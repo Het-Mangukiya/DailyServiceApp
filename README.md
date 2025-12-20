@@ -11,6 +11,5 @@ The app allows:
 - Auto calculating monthly bills
 - Showing payment status
 - Using Firebase Firestore for data storage
--  change in main
 */
 
