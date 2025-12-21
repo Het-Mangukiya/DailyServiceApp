@@ -1,0 +1,18 @@
+[
+    {
+        "merged": "com.dailyserviceapp-debug-36:/layout_activity_customer_edit.xml.flat",
+        "source": "com.dailyserviceapp-main-38:/layout/activity_customer_edit.xml"
+    },
+    {
+        "merged": "com.dailyserviceapp-debug-36:/layout_row_customer.xml.flat",
+        "source": "com.dailyserviceapp-main-38:/layout/row_customer.xml"
+    },
+    {
+        "merged": "com.dailyserviceapp-debug-36:/layout_activity_customer_detail.xml.flat",
+        "source": "com.dailyserviceapp-main-38:/layout/activity_customer_detail.xml"
+    },
+    {
+        "merged": "com.dailyserviceapp-debug-36:/layout_activity_customer_list.xml.flat",
+        "source": "com.dailyserviceapp-main-38:/layout/activity_customer_list.xml"
+    }
+]

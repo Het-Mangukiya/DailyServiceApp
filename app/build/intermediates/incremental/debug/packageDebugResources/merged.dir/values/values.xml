@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:ns1="http://schemas.android.com/tools">
+    <string name="add_customer">Add customer</string>
+    <string name="address">Address</string>
+    <string name="app_name">DailyServiceApp</string>
+    <string name="customers">Customers</string>
+    <string name="gcm_defaultSenderId" translatable="false">717495606296</string>
+    <string name="google_api_key" translatable="false">AIzaSyAoklRbDNcplP_VNqGU0MNfcpVj3WrZadQ</string>
+    <string name="google_app_id" translatable="false">1:717495606296:android:853886b36fa20d187ff76d</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyAoklRbDNcplP_VNqGU0MNfcpVj3WrZadQ</string>
+    <string name="google_storage_bucket" translatable="false">sgp-1-53142.firebasestorage.app</string>
+    <string name="mark_delivered_today">Mark delivered today</string>
+    <string name="monthly_summary">Monthly summary</string>
+    <string name="name">Name</string>
+    <string name="payment_status">Payment status</string>
+    <string name="phone">Phone</string>
+    <string name="project_id" translatable="false">sgp-1-53142</string>
+    <string name="rate_per_unit">Rate per unit</string>
+    <string name="save">Save</string>
+    <string name="service_type">Service type</string>
+    <style name="Theme.DailyServiceApp" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="android:statusBarColor" ns1:targetApi="l">?attr/colorPrimaryVariant</item>
+    </style>
+</resources>
