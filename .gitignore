@@ -1,0 +1,23 @@
+# Mac
+.DS_Store
+
+# Gradle
+.gradle/
+build/
+
+# Android build
+app/build/
+
+# Android Studio / IDE
+.idea/
+*.iml
+.vscode/
+
+# Local config
+local.properties
+
+# Logs & compiled files
+*.log
+*.class
+*.dex
+
