@@ -123,7 +123,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="No deliveries recorded"
+                    android:text="No customers found"
                     android:textSize="16sp"
                     android:textColor="#64748B"
                     android:layout_marginTop="8dp" />
@@ -131,7 +131,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Tap + to add service entries"
+                    android:text="Add customers first to record deliveries"
                     android:textSize="14sp"
                     android:textColor="#94A3B8"
                     android:layout_marginTop="4dp" />
@@ -149,8 +149,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
-        android:contentDescription="Add Service Entry"
-        app:srcCompat="@android:drawable/ic_input_add"
+        android:contentDescription="Refresh Service Entries"
+        app:srcCompat="@android:drawable/ic_popup_sync"
         app:backgroundTint="#0891B2"
         app:tint="@android:color/white" />
 

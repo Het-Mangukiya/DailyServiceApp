@@ -53,44 +53,53 @@
         <!-- Customer Management -->
         <activity
             android:name=".ui.CustomerEditActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.DailyServiceApp.NoActionBar" />
 
         <activity
             android:name=".ui.CustomerDetailActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.DailyServiceApp.NoActionBar" />
 
         <activity
             android:name=".ui.CustomerListActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.DailyServiceApp.NoActionBar" />
 
         <!-- Service Entry -->
         <activity
             android:name=".service.ServiceEntryActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.DailyServiceApp.NoActionBar" />
 
         <!-- Billing -->
         <activity
             android:name=".billing.BillListActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.DailyServiceApp.NoActionBar" />
 
         <activity
             android:name=".billing.BillDetailActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.DailyServiceApp.NoActionBar" />
 
         <!-- Payment -->
         <activity
             android:name=".payment.PaymentActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.DailyServiceApp.NoActionBar" />
 
         <!-- Reports -->
         <activity
             android:name=".reports.ReportsActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.DailyServiceApp.NoActionBar" />
 
         <!-- Profile & Settings -->
         <activity
             android:name=".profile.ProfileActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.DailyServiceApp.NoActionBar" />
 
         <activity
             android:name=".profile.SettingsActivity"
