@@ -2,13 +2,43 @@ package com.dailyserviceapp.data.models;
 
 import java.util.Date;
 
+/**
+ * User data model representing a registered user in DailyDrop.
+ * Stores basic user information including authentication details and role.
+ * 
+ * <p>Supports two user roles:</p>
+ * <ul>
+ *   <li>PROVIDER - Service providers who deliver milk, newspaper, etc.</li>
+ *   <li>CUSTOMER - Customers who receive services</li>
+ * </ul>
+ * 
+ * <p>This class is designed for Firebase Firestore serialization and requires
+ * a public no-argument constructor.</p>
+ * 
+ * @author DailyDrop Team
+ * @version 1.0
+ * @since 2026-01-08
+ */
 public class User {
+    /** Unique user ID (Firebase Auth UID) */
     private String id;
+    
+    /** User email address */
     private String email;
+    
+    /** User full name */
     private String name;
+    
+    /** User phone number */
     private String phone;
-    private String role; // PROVIDER or CUSTOMER
+    
+    /** User role: PROVIDER or CUSTOMER */
+    private String role;
+    
+    /** Account creation timestamp */
     private Date createdAt;
+    
+    /** Last update timestamp */
     private Date updatedAt;
     
     public User() {

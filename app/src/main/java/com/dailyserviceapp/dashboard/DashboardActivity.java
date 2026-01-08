@@ -22,13 +22,38 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
+/**
+ * Main Dashboard Activity for DailyDrop application.
+ * Displays key statistics and provides navigation to all major features.
+ * 
+ * <p>Features:</p>
+ * <ul>
+ *   <li>Welcome message with user name</li>
+ *   <li>Statistics cards showing total customers, pending deliveries, outstanding amount</li>
+ *   <li>Navigation cards to Customers, Service Entry, Bills, Payments, Reports</li>
+ *   <li>Toolbar with profile and logout options</li>
+ *   <li>Real-time data loading from Firestore</li>
+ * </ul>
+ * 
+ * @author DailyDrop Team
+ * @version 1.0
+ * @since 2026-01-08
+ */
 public class DashboardActivity extends BaseActivity {
     
+    /** Welcome text showing user name */
     private TextView welcomeText;
+    
+    /** Statistics text views */
     private TextView totalCustomersText, pendingDeliveriesText, outstandingAmountText;
+    
+    /** Navigation cards for main features */
     private CardView customersCard, serviceEntryCard, billsCard, paymentsCard, reportsCard;
     
+    /** Firestore database instance */
     private FirebaseFirestore firestore;
+    
+    /** Current logged-in user ID */
     private String currentUserId;
     
     @Override

@@ -3,19 +3,52 @@ package com.dailyserviceapp.data.models;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentId;
 
+/**
+ * Customer data model representing a service customer in DailyDrop.
+ * Stores customer information, service details, and pricing for a provider's customer.
+ * 
+ * <p>Each customer is associated with a specific provider and service type.
+ * Tracks customer status (ACTIVE/INACTIVE), service rate, and subscription details.</p>
+ * 
+ * <p>Uses Firebase Firestore annotations for document ID mapping.</p>
+ * 
+ * @author DailyDrop Team
+ * @version 1.0
+ * @since 2026-01-08
+ */
 public class Customer {
+    /** Firestore document ID */
     @DocumentId
     private String id;
 
+    /** Customer full name */
     private String name;
+    
+    /** Customer phone number */
     private String phone;
+    
+    /** Customer address for service delivery */
     private String address;
+    
+    /** Type of service subscribed (Milk, Newspaper, Maid, Laundry) */
     private String serviceType;
+    
+    /** Rate per unit of service */
     private double ratePerUnit;
+    
+    /** Provider ID who manages this customer */
     private String providerId;
-    private String status; // ACTIVE, INACTIVE
+    
+    /** Customer status: ACTIVE or INACTIVE */
+    private String status;
+    
+    /** Additional notes about the customer */
     private String notes;
+    
+    /** Service subscription start date */
     private Timestamp startDate;
+    
+    /** Customer record creation timestamp */
     private Timestamp createdAt;
 
     public Customer() {

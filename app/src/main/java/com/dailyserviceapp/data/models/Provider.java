@@ -2,14 +2,41 @@ package com.dailyserviceapp.data.models;
 
 import java.util.Date;
 
+/**
+ * Provider data model representing a service provider in DailyDrop.
+ * Contains business details for providers who offer services like milk delivery,
+ * newspaper delivery, maid service, or laundry service.
+ * 
+ * <p>Each provider is linked to a User account via userId field.
+ * Providers can offer one or multiple service types to customers.</p>
+ * 
+ * @author DailyDrop Team
+ * @version 1.0
+ * @since 2026-01-08
+ */
 public class Provider {
+    /** Unique provider ID */
     private String id;
+    
+    /** Associated user ID (Firebase Auth UID) */
     private String userId;
+    
+    /** Business or trade name */
     private String businessName;
+    
+    /** Type of service offered (Milk, Newspaper, Maid, Laundry) */
     private String serviceType;
+    
+    /** Business address */
     private String address;
+    
+    /** GST number for tax purposes */
     private String gstNumber;
+    
+    /** Contact phone number */
     private String phone;
+    
+    /** Provider registration timestamp */
     private Date createdAt;
     
     public Provider() {
