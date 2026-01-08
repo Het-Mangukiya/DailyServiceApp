@@ -87,7 +87,7 @@ public class ServiceEntryAdapter extends RecyclerView.Adapter<ServiceEntryAdapte
         }
         holder.customerName.setText(customer.getName());
         
-        String serviceInfo = customer.getServiceType() + " · " + customer.getRatePerUnit() + "/unit";
+        String serviceInfo = customer.getServiceType() + " · ₹" + String.format("%.2f", customer.getRatePerUnit());
         holder.serviceInfo.setText(serviceInfo);
         
         // Set quantity and delivery status
