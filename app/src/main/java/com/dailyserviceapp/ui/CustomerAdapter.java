@@ -53,6 +53,12 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.ViewHo
                 + CurrencyUtils.formatCurrency(customer.getRatePerUnit());
         holder.subtitle.setText(subtitle);
 
+        // Set customer initial
+        if (customer.getName() != null && !customer.getName().isEmpty()) {
+            String initial = customer.getName().substring(0, 1).toUpperCase();
+            holder.customerInitial.setText(initial);
+        }
+
         holder.itemView.setOnClickListener(v -> listener.onCustomerClick(customer));
     }
 
@@ -64,11 +70,13 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.ViewHo
     static class ViewHolder extends RecyclerView.ViewHolder {
         final TextView name;
         final TextView subtitle;
+        final TextView customerInitial;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
             name = itemView.findViewById(R.id.name);
             subtitle = itemView.findViewById(R.id.subtitle);
+            customerInitial = itemView.findViewById(R.id.customerInitial);
         }
     }
 }
