@@ -1,12 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!-- Permissions -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" 
+        android:maxSdkVersion="28" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+
     <application
         android:allowBackup="true"
         android:label="DailyServiceApp"
         android:supportsRtl="true"
-        android:theme="@style/Theme.DailyServiceApp">
+        android:theme="@style/Theme.DailyServiceApp"
+        android:usesCleartextTraffic="false"
+        android:networkSecurityConfig="@xml/network_security_config">
 
+        <!-- Splash / Main Activity (Login) -->
+        <activity
+            android:name=".auth.LoginActivity"
+            android:exported="true"
+            android:theme="@style/Theme.DailyServiceApp.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Auth Activities -->
+        <activity
+            android:name=".auth.SignupActivity"
+            android:exported="false"
+            android:theme="@style/Theme.DailyServiceApp.NoActionBar" />
+
+        <activity
+            android:name=".auth.ForgotPasswordActivity"
+            android:exported="false" />
+
+        <!-- Dashboard -->
+        <activity
+            android:name=".dashboard.DashboardActivity"
+            android:exported="false" />
+
+        <!-- Customer Management -->
         <activity
             android:name=".ui.CustomerEditActivity"
             android:exported="false" />
@@ -17,12 +55,65 @@
 
         <activity
             android:name=".ui.CustomerListActivity"
-            android:exported="true">
+            android:exported="false" />
+
+        <!-- Service Entry -->
+        <activity
+            android:name=".service.ServiceEntryActivity"
+            android:exported="false" />
+
+        <!-- Billing -->
+        <activity
+            android:name=".billing.BillListActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".billing.BillDetailActivity"
+            android:exported="false" />
+
+        <!-- Payment -->
+        <activity
+            android:name=".payment.PaymentActivity"
+            android:exported="false" />
+
+        <!-- Reports -->
+        <activity
+            android:name=".reports.ReportsActivity"
+            android:exported="false" />
+
+        <!-- Profile & Settings -->
+        <activity
+            android:name=".profile.ProfileActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".profile.SettingsActivity"
+            android:exported="false" />
+
+        <!-- Notifications -->
+        <activity
+            android:name=".notifications.NotificationListActivity"
+            android:exported="false" />
+
+        <!-- Firebase Cloud Messaging Service -->
+        <service
+            android:name=".notifications.FCMService"
+            android:exported="false">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
-        </activity>
+        </service>
+
+        <!-- FileProvider for sharing PDFs -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
 
     </application>
 
