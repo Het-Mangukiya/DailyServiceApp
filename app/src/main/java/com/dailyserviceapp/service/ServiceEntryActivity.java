@@ -132,8 +132,14 @@ public class ServiceEntryActivity extends BaseActivity {
     }
     
     private void loadData() {
-        if (providerId == null) {
-            showToast("Provider ID not found");
+        if (providerId == null || providerId.isEmpty()) {
+            showToast("Please login again");
+            showEmptyState(true);
+            return;
+        }
+        
+        if (!isNetworkAvailable()) {
+            showToast("No internet connection");
             return;
         }
         
@@ -154,8 +160,8 @@ public class ServiceEntryActivity extends BaseActivity {
                 
                 repository.getServiceEntriesByProviderAndDate(
                     providerId,
-                    Timestamp.now(), // This will be fixed with proper date
-                    Timestamp.now(),
+                    new Timestamp(startOfDay),
+                    new Timestamp(endOfDay),
                     new FirestoreRepository.OnServiceEntriesLoadedListener() {
                         @Override
                         public void onServiceEntriesLoaded(List<ServiceEntry> entries) {

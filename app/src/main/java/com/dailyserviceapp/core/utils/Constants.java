@@ -116,6 +116,26 @@ public class Constants {
     /** Notifications collection in Firestore */
     public static final String COLLECTION_NOTIFICATIONS = "notifications";
     
+    // Date Formats
+    /** Full date-time format (dd MMM yyyy, hh:mm a) */
+    public static final String DATE_FORMAT_FULL = "dd MMM yyyy, hh:mm a";
+    
+    /** Short date format (dd MMM yyyy) */
+    public static final String DATE_FORMAT_SHORT = "dd MMM yyyy";
+    
+    /** Month and year format (MMM yyyy) */
+    public static final String DATE_FORMAT_MONTH_YEAR = "MMM yyyy";
+    
+    /** Day and month format (dd MMM) */
+    public static final String DATE_FORMAT_DAY_MONTH = "dd MMM";
+    
+    // Validation
+    /** Minimum password length */
+    public static final int MIN_PASSWORD_LENGTH = 8;
+    
+    /** Maximum phone number length (Indian standard) */
+    public static final int MAX_PHONE_LENGTH = 10;
+    
     // Intent Extras
     public static final String EXTRA_USER_ID = "userId";
     public static final String EXTRA_CUSTOMER_ID = "customerId";
@@ -124,16 +144,6 @@ public class Constants {
     public static final String EXTRA_SERVICE_ENTRY_ID = "serviceEntryId";
     public static final String EXTRA_MONTH = "month";
     public static final String EXTRA_YEAR = "year";
-    
-    // Date Formats
-    public static final String DATE_FORMAT_FULL = "dd MMM yyyy, hh:mm a";
-    public static final String DATE_FORMAT_SHORT = "dd MMM yyyy";
-    public static final String DATE_FORMAT_MONTH_YEAR = "MMM yyyy";
-    public static final String DATE_FORMAT_DAY_MONTH = "dd MMM";
-    
-    // Validation
-    public static final int MIN_PASSWORD_LENGTH = 8;
-    public static final int MAX_PHONE_LENGTH = 10;
     
     // Pagination
     public static final int PAGE_SIZE = 50;
