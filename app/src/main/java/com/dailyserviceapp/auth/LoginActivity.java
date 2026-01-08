@@ -30,17 +30,48 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+/**
+ * Login Activity for DailyDrop application.
+ * Provides email/password authentication and Google Sign-In functionality.
+ * Integrates with Firebase Authentication and Firestore for user management.
+ * 
+ * <p>Features:</p>
+ * <ul>
+ *   <li>Email/password login with validation</li>
+ *   <li>Google Sign-In integration</li>
+ *   <li>Password recovery link</li>
+ *   <li>Registration link to SignupActivity</li>
+ *   <li>Automatic navigation to dashboard after successful login</li>
+ * </ul>
+ * 
+ * @author DailyDrop Team
+ * @version 1.0
+ * @since 2026-01-08
+ */
 public class LoginActivity extends BaseActivity {
     
+    /** Email input field */
     private EditText emailInput, passwordInput;
+    
+    /** Login and Google Sign-In buttons */
     private Button loginButton, googleSignInButton;
+    
+    /** Text links for signup and forgot password */
     private TextView signupLink, forgotPasswordLink;
+    
+    /** Progress indicator for async operations */
     private ProgressBar progressBar;
     
+    /** Firebase Authentication instance */
     private FirebaseAuth firebaseAuth;
+    
+    /** Firestore database instance */
     private FirebaseFirestore firestore;
+    
+    /** Google Sign-In client */
     private GoogleSignInClient googleSignInClient;
     
+    /** Activity result launcher for Google Sign-In flow */
     private ActivityResultLauncher<Intent> googleSignInLauncher;
     
     @Override
