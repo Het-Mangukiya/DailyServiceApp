@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">DailyServiceApp</string>
+    <string name="app_name">DailyDrop</string>
     <string name="customers">Customers</string>
     <string name="add_customer">Add customer</string>
     <string name="save">Save</string>
