@@ -138,10 +138,19 @@ public class SignupActivity extends BaseActivity {
                     }
                 } else {
                     hideLoading();
-                    String error = task.getException() != null ? 
-                        task.getException().getMessage() : "Signup failed";
+                    String error = "Signup failed";
+                    if (task.getException() != null) {
+                        error = task.getException().getMessage();
+                        // Log the full error for debugging
+                        android.util.Log.e("SignupActivity", "Signup error: " + error, task.getException());
+                    }
                     showToast(error);
                 }
+            })
+            .addOnFailureListener(e -> {
+                hideLoading();
+                android.util.Log.e("SignupActivity", "Signup failure: " + e.getMessage(), e);
+                showToast("Error: " + e.getMessage());
             });
     }
     
