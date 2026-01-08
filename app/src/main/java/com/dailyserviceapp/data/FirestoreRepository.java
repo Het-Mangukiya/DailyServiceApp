@@ -153,7 +153,6 @@ public class FirestoreRepository {
         customers()
                 .whereEqualTo("providerId", providerId)
                 .whereEqualTo("status", "ACTIVE")
-                .orderBy("name")
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
                     List<Customer> customerList = new ArrayList<>();
@@ -181,8 +180,9 @@ public class FirestoreRepository {
                                                     Timestamp endDate, OnServiceEntriesLoadedListener listener) {
         db.collection("serviceEntries")
                 .whereEqualTo("providerId", providerId)
-                .whereGreaterThanOrEqualTo("date", startDate)
-                .whereLessThanOrEqualTo("date", endDate)
+                .orderBy("date")
+                .startAt(startDate)
+                .endAt(endDate)
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
                     List<ServiceEntry> entries = new ArrayList<>();
