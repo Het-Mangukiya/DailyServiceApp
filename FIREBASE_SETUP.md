@@ -58,7 +58,7 @@ For the Daily Service App to work fully, enable these Firebase services:
 Your current `google-services.json` includes:
 - Project ID: sgp-1-53142
 - Package: com.dailyserviceapp
-- API Key: AIzaSyAoklRbDNcplP_VNqGU0MNfcpVj3WrZadQ
+- API Key: [Your Firebase API Key]
 
 But it's missing:
 - Authentication configuration
