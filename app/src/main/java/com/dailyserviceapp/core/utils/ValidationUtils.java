@@ -3,18 +3,36 @@ package com.dailyserviceapp.core.utils;
 import android.text.TextUtils;
 import android.util.Patterns;
 
+/**
+ * Utility class for input validation operations.
+ * Provides methods to validate email addresses, passwords, phone numbers,
+ * and other user input data for the DailyDrop application.
+ * 
+ * <p>All methods are static and the class should not be instantiated.</p>
+ * 
+ * @author DailyDrop Team
+ * @version 1.0
+ * @since 2026-01-08
+ */
 public class ValidationUtils {
     
     /**
-     * Validate email address
+     * Validates an email address using Android's Patterns utility.
+     * 
+     * @param email The email address to validate
+     * @return true if the email is valid, false otherwise
      */
     public static boolean isValidEmail(String email) {
         return !TextUtils.isEmpty(email) && Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
     
     /**
-     * Validate password
-     * Must be at least 8 characters with alphanumeric and special characters
+     * Validates a password against security requirements.
+     * Password must be at least 8 characters long and contain
+     * both letters and digits.
+     * 
+     * @param password The password to validate
+     * @return true if password meets requirements, false otherwise
      */
     public static boolean isValidPassword(String password) {
         if (TextUtils.isEmpty(password) || password.length() < Constants.MIN_PASSWORD_LENGTH) {
@@ -35,7 +53,11 @@ public class ValidationUtils {
     }
     
     /**
-     * Get password strength message
+     * Generates a user-friendly message indicating password strength.
+     * Evaluates password length, character types, and complexity.
+     * 
+     * @param password The password to evaluate
+     * @return A descriptive message about password strength
      */
     public static String getPasswordStrengthMessage(String password) {
         if (TextUtils.isEmpty(password)) {
@@ -68,7 +90,11 @@ public class ValidationUtils {
     }
     
     /**
-     * Validate phone number (10 digits)
+     * Validates a phone number.
+     * Accepts 10-digit Indian phone numbers with optional formatting.
+     * 
+     * @param phone The phone number to validate
+     * @return true if phone number is valid (10 digits), false otherwise
      */
     public static boolean isValidPhone(String phone) {
         if (TextUtils.isEmpty(phone)) return false;

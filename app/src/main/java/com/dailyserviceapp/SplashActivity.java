@@ -11,10 +11,31 @@ import com.dailyserviceapp.auth.LoginActivity;
 import com.dailyserviceapp.dashboard.DashboardActivity;
 import com.dailyserviceapp.utils.SessionManager;
 
+/**
+ * Splash screen activity displayed on app launch.
+ * Shows the DailyDrop logo and brand name for 2 seconds,
+ * then navigates to either the Dashboard (if user is logged in)
+ * or the Login screen (if user is not logged in).
+ * 
+ * @author DailyDrop Team
+ * @version 1.0
+ * @since 2026-01-08
+ */
 public class SplashActivity extends AppCompatActivity {
 
+    /**
+     * Duration in milliseconds to display the splash screen.
+     */
     private static final int SPLASH_DELAY = 2000; // 2 seconds
 
+    /**
+     * Called when the activity is first created.
+     * Sets up the splash screen layout, hides the action bar,
+     * and schedules navigation to the next screen after a delay.
+     * 
+     * @param savedInstanceState If the activity is being re-initialized after previously
+     *                          being shut down, this Bundle contains the most recent data.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,6 +52,12 @@ public class SplashActivity extends AppCompatActivity {
         }, SPLASH_DELAY);
     }
 
+    /**
+     * Determines the next screen to navigate to based on user's login status.
+     * If the user is logged in (session exists), navigates to the Dashboard.
+     * Otherwise, navigates to the Login screen.
+     * Finishes this activity to prevent returning to splash screen on back press.
+     */
     private void navigateToNextScreen() {
         SessionManager sessionManager = new SessionManager(this);
         Intent intent;

@@ -4,35 +4,69 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
 
+/**
+ * Utility class for currency formatting and parsing operations.
+ * Provides methods to format amounts with Indian Rupee (₹) symbol,
+ * parse currency strings, and handle currency conversions.
+ * 
+ * <p>Supports Indian number formatting with proper comma placement
+ * according to Indian numbering system (lakhs and crores).</p>
+ * 
+ * @author DailyDrop Team
+ * @version 1.0
+ * @since 2026-01-08
+ */
 public class CurrencyUtils {
     
+    /** Formatter for currency with ₹ symbol */
     private static final DecimalFormat currencyFormat = new DecimalFormat("₹#,##0.00");
+    
+    /** Formatter for amounts without currency symbol */
     private static final DecimalFormat simpleFormat = new DecimalFormat("#,##0.00");
+    
+    /** Indian currency formatter with locale support */
     private static final NumberFormat indianFormat = NumberFormat.getCurrencyInstance(new Locale("en", "IN"));
     
     /**
-     * Format amount to currency string with ₹ symbol
+     * Formats a numeric amount as currency string with ₹ symbol.
+     * Example: 1234.56 → "₹1,234.56"
+     * 
+     * @param amount The amount to format
+     * @return Formatted currency string with ₹ symbol
      */
     public static String formatCurrency(double amount) {
         return currencyFormat.format(amount);
     }
     
     /**
-     * Format amount without currency symbol
+     * Formats a numeric amount without currency symbol.
+     * Example: 1234.56 → "1,234.56"
+     * 
+     * @param amount The amount to format
+     * @return Formatted number string with comma separators
      */
     public static String formatAmount(double amount) {
         return simpleFormat.format(amount);
     }
     
     /**
-     * Format amount with Indian currency format
+     * Formats amount using Indian currency formatting rules.
+     * Uses locale-specific formatting with proper comma placement.
+     * 
+     * @param amount The amount to format
+     * @return Formatted currency string in Indian format
      */
     public static String formatIndianCurrency(double amount) {
         return indianFormat.format(amount);
     }
     
     /**
-     * Parse currency string to double
+     * Parses a currency string and extracts the numeric value.
+     * Removes currency symbols, commas, and spaces before parsing.
+     * Returns 0.0 if parsing fails or input is invalid.
+     * 
+     * @param currencyString The currency string to parse (e.g., "₹1,234.56")
+     * @return The numeric value, or 0.0 if parsing fails
      */
     public static double parseCurrency(String currencyString) {
         if (currencyString == null || currencyString.isEmpty()) {
@@ -51,7 +85,11 @@ public class CurrencyUtils {
     }
     
     /**
-     * Round amount to 2 decimal places
+     * Rounds an amount to 2 decimal places.
+     * Uses standard rounding rules (0.5 rounds up).
+     * 
+     * @param amount The amount to round
+     * @return The rounded amount with 2 decimal places
      */
     public static double roundAmount(double amount) {
         return Math.round(amount * 100.0) / 100.0;
