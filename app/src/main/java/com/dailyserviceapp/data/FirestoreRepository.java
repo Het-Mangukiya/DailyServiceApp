@@ -2,6 +2,7 @@ package com.dailyserviceapp.data;
 
 import androidx.annotation.NonNull;
 
+import com.dailyserviceapp.data.models.Customer;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.Timestamp;

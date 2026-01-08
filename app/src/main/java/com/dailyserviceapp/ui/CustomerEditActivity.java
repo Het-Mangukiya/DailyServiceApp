@@ -8,8 +8,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.dailyserviceapp.R;
-import com.dailyserviceapp.data.Customer;
 import com.dailyserviceapp.data.FirestoreRepository;
+import com.dailyserviceapp.data.models.Customer;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.Timestamp;
