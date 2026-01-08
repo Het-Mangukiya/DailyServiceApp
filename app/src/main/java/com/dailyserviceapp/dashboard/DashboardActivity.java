@@ -160,11 +160,11 @@ public class DashboardActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         
-        if (id == R.id.action_profile) {
-            startActivity(new Intent(this, ProfileActivity.class));
+        if (id == R.id.action_qr_code) {
+            // TODO: Implement QR code feature
             return true;
-        } else if (id == R.id.action_logout) {
-            logout();
+        } else if (id == R.id.action_more) {
+            // TODO: Implement more options
             return true;
         }
         

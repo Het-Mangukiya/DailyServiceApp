@@ -144,7 +144,7 @@ public class ServiceEntryAdapter extends RecyclerView.Adapter<ServiceEntryAdapte
             decreaseButton = itemView.findViewById(R.id.decreaseButton);
             quantityText = itemView.findViewById(R.id.quantityText);
             increaseButton = itemView.findViewById(R.id.increaseButton);
-            deliveredCheckbox = itemView.findViewById(R.id.deliveredCheckbox);
+            deliveredCheckbox = itemView.findViewById(R.id.deliveryCheckbox);
         }
     }
 }

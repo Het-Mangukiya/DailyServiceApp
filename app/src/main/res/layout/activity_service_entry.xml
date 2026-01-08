@@ -3,23 +3,23 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/md_theme_background">
 
-    <!-- Toolbar -->
+    <!-- AppBar -->
     <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/ThemeOverlay.MaterialComponents.ActionBar">
+        android:background="@color/md_theme_primary"
+        app:elevation="@dimen/elevation_md">
 
         <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/topAppBar"
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
+            app:navigationIcon="@android:drawable/ic_menu_revert"
             app:title="Service Entry"
-            app:titleTextColor="@android:color/white"
-            app:navigationIcon="?attr/homeAsUpIndicator" />
+            app:titleTextColor="@android:color/white" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -27,131 +27,142 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:fillViewport="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="@dimen/spacing_base">
 
             <!-- Date Selector Card -->
             <com.google.android.material.card.MaterialCardView
+                android:id="@+id/dateSelectorCard"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="2dp">
+                android:layout_marginBottom="@dimen/spacing_base"
+                app:cardCornerRadius="@dimen/corner_radius_md"
+                app:cardElevation="@dimen/elevation_base"
+                app:cardBackgroundColor="@color/md_theme_surface">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp">
+                    android:orientation="horizontal"
+                    android:padding="@dimen/spacing_base"
+                    android:gravity="center_vertical">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Select Date"
-                        android:textSize="14sp"
-                        android:textColor="#64748B"
-                        android:textStyle="bold" />
+                    <ImageView
+                        android:layout_width="@dimen/card_size_md"
+                        android:layout_height="@dimen/card_size_md"
+                        android:src="@android:drawable/ic_menu_my_calendar"
+                        android:tint="@color/md_theme_primary"
+                        android:layout_marginEnd="@dimen/spacing_base" />
 
                     <LinearLayout
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical"
-                        android:layout_marginTop="8dp">
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Selected Date"
+                            android:textSize="@dimen/text_size_sm"
+                            android:textColor="@color/md_theme_on_surface_variant" />
 
                         <TextView
                             android:id="@+id/selectedDateText"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Today"
-                            android:textSize="18sp"
-                            android:textColor="#1E293B"
-                            android:textStyle="bold" />
-
-                        <Button
-                            android:id="@+id/changeDateButton"
-                            style="@style/Widget.MaterialComponents.Button.TextButton"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Change"
-                            android:textColor="#0891B2" />
+                            android:text="Today"
+                            android:textSize="@dimen/text_size_lg"
+                            android:textStyle="bold"
+                            android:textColor="@color/md_theme_on_surface"
+                            android:layout_marginTop="@dimen/spacing_xs" />
 
                     </LinearLayout>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/changeDateButton"
+                        style="@style/Widget.Material3.Button.TonalButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Change"
+                        android:textSize="@dimen/text_size_base"
+                        app:cornerRadius="@dimen/corner_radius_base" />
 
                 </LinearLayout>
 
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Service Entries RecyclerView -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Today's Deliveries"
-                android:textSize="16sp"
-                android:textColor="#1E293B"
-                android:textStyle="bold"
-                android:layout_marginBottom="12dp" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/serviceEntriesRecycler"
+            <!-- RecyclerView with Empty State -->
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:nestedScrollingEnabled="false" />
+                android:layout_height="0dp"
+                android:layout_weight="1">
 
-            <!-- Empty State -->
-            <LinearLayout
-                android:id="@+id/emptyStateLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:padding="32dp"
-                android:visibility="gone">
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:clipToPadding="false" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="📦"
-                    android:textSize="48sp" />
+                <!-- Empty State -->
+                <LinearLayout
+                    android:id="@+id/emptyState"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:padding="@dimen/spacing_xl"
+                    android:visibility="gone">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="No customers found"
-                    android:textSize="16sp"
-                    android:textColor="#64748B"
-                    android:layout_marginTop="8dp" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="📦"
+                        android:textSize="@dimen/card_size_xxl"
+                        android:layout_marginBottom="@dimen/spacing_base" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Add customers first to record deliveries"
-                    android:textSize="14sp"
-                    android:textColor="#94A3B8"
-                    android:layout_marginTop="4dp" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="No customers found"
+                        android:textSize="@dimen/text_size_lg"
+                        android:textStyle="bold"
+                        android:textColor="@color/md_theme_on_surface"
+                        android:gravity="center"
+                        android:layout_marginBottom="@dimen/spacing_sm" />
 
-            </LinearLayout>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Add customers first to record deliveries"
+                        android:textSize="@dimen/text_size_base"
+                        android:textColor="@color/md_theme_on_surface_variant"
+                        android:gravity="center" />
+
+                </LinearLayout>
+
+            </FrameLayout>
 
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
 
-    <!-- Floating Action Button -->
+    <!-- FAB -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/addServiceEntryFab"
+        android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_margin="16dp"
-        android:contentDescription="Refresh Service Entries"
-        app:srcCompat="@android:drawable/ic_popup_sync"
-        app:backgroundTint="#0891B2"
-        app:tint="@android:color/white" />
+        android:layout_margin="@dimen/spacing_base"
+        android:contentDescription="Refresh"
+        android:src="@android:drawable/ic_popup_sync"
+        app:tint="@android:color/white"
+        app:backgroundTint="@color/md_theme_primary" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
