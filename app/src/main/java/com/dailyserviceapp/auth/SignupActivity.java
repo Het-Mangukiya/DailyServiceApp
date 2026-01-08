@@ -34,18 +34,51 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Signup Activity for new user registration in DailyDrop.
+ * Provides email/password registration and Google Sign-In options.
+ * 
+ * <p>Features:</p>
+ * <ul>
+ *   <li>Name, email, phone, password input with validation</li>
+ *   <li>Role selection (Provider or Customer)</li>
+ *   <li>Email/password signup with Firebase Authentication</li>
+ *   <li>Google Sign-In integration</li>
+ *   <li>Automatic Firestore user record creation</li>
+ *   <li>Link to login page for existing users</li>
+ * </ul>
+ * 
+ * @author DailyDrop Team
+ * @version 1.0
+ * @since 2026-01-08
+ */
 public class SignupActivity extends BaseActivity {
     
+    /** Input fields for user registration */
     private EditText nameInput, emailInput, phoneInput, passwordInput, confirmPasswordInput;
+    
+    /** Role selection spinner */
     private Spinner roleSpinner;
+    
+    /** Signup and Google Sign-In buttons */
     private Button signupButton, googleSignInButton;
+    
+    /** Login link for existing users */
     private TextView loginLink;
+    
+    /** Progress indicator */
     private ProgressBar progressBar;
     
+    /** Firebase Authentication instance */
     private FirebaseAuth firebaseAuth;
+    
+    /** Firestore database instance */
     private FirebaseFirestore firestore;
+    
+    /** Google Sign-In client */
     private GoogleSignInClient googleSignInClient;
     
+    /** Activity result launcher for Google Sign-In */
     private ActivityResultLauncher<Intent> googleSignInLauncher;
     
     @Override

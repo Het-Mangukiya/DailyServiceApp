@@ -3,17 +3,52 @@ package com.dailyserviceapp.data.models;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentId;
 
+/**
+ * Service Entry data model representing a daily service delivery record.
+ * Tracks individual service transactions including quantity delivered,
+ * delivery status, and timestamps.
+ * 
+ * <p>Used for recording daily deliveries such as:</p>
+ * <ul>
+ *   <li>Milk delivery (quantity in liters)</li>
+ *   <li>Newspaper delivery (number of copies)</li>
+ *   <li>Maid service (hours worked)</li>
+ *   <li>Laundry service (number of items)</li>
+ * </ul>
+ * 
+ * <p>Service entries are aggregated monthly to generate bills.</p>
+ * 
+ * @author DailyDrop Team
+ * @version 1.0
+ * @since 2026-01-08
+ */
 public class ServiceEntry {
+    /** Firestore document ID */
     @DocumentId
     private String id;
     
+    /** Provider ID who delivered the service */
     private String providerId;
+    
+    /** Customer ID who received the service */
     private String customerId;
+    
+    /** Service delivery date and time */
     private Timestamp date;
+    
+    /** Quantity of service delivered (liters, items, hours, etc.) */
     private double quantity;
+    
+    /** Delivery status flag */
     private boolean delivered;
+    
+    /** Additional notes about this service entry */
     private String notes;
+    
+    /** Record creation timestamp */
     private Timestamp createdAt;
+    
+    /** Last update timestamp */
     private Timestamp updatedAt;
     
     public ServiceEntry() {

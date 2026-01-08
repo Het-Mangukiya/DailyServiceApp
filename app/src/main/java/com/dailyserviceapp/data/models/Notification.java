@@ -3,16 +3,49 @@ package com.dailyserviceapp.data.models;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentId;
 
+/**
+ * Notification data model representing an in-app notification.
+ * Stores notification details for various app events including
+ * bill generation, payment reminders, payment receipts, and service updates.
+ * 
+ * <p>Notification types:</p>
+ * <ul>
+ *   <li>BILL_GENERATED - New monthly bill created</li>
+ *   <li>PAYMENT_REMINDER - Upcoming or overdue payment</li>
+ *   <li>PAYMENT_RECEIVED - Payment successfully recorded</li>
+ *   <li>SERVICE_DELIVERY - Service delivery update</li>
+ * </ul>
+ * 
+ * <p>Notifications support read/unread status and can link to related entities.</p>
+ * 
+ * @author DailyDrop Team
+ * @version 1.0
+ * @since 2026-01-08
+ */
 public class Notification {
+    /** Firestore document ID */
     @DocumentId
     private String id;
     
+    /** User ID who receives this notification */
     private String userId;
+    
+    /** Notification title */
     private String title;
+    
+    /** Notification message content */
     private String message;
-    private String type; // BILL_GENERATED, PAYMENT_REMINDER, PAYMENT_RECEIVED, SERVICE_DELIVERY
+    
+    /** Notification type: BILL_GENERATED, PAYMENT_REMINDER, PAYMENT_RECEIVED, SERVICE_DELIVERY */
+    private String type;
+    
+    /** Read status flag */
     private boolean read;
-    private String relatedId; // ID of related bill/payment/service
+    
+    /** ID of related bill, payment, or service entry */
+    private String relatedId;
+    
+    /** Notification creation timestamp */
     private Timestamp timestamp;
     
     public Notification() {

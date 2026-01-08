@@ -6,22 +6,67 @@ import com.google.firebase.firestore.DocumentId;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Bill data model representing a monthly billing statement.
+ * Contains billing details including items, extra charges, adjustments,
+ * and payment tracking for a customer's service usage.
+ * 
+ * <p>Supports:</p>
+ * <ul>
+ *   <li>Monthly billing cycles</li>
+ *   <li>Multiple bill items per month</li>
+ *   <li>Extra charges (delivery fees, late fees, etc.)</li>
+ *   <li>Adjustments (discounts, refunds, etc.)</li>
+ *   <li>Payment status tracking (PENDING, PARTIAL, PAID, OVERDUE)</li>
+ *   <li>PDF generation and storage</li>
+ * </ul>
+ * 
+ * @author DailyDrop Team
+ * @version 1.0
+ * @since 2026-01-08
+ */
 public class Bill {
+    /** Firestore document ID */
     @DocumentId
     private String id;
     
+    /** Provider ID who generated the bill */
     private String providerId;
+    
+    /** Customer ID for whom the bill is generated */
     private String customerId;
-    private int month; // 0-11
+    
+    /** Billing month (0-11, January=0, December=11) */
+    private int month;
+    
+    /** Billing year */
     private int year;
+    
+    /** Total bill amount after all charges and adjustments */
     private double totalAmount;
+    
+    /** Number of days service was provided */
     private int daysServed;
-    private String paymentStatus; // PENDING, PARTIAL, PAID, OVERDUE
+    
+    /** Payment status: PENDING, PARTIAL, PAID, or OVERDUE */
+    private String paymentStatus;
+    
+    /** URL to generated PDF bill document */
     private String pdfUrl;
+    
+    /** List of individual bill items */
     private List<BillItem> items;
+    
+    /** List of extra charges */
     private List<ExtraCharge> extras;
+    
+    /** List of adjustments (discounts, refunds) */
     private List<Adjustment> adjustments;
+    
+    /** Bill creation timestamp */
     private Timestamp createdAt;
+    
+    /** Payment due date */
     private Timestamp dueDate;
     
     public Bill() {

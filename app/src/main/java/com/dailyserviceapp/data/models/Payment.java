@@ -3,17 +3,52 @@ package com.dailyserviceapp.data.models;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentId;
 
+/**
+ * Payment data model representing a payment transaction.
+ * Records payment details including amount, method, and associated bill.
+ * 
+ * <p>Supports multiple payment methods:</p>
+ * <ul>
+ *   <li>Cash</li>
+ *   <li>UPI (Google Pay, PhonePe, Paytm, etc.)</li>
+ *   <li>Bank Transfer</li>
+ *   <li>Cheque</li>
+ *   <li>Other</li>
+ * </ul>
+ * 
+ * <p>Payments are linked to bills and update bill payment status.</p>
+ * 
+ * @author DailyDrop Team
+ * @version 1.0
+ * @since 2026-01-08
+ */
 public class Payment {
+    /** Firestore document ID */
     @DocumentId
     private String id;
     
+    /** Associated bill ID */
     private String billId;
+    
+    /** Provider ID who received the payment */
     private String providerId;
+    
+    /** Customer ID who made the payment */
     private String customerId;
+    
+    /** Payment amount */
     private double amount;
-    private String paymentMethod; // Cash, UPI, Bank Transfer, Cheque, Other
+    
+    /** Payment method: Cash, UPI, Bank Transfer, Cheque, or Other */
+    private String paymentMethod;
+    
+    /** Date and time payment was received */
     private Timestamp paymentDate;
+    
+    /** Additional notes about the payment */
     private String notes;
+    
+    /** Payment record creation timestamp */
     private Timestamp createdAt;
     
     public Payment() {
