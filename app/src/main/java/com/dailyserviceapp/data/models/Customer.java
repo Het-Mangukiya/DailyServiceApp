@@ -1,4 +1,4 @@
-package com.dailyserviceapp.data;
+package com.dailyserviceapp.data.models;
 
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentId;
@@ -12,6 +12,10 @@ public class Customer {
     private String address;
     private String serviceType;
     private double ratePerUnit;
+    private String providerId;
+    private String status; // ACTIVE, INACTIVE
+    private String notes;
+    private Timestamp startDate;
     private Timestamp createdAt;
 
     public Customer() {
@@ -25,6 +29,7 @@ public class Customer {
         this.serviceType = serviceType;
         this.ratePerUnit = ratePerUnit;
         this.createdAt = createdAt;
+        this.status = "ACTIVE";
     }
 
     public String getId() {
@@ -49,6 +54,22 @@ public class Customer {
 
     public double getRatePerUnit() {
         return ratePerUnit;
+    }
+    
+    public String getProviderId() {
+        return providerId;
+    }
+    
+    public String getStatus() {
+        return status;
+    }
+    
+    public String getNotes() {
+        return notes;
+    }
+    
+    public Timestamp getStartDate() {
+        return startDate;
     }
 
     public Timestamp getCreatedAt() {
@@ -77,6 +98,22 @@ public class Customer {
 
     public void setRatePerUnit(double ratePerUnit) {
         this.ratePerUnit = ratePerUnit;
+    }
+    
+    public void setProviderId(String providerId) {
+        this.providerId = providerId;
+    }
+    
+    public void setStatus(String status) {
+        this.status = status;
+    }
+    
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
+    
+    public void setStartDate(Timestamp startDate) {
+        this.startDate = startDate;
     }
 
     public void setCreatedAt(Timestamp createdAt) {
