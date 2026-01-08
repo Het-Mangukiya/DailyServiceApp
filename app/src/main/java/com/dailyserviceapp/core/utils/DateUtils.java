@@ -6,21 +6,44 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+/**
+ * Utility class for date and time operations.
+ * Provides methods for date formatting, parsing, and manipulation
+ * using predefined date formats from Constants.
+ * 
+ * <p>Supports multiple date formats: full (with time), short (date only),
+ * and month-year display. All methods are static and thread-safe.</p>
+ * 
+ * @author DailyDrop Team
+ * @version 1.0
+ * @since 2026-01-08
+ */
 public class DateUtils {
     
+    /** SimpleDateFormat for full date-time display (dd MMM yyyy, hh:mm a) */
     private static final SimpleDateFormat fullFormat = new SimpleDateFormat(Constants.DATE_FORMAT_FULL, Locale.getDefault());
+    
+    /** SimpleDateFormat for short date display (dd MMM yyyy) */
     private static final SimpleDateFormat shortFormat = new SimpleDateFormat(Constants.DATE_FORMAT_SHORT, Locale.getDefault());
+    
+    /** SimpleDateFormat for month and year display (MMM yyyy) */
     private static final SimpleDateFormat monthYearFormat = new SimpleDateFormat(Constants.DATE_FORMAT_MONTH_YEAR, Locale.getDefault());
     
     /**
-     * Get current date and time
+     * Gets the current date and time.
+     * 
+     * @return Current Date object
      */
     public static Date getCurrentDate() {
         return new Date();
     }
     
     /**
-     * Format date to full format (dd MMM yyyy, hh:mm a)
+     * Formats a date to full format with date and time.
+     * Example output: "08 Jan 2026, 02:30 PM"
+     * 
+     * @param date The date to format, or null
+     * @return Formatted date string, or empty string if date is null
      */
     public static String formatFullDate(Date date) {
         if (date == null) return "";
@@ -28,7 +51,11 @@ public class DateUtils {
     }
     
     /**
-     * Format date to short format (dd MMM yyyy)
+     * Formats a date to short format with date only.
+     * Example output: "08 Jan 2026"
+     * 
+     * @param date The date to format, or null
+     * @return Formatted date string, or empty string if date is null
      */
     public static String formatShortDate(Date date) {
         if (date == null) return "";
@@ -36,7 +63,11 @@ public class DateUtils {
     }
     
     /**
-     * Format date to month and year (MMM yyyy)
+     * Formats a date to show only month and year.
+     * Example output: "Jan 2026"
+     * 
+     * @param date The date to format, or null
+     * @return Formatted month-year string, or empty string if date is null
      */
     public static String formatMonthYear(Date date) {
         if (date == null) return "";
@@ -44,7 +75,12 @@ public class DateUtils {
     }
     
     /**
-     * Parse date from string
+     * Parses a date string using the specified format.
+     * Returns null if parsing fails or input is invalid.
+     * 
+     * @param dateString The date string to parse
+     * @param format The expected date format pattern
+     * @return Parsed Date object, or null if parsing fails
      */
     public static Date parseDate(String dateString, String format) {
         try {
@@ -57,7 +93,10 @@ public class DateUtils {
     }
     
     /**
-     * Get start of day (00:00:00)
+     * Gets the start of day (00:00:00.000) for a given date.
+     * 
+     * @param date The date to process
+     * @return New Date set to midnight (start of day)
      */
     public static Date getStartOfDay(Date date) {
         Calendar calendar = Calendar.getInstance();
@@ -70,7 +109,10 @@ public class DateUtils {
     }
     
     /**
-     * Get end of day (23:59:59)
+     * Gets the end of day (23:59:59.999) for a given date.
+     * 
+     * @param date The date to process
+     * @return New Date set to last millisecond of the day
      */
     public static Date getEndOfDay(Date date) {
         Calendar calendar = Calendar.getInstance();

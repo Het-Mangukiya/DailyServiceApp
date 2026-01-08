@@ -11,11 +11,33 @@ import androidx.appcompat.widget.Toolbar;
 import com.dailyserviceapp.core.utils.NetworkMonitor;
 import com.dailyserviceapp.core.utils.PreferenceManager;
 
+/**
+ * Base Activity for all activities in the DailyDrop application.
+ * Provides common functionality including preference management,
+ * network monitoring, toolbar setup, and utility methods.
+ * 
+ * <p>All activities should extend this base class to inherit
+ * common features like user session management, network checking,
+ * and consistent UI patterns.</p>
+ * 
+ * @author DailyDrop Team
+ * @version 1.0
+ * @since 2026-01-08
+ */
 public abstract class BaseActivity extends AppCompatActivity {
     
+    /** Preference manager for accessing user data */
     protected PreferenceManager preferenceManager;
+    
+    /** Network monitor for checking connectivity */
     protected NetworkMonitor networkMonitor;
     
+    /**
+     * Initializes base activity components including preference manager
+     * and network monitor.
+     * 
+     * @param savedInstanceState Saved state bundle
+     */
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -24,7 +46,11 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
     
     /**
-     * Setup toolbar with back button
+     * Sets up the toolbar with title and optional back button.
+     * 
+     * @param toolbar The toolbar to configure
+     * @param title The title to display in the toolbar
+     * @param showBackButton Whether to show the back navigation button
      */
     protected void setupToolbar(Toolbar toolbar, String title, boolean showBackButton) {
         if (toolbar != null) {
@@ -37,7 +63,10 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
     
     /**
-     * Handle back button press in toolbar
+     * Handles toolbar menu item selection, specifically back button.
+     * 
+     * @param item The selected menu item
+     * @return true if item selection was handled
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -49,35 +78,43 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
     
     /**
-     * Show toast message
+     * Shows a short toast message.
+     * 
+     * @param message The message to display
      */
     protected void showToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
     
     /**
-     * Show long toast message
+     * Shows a long toast message.
+     * 
+     * @param message The message to display
      */
     protected void showLongToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
     
     /**
-     * Check if network is available
+     * Checks if network connection is available.
+     * 
+     * @return true if network is available, false otherwise
      */
     protected boolean isNetworkAvailable() {
         return networkMonitor.isNetworkAvailable();
     }
     
     /**
-     * Show network error message
+     * Shows a standard network error message.
      */
     protected void showNetworkError() {
         showToast("No internet connection");
     }
     
     /**
-     * Get current user ID from preferences
+     * Gets the current user ID from preferences.
+     * 
+     * @return The user ID, or null if not logged in
      */
     protected String getCurrentUserId() {
         return preferenceManager.getUserId();

@@ -9,27 +9,70 @@ import android.os.Build;
 
 import androidx.annotation.NonNull;
 
+/**
+ * Monitors network connectivity status for the application.
+ * Provides real-time network availability checking and callbacks
+ * for network state changes (connected/disconnected).
+ * 
+ * <p>Supports both legacy (pre-Lollipop) and modern Android network APIs.
+ * Can detect WiFi, cellular, and ethernet connections.</p>
+ * 
+ * @author DailyDrop Team
+ * @version 1.0
+ * @since 2026-01-08
+ */
 public class NetworkMonitor {
     
+    /** Android connectivity manager instance */
     private final ConnectivityManager connectivityManager;
+    
+    /** Network callback for monitoring connection changes */
     private NetworkCallback networkCallback;
+    
+    /** Current network connection status */
     private boolean isConnected = false;
     
+    /**
+     * Listener interface for network connectivity changes.
+     * Implement this to receive callbacks when network becomes available or lost.
+     */
     public interface OnNetworkChangeListener {
+        /**
+         * Called when network connection becomes available.
+         */
         void onNetworkAvailable();
+        
+        /**
+         * Called when network connection is lost.
+         */
         void onNetworkLost();
     }
     
+    /**
+     * Constructs a NetworkMonitor with the application context.
+     * Automatically checks initial network connectivity status.
+     * 
+     * @param context The application context
+     */
     public NetworkMonitor(Context context) {
         this.connectivityManager = (ConnectivityManager) 
             context.getSystemService(Context.CONNECTIVITY_SERVICE);
         checkInitialConnection();
     }
     
+    /**
+     * Checks and stores the initial network connection status.
+     */
     private void checkInitialConnection() {
         isConnected = isNetworkAvailable();
     }
     
+    /**
+     * Checks if network is currently available.
+     * Detects WiFi, cellular, or ethernet connections.
+     * 
+     * @return true if network is available, false otherwise
+     */
     public boolean isNetworkAvailable() {
         if (connectivityManager == null) return false;
         
@@ -49,6 +92,12 @@ public class NetworkMonitor {
         }
     }
     
+    /**
+     * Registers a callback to listen for network changes.
+     * Only works on Android Lollipop (API 21) and above.
+     * 
+     * @param listener The listener to receive network change callbacks
+     */
     public void registerNetworkCallback(OnNetworkChangeListener listener) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             NetworkRequest networkRequest = new NetworkRequest.Builder()
@@ -60,6 +109,10 @@ public class NetworkMonitor {
         }
     }
     
+    /**
+     * Unregisters the network callback to stop listening for changes.
+     * Safe to call even if callback was not registered.
+     */
     public void unregisterNetworkCallback() {
         if (networkCallback != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             try {
@@ -70,13 +123,27 @@ public class NetworkMonitor {
         }
     }
     
+    /**
+     * Gets the current network connection status.
+     * 
+     * @return true if connected, false otherwise
+     */
     public boolean isConnected() {
         return isConnected;
     }
     
+    /**
+     * Internal callback implementation for network state changes.
+     */
     private class NetworkCallback extends ConnectivityManager.NetworkCallback {
+        /** Listener to notify of network changes */
         private final OnNetworkChangeListener listener;
         
+        /**
+         * Constructs a NetworkCallback with the specified listener.
+         * 
+         * @param listener The listener to receive callbacks
+         */
         NetworkCallback(OnNetworkChangeListener listener) {
             this.listener = listener;
         }

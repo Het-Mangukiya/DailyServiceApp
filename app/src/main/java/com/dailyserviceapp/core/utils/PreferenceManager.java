@@ -3,10 +3,29 @@ package com.dailyserviceapp.core.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+/**
+ * Manager class for handling SharedPreferences operations.
+ * Provides convenient methods for storing and retrieving user data,
+ * login status, and role information from SharedPreferences.
+ * 
+ * <p>This is a wrapper around SharedPreferences that uses constants
+ * defined in {@link Constants} for consistent key management.</p>
+ * 
+ * @author DailyDrop Team
+ * @version 1.0
+ * @since 2026-01-08
+ */
 public class PreferenceManager {
     
+    /** SharedPreferences instance for data persistence */
     private final SharedPreferences sharedPreferences;
     
+    /**
+     * Constructs a PreferenceManager with the application context.
+     * Initializes SharedPreferences with MODE_PRIVATE.
+     * 
+     * @param context The application context
+     */
     public PreferenceManager(Context context) {
         this.sharedPreferences = context.getSharedPreferences(
             Constants.PREF_NAME, 
@@ -14,60 +33,123 @@ public class PreferenceManager {
         );
     }
     
-    // User ID
+    /**
+     * Stores the user ID in SharedPreferences.
+     * 
+     * @param userId The user ID to store
+     */
     public void setUserId(String userId) {
         sharedPreferences.edit().putString(Constants.KEY_USER_ID, userId).apply();
     }
     
+    /**
+     * Retrieves the stored user ID.
+     * 
+     * @return The user ID, or null if not set
+     */
     public String getUserId() {
         return sharedPreferences.getString(Constants.KEY_USER_ID, null);
     }
     
-    // User Role
+    /**
+     * Stores the user role in SharedPreferences.
+     * 
+     * @param role The user role (PROVIDER or CUSTOMER)
+     */
     public void setUserRole(String role) {
         sharedPreferences.edit().putString(Constants.KEY_USER_ROLE, role).apply();
     }
     
+    /**
+     * Retrieves the stored user role.
+     * 
+     * @return The user role, or null if not set
+     */
     public String getUserRole() {
         return sharedPreferences.getString(Constants.KEY_USER_ROLE, null);
     }
     
+    /**
+     * Checks if the current user is a provider.
+     * 
+     * @return true if user role is PROVIDER, false otherwise
+     */
     public boolean isProvider() {
         return Constants.ROLE_PROVIDER.equals(getUserRole());
     }
     
+    /**
+     * Checks if the current user is a customer.
+     * 
+     * @return true if user role is CUSTOMER, false otherwise
+     */
     public boolean isCustomer() {
         return Constants.ROLE_CUSTOMER.equals(getUserRole());
     }
     
-    // User Email
+    /**
+     * Stores the user email in SharedPreferences.
+     * 
+     * @param email The user email to store
+     */
     public void setUserEmail(String email) {
         sharedPreferences.edit().putString(Constants.KEY_USER_EMAIL, email).apply();
     }
     
+    /**
+     * Retrieves the stored user email.
+     * 
+     * @return The user email, or null if not set
+     */
     public String getUserEmail() {
         return sharedPreferences.getString(Constants.KEY_USER_EMAIL, null);
     }
     
-    // User Name
+    /**
+     * Stores the user name in SharedPreferences.
+     * 
+     * @param name The user name to store
+     */
     public void setUserName(String name) {
         sharedPreferences.edit().putString(Constants.KEY_USER_NAME, name).apply();
     }
     
+    /**
+     * Retrieves the stored user name.
+     * 
+     * @return The user name, or null if not set
+     */
     public String getUserName() {
         return sharedPreferences.getString(Constants.KEY_USER_NAME, null);
     }
     
-    // Login Status
+    /**
+     * Sets the user login status.
+     * 
+     * @param isLoggedIn true if user is logged in, false otherwise
+     */
     public void setLoggedIn(boolean isLoggedIn) {
         sharedPreferences.edit().putBoolean(Constants.KEY_IS_LOGGED_IN, isLoggedIn).apply();
     }
     
+    /**
+     * Checks if a user is currently logged in.
+     * 
+     * @return true if user is logged in, false otherwise
+     */
     public boolean isLoggedIn() {
         return sharedPreferences.getBoolean(Constants.KEY_IS_LOGGED_IN, false);
     }
     
-    // Save user data
+    /**
+     * Saves all user data at once in a single transaction.
+     * Sets login status to true automatically.
+     * 
+     * @param userId The user ID
+     * @param email The user email
+     * @param name The user name
+     * @param role The user role (PROVIDER or CUSTOMER)
+     */
     public void saveUserData(String userId, String email, String name, String role) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(Constants.KEY_USER_ID, userId);
