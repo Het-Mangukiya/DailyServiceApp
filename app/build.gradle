@@ -86,6 +86,10 @@ dependencies {
     // Date & Time
     implementation 'com.jakewharton.threetenabp:threetenabp:1.4.6'
 
+    // UI Enhancements
+    implementation 'com.facebook.shimmer:shimmer:0.5.0'
+    implementation 'androidx.dynamicanimation:dynamicanimation:1.0.0'
+
     // Testing
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.mockito:mockito-core:5.8.0'

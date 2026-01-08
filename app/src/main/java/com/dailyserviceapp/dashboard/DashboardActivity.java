@@ -41,9 +41,6 @@ import com.google.firebase.firestore.QuerySnapshot;
  */
 public class DashboardActivity extends BaseActivity {
     
-    /** Dashboard title */
-    private TextView dashboardTitle;
-    
     /** Statistics text views */
     private TextView totalCustomersCount, totalRevenueAmount;
     
@@ -75,7 +72,6 @@ public class DashboardActivity extends BaseActivity {
     }
     
     private void initializeViews() {
-        dashboardTitle = findViewById(R.id.dashboardTitle);
         totalCustomersCount = findViewById(R.id.totalCustomersCount);
         totalRevenueAmount = findViewById(R.id.totalRevenueAmount);
         
