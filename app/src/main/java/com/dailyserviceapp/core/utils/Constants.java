@@ -116,6 +116,9 @@ public class Constants {
     /** Notifications collection in Firestore */
     public static final String COLLECTION_NOTIFICATIONS = "notifications";
     
+    /** Products collection in Firestore */
+    public static final String COLLECTION_PRODUCTS = "products";
+    
     // Date Formats
     /** Full date-time format (dd MMM yyyy, hh:mm a) */
     public static final String DATE_FORMAT_FULL = "dd MMM yyyy, hh:mm a";

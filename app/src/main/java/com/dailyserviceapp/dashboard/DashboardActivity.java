@@ -28,27 +28,27 @@ import com.google.firebase.firestore.QuerySnapshot;
  * 
  * <p>Features:</p>
  * <ul>
- *   <li>Welcome message with user name</li>
- *   <li>Statistics cards showing total customers, pending deliveries, outstanding amount</li>
- *   <li>Navigation cards to Customers, Service Entry, Bills, Payments, Reports</li>
- *   <li>Toolbar with profile and logout options</li>
+ *   <li>Modern toolbar with action icons</li>
+ *   <li>Statistics cards showing total customers and revenue</li>
+ *   <li>Search bar for quick navigation</li>
+ *   <li>Feature cards grid for Customers, Service Entry, Bills, Payments, Reports, Profile</li>
  *   <li>Real-time data loading from Firestore</li>
  * </ul>
  * 
  * @author DailyDrop Team
- * @version 1.0
- * @since 2026-01-08
+ * @version 2.0
+ * @since 2026-01-09
  */
 public class DashboardActivity extends BaseActivity {
     
-    /** Welcome text showing user name */
-    private TextView welcomeText;
+    /** Dashboard title */
+    private TextView dashboardTitle;
     
     /** Statistics text views */
-    private TextView totalCustomersText, pendingDeliveriesText, outstandingAmountText;
+    private TextView totalCustomersCount, totalRevenueAmount;
     
     /** Navigation cards for main features */
-    private CardView customersCard, serviceEntryCard, billsCard, paymentsCard, reportsCard;
+    private CardView customersCard, serviceEntryCard, billsCard, paymentsCard, reportsCard, profileCard;
     
     /** Firestore database instance */
     private FirebaseFirestore firestore;
@@ -75,19 +75,16 @@ public class DashboardActivity extends BaseActivity {
     }
     
     private void initializeViews() {
-        welcomeText = findViewById(R.id.welcomeText);
-        totalCustomersText = findViewById(R.id.totalCustomersText);
-        pendingDeliveriesText = findViewById(R.id.pendingDeliveriesText);
-        outstandingAmountText = findViewById(R.id.outstandingAmountText);
+        dashboardTitle = findViewById(R.id.dashboardTitle);
+        totalCustomersCount = findViewById(R.id.totalCustomersCount);
+        totalRevenueAmount = findViewById(R.id.totalRevenueAmount);
         
         customersCard = findViewById(R.id.customersCard);
         serviceEntryCard = findViewById(R.id.serviceEntryCard);
         billsCard = findViewById(R.id.billsCard);
         paymentsCard = findViewById(R.id.paymentsCard);
         reportsCard = findViewById(R.id.reportsCard);
-        
-        String userName = preferenceManager.getUserName();
-        welcomeText.setText("Welcome, " + (userName != null ? userName : "User"));
+        profileCard = findViewById(R.id.profileCard);
     }
     
     private void setupClickListeners() {
@@ -110,6 +107,10 @@ public class DashboardActivity extends BaseActivity {
         reportsCard.setOnClickListener(v -> {
             startActivity(new Intent(this, ReportsActivity.class));
         });
+        
+        profileCard.setOnClickListener(v -> {
+            startActivity(new Intent(this, ProfileActivity.class));
+        });
     }
     
     private void loadDashboardData() {
@@ -128,35 +129,29 @@ public class DashboardActivity extends BaseActivity {
             .get()
             .addOnSuccessListener(querySnapshot -> {
                 int totalCustomers = querySnapshot.size();
-                totalCustomersText.setText(String.valueOf(totalCustomers));
+                totalCustomersCount.setText(String.valueOf(totalCustomers));
             });
         
-        // Load pending deliveries (today's entries not marked)
-        // This would need more complex date filtering
-        pendingDeliveriesText.setText("0");
-        
-        // Load outstanding amount
+        // Load total revenue from bills
         firestore.collection(Constants.COLLECTION_BILLS)
             .whereEqualTo("providerId", currentUserId)
-            .whereIn("paymentStatus", java.util.Arrays.asList("PENDING", "PARTIAL", "OVERDUE"))
             .get()
             .addOnSuccessListener(querySnapshot -> {
-                double totalOutstanding = 0;
+                double totalRevenue = 0;
                 for (com.google.firebase.firestore.DocumentSnapshot doc : querySnapshot.getDocuments()) {
                     Double amount = doc.getDouble("totalAmount");
                     if (amount != null) {
-                        totalOutstanding += amount;
+                        totalRevenue += amount;
                     }
                 }
-                outstandingAmountText.setText("₹" + String.format("%.2f", totalOutstanding));
+                totalRevenueAmount.setText("₹" + String.format("%.0f", totalRevenue));
             });
     }
     
     private void loadCustomerStats() {
         // Customer-specific stats
-        totalCustomersText.setText("N/A");
-        pendingDeliveriesText.setText("N/A");
-        outstandingAmountText.setText("₹0.00");
+        totalCustomersCount.setText("N/A");
+        totalRevenueAmount.setText("₹0");
     }
     
     @Override

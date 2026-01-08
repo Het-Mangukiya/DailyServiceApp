@@ -11,4 +11,8 @@
     <string name="mark_delivered_today">Mark delivered today</string>
     <string name="monthly_summary">Monthly summary</string>
     <string name="payment_status">Payment status</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="products">Products</string>
+    <string name="add_product">Add Product</string>
 </resources>
