@@ -51,7 +51,7 @@ public class CustomerListActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_customer_list);
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.topAppBar);
         setupToolbar(toolbar, "Customers", true);
 
         repo = new FirestoreRepository();
