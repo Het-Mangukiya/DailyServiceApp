@@ -11,13 +11,24 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+
 import com.dailyserviceapp.R;
 import com.dailyserviceapp.core.base.BaseActivity;
 import com.dailyserviceapp.core.utils.Constants;
 import com.dailyserviceapp.core.utils.ValidationUtils;
 import com.dailyserviceapp.data.models.User;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
@@ -27,12 +38,15 @@ public class SignupActivity extends BaseActivity {
     
     private EditText nameInput, emailInput, phoneInput, passwordInput, confirmPasswordInput;
     private Spinner roleSpinner;
-    private Button signupButton;
+    private Button signupButton, googleSignInButton;
     private TextView loginLink;
     private ProgressBar progressBar;
     
     private FirebaseAuth firebaseAuth;
     private FirebaseFirestore firestore;
+    private GoogleSignInClient googleSignInClient;
+    
+    private ActivityResultLauncher<Intent> googleSignInLauncher;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +54,7 @@ public class SignupActivity extends BaseActivity {
         setContentView(R.layout.activity_signup);
         
         initializeFirebase();
+        initializeGoogleSignIn();
         initializeViews();
         setupRoleSpinner();
         setupClickListeners();
@@ -50,6 +65,27 @@ public class SignupActivity extends BaseActivity {
         firestore = FirebaseFirestore.getInstance();
     }
     
+    private void initializeGoogleSignIn() {
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+        
+        googleSignInClient = GoogleSignIn.getClient(this, gso);
+        
+        googleSignInLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                    Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(result.getData());
+                    handleGoogleSignInResult(task);
+                } else {
+                    hideLoading();
+                }
+            }
+        );
+    }
+    
     private void initializeViews() {
         nameInput = findViewById(R.id.nameInput);
         emailInput = findViewById(R.id.emailInput);
@@ -58,6 +94,7 @@ public class SignupActivity extends BaseActivity {
         confirmPasswordInput = findViewById(R.id.confirmPasswordInput);
         roleSpinner = findViewById(R.id.roleSpinner);
         signupButton = findViewById(R.id.signupButton);
+        googleSignInButton = findViewById(R.id.googleSignInButton);
         loginLink = findViewById(R.id.loginLink);
         progressBar = findViewById(R.id.progressBar);
     }
@@ -75,6 +112,8 @@ public class SignupActivity extends BaseActivity {
     
     private void setupClickListeners() {
         signupButton.setOnClickListener(v -> performSignup());
+        
+        googleSignInButton.setOnClickListener(v -> signInWithGoogle());
         
         loginLink.setOnClickListener(v -> {
             finish();
@@ -183,13 +222,56 @@ public class SignupActivity extends BaseActivity {
             });
     }
     
+    private void signInWithGoogle() {
+        if (!isNetworkAvailable()) {
+            showNetworkError();
+            return;
+        }
+        
+        showLoading();
+        Intent signInIntent = googleSignInClient.getSignInIntent();
+        googleSignInLauncher.launch(signInIntent);
+    }
+    
+    private void handleGoogleSignInResult(Task<GoogleSignInAccount> completedTask) {
+        try {
+            GoogleSignInAccount account = completedTask.getResult(ApiException.class);
+            if (account != null) {
+                firebaseAuthWithGoogle(account.getIdToken());
+            }
+        } catch (ApiException e) {
+            hideLoading();
+            android.util.Log.e("SignupActivity", "Google sign in failed", e);
+            showToast("Google sign-in failed");
+        }
+    }
+    
+    private void firebaseAuthWithGoogle(String idToken) {
+        AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
+        firebaseAuth.signInWithCredential(credential)
+            .addOnCompleteListener(this, task -> {
+                hideLoading();
+                if (task.isSuccessful()) {
+                    showToast("Account created successfully!");
+                    Intent intent = new Intent(this, LoginActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    finish();
+                } else {
+                    showToast("Authentication failed");
+                }
+            });
+    }
+    
     private void showLoading() {
         progressBar.setVisibility(View.VISIBLE);
         signupButton.setEnabled(false);
+        googleSignInButton.setEnabled(false);
     }
     
     private void hideLoading() {
         progressBar.setVisibility(View.GONE);
         signupButton.setEnabled(true);
+        googleSignInButton.setEnabled(true);
     }
 }
