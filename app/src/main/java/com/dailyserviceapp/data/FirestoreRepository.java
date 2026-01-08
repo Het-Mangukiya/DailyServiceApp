@@ -3,6 +3,7 @@ package com.dailyserviceapp.data;
 import androidx.annotation.NonNull;
 
 import com.dailyserviceapp.data.models.Customer;
+import com.dailyserviceapp.data.models.ServiceEntry;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.Timestamp;
@@ -15,8 +16,17 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Repository class for Firestore database operations.
+ * Handles CRUD operations for customers, service entries, and payments.
+ * 
+ * @author DailyDrop Team
+ * @version 1.0
+ * @since 2026-01-09
+ */
 public class FirestoreRepository {
     private static final DateTimeFormatter DATE_KEY = DateTimeFormatter.BASIC_ISO_DATE; // yyyyMMdd
 
@@ -105,5 +115,109 @@ public class FirestoreRepository {
                 .set(status)
                 .addOnSuccessListener(onSuccess)
                 .addOnFailureListener(onFailure);
+    }
+    
+    // ========== Service Entry Methods ==========
+    
+    /**
+     * Listener interface for loading customers.
+     */
+    public interface OnCustomersLoadedListener {
+        void onCustomersLoaded(List<Customer> customers);
+        void onError(String error);
+    }
+    
+    /**
+     * Listener interface for loading service entries.
+     */
+    public interface OnServiceEntriesLoadedListener {
+        void onServiceEntriesLoaded(List<ServiceEntry> entries);
+        void onError(String error);
+    }
+    
+    /**
+     * Listener interface for save operations.
+     */
+    public interface OnSaveCompleteListener {
+        void onSuccess();
+        void onError(String error);
+    }
+    
+    /**
+     * Gets all customers for a specific provider.
+     * 
+     * @param providerId The provider's ID
+     * @param listener Callback for results
+     */
+    public void getCustomersByProvider(String providerId, OnCustomersLoadedListener listener) {
+        customers()
+                .whereEqualTo("providerId", providerId)
+                .whereEqualTo("status", "ACTIVE")
+                .orderBy("name")
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    List<Customer> customerList = new ArrayList<>();
+                    for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
+                        Customer customer = doc.toObject(Customer.class);
+                        if (customer != null) {
+                            customer.setId(doc.getId());
+                            customerList.add(customer);
+                        }
+                    }
+                    listener.onCustomersLoaded(customerList);
+                })
+                .addOnFailureListener(e -> listener.onError(e.getMessage()));
+    }
+    
+    /**
+     * Gets service entries for a provider within a date range.
+     * 
+     * @param providerId The provider's ID
+     * @param startDate Start of date range
+     * @param endDate End of date range
+     * @param listener Callback for results
+     */
+    public void getServiceEntriesByProviderAndDate(String providerId, Timestamp startDate, 
+                                                    Timestamp endDate, OnServiceEntriesLoadedListener listener) {
+        db.collection("serviceEntries")
+                .whereEqualTo("providerId", providerId)
+                .whereGreaterThanOrEqualTo("date", startDate)
+                .whereLessThanOrEqualTo("date", endDate)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    List<ServiceEntry> entries = new ArrayList<>();
+                    for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
+                        ServiceEntry entry = doc.toObject(ServiceEntry.class);
+                        if (entry != null) {
+                            entry.setId(doc.getId());
+                            entries.add(entry);
+                        }
+                    }
+                    listener.onServiceEntriesLoaded(entries);
+                })
+                .addOnFailureListener(e -> listener.onError(e.getMessage()));
+    }
+    
+    /**
+     * Saves or updates a service entry.
+     * 
+     * @param entry The service entry to save
+     * @param listener Callback for completion
+     */
+    public void saveServiceEntry(ServiceEntry entry, OnSaveCompleteListener listener) {
+        if (entry.getId() != null && !entry.getId().isEmpty()) {
+            // Update existing entry
+            db.collection("serviceEntries")
+                    .document(entry.getId())
+                    .set(entry)
+                    .addOnSuccessListener(aVoid -> listener.onSuccess())
+                    .addOnFailureListener(e -> listener.onError(e.getMessage()));
+        } else {
+            // Create new entry
+            db.collection("serviceEntries")
+                    .add(entry)
+                    .addOnSuccessListener(documentReference -> listener.onSuccess())
+                    .addOnFailureListener(e -> listener.onError(e.getMessage()));
+        }
     }
 }
