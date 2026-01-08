@@ -21,9 +21,29 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
 
+/**
+ * Customer List Activity displaying all customers for a provider.
+ * Shows a scrollable list of customers with click-to-view-details functionality.
+ * 
+ * <p>Features:</p>
+ * <ul>
+ *   <li>RecyclerView displaying all provider's customers</li>
+ *   <li>Click on customer to view details</li>
+ *   <li>Floating Action Button to add new customers</li>
+ *   <li>Toolbar with back navigation</li>
+ *   <li>Real-time data loading from Firestore</li>
+ * </ul>
+ * 
+ * @author DailyDrop Team
+ * @version 1.0
+ * @since 2026-01-08
+ */
 public class CustomerListActivity extends BaseActivity {
 
+    /** Firestore repository for data operations */
     private FirestoreRepository repo;
+    
+    /** RecyclerView adapter for customer list */
     private CustomerAdapter adapter;
 
     @Override
