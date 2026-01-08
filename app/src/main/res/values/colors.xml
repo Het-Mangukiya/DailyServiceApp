@@ -1,99 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Primary - Trust Blue/Teal -->
-    <color name="primary">#0891B2</color>
-    <color name="primary_dark">#0E7490</color>
-    <color name="primary_light">#06B6D4</color>
-    <color name="primary_surface">#ECFEFF</color>
-    <color name="primary_container">#CFFAFE</color>
+    <!-- Primary Colors - Material Design 3 -->
+    <color name="md_theme_primary">#4DB6AC</color>
+    <color name="md_theme_primary_container">#B2DFDB</color>
+    <color name="md_theme_secondary">#66BB6A</color>
+    <color name="md_theme_secondary_container">#C8E6C9</color>
+    <color name="md_theme_tertiary">#42A5F5</color>
     
-    <!-- Secondary - Fresh Green -->
-    <color name="secondary">#10B981</color>
-    <color name="secondary_dark">#059669</color>
-    <color name="secondary_light">#34D399</color>
-    <color name="secondary_surface">#ECFDF5</color>
+    <!-- Surface Colors -->
+    <color name="md_theme_surface">#FFFFFF</color>
+    <color name="md_theme_surface_variant">#F5F5F5</color>
+    <color name="md_theme_background">#FAFAFA</color>
     
-    <!-- Accent - Soft Orange -->
-    <color name="accent">#FB923C</color>
-    <color name="accent_dark">#F97316</color>
-    <color name="accent_light">#FDBA74</color>
-    <color name="accent_surface">#FFF7ED</color>
+    <!-- Text Colors -->
+    <color name="md_theme_on_primary">#FFFFFF</color>
+    <color name="md_theme_on_secondary">#FFFFFF</color>
+    <color name="md_theme_on_surface">#1C1B1F</color>
+    <color name="md_theme_on_surface_variant">#49454F</color>
     
-    <!-- Status Colors -->
-    <color name="error">#EF4444</color>
-    <color name="error_light">#FCA5A5</color>
-    <color name="error_surface">#FEF2F2</color>
-    <color name="success">#10B981</color>
-    <color name="success_light">#6EE7B7</color>
-    <color name="success_surface">#ECFDF5</color>
-    <color name="warning">#F59E0B</color>
-    <color name="warning_light">#FCD34D</color>
-    <color name="warning_surface">#FFFBEB</color>
-    <color name="info">#3B82F6</color>
-    <color name="info_light">#93C5FD</color>
-    <color name="info_surface">#EFF6FF</color>
-    
-    <!-- Background Colors - Light Mode -->
-    <color name="background">#F8FAFC</color>
-    <color name="background_secondary">#F1F5F9</color>
+    <!-- Legacy Support -->
+    <color name="primary">#4DB6AC</color>
+    <color name="primary_dark">#00897B</color>
+    <color name="accent">#66BB6A</color>
+    <color name="background">#FAFAFA</color>
     <color name="surface">#FFFFFF</color>
-    <color name="surface_elevated">#FFFFFF</color>
-    <color name="surface_variant">#F8FAFC</color>
+    <color name="surface_variant">#F5F5F5</color>
+    <color name="secondary">#66BB6A</color>
+    <color name="secondary_light">#80C7BE</color>
+    <color name="primary_container">#B2DFDB</color>
+    <color name="text_primary">#212121</color>
+    <color name="text_secondary">#757575</color>
+    <color name="divider">#E0E0E0</color>
     
-    <!-- Background Colors - Dark Mode -->
-    <color name="background_dark">#0F172A</color>
-    <color name="background_secondary_dark">#1E293B</color>
-    <color name="surface_dark">#1E293B</color>
-    <color name="surface_elevated_dark">#334155</color>
-    <color name="surface_variant_dark">#475569</color>
-    
-    <!-- Text Colors - Light Mode -->
-    <color name="text_primary">#0F172A</color>
-    <color name="text_secondary">#475569</color>
-    <color name="text_tertiary">#94A3B8</color>
-    <color name="text_hint">#CBD5E1</color>
-    <color name="text_disabled">#E2E8F0</color>
-    
-    <!-- Text Colors - Dark Mode -->
-    <color name="text_primary_dark">#F1F5F9</color>
-    <color name="text_secondary_dark">#CBD5E1</color>
-    <color name="text_tertiary_dark">#94A3B8</color>
-    <color name="text_hint_dark">#64748B</color>
-    <color name="text_disabled_dark">#475569</color>
-    
-    <!-- Divider & Border -->
-    <color name="divider">#E2E8F0</color>
-    <color name="divider_dark">#334155</color>
-    <color name="border">#CBD5E1</color>
-    <color name="border_dark">#475569</color>
-    
-    <!-- Gradient Colors -->
-    <color name="gradient_start">#06B6D4</color>
-    <color name="gradient_middle">#0891B2</color>
-    <color name="gradient_end">#0E7490</color>
-    <color name="gradient_teal_start">#0891B2</color>
-    <color name="gradient_teal_end">#06B6D4</color>
-    <color name="gradient_green_start">#10B981</color>
-    <color name="gradient_green_end">#34D399</color>
-    <color name="gradient_orange_start">#FB923C</color>
-    <color name="gradient_orange_end">#F97316</color>
-    
-    <!-- System Colors -->
-    <color name="black">#000000</color>
-    <color name="white">#FFFFFF</color>
-    <color name="transparent">#00000000</color>
-    <color name="overlay_light">#1A000000</color>
-    <color name="overlay_dark">#4D000000</color>
-    
-    <!-- Role Badge Colors -->
-    <color name="role_customer">#3B82F6</color>
-    <color name="role_customer_bg">#EFF6FF</color>
-    <color name="role_customer_text">#3B82F6</color>
-    <color name="role_provider">#8B5CF6</color>
-    <color name="role_provider_bg">#F5F3FF</color>
-    <color name="role_provider_text">#8B5CF6</color>
-    <color name="role_badge_customer_bg">#EFF6FF</color>
-    <color name="role_badge_customer_text">#3B82F6</color>
-    <color name="role_badge_provider_bg">#F5F3FF</color>
-    <color name="role_badge_provider_text">#8B5CF6</color>
+    <!-- Feature Colors -->
+    <color name="color_customers">#66BB6A</color>
+    <color name="color_service_entry">#42A5F5</color>
+    <color name="color_bills">#FFA726</color>
+    <color name="color_payments">#AB47BC</color>
+    <color name="color_reports">#EF5350</color>
+    <color name="color_profile">#78909C</color>
 </resources>

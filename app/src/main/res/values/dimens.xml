@@ -1,74 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Spacing Scale (8dp base) -->
-    <dimen name="spacing_xxs">2dp</dimen>
+    <!-- Spacing -->
     <dimen name="spacing_xs">4dp</dimen>
     <dimen name="spacing_sm">8dp</dimen>
-    <dimen name="spacing_md">12dp</dimen>
     <dimen name="spacing_base">16dp</dimen>
-    <dimen name="spacing_lg">20dp</dimen>
-    <dimen name="spacing_xl">24dp</dimen>
-    <dimen name="spacing_xxl">32dp</dimen>
+    <dimen name="spacing_md">20dp</dimen>
+    <dimen name="spacing_lg">24dp</dimen>
+    <dimen name="spacing_xl">32dp</dimen>
     <dimen name="spacing_xxxl">48dp</dimen>
-    
-    <!-- Screen Margins -->
-    <dimen name="screen_margin_horizontal">20dp</dimen>
-    <dimen name="screen_margin_vertical">16dp</dimen>
-    
-    <!-- Elevation -->
-    <dimen name="elevation_none">0dp</dimen>
-    <dimen name="elevation_xs">1dp</dimen>
-    <dimen name="elevation_sm">2dp</dimen>
-    <dimen name="elevation_md">4dp</dimen>
-    <dimen name="elevation_lg">8dp</dimen>
-    
-    <!-- Card Elevation -->
-    <dimen name="card_elevation_flat">0dp</dimen>
-    <dimen name="card_elevation_low">2dp</dimen>
-    <dimen name="card_elevation_medium">4dp</dimen>
-    <dimen name="card_elevation_high">8dp</dimen>
     
     <!-- Corner Radius -->
     <dimen name="corner_radius_sm">8dp</dimen>
-    <dimen name="corner_radius_md">12dp</dimen>
-    <dimen name="corner_radius_lg">16dp</dimen>
-    <dimen name="corner_radius_xl">20dp</dimen>
-    <dimen name="corner_radius_round">999dp</dimen>
-    <dimen name="corner_radius_full">999dp</dimen>
+    <dimen name="corner_radius_base">12dp</dimen>
+    <dimen name="corner_radius_md">16dp</dimen>
+    <dimen name="corner_radius_lg">20dp</dimen>
+    <dimen name="corner_radius_xl">24dp</dimen>
     
-    <!-- Button Heights -->
-    <dimen name="button_height">48dp</dimen>
-    <dimen name="button_height_sm">40dp</dimen>
-    <dimen name="button_height_md">48dp</dimen>
-    <dimen name="button_height_lg">56dp</dimen>
-    
-    <!-- Icon Sizes -->
-    <dimen name="icon_size_xs">16dp</dimen>
-    <dimen name="icon_size_sm">20dp</dimen>
-    <dimen name="icon_size_md">24dp</dimen>
-    <dimen name="icon_size_lg">32dp</dimen>
-    <dimen name="icon_size_xl">48dp</dimen>
-    
-    <!-- Text Sizes (Elder-friendly) -->
-    <dimen name="text_size_xs">12sp</dimen>
-    <dimen name="text_size_sm">14sp</dimen>
-    <dimen name="text_size_base">16sp</dimen>
-    <dimen name="text_size_md">18sp</dimen>
-    <dimen name="text_size_lg">20sp</dimen>
-    <dimen name="text_size_xl">24sp</dimen>
-    <dimen name="text_size_xxl">28sp</dimen>
-    <dimen name="text_size_xxxl">32sp</dimen>
-    
-    <!-- Touch Targets (Accessibility) -->
-    <dimen name="touch_target_min">48dp</dimen>
-    <dimen name="touch_target_lg">56dp</dimen>
+    <!-- Elevation -->
+    <dimen name="elevation_sm">2dp</dimen>
+    <dimen name="elevation_base">4dp</dimen>
+    <dimen name="elevation_md">6dp</dimen>
     
     <!-- Card Sizes -->
-    <dimen name="card_size_sm">64dp</dimen>
-    <dimen name="card_size_md">80dp</dimen>
-    <dimen name="card_size_lg">96dp</dimen>
-    <dimen name="card_size_xl">140dp</dimen>
-    <dimen name="card_stat_height">100dp</dimen>
-    <dimen name="card_module_height">120dp</dimen>
-    <dimen name="card_service_height">80dp</dimen>
+    <dimen name="card_size_md">40dp</dimen>
+    <dimen name="card_size_lg">64dp</dimen>
+    <dimen name="card_size_xl">96dp</dimen>
+    <dimen name="card_size_xxl">128dp</dimen>
+    
+    <!-- Icon Sizes -->
+    <dimen name="icon_size_md">24dp</dimen>
+    
+    <!-- Pill/Circle for full rounding -->
+    <dimen name="corner_radius_pill">999dp</dimen>
+    
+    <!-- Text Sizes -->
+    <dimen name="text_size_sm">14sp</dimen>
+    <dimen name="text_size_md">16sp</dimen>
+    <dimen name="text_size_base">16sp</dimen>
+    <dimen name="text_size_lg">20sp</dimen>
+    <dimen name="text_size_xl">24sp</dimen>
+    <dimen name="text_size_xxl">32sp</dimen>
+    
+    <!-- Button Sizes -->
+    <dimen name="button_height">48dp</dimen>
+    
+    <!-- Corner Radius Additional -->
+    <dimen name="corner_radius_round">999dp</dimen>
 </resources>

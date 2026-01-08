@@ -72,9 +72,9 @@ public class ServiceEntryActivity extends BaseActivity {
     private void initializeViews() {
         selectedDateText = findViewById(R.id.selectedDateText);
         changeDateButton = findViewById(R.id.changeDateButton);
-        serviceEntriesRecycler = findViewById(R.id.serviceEntriesRecycler);
-        emptyStateLayout = findViewById(R.id.emptyStateLayout);
-        addServiceEntryFab = findViewById(R.id.addServiceEntryFab);
+        serviceEntriesRecycler = findViewById(R.id.recyclerView);
+        emptyStateLayout = findViewById(R.id.emptyState);
+        addServiceEntryFab = findViewById(R.id.fab);
         
         serviceEntriesRecycler.setLayoutManager(new LinearLayoutManager(this));
     }
