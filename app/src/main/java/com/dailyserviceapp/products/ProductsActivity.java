@@ -2,10 +2,14 @@ package com.dailyserviceapp.products;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.HapticFeedbackConstants;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.AnimationUtils;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -53,11 +57,13 @@ public class ProductsActivity extends BaseActivity implements NavigationView.OnN
     private View emptyStateView;
 
     private ProductAdapter productAdapter;
+    private SkeletonProductAdapter skeletonAdapter;
     private List<Product> productList;
     private List<Product> filteredProductList;
 
     private FirebaseFirestore firestore;
     private String currentUserId;
+    private boolean isLoading = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,11 +104,17 @@ public class ProductsActivity extends BaseActivity implements NavigationView.OnN
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        // Setup menu icon click to open drawer
+        // Setup menu icon click to open drawer with haptic feedback
         ImageView menuIcon = findViewById(R.id.menuIcon);
         if (menuIcon != null) {
-            menuIcon.setOnClickListener(v -> drawerLayout.openDrawer(GravityCompat.START));
+            menuIcon.setOnClickListener(v -> {
+                v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
+                drawerLayout.openDrawer(GravityCompat.START);
+            });
         }
+
+        // Animate header icons on load
+        animateHeaderIcons();
 
         // Setup navigation view header
         setupNavigationHeader();
@@ -145,8 +157,36 @@ public class ProductsActivity extends BaseActivity implements NavigationView.OnN
         productList = new ArrayList<>();
         filteredProductList = new ArrayList<>();
         productAdapter = new ProductAdapter(filteredProductList, this::onProductClick);
+        skeletonAdapter = new SkeletonProductAdapter(5); // Show 5 skeleton items
         productsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        productsRecyclerView.setAdapter(productAdapter);
+        
+        // Show skeleton loading initially
+        productsRecyclerView.setAdapter(skeletonAdapter);
+    }
+
+    private void animateHeaderIcons() {
+        ImageView bellIcon = findViewById(R.id.bellIcon);
+        ImageView calendarIcon = findViewById(R.id.calendarIcon);
+        ImageView sparkleIcon = findViewById(R.id.sparkleIcon);
+        ImageView gridIcon = findViewById(R.id.gridIcon);
+
+        Handler handler = new Handler(Looper.getMainLooper());
+        if (bellIcon != null) {
+            bellIcon.setAlpha(0f);
+            bellIcon.animate().alpha(1f).setDuration(300).setStartDelay(100).start();
+        }
+        if (calendarIcon != null) {
+            calendarIcon.setAlpha(0f);
+            calendarIcon.animate().alpha(1f).setDuration(300).setStartDelay(150).start();
+        }
+        if (sparkleIcon != null) {
+            sparkleIcon.setAlpha(0f);
+            sparkleIcon.animate().alpha(1f).setDuration(300).setStartDelay(200).start();
+        }
+        if (gridIcon != null) {
+            gridIcon.setAlpha(0f);
+            gridIcon.animate().alpha(1f).setDuration(300).setStartDelay(250).start();
+        }
     }
 
     private void setupSearch() {
@@ -165,34 +205,52 @@ public class ProductsActivity extends BaseActivity implements NavigationView.OnN
     }
 
     private void setupClickListeners() {
-        addProductFab.setOnClickListener(v -> showAddProductDialog());
+        addProductFab.setOnClickListener(v -> {
+            v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
+            // Animate button press
+            v.animate().scaleX(0.95f).scaleY(0.95f).setDuration(100)
+                .withEndAction(() -> v.animate().scaleX(1f).scaleY(1f).setDuration(100).start())
+                .start();
+            showAddProductDialog();
+        });
 
-        // Header icons
+        // Header icons with haptic feedback and animations
         ImageView bellIcon = findViewById(R.id.bellIcon);
         ImageView calendarIcon = findViewById(R.id.calendarIcon);
         ImageView sparkleIcon = findViewById(R.id.sparkleIcon);
         ImageView gridIcon = findViewById(R.id.gridIcon);
 
+        View.OnClickListener iconClickListener = v -> {
+            v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
+            v.animate().scaleX(0.9f).scaleY(0.9f).setDuration(100)
+                .withEndAction(() -> v.animate().scaleX(1f).scaleY(1f).setDuration(100).start())
+                .start();
+        };
+
         if (bellIcon != null) {
             bellIcon.setOnClickListener(v -> {
+                iconClickListener.onClick(v);
                 // TODO: Open notifications
                 showToast("Notifications");
             });
         }
         if (calendarIcon != null) {
             calendarIcon.setOnClickListener(v -> {
+                iconClickListener.onClick(v);
                 // TODO: Open calendar
                 showToast("Calendar");
             });
         }
         if (sparkleIcon != null) {
             sparkleIcon.setOnClickListener(v -> {
+                iconClickListener.onClick(v);
                 // TODO: Open features
                 showToast("Features");
             });
         }
         if (gridIcon != null) {
             gridIcon.setOnClickListener(v -> {
+                iconClickListener.onClick(v);
                 // TODO: Toggle grid/list view
                 showToast("View Options");
             });
@@ -200,6 +258,12 @@ public class ProductsActivity extends BaseActivity implements NavigationView.OnN
     }
 
     private void loadProducts() {
+        isLoading = true;
+        
+        // Show skeleton loading
+        productsRecyclerView.setAdapter(skeletonAdapter);
+        emptyStateView.setVisibility(View.GONE);
+        
         firestore.collection(Constants.COLLECTION_PRODUCTS)
                 .whereEqualTo("providerId", currentUserId)
                 .get()
@@ -210,10 +274,23 @@ public class ProductsActivity extends BaseActivity implements NavigationView.OnN
                         product.setId(document.getId());
                         productList.add(product);
                     }
-                    filterProducts("");
-                    updateSummary();
+                    
+                    // Simulate minimum loading time for better UX
+                    new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                        isLoading = false;
+                        filterProducts("");
+                        updateSummary();
+                        
+                        // Animate transition from skeleton to real content
+                        productsRecyclerView.setAdapter(productAdapter);
+                        productsRecyclerView.startAnimation(
+                            AnimationUtils.loadAnimation(this, R.anim.fade_in)
+                        );
+                    }, 500);
                 })
                 .addOnFailureListener(e -> {
+                    isLoading = false;
+                    productsRecyclerView.setAdapter(productAdapter);
                     showToast("Failed to load products");
                 });
     }
@@ -242,14 +319,37 @@ public class ProductsActivity extends BaseActivity implements NavigationView.OnN
             totalValue += product.getTotalValue();
         }
 
-        productsCountText.setText(count + " Products");
-        totalValueText.setText("₹" + String.format("%.0f", totalValue) + " Total Value");
+        // Animate number counting
+        animateNumber(productsCountText, count + " Products");
+        animateNumber(totalValueText, "₹" + String.format("%.0f", totalValue) + " Total Value");
+    }
+
+    private void animateNumber(TextView textView, String finalText) {
+        textView.animate()
+            .scaleX(1.1f)
+            .scaleY(1.1f)
+            .setDuration(200)
+            .withEndAction(() -> {
+                textView.setText(finalText);
+                textView.animate()
+                    .scaleX(1f)
+                    .scaleY(1f)
+                    .setDuration(200)
+                    .start();
+            })
+            .start();
     }
 
     private void updateEmptyState() {
-        if (filteredProductList.isEmpty()) {
+        if (filteredProductList.isEmpty() && !isLoading) {
             productsRecyclerView.setVisibility(View.GONE);
             emptyStateView.setVisibility(View.VISIBLE);
+            // Animate empty state appearance
+            emptyStateView.setAlpha(0f);
+            emptyStateView.animate()
+                .alpha(1f)
+                .setDuration(300)
+                .start();
         } else {
             productsRecyclerView.setVisibility(View.VISIBLE);
             emptyStateView.setVisibility(View.GONE);
