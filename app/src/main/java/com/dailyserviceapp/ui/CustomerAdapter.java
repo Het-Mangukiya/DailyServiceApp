@@ -9,7 +9,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.dailyserviceapp.R;
-import com.dailyserviceapp.data.Customer;
+import com.dailyserviceapp.core.utils.CurrencyUtils;
+import com.dailyserviceapp.data.models.Customer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +50,7 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.ViewHo
 
         String subtitle = (customer.getServiceType() == null ? "" : customer.getServiceType())
                 + " · "
-                + customer.getRatePerUnit();
+                + CurrencyUtils.formatCurrency(customer.getRatePerUnit());
         holder.subtitle.setText(subtitle);
 
         holder.itemView.setOnClickListener(v -> listener.onCustomerClick(customer));
