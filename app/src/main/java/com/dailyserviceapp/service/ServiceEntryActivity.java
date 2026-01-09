@@ -60,7 +60,7 @@ public class ServiceEntryActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_service_entry);
         
-        MaterialToolbar toolbar = findViewById(R.id.topAppBar);
+        MaterialToolbar toolbar = findViewById(R.id.toolbar);
         setupToolbar(toolbar, "Service Entry", true);
         
         initializeViews();
