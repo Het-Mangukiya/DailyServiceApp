@@ -167,8 +167,8 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
             return;
         }
         
+        // Analytics will be loaded after customers finish loading
         loadCustomers();
-        loadAnalytics();
     }
     
     private void loadCustomers() {
@@ -189,6 +189,9 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
                 
                 customerAdapter.notifyDataSetChanged();
                 updateEmptyState();
+                
+                // Load analytics after customers are loaded to avoid race condition
+                loadAnalytics();
             })
             .addOnFailureListener(e -> {
                 showToast("Failed to load customers: " + e.getMessage());
@@ -221,14 +224,18 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
     private void filterCustomers(String query) {
         filteredCustomers.clear();
         
-        if (query.isEmpty()) {
+        if (query == null || query.isEmpty()) {
             filteredCustomers.addAll(allCustomers);
         } else {
             String lowerCaseQuery = query.toLowerCase();
             for (Customer customer : allCustomers) {
-                if (customer.getName().toLowerCase().contains(lowerCaseQuery) ||
-                    customer.getServiceType().toLowerCase().contains(lowerCaseQuery) ||
-                    (customer.getPhone() != null && customer.getPhone().contains(query))) {
+                String name = customer.getName();
+                String serviceType = customer.getServiceType();
+                String phone = customer.getPhone();
+                
+                if ((name != null && name.toLowerCase().contains(lowerCaseQuery)) ||
+                    (serviceType != null && serviceType.toLowerCase().contains(lowerCaseQuery)) ||
+                    (phone != null && phone.contains(query))) {
                     filteredCustomers.add(customer);
                 }
             }

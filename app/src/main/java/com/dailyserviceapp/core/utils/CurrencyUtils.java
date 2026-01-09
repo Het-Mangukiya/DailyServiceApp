@@ -18,46 +18,46 @@ import java.util.Locale;
  */
 public class CurrencyUtils {
     
-    /** Formatter for currency with ₹ symbol */
-    private static final DecimalFormat currencyFormat = new DecimalFormat("₹#,##0.00");
-    
-    /** Formatter for amounts without currency symbol */
-    private static final DecimalFormat simpleFormat = new DecimalFormat("#,##0.00");
-    
-    /** Indian currency formatter with locale support */
-    private static final NumberFormat indianFormat = NumberFormat.getCurrencyInstance(new Locale.Builder().setLanguage("en").setRegion("IN").build());
+    /** Locale for Indian currency formatting */
+    private static final Locale INDIAN_LOCALE = new Locale.Builder().setLanguage("en").setRegion("IN").build();
     
     /**
      * Formats a numeric amount as currency string with ₹ symbol.
      * Example: 1234.56 → "₹1,234.56"
+     * Thread-safe: creates new formatter instance for each call.
      * 
      * @param amount The amount to format
      * @return Formatted currency string with ₹ symbol
      */
     public static String formatCurrency(double amount) {
-        return currencyFormat.format(amount);
+        DecimalFormat formatter = new DecimalFormat("₹#,##0.00");
+        return formatter.format(amount);
     }
     
     /**
      * Formats a numeric amount without currency symbol.
      * Example: 1234.56 → "1,234.56"
+     * Thread-safe: creates new formatter instance for each call.
      * 
      * @param amount The amount to format
      * @return Formatted number string with comma separators
      */
     public static String formatAmount(double amount) {
-        return simpleFormat.format(amount);
+        DecimalFormat formatter = new DecimalFormat("#,##0.00");
+        return formatter.format(amount);
     }
     
     /**
      * Formats amount using Indian currency formatting rules.
      * Uses locale-specific formatting with proper comma placement.
+     * Thread-safe: creates new formatter instance for each call.
      * 
      * @param amount The amount to format
      * @return Formatted currency string in Indian format
      */
     public static String formatIndianCurrency(double amount) {
-        return indianFormat.format(amount);
+        NumberFormat formatter = NumberFormat.getCurrencyInstance(INDIAN_LOCALE);
+        return formatter.format(amount);
     }
     
     /**
