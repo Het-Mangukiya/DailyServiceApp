@@ -154,25 +154,30 @@ public class BillListActivity extends BaseActivity {
             return;
         }
         
-        // First load customers to build map
-        repository.getCustomersByProvider(providerId, new FirestoreRepository.OnCustomersLoadedListener() {
-            @Override
-            public void onCustomersLoaded(List<Customer> customers) {
-                customerMap.clear();
-                for (Customer customer : customers) {
-                    customerMap.put(customer.getId(), customer);
+        // Only load customers if map is empty (first load or after clearing)
+        if (customerMap.isEmpty()) {
+            repository.getCustomersByProvider(providerId, new FirestoreRepository.OnCustomersLoadedListener() {
+                @Override
+                public void onCustomersLoaded(List<Customer> customers) {
+                    customerMap.clear();
+                    for (Customer customer : customers) {
+                        customerMap.put(customer.getId(), customer);
+                    }
+                    
+                    // Then load bills
+                    loadBills();
                 }
-                
-                // Then load bills
-                loadBills();
-            }
 
-            @Override
-            public void onError(String error) {
-                showToast("Error loading customers: " + error);
-                showEmptyState(true);
-            }
-        });
+                @Override
+                public void onError(String error) {
+                    showToast("Error loading customers: " + error);
+                    showEmptyState(true);
+                }
+            });
+        } else {
+            // Customers already loaded, just load bills
+            loadBills();
+        }
     }
     
     private void loadBills() {

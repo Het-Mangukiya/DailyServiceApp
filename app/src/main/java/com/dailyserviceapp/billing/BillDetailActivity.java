@@ -136,7 +136,10 @@ public class BillDetailActivity extends BaseActivity {
     }
     
     private void markBillAsPaid() {
-        if (currentBill == null) return;
+        if (currentBill == null || currentBill.getId() == null || currentBill.getId().isEmpty()) {
+            showToast("Error: Bill data not loaded");
+            return;
+        }
         
         // Open PaymentActivity to record payment
         Intent intent = new Intent(this, PaymentActivity.class);
