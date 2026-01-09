@@ -36,9 +36,6 @@ public class SessionManager {
 
     /** SharedPreferences instance for reading data */
     private final SharedPreferences preferences;
-    
-    /** Editor for writing data to SharedPreferences */
-    private final SharedPreferences.Editor editor;
 
     /**
      * Constructs a new SessionManager instance.
@@ -48,7 +45,6 @@ public class SessionManager {
      */
     public SessionManager(Context context) {
         preferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-        editor = preferences.edit();
     }
 
     /**
@@ -62,6 +58,7 @@ public class SessionManager {
      * @param role The user's role (e.g., "ROLE_CUSTOMER" or "ROLE_PROVIDER")
      */
     public void saveUserSession(String userId, String email, String name, String role) {
+        SharedPreferences.Editor editor = preferences.edit();
         editor.putBoolean(KEY_IS_LOGGED_IN, true);
         editor.putString(KEY_USER_ID, userId);
         editor.putString(KEY_USER_EMAIL, email);
@@ -121,6 +118,7 @@ public class SessionManager {
      * Changes are applied asynchronously.
      */
     public void logout() {
+        SharedPreferences.Editor editor = preferences.edit();
         editor.clear();
         editor.apply();
     }
