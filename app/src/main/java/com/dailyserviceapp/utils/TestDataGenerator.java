@@ -6,6 +6,9 @@ import com.dailyserviceapp.data.FirestoreRepository;
 import com.dailyserviceapp.data.models.Customer;
 import com.dailyserviceapp.data.models.ServiceEntry;
 import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.WriteBatch;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -24,11 +27,13 @@ public class TestDataGenerator {
     private final String providerId;
     private final Context context;
     private final List<String> createdCustomerIds = new ArrayList<>();
+    private final FirebaseFirestore db;
     
     public TestDataGenerator(Context context, String providerId) {
         this.context = context;
         this.providerId = providerId;
         this.repository = new FirestoreRepository();
+        this.db = FirebaseFirestore.getInstance();
     }
     
     /**
@@ -62,33 +67,28 @@ public class TestDataGenerator {
         };
         
         List<String> customerIds = new ArrayList<>();
-        final int[] completed = {0};
-        
+        WriteBatch batch = db.batch();
+
         for (String[] data : customerData) {
             Customer customer = new Customer(
-                data[0], // name
-                data[1], // phone  
-                data[2], // address
-                data[3], // serviceType
-                Double.parseDouble(data[4]), // ratePerUnit
-                Timestamp.now() // createdAt
+                    data[0], // name
+                    data[1], // phone
+                    data[2], // address
+                    data[3], // serviceType
+                    Double.parseDouble(data[4]), // ratePerUnit
+                    Timestamp.now() // createdAt
             );
             customer.setProviderId(providerId);
             customer.setStatus("ACTIVE");
-            
-            repository.addCustomer(customer,
-                    ref -> {
-                        String customerId = ref.getId();
-                        customerIds.add(customerId);
-                        completed[0]++;
-                        
-                        if (completed[0] == customerData.length) {
-                            listener.onCustomersGenerated(customerIds);
-                        }
-                    },
-                    e -> listener.onError(e.getMessage())
-            );
+
+            DocumentReference ref = db.collection("customers").document();
+            customerIds.add(ref.getId());
+            batch.set(ref, customer);
         }
+
+        batch.commit()
+                .addOnSuccessListener(aVoid -> listener.onCustomersGenerated(customerIds))
+                .addOnFailureListener(e -> listener.onError(e.getMessage()));
     }
     
     /**
@@ -137,8 +137,16 @@ public class TestDataGenerator {
             }
         }
         
-        // Save all entries
-        saveServiceEntries(allEntries, 0, listener);
+        // Save all entries in one batch (fast)
+        WriteBatch batch = db.batch();
+        for (ServiceEntry entry : allEntries) {
+            DocumentReference ref = db.collection("serviceEntries").document();
+            batch.set(ref, entry);
+        }
+
+        batch.commit()
+                .addOnSuccessListener(aVoid -> listener.onTestDataGenerated(createdCustomerIds, allEntries.size()))
+                .addOnFailureListener(e -> listener.onError("Failed to save service entries: " + e.getMessage()));
     }
     
     private ServiceEntry createServiceEntry(String customerId, Date date, double quantity) {
@@ -151,26 +159,6 @@ public class TestDataGenerator {
         entry.setNotes("Test delivery - " + sdf.format(date));
         entry.setCreatedAt(Timestamp.now());
         return entry;
-    }
-    
-    private void saveServiceEntries(List<ServiceEntry> entries, int index, OnTestDataGeneratedListener listener) {
-        if (index >= entries.size()) {
-            listener.onTestDataGenerated(createdCustomerIds, entries.size());
-            return;
-        }
-        
-        repository.saveServiceEntry(entries.get(index), new FirestoreRepository.OnSaveCompleteListener() {
-            @Override
-            public void onSuccess() {
-                // Continue with next entry
-                saveServiceEntries(entries, index + 1, listener);
-            }
-            
-            @Override
-            public void onError(String error) {
-                listener.onError("Failed to save entry " + (index + 1) + ": " + error);
-            }
-        });
     }
     
     public interface OnCustomersGeneratedListener {
