@@ -1,5 +1,6 @@
 package com.dailyserviceapp.billing;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
 
@@ -9,6 +10,7 @@ import com.dailyserviceapp.core.utils.CurrencyUtils;
 import com.dailyserviceapp.data.FirestoreRepository;
 import com.dailyserviceapp.data.models.Bill;
 import com.dailyserviceapp.data.models.Customer;
+import com.dailyserviceapp.payment.PaymentActivity;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.chip.Chip;
@@ -46,6 +48,15 @@ public class BillDetailActivity extends BaseActivity {
         initializeViews();
         initializeData();
         loadBillDetails();
+    }
+    
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Reload bill details when returning from PaymentActivity
+        if (billId != null && !billId.isEmpty()) {
+            loadBillDetails();
+        }
     }
     
     private void initializeViews() {
@@ -103,10 +114,13 @@ public class BillDetailActivity extends BaseActivity {
         String status = bill.getPaymentStatus() != null ? bill.getPaymentStatus() : "PENDING";
         paymentStatusChip.setText(status);
         
-        // Update button visibility based on payment status
+        // Update button based on payment status
         if ("PAID".equals(status)) {
             markAsPaidButton.setEnabled(false);
-            markAsPaidButton.setText("Already Paid");
+            markAsPaidButton.setText("Payment Completed");
+        } else {
+            markAsPaidButton.setEnabled(true);
+            markAsPaidButton.setText("Record Payment");
         }
     }
     
@@ -124,19 +138,10 @@ public class BillDetailActivity extends BaseActivity {
     private void markBillAsPaid() {
         if (currentBill == null) return;
         
-        currentBill.setPaymentStatus("PAID");
-        repository.saveBill(currentBill, new FirestoreRepository.OnSaveCompleteListener() {
-            @Override
-            public void onSuccess() {
-                showToast("Bill marked as paid");
-                displayBillInfo(currentBill);
-            }
-
-            @Override
-            public void onError(String error) {
-                showToast("Error updating bill: " + error);
-            }
-        });
+        // Open PaymentActivity to record payment
+        Intent intent = new Intent(this, PaymentActivity.class);
+        intent.putExtra("billId", currentBill.getId());
+        startActivity(intent);
     }
     
     private void shareBill() {
