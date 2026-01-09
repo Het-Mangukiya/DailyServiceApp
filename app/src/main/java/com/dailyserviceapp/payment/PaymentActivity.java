@@ -102,7 +102,7 @@ public class PaymentActivity extends BaseActivity {
         billId = getIntent().getStringExtra("billId");
         
         if (billId == null || billId.isEmpty()) {
-            showToast("Invalid bill ID");
+            showToast("Error: Bill ID not provided. Please open from Bill Details.");
             finish();
             return;
         }
@@ -118,6 +118,12 @@ public class PaymentActivity extends BaseActivity {
     }
     
     private void loadBillDetails() {
+        if (billId == null || billId.isEmpty()) {
+            showToast("Cannot load bill: Invalid ID");
+            finish();
+            return;
+        }
+        
         repository.getBillById(billId, new FirestoreRepository.OnBillLoadedListener() {
             @Override
             public void onBillLoaded(Bill bill) {
