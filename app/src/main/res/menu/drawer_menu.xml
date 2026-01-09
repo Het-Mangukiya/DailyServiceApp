@@ -36,6 +36,11 @@
                 android:id="@+id/nav_qr_code"
                 android:icon="@android:drawable/ic_menu_camera"
                 android:title="My QR Code" />
+            
+            <item
+                android:id="@+id/nav_test_data"
+                android:icon="@android:drawable/ic_menu_add"
+                android:title="Generate Test Data" />
         </menu>
     </item>
 
