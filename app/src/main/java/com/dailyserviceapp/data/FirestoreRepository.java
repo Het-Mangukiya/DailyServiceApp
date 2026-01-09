@@ -2,6 +2,7 @@ package com.dailyserviceapp.data;
 
 import androidx.annotation.NonNull;
 
+import com.dailyserviceapp.data.models.Bill;
 import com.dailyserviceapp.data.models.Customer;
 import com.dailyserviceapp.data.models.ServiceEntry;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -21,7 +22,7 @@ import java.util.List;
 
 /**
  * Repository class for Firestore database operations.
- * Handles CRUD operations for customers, service entries, and payments.
+ * Handles CRUD operations for customers, service entries, bills, and payments.
  * 
  * @author DailyDrop Team
  * @version 1.0
@@ -220,4 +221,97 @@ public class FirestoreRepository {
                     .addOnFailureListener(e -> listener.onError(e.getMessage()));
         }
     }
+    
+    // ========== Bill Methods ==========
+    
+    /**
+     * Listener interface for loading bills.
+     */
+    public interface OnBillsLoadedListener {
+        void onBillsLoaded(List<Bill> bills);
+        void onError(String error);
+    }
+    
+    /**
+     * Gets bills for a provider in a specific month and year.
+     * 
+     * @param providerId The provider's ID
+     * @param month The month (0-11, January=0)
+     * @param year The year
+     * @param listener Callback for results
+     */
+    public void getBillsByProviderAndMonth(String providerId, int month, int year,
+                                            OnBillsLoadedListener listener) {
+        db.collection("bills")
+                .whereEqualTo("providerId", providerId)
+                .whereEqualTo("month", month)
+                .whereEqualTo("year", year)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    List<Bill> bills = new ArrayList<>();
+                    for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
+                        Bill bill = doc.toObject(Bill.class);
+                        if (bill != null) {
+                            bill.setId(doc.getId());
+                            bills.add(bill);
+                        }
+                    }
+                    listener.onBillsLoaded(bills);
+                })
+                .addOnFailureListener(e -> listener.onError(e.getMessage()));
+    }
+    
+    /**
+     * Saves or updates a bill.
+     * 
+     * @param bill The bill to save
+     * @param listener Callback for completion
+     */
+    public void saveBill(Bill bill, OnSaveCompleteListener listener) {
+        if (bill.getId() != null && !bill.getId().isEmpty()) {
+            // Update existing bill
+            db.collection("bills")
+                    .document(bill.getId())
+                    .set(bill)
+                    .addOnSuccessListener(aVoid -> listener.onSuccess())
+                    .addOnFailureListener(e -> listener.onError(e.getMessage()));
+        } else {
+            // Create new bill
+            db.collection("bills")
+                    .add(bill)
+                    .addOnSuccessListener(documentReference -> listener.onSuccess())
+                    .addOnFailureListener(e -> listener.onError(e.getMessage()));
+        }
+    }
+    
+    /**
+     * Gets a single bill by ID.
+     * 
+     * @param billId The bill's ID
+     * @param listener Callback for results
+     */
+    public void getBillById(String billId, OnBillLoadedListener listener) {
+        db.collection("bills")
+                .document(billId)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    Bill bill = documentSnapshot.toObject(Bill.class);
+                    if (bill != null) {
+                        bill.setId(documentSnapshot.getId());
+                        listener.onBillLoaded(bill);
+                    } else {
+                        listener.onError("Bill not found");
+                    }
+                })
+                .addOnFailureListener(e -> listener.onError(e.getMessage()));
+    }
+    
+    /**
+     * Listener interface for loading a single bill.
+     */
+    public interface OnBillLoadedListener {
+        void onBillLoaded(Bill bill);
+        void onError(String error);
+    }
 }
+

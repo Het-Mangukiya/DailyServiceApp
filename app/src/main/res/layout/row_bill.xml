@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/spacing_sm"
+    app:cardCornerRadius="@dimen/corner_radius_md"
+    app:cardElevation="@dimen/elevation_base"
+    app:cardBackgroundColor="@color/md_theme_surface">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/spacing_base">
+
+        <!-- Customer Avatar -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/customerAvatar"
+            android:layout_width="@dimen/card_size_lg"
+            android:layout_height="@dimen/card_size_lg"
+            app:cardCornerRadius="@dimen/corner_radius_pill"
+            app:cardBackgroundColor="@color/color_bills"
+            app:cardElevation="0dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <TextView
+                android:id="@+id/customerInitial"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:textSize="@dimen/text_size_lg"
+                android:textStyle="bold"
+                android:textColor="@android:color/white" />
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Customer Info -->
+        <LinearLayout
+            android:id="@+id/customerInfo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginStart="@dimen/spacing_base"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/customerAvatar"
+            app:layout_constraintStart_toEndOf="@id/customerAvatar"
+            app:layout_constraintEnd_toStartOf="@id/billAmount">
+
+            <TextView
+                android:id="@+id/customerName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Customer Name"
+                android:textSize="@dimen/text_size_base"
+                android:textStyle="bold"
+                android:textColor="@color/md_theme_on_surface"
+                android:maxLines="1"
+                android:ellipsize="end" />
+
+            <TextView
+                android:id="@+id/billPeriod"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="January 2026 • 28 days"
+                android:textSize="@dimen/text_size_sm"
+                android:textColor="@color/md_theme_on_surface_variant"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:layout_marginTop="@dimen/spacing_xs" />
+
+        </LinearLayout>
+
+        <!-- Bill Amount -->
+        <TextView
+            android:id="@+id/billAmount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="₹0.00"
+            android:textSize="@dimen/text_size_xl"
+            android:textStyle="bold"
+            android:textColor="@color/md_theme_primary"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Payment Status Chip -->
+        <com.google.android.material.chip.Chip
+            android:id="@+id/paymentStatusChip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Pending"
+            android:textSize="@dimen/text_size_sm"
+            app:chipBackgroundColor="@color/color_payments"
+            app:chipStrokeWidth="0dp"
+            android:layout_marginTop="@dimen/spacing_sm"
+            app:layout_constraintTop_toBottomOf="@id/customerAvatar"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <!-- Action Buttons -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="@dimen/spacing_sm"
+            app:layout_constraintTop_toBottomOf="@id/customerAvatar"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/viewDetailsButton"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Details"
+                android:textSize="@dimen/text_size_sm" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/shareBillButton"
+                style="@style/Widget.Material3.Button.TonalButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Share"
+                android:textSize="@dimen/text_size_sm"
+                android:layout_marginStart="@dimen/spacing_xs" />
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>
