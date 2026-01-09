@@ -28,7 +28,9 @@ import com.dailyserviceapp.reports.ReportsActivity;
 import com.dailyserviceapp.service.ServiceEntryActivity;
 import com.dailyserviceapp.ui.CustomerAdapter;
 import com.dailyserviceapp.ui.CustomerEditActivity;
+import com.dailyserviceapp.utils.TestDataGenerator;
 import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -271,6 +273,8 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
             startActivity(new Intent(this, ProfileActivity.class));
         } else if (id == R.id.nav_qr_code) {
             startActivity(new Intent(this, com.dailyserviceapp.qr.QRCodeActivity.class));
+        } else if (id == R.id.nav_test_data) {
+            generateTestData();
         } else if (id == R.id.nav_share) {
             shareApp();
         } else if (id == R.id.nav_logout) {
@@ -279,6 +283,36 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
+    }
+    
+    private void generateTestData() {
+        new MaterialAlertDialogBuilder(this)
+            .setTitle("Generate Test Data")
+            .setMessage("This will create:\n\n" +
+                    "✓ 5 test customers\n" +
+                    "✓ ~120 service entries for January 2026\n" +
+                    "✓ Ready for bill generation\n\n" +
+                    "Continue?")
+            .setPositiveButton("Generate", (dialog, which) -> {
+                showToast("Generating test data...");
+                
+                TestDataGenerator generator = new TestDataGenerator(this, getCurrentUserId());
+                generator.generateCompleteTestData(new TestDataGenerator.OnTestDataGeneratedListener() {
+                    @Override
+                    public void onTestDataGenerated(List<String> customerIds, int entriesCount) {
+                        showToast("✅ Generated " + customerIds.size() + " customers and " + 
+                                entriesCount + " service entries!");
+                        loadData(); // Refresh the list
+                    }
+                    
+                    @Override
+                    public void onError(String error) {
+                        showToast("Error: " + error);
+                    }
+                });
+            })
+            .setNegativeButton("Cancel", null)
+            .show();
     }
     
     private void shareApp() {
