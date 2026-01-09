@@ -67,11 +67,6 @@
             android:exported="false"
             android:theme="@style/Theme.DailyServiceApp.NoActionBar" />
 
-        <activity
-            android:name=".ui.CustomerListActivity"
-            android:exported="false"
-            android:theme="@style/Theme.DailyServiceApp.NoActionBar" />
-
         <!-- Service Entry -->
         <activity
             android:name=".service.ServiceEntryActivity"
@@ -110,6 +105,12 @@
         <activity
             android:name=".profile.SettingsActivity"
             android:exported="false" />
+
+        <!-- QR Code -->
+        <activity
+            android:name=".qr.QRCodeActivity"
+            android:exported="false"
+            android:theme="@style/Theme.DailyServiceApp.NoActionBar" />
 
         <!-- Notifications -->
         <activity

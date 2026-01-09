@@ -46,18 +46,32 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.ViewHo
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Customer customer = items.get(position);
-        holder.name.setText(customer.getName());
-
-        String subtitle = (customer.getServiceType() == null ? "" : customer.getServiceType())
+        
+        // Set customer name
+        holder.customerName.setText(customer.getName());
+        
+        // Set service info
+        String serviceInfo = (customer.getServiceType() == null ? "" : customer.getServiceType())
                 + " · "
                 + CurrencyUtils.formatCurrency(customer.getRatePerUnit());
-        holder.subtitle.setText(subtitle);
-
+        holder.customerService.setText(serviceInfo);
+        
+        // Set phone number (optional)
+        if (customer.getPhone() != null && !customer.getPhone().isEmpty()) {
+            holder.customerPhone.setText(customer.getPhone());
+            holder.customerPhone.setVisibility(View.VISIBLE);
+        } else {
+            holder.customerPhone.setVisibility(View.GONE);
+        }
+        
         // Set customer initial
         if (customer.getName() != null && !customer.getName().isEmpty()) {
             String initial = customer.getName().substring(0, 1).toUpperCase();
             holder.customerInitial.setText(initial);
         }
+        
+        // Set status chip
+        holder.customerStatus.setText(customer.getStatus() != null ? customer.getStatus() : "ACTIVE");
 
         holder.itemView.setOnClickListener(v -> listener.onCustomerClick(customer));
     }
@@ -68,15 +82,19 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.ViewHo
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        final TextView name;
-        final TextView subtitle;
+        final TextView customerName;
+        final TextView customerService;
+        final TextView customerPhone;
         final TextView customerInitial;
+        final com.google.android.material.chip.Chip customerStatus;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
-            name = itemView.findViewById(R.id.name);
-            subtitle = itemView.findViewById(R.id.subtitle);
+            customerName = itemView.findViewById(R.id.customerName);
+            customerService = itemView.findViewById(R.id.customerService);
+            customerPhone = itemView.findViewById(R.id.customerPhone);
             customerInitial = itemView.findViewById(R.id.customerInitial);
+            customerStatus = itemView.findViewById(R.id.customerStatus);
         }
     }
 }
