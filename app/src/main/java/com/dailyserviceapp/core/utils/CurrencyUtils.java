@@ -25,7 +25,7 @@ public class CurrencyUtils {
     private static final DecimalFormat simpleFormat = new DecimalFormat("#,##0.00");
     
     /** Indian currency formatter with locale support */
-    private static final NumberFormat indianFormat = NumberFormat.getCurrencyInstance(new Locale("en", "IN"));
+    private static final NumberFormat indianFormat = NumberFormat.getCurrencyInstance(new Locale.Builder().setLanguage("en").setRegion("IN").build());
     
     /**
      * Formats a numeric amount as currency string with ₹ symbol.

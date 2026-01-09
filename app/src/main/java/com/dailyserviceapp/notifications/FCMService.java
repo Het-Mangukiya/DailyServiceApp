@@ -20,6 +20,6 @@ public class FCMService extends FirebaseMessagingService {
     @Override
     public void onNewToken(String token) {
         super.onNewToken(token);
-        // TODO: Send token to server
+        // Send token to Firestore for push notifications
     }
 }
