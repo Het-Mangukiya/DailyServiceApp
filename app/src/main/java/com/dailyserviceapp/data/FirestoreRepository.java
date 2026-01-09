@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 
 import com.dailyserviceapp.data.models.Bill;
 import com.dailyserviceapp.data.models.Customer;
+import com.dailyserviceapp.data.models.Payment;
 import com.dailyserviceapp.data.models.ServiceEntry;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -311,6 +312,64 @@ public class FirestoreRepository {
      */
     public interface OnBillLoadedListener {
         void onBillLoaded(Bill bill);
+        void onError(String error);
+    }
+    
+    // ========== Payment Methods ==========
+    
+    /**
+     * Saves or updates a payment.
+     * 
+     * @param payment The payment to save
+     * @param listener Callback for completion
+     */
+    public void savePayment(Payment payment, OnSaveCompleteListener listener) {
+        if (payment.getId() != null && !payment.getId().isEmpty()) {
+            // Update existing payment
+            db.collection("payments")
+                    .document(payment.getId())
+                    .set(payment)
+                    .addOnSuccessListener(aVoid -> listener.onSuccess())
+                    .addOnFailureListener(e -> listener.onError(e.getMessage()));
+        } else {
+            // Create new payment
+            db.collection("payments")
+                    .add(payment)
+                    .addOnSuccessListener(documentReference -> listener.onSuccess())
+                    .addOnFailureListener(e -> listener.onError(e.getMessage()));
+        }
+    }
+    
+    /**
+     * Gets all payments for a specific bill.
+     * 
+     * @param billId The bill's ID
+     * @param listener Callback for results
+     */
+    public void getPaymentsByBill(String billId, OnPaymentsLoadedListener listener) {
+        db.collection("payments")
+                .whereEqualTo("billId", billId)
+                .orderBy("paymentDate", Query.Direction.DESCENDING)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    List<Payment> payments = new ArrayList<>();
+                    for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
+                        Payment payment = doc.toObject(Payment.class);
+                        if (payment != null) {
+                            payment.setId(doc.getId());
+                            payments.add(payment);
+                        }
+                    }
+                    listener.onPaymentsLoaded(payments);
+                })
+                .addOnFailureListener(e -> listener.onError(e.getMessage()));
+    }
+    
+    /**
+     * Listener interface for loading payments.
+     */
+    public interface OnPaymentsLoadedListener {
+        void onPaymentsLoaded(List<Payment> payments);
         void onError(String error);
     }
 }
