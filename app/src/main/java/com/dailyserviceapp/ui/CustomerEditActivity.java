@@ -81,7 +81,7 @@ public class CustomerEditActivity extends BaseActivity {
             try {
                 rate = Double.parseDouble(rateStr);
             } catch (NumberFormatException e) {
-                Toast.makeText(this, "Rate must be a number", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, R.string.error_rate_must_be_number, Toast.LENGTH_LONG).show();
                 return;
             }
 
@@ -96,7 +96,7 @@ public class CustomerEditActivity extends BaseActivity {
                 repo.updateCustomer(existingCustomer, new FirestoreRepository.OnSaveCompleteListener() {
                     @Override
                     public void onSuccess() {
-                        Toast.makeText(CustomerEditActivity.this, "Customer updated", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(CustomerEditActivity.this, R.string.success_customer_updated, Toast.LENGTH_SHORT).show();
                         finish();
                     }
 
@@ -112,7 +112,7 @@ public class CustomerEditActivity extends BaseActivity {
                 customer.setStatus("ACTIVE"); // Set initial status
                 repo.addCustomer(customer,
                         ref -> {
-                            Toast.makeText(this, "Customer added", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, R.string.success_customer_added, Toast.LENGTH_SHORT).show();
                             finish();
                         },
                         e -> Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show()
@@ -142,7 +142,7 @@ public class CustomerEditActivity extends BaseActivity {
                     }
                 })
                 .addOnFailureListener(e -> 
-                    Toast.makeText(this, "Error loading customer", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, R.string.error_loading_customer, Toast.LENGTH_SHORT).show()
                 );
     }
 
@@ -161,13 +161,13 @@ public class CustomerEditActivity extends BaseActivity {
         repo.deleteCustomer(customerId, new FirestoreRepository.OnSaveCompleteListener() {
             @Override
             public void onSuccess() {
-                Toast.makeText(CustomerEditActivity.this, "Customer deleted", Toast.LENGTH_SHORT).show();
+                Toast.makeText(CustomerEditActivity.this, R.string.success_customer_deleted, Toast.LENGTH_SHORT).show();
                 finish();
             }
 
             @Override
             public void onError(String error) {
-                Toast.makeText(CustomerEditActivity.this, "Error deleting customer: " + error, Toast.LENGTH_LONG).show();
+                Toast.makeText(CustomerEditActivity.this, getString(R.string.error_deleting_customer, error), Toast.LENGTH_LONG).show();
             }
         });
     }

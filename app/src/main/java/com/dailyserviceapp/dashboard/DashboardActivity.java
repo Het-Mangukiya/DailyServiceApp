@@ -131,8 +131,8 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
             String name = currentUser.getDisplayName();
             String email = currentUser.getEmail();
             
-            userName.setText(name != null ? name : "User");
-            userEmail.setText(email != null ? email : "user@example.com");
+            userName.setText(name != null ? name : getString(R.string.default_user_name));
+            userEmail.setText(email != null ? email : getString(R.string.default_user_email));
             
             if (name != null && !name.isEmpty()) {
                 userInitial.setText(name.substring(0, 1).toUpperCase());
