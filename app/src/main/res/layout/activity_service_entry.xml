@@ -154,16 +154,19 @@
 
     </androidx.core.widget.NestedScrollView>
 
-    <!-- FAB -->
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
+    <!-- Mark Delivery Button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnMarkDelivery"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
+        android:layout_gravity="bottom"
         android:layout_margin="@dimen/spacing_base"
-        android:contentDescription="Refresh"
-        android:src="@android:drawable/ic_popup_sync"
-        app:tint="@android:color/white"
-        app:backgroundTint="@color/md_theme_primary" />
+        android:text="Mark Delivery"
+        android:textSize="@dimen/text_size_base"
+        android:textStyle="bold"
+        android:paddingVertical="@dimen/spacing_base"
+        app:cornerRadius="@dimen/corner_radius_button"
+        app:backgroundTint="@color/md_theme_primary"
+        style="@style/Widget.Material3.Button" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
