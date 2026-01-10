@@ -200,19 +200,19 @@ public class ServiceEntryActivity extends BaseActivity {
      */
     private void markDeliveries() {
         if (!isNetworkAvailable()) {
-            showToast("No internet connection");
+            showToast(getString(R.string.validation_no_internet));
             return;
         }
         
         List<ServiceEntryAdapter.DeliveryItem> deliveries = adapter.getSelectedDeliveries();
         
         if (deliveries.isEmpty()) {
-            showToast("No customers selected");
+            showToast(getString(R.string.validation_no_customers_selected));
             return;
         }
         
         btnMarkDelivery.setEnabled(false);
-        btnMarkDelivery.setText("Saving...");
+        btnMarkDelivery.setText(R.string.button_saving);
         
         Timestamp timestamp = new Timestamp(selectedDate);
         int[] successCount = {0};
@@ -235,17 +235,17 @@ public class ServiceEntryActivity extends BaseActivity {
                     successCount[0]++;
                     if (successCount[0] == totalCount) {
                         btnMarkDelivery.setEnabled(true);
-                        btnMarkDelivery.setText("Mark Delivery");
-                        showToast("Deliveries marked successfully");
+                        btnMarkDelivery.setText(R.string.button_mark_delivery);
+                        showToast(getString(R.string.success_deliveries_marked));
                         loadData(); // Refresh to show saved state
                     }
                 }
 
                 @Override
                 public void onError(String error) {
-                    showToast("Error: " + error);
+                    showToast(getString(R.string.error_general, error));
                     btnMarkDelivery.setEnabled(true);
-                    btnMarkDelivery.setText("Mark Delivery");
+                    btnMarkDelivery.setText(R.string.button_mark_delivery);
                 }
             });
         }
