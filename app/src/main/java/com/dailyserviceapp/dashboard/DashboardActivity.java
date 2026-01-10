@@ -31,14 +31,17 @@ import com.dailyserviceapp.ui.CustomerEditActivity;
 import com.dailyserviceapp.utils.TestDataGenerator;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.Timestamp;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -57,21 +60,23 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
     private MaterialToolbar toolbar;
     
     private TextView totalCustomersCount, totalRevenueAmount;
+    private TextView txtTodayDelivered, txtTodayAmount;
     private RecyclerView customerRecyclerView;
     private CustomerAdapter customerAdapter;
     private LinearLayout emptyState;
     private EditText searchEditText;
-    private FloatingActionButton addCustomerFab;
+    private ExtendedFloatingActionButton addCustomerFab;
     
     private FirebaseFirestore firestore;
     private String providerId;
     private List<Customer> allCustomers = new ArrayList<>();
     private List<Customer> filteredCustomers = new ArrayList<>();
+    private ListenerRegistration customersListener;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_dashboard);
+        setContentView(R.layout.activity_home);
         
         if (!isLoggedIn()) {
             navigateToLogin();
@@ -91,14 +96,16 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
     private void initializeViews() {
         drawerLayout = findViewById(R.id.drawerLayout);
         navigationView = findViewById(R.id.navigationView);
-        toolbar = findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.topAppBar);
         
-        totalCustomersCount = findViewById(R.id.totalCustomersCount);
-        totalRevenueAmount = findViewById(R.id.totalRevenueAmount);
+        totalCustomersCount = findViewById(R.id.txtCustomerCount);
+        totalRevenueAmount = findViewById(R.id.txtTotalValue);
+        txtTodayDelivered = findViewById(R.id.txtTodayDelivered);
+        txtTodayAmount = findViewById(R.id.txtTodayAmount);
         customerRecyclerView = findViewById(R.id.customerRecyclerView);
-        emptyState = findViewById(R.id.emptyState);
-        searchEditText = findViewById(R.id.searchEditText);
-        addCustomerFab = findViewById(R.id.addCustomerFab);
+        emptyState = findViewById(R.id.emptyStateLayout);
+        searchEditText = findViewById(R.id.edtSearch);
+        addCustomerFab = findViewById(R.id.fabAddCustomer);
         
         setSupportActionBar(toolbar);
     }
@@ -174,29 +181,39 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
     }
     
     private void loadCustomers() {
-        firestore.collection("customers")
+        // Remove old listener if exists
+        if (customersListener != null) {
+            customersListener.remove();
+        }
+        
+        // Listen to real-time customer updates
+        customersListener = firestore.collection("customers")
             .whereEqualTo("providerId", providerId)
             .whereEqualTo("status", "ACTIVE")
-            .get()
-            .addOnSuccessListener(queryDocumentSnapshots -> {
-                allCustomers.clear();
-                filteredCustomers.clear();
-                
-                for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
-                    Customer customer = document.toObject(Customer.class);
-                    customer.setId(document.getId());
-                    allCustomers.add(customer);
-                    filteredCustomers.add(customer);
+            .addSnapshotListener((queryDocumentSnapshots, error) -> {
+                if (error != null) {
+                    showToast("Failed to load customers: " + error.getMessage());
+                    return;
                 }
                 
-                customerAdapter.notifyDataSetChanged();
-                updateEmptyState();
-                
-                // Load analytics after customers are loaded to avoid race condition
-                loadAnalytics();
-            })
-            .addOnFailureListener(e -> {
-                showToast("Failed to load customers: " + e.getMessage());
+                if (queryDocumentSnapshots != null) {
+                    allCustomers.clear();
+                    filteredCustomers.clear();
+                    
+                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                        Customer customer = document.toObject(Customer.class);
+                        customer.setId(document.getId());
+                        allCustomers.add(customer);
+                        filteredCustomers.add(customer);
+                    }
+                    
+                    // Update adapter using submit method
+                    customerAdapter.submit(filteredCustomers);
+                    updateEmptyState();
+                    
+                    // Load analytics after customers are loaded to avoid race condition
+                    loadAnalytics();
+                }
             });
     }
     
@@ -204,21 +221,115 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         // Load total customers
         totalCustomersCount.setText(String.valueOf(allCustomers.size()));
         
-        // Load monthly revenue from bills
-        firestore.collection("bills")
+        // Calculate current month revenue from deliveries
+        calculateCurrentMonthRevenue();
+        
+        // Calculate today's deliveries
+        calculateTodaysSummary();
+    }
+    
+    private void calculateTodaysSummary() {
+        // Get today's date range
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        long startOfDay = calendar.getTimeInMillis();
+        
+        // Query today's service entries
+        firestore.collection("serviceEntries")
             .whereEqualTo("providerId", providerId)
             .get()
-            .addOnSuccessListener(queryDocumentSnapshots -> {
-                double totalRevenue = 0;
-                for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
-                    Double totalAmount = document.getDouble("totalAmount");
-                    if (totalAmount != null) {
-                        totalRevenue += totalAmount;
+            .addOnSuccessListener(querySnapshots -> {
+                int todayCount = 0;
+                double todayRevenue = 0;
+                
+                for (com.google.firebase.firestore.QueryDocumentSnapshot doc : querySnapshots) {
+                    com.google.firebase.Timestamp entryDate = doc.getTimestamp("date");
+                    if (entryDate != null && entryDate.toDate().getTime() >= startOfDay) {
+                        todayCount++;
+                        String customerId = doc.getString("customerId");
+                        Double quantity = doc.getDouble("quantity");
+                        
+                        // Find customer to get rate
+                        for (Customer customer : allCustomers) {
+                            if (customer.getId().equals(customerId)) {
+                                double rate = customer.getRatePerUnit();
+                                todayRevenue += (quantity != null ? quantity : 0) * rate;
+                                break;
+                            }
+                        }
                     }
                 }
-                totalRevenueAmount.setText(CurrencyUtils.formatIndianCurrency(totalRevenue));
+                
+                txtTodayDelivered.setText(todayCount + "/" + allCustomers.size() + " delivered");
+                txtTodayAmount.setText(CurrencyUtils.formatIndianCurrency(todayRevenue));
             })
             .addOnFailureListener(e -> {
+                txtTodayDelivered.setText("0/" + allCustomers.size() + " delivered");
+                txtTodayAmount.setText("₹0");
+            });
+    }
+    
+    private void calculateCurrentMonthRevenue() {
+        // Reset counter
+        totalRevenueAmount.setText("₹0");
+        
+        if (allCustomers.isEmpty()) {
+            android.util.Log.d("DashboardActivity", "No customers loaded yet, skipping revenue calculation");
+            return;
+        }
+        
+        // Get current month start date
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        
+        long startOfMonthMillis = calendar.getTimeInMillis();
+        
+        android.util.Log.d("DashboardActivity", "Calculating revenue for providerId: " + providerId + ", customers count: " + allCustomers.size());
+        
+        // Query all service entries for this provider (without date filter to avoid index requirement)
+        firestore.collection("serviceEntries")
+            .whereEqualTo("providerId", providerId)
+            .get()
+            .addOnSuccessListener(querySnapshots -> {
+                android.util.Log.d("DashboardActivity", "Found " + querySnapshots.size() + " total service entries");
+                double totalRevenue = 0;
+                int currentMonthCount = 0;
+                
+                for (QueryDocumentSnapshot doc : querySnapshots) {
+                    // Filter by date in memory
+                    Timestamp entryDate = doc.getTimestamp("date");
+                    if (entryDate != null && entryDate.toDate().getTime() >= startOfMonthMillis) {
+                        currentMonthCount++;
+                        String customerId = doc.getString("customerId");
+                        Double quantityObj = doc.getDouble("quantity");
+                        double quantity = quantityObj != null ? quantityObj : 0;
+                        
+                        // Find customer to get rate
+                        for (Customer customer : allCustomers) {
+                            if (customer.getId().equals(customerId)) {
+                                double rate = customer.getRatePerUnit();
+                                double entryRevenue = quantity * rate;
+                                totalRevenue += entryRevenue;
+                                break;
+                            }
+                        }
+                    }
+                }
+                
+                android.util.Log.d("DashboardActivity", "Current month entries: " + currentMonthCount + ", Total revenue: " + totalRevenue);
+                String formattedAmount = CurrencyUtils.formatIndianCurrency(totalRevenue);
+                android.util.Log.d("DashboardActivity", "Formatted amount: " + formattedAmount);
+                totalRevenueAmount.setText(formattedAmount);
+            })
+            .addOnFailureListener(e -> {
+                android.util.Log.e("DashboardActivity", "Error loading revenue", e);
                 totalRevenueAmount.setText("₹0");
             });
     }
@@ -243,7 +354,8 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
             }
         }
         
-        customerAdapter.notifyDataSetChanged();
+        // Update adapter using submit method
+        customerAdapter.submit(filteredCustomers);
         updateEmptyState();
     }
     
@@ -348,5 +460,14 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
     protected void onResume() {
         super.onResume();
         loadData(); // Refresh data when returning to dashboard
+    }
+    
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Remove real-time listener to prevent memory leaks
+        if (customersListener != null) {
+            customersListener.remove();
+        }
     }
 }

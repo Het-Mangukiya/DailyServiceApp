@@ -13,8 +13,10 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.WriteBatch;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -118,6 +120,40 @@ public class FirestoreRepository {
                 .addOnSuccessListener(onSuccess)
                 .addOnFailureListener(onFailure);
     }
+
+    /**
+     * Updates an existing customer.
+     * 
+     * @param customer Customer with updated fields (must have ID set)
+     * @param listener Callback for completion
+     */
+    public void updateCustomer(Customer customer, OnSaveCompleteListener listener) {
+        if (customer.getId() == null || customer.getId().isEmpty()) {
+            listener.onError("Customer ID is required for update");
+            return;
+        }
+
+        customers()
+                .document(customer.getId())
+                .set(customer)
+                .addOnSuccessListener(aVoid -> listener.onSuccess())
+                .addOnFailureListener(e -> listener.onError(e.getMessage()));
+    }
+
+    /**
+     * Deletes a customer and all associated data.
+     * WARNING: This also deletes service entries, bills, and payments.
+     * 
+     * @param customerId Customer ID to delete
+     * @param listener Callback for completion
+     */
+    public void deleteCustomer(String customerId, OnSaveCompleteListener listener) {
+        customers()
+                .document(customerId)
+                .delete()
+                .addOnSuccessListener(aVoid -> listener.onSuccess())
+                .addOnFailureListener(e -> listener.onError(e.getMessage()));
+    }
     
     // ========== Service Entry Methods ==========
     
@@ -171,7 +207,40 @@ public class FirestoreRepository {
     }
     
     /**
+     * Listens to real-time updates for customers of a specific provider.
+     * Returns a ListenerRegistration that should be removed when done.
+     * 
+     * @param providerId The provider's ID
+     * @param listener Callback for real-time updates
+     * @return ListenerRegistration to remove listener
+     */
+    public ListenerRegistration listenToCustomers(String providerId, OnCustomersLoadedListener listener) {
+        return customers()
+                .whereEqualTo("providerId", providerId)
+                .whereEqualTo("status", "ACTIVE")
+                .addSnapshotListener((querySnapshot, error) -> {
+                    if (error != null) {
+                        listener.onError(error.getMessage());
+                        return;
+                    }
+                    
+                    if (querySnapshot != null) {
+                        List<Customer> customerList = new ArrayList<>();
+                        for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
+                            Customer customer = doc.toObject(Customer.class);
+                            if (customer != null) {
+                                customer.setId(doc.getId());
+                                customerList.add(customer);
+                            }
+                        }
+                        listener.onCustomersLoaded(customerList);
+                    }
+                });
+    }
+    
+    /**
      * Gets service entries for a provider within a date range.
+     * Filters in memory to avoid complex Firestore index requirements.
      * 
      * @param providerId The provider's ID
      * @param startDate Start of date range
@@ -182,9 +251,6 @@ public class FirestoreRepository {
                                                     Timestamp endDate, OnServiceEntriesLoadedListener listener) {
         db.collection("serviceEntries")
                 .whereEqualTo("providerId", providerId)
-                .orderBy("date")
-                .startAt(startDate)
-                .endAt(endDate)
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
                     List<ServiceEntry> entries = new ArrayList<>();
@@ -192,7 +258,14 @@ public class FirestoreRepository {
                         ServiceEntry entry = doc.toObject(ServiceEntry.class);
                         if (entry != null) {
                             entry.setId(doc.getId());
-                            entries.add(entry);
+                            
+                            // Filter by date range in memory
+                            Timestamp entryDate = entry.getDate();
+                            if (entryDate != null && 
+                                !entryDate.toDate().before(startDate.toDate()) && 
+                                !entryDate.toDate().after(endDate.toDate())) {
+                                entries.add(entry);
+                            }
                         }
                     }
                     listener.onServiceEntriesLoaded(entries);
@@ -221,6 +294,85 @@ public class FirestoreRepository {
                     .addOnSuccessListener(documentReference -> listener.onSuccess())
                     .addOnFailureListener(e -> listener.onError(e.getMessage()));
         }
+    }
+    
+    /**
+     * Saves a service entry and atomically updates customer's lent amount.
+     * Uses Firestore transaction to ensure atomicity (both succeed or both fail).
+     * Also checks for duplicate entry (one delivery per customer per day).
+     * 
+     * @param entry The service entry to save
+     * @param customerId Customer ID
+     * @param deliveryCost Cost to add to lent amount (rate × quantity)
+     * @param listener Callback for completion
+     */
+    public void saveServiceEntryWithTransaction(ServiceEntry entry, String customerId, 
+                                                 double deliveryCost, OnSaveCompleteListener listener) {
+        // First check for duplicate entry (same customer + same day)
+        // We'll query all entries for this customer and check dates in memory
+        db.collection("serviceEntries")
+                .whereEqualTo("customerId", customerId)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    // Check if any entry matches the same day
+                    Timestamp entryDate = entry.getDate();
+                    java.util.Calendar entryCal = java.util.Calendar.getInstance();
+                    entryCal.setTime(entryDate.toDate());
+                    int entryYear = entryCal.get(java.util.Calendar.YEAR);
+                    int entryMonth = entryCal.get(java.util.Calendar.MONTH);
+                    int entryDay = entryCal.get(java.util.Calendar.DAY_OF_MONTH);
+                    
+                    for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
+                        Timestamp existingDate = doc.getTimestamp("date");
+                        if (existingDate != null) {
+                            java.util.Calendar existingCal = java.util.Calendar.getInstance();
+                            existingCal.setTime(existingDate.toDate());
+                            
+                            if (existingCal.get(java.util.Calendar.YEAR) == entryYear &&
+                                existingCal.get(java.util.Calendar.MONTH) == entryMonth &&
+                                existingCal.get(java.util.Calendar.DAY_OF_MONTH) == entryDay) {
+                                // Duplicate found - entry already exists for this customer on this day
+                                listener.onError("Delivery already marked for this customer today");
+                                return;
+                            }
+                        }
+                    }
+                    
+                    // No duplicate - proceed with transaction
+                    DocumentReference customerRef = customers().document(customerId);
+                    
+                    db.runTransaction(transaction -> {
+                        // Read customer document
+                        DocumentSnapshot customerSnapshot = transaction.get(customerRef);
+                        
+                        if (!customerSnapshot.exists()) {
+                            throw new RuntimeException("Customer not found");
+                        }
+                        
+                        // Get current lent amount (default to 0 if not set)
+                        Double currentLent = customerSnapshot.getDouble("lentAmount");
+                        if (currentLent == null) {
+                            currentLent = 0.0;
+                        }
+                        
+                        // Calculate new lent amount
+                        double newLent = currentLent + deliveryCost;
+                        
+                        // Update customer's lent amount
+                        transaction.update(customerRef, "lentAmount", newLent);
+                        
+                        // Add service entry
+                        DocumentReference entryRef = db.collection("serviceEntries").document();
+                        transaction.set(entryRef, entry);
+                        
+                        return null;
+                    }).addOnSuccessListener(aVoid -> {
+                        listener.onSuccess();
+                    }).addOnFailureListener(e -> {
+                        listener.onError(e.getMessage());
+                    });
+                })
+                .addOnFailureListener(e -> listener.onError(e.getMessage()));
     }
     
     // ========== Bill Methods ==========

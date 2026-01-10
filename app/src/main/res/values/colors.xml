@@ -14,9 +14,21 @@
     
     <!-- Text Colors -->
     <color name="md_theme_on_primary">#FFFFFF</color>
+    <color name="md_theme_on_primary_container">#004D40</color>
     <color name="md_theme_on_secondary">#FFFFFF</color>
     <color name="md_theme_on_surface">#1C1B1F</color>
     <color name="md_theme_on_surface_variant">#49454F</color>
+    <color name="text_muted">#757575</color>
+    
+    <!-- Status Colors -->
+    <color name="md_theme_error">#EF5350</color>
+    <color name="error">#EF5350</color>
+    <color name="md_theme_success">#66BB6A</color>
+    <color name="success">#66BB6A</color>
+    
+    <!-- Gradient Colors -->
+    <color name="gradient_start">#4DB6AC</color>
+    <color name="gradient_end">#00897B</color>
     
     <!-- Legacy Support -->
     <color name="primary">#4DB6AC</color>
