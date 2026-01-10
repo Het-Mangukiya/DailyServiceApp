@@ -39,6 +39,9 @@ public class ServiceEntry {
     /** Quantity of service delivered (liters, items, hours, etc.) */
     private double quantity;
     
+    /** Rate per unit for this service delivery */
+    private double rate;
+    
     /** Delivery status flag */
     private boolean delivered;
     
@@ -104,6 +107,14 @@ public class ServiceEntry {
     
     public void setQuantity(double quantity) {
         this.quantity = quantity;
+    }
+    
+    public double getRate() {
+        return rate;
+    }
+    
+    public void setRate(double rate) {
+        this.rate = rate;
     }
     
     public boolean isDelivered() {

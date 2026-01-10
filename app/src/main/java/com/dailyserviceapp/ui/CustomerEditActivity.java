@@ -6,9 +6,9 @@ import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.dailyserviceapp.R;
+import com.dailyserviceapp.core.base.BaseActivity;
 import com.dailyserviceapp.data.FirestoreRepository;
 import com.dailyserviceapp.data.models.Customer;
 import com.google.android.material.button.MaterialButton;
@@ -19,7 +19,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.List;
 
-public class CustomerEditActivity extends AppCompatActivity {
+public class CustomerEditActivity extends BaseActivity {
 
     private FirestoreRepository repo;
     private String customerId; // null for ADD, non-null for EDIT
@@ -29,6 +29,13 @@ public class CustomerEditActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_customer_edit);
+        
+        // CRITICAL: Check login session first
+        if (!isLoggedIn()) {
+            showToast("Please login first");
+            finish();
+            return;
+        }
 
         repo = new FirestoreRepository();
         customerId = getIntent().getStringExtra("customerId");
@@ -101,6 +108,8 @@ public class CustomerEditActivity extends AppCompatActivity {
             } else {
                 // ADD new customer
                 Customer customer = new Customer(name, phone, address, service, rate, Timestamp.now());
+                customer.setProviderId(getCurrentUserId()); // CRITICAL: Set provider ID
+                customer.setStatus("ACTIVE"); // Set initial status
                 repo.addCustomer(customer,
                         ref -> {
                             Toast.makeText(this, "Customer added", Toast.LENGTH_SHORT).show();
@@ -163,13 +172,10 @@ public class CustomerEditActivity extends AppCompatActivity {
         });
     }
 
-    private String getCurrentUserId() {
-        return getSharedPreferences("daily_service_prefs", MODE_PRIVATE)
-                .getString("user_id", "");
-    }
-
+    // Remove this method - use BaseActivity's getCurrentUserId() instead
+    
     private static String value(TextInputEditText editText) {
-        if (editText.getText() == null) return "";
+        if (editText == null || editText.getText() == null) return "";
         return editText.getText().toString().trim();
     }
 }
