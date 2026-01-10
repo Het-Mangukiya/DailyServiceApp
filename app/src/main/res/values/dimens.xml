@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Spacing -->
+    <dimen name="spacing_xxs">2dp</dimen>
     <dimen name="spacing_xs">4dp</dimen>
     <dimen name="spacing_sm">8dp</dimen>
     <dimen name="spacing_base">16dp</dimen>
@@ -12,6 +13,8 @@
     <!-- Corner Radius -->
     <dimen name="corner_radius_sm">8dp</dimen>
     <dimen name="corner_radius_base">12dp</dimen>
+    <dimen name="corner_radius_button">12dp</dimen>
+    <dimen name="corner_radius_card">16dp</dimen>
     <dimen name="corner_radius_md">16dp</dimen>
     <dimen name="corner_radius_lg">20dp</dimen>
     <dimen name="corner_radius_xl">24dp</dimen>
@@ -19,6 +22,7 @@
     <!-- Elevation -->
     <dimen name="elevation_sm">2dp</dimen>
     <dimen name="elevation_base">4dp</dimen>
+    <dimen name="elevation_card">4dp</dimen>
     <dimen name="elevation_md">6dp</dimen>
     
     <!-- Card Sizes -->

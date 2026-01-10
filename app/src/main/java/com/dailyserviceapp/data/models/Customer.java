@@ -36,6 +36,12 @@ public class Customer {
     /** Rate per unit of service */
     private double ratePerUnit;
     
+    /** Default quantity for daily delivery (everyday quantity) */
+    private double defaultQuantity;
+    
+    /** Total amount lent to customer (pending payments) */
+    private double lentAmount;
+    
     /** Provider ID who manages this customer */
     private String providerId;
     
@@ -53,6 +59,8 @@ public class Customer {
 
     public Customer() {
         // Firestore requires a public no-arg constructor
+        this.defaultQuantity = 1.0; // Default to 1 unit per day
+        this.lentAmount = 0.0; // Default to no pending amount
     }
 
     public Customer(String name, String phone, String address, String serviceType, double ratePerUnit, Timestamp createdAt) {
@@ -63,6 +71,8 @@ public class Customer {
         this.ratePerUnit = ratePerUnit;
         this.createdAt = createdAt;
         this.status = "ACTIVE";
+        this.defaultQuantity = 1.0; // Default to 1 unit per day
+        this.lentAmount = 0.0; // Default to no pending amount
     }
 
     public String getId() {
@@ -87,6 +97,14 @@ public class Customer {
 
     public double getRatePerUnit() {
         return ratePerUnit;
+    }
+    
+    public double getDefaultQuantity() {
+        return defaultQuantity;
+    }
+    
+    public double getLentAmount() {
+        return lentAmount;
     }
     
     public String getProviderId() {
@@ -131,6 +149,14 @@ public class Customer {
 
     public void setRatePerUnit(double ratePerUnit) {
         this.ratePerUnit = ratePerUnit;
+    }
+    
+    public void setDefaultQuantity(double defaultQuantity) {
+        this.defaultQuantity = defaultQuantity;
+    }
+    
+    public void setLentAmount(double lentAmount) {
+        this.lentAmount = lentAmount;
     }
     
     public void setProviderId(String providerId) {

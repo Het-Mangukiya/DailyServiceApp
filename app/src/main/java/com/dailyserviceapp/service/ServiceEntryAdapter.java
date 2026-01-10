@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.dailyserviceapp.R;
 import com.dailyserviceapp.data.models.Customer;
 import com.dailyserviceapp.data.models.ServiceEntry;
-import com.google.android.material.button.MaterialButton;
 import com.google.android.material.checkbox.MaterialCheckBox;
 
 import java.util.ArrayList;
@@ -20,47 +19,48 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Adapter for displaying and managing service entries in a RecyclerView.
- * Provides inline editing capabilities for quantity and delivery status.
+ * Simplified adapter for service entry marking.
+ * Shows which customers already have deliveries marked today.
+ * Only unmarked customers can be selected for batch delivery.
  * 
  * @author DailyDrop Team
- * @version 1.0
- * @since 2026-01-09
+ * @version 3.0
+ * @since 2026-01-10
  */
 public class ServiceEntryAdapter extends RecyclerView.Adapter<ServiceEntryAdapter.ViewHolder> {
 
-    /**
-     * Listener interface for service entry changes.
-     */
-    public interface OnEntryChangeListener {
-        void onQuantityChanged(Customer customer, double quantity, boolean delivered);
-    }
-
     private final List<Customer> customers = new ArrayList<>();
-    private final Map<String, ServiceEntry> entries = new HashMap<>();
-    private final OnEntryChangeListener listener;
+    private final Map<String, Boolean> deliveryStatus = new HashMap<>(); // true = already delivered
 
-    public ServiceEntryAdapter(OnEntryChangeListener listener) {
-        this.listener = listener;
+    public ServiceEntryAdapter() {
     }
 
     /**
-     * Updates the adapter with customer list and existing service entries.
+     * Updates adapter with customer list and existing service entries.
+     * Marks which customers already have deliveries for the selected date.
      * 
-     * @param customerList List of customers to display
-     * @param serviceEntries Existing service entries for the selected date
+     * @param customerList List of customers
+     * @param serviceEntries Existing service entries for selected date
      */
     public void submitData(List<Customer> customerList, List<ServiceEntry> serviceEntries) {
         customers.clear();
-        entries.clear();
+        deliveryStatus.clear();
         
         if (customerList != null) {
             customers.addAll(customerList);
-        }
-        
-        if (serviceEntries != null) {
-            for (ServiceEntry entry : serviceEntries) {
-                entries.put(entry.getCustomerId(), entry);
+            
+            // Mark which customers already have deliveries
+            for (Customer customer : customerList) {
+                boolean hasEntry = false;
+                if (serviceEntries != null) {
+                    for (ServiceEntry entry : serviceEntries) {
+                        if (entry.getCustomerId().equals(customer.getId()) && entry.isDelivered()) {
+                            hasEntry = true;
+                            break;
+                        }
+                    }
+                }
+                deliveryStatus.put(customer.getId(), hasEntry);
             }
         }
         
@@ -71,55 +71,33 @@ public class ServiceEntryAdapter extends RecyclerView.Adapter<ServiceEntryAdapte
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.row_service_entry, parent, false);
+                .inflate(R.layout.item_service_entry, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Customer customer = customers.get(position);
-        ServiceEntry entry = entries.get(customer.getId());
+        boolean alreadyDelivered = deliveryStatus.getOrDefault(customer.getId(), false);
         
-        // Set customer info
-        if (customer.getName() != null && !customer.getName().isEmpty()) {
-            String initial = customer.getName().substring(0, 1).toUpperCase();
-            holder.customerInitial.setText(initial);
-        }
+        // Set customer name
         holder.customerName.setText(customer.getName());
         
-        String serviceInfo = customer.getServiceType() + " · ₹" + String.format("%.2f", customer.getRatePerUnit());
-        holder.serviceInfo.setText(serviceInfo);
+        // Set service details
+        String details = String.format("%s • ₹%.0f × %.1f", 
+            customer.getServiceType(),
+            customer.getRatePerUnit(),
+            customer.getDefaultQuantity()
+        );
+        holder.serviceDetails.setText(details);
         
-        // Set quantity and delivery status
-        double quantity = entry != null ? entry.getQuantity() : 0.0;
-        boolean delivered = entry != null && entry.isDelivered();
+        // Set quantity
+        holder.quantityText.setText(String.format("%.1f", customer.getDefaultQuantity()));
         
-        holder.quantityText.setText(String.valueOf(quantity));
-        holder.deliveredCheckbox.setChecked(delivered);
-        
-        // Decrease button
-        holder.decreaseButton.setOnClickListener(v -> {
-            double currentQty = Double.parseDouble(holder.quantityText.getText().toString());
-            if (currentQty > 0) {
-                double newQty = currentQty - 0.5;
-                holder.quantityText.setText(String.valueOf(newQty));
-                listener.onQuantityChanged(customer, newQty, holder.deliveredCheckbox.isChecked());
-            }
-        });
-        
-        // Increase button
-        holder.increaseButton.setOnClickListener(v -> {
-            double currentQty = Double.parseDouble(holder.quantityText.getText().toString());
-            double newQty = currentQty + 0.5;
-            holder.quantityText.setText(String.valueOf(newQty));
-            listener.onQuantityChanged(customer, newQty, holder.deliveredCheckbox.isChecked());
-        });
-        
-        // Delivered checkbox
-        holder.deliveredCheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            double currentQty = Double.parseDouble(holder.quantityText.getText().toString());
-            listener.onQuantityChanged(customer, currentQty, isChecked);
-        });
+        // Checkbox: checked = already delivered (read-only), unchecked = ready to mark
+        holder.deliveredCheckbox.setOnCheckedChangeListener(null);
+        holder.deliveredCheckbox.setChecked(alreadyDelivered);
+        holder.deliveredCheckbox.setEnabled(!alreadyDelivered); // Disable if already delivered
     }
 
     @Override
@@ -127,24 +105,51 @@ public class ServiceEntryAdapter extends RecyclerView.Adapter<ServiceEntryAdapte
         return customers.size();
     }
 
+    /**
+     * Get customers who DON'T have deliveries yet (ready for marking)
+     */
+    public List<DeliveryItem> getSelectedDeliveries() {
+        List<DeliveryItem> deliveries = new ArrayList<>();
+        for (Customer customer : customers) {
+            // Only include customers who DON'T have deliveries yet
+            if (!deliveryStatus.getOrDefault(customer.getId(), false)) {
+                deliveries.add(new DeliveryItem(
+                    customer.getId(),
+                    customer.getDefaultQuantity(),
+                    customer.getRatePerUnit() * customer.getDefaultQuantity()
+                ));
+            }
+        }
+        return deliveries;
+    }
+
+    /**
+     * Simple data class for delivery marking
+     */
+    public static class DeliveryItem {
+        public final String customerId;
+        public final double quantity;
+        public final double amount;
+
+        public DeliveryItem(String customerId, double quantity, double amount) {
+            this.customerId = customerId;
+            this.quantity = quantity;
+            this.amount = amount;
+        }
+    }
+
     static class ViewHolder extends RecyclerView.ViewHolder {
-        final TextView customerInitial;
         final TextView customerName;
-        final TextView serviceInfo;
-        final MaterialButton decreaseButton;
+        final TextView serviceDetails;
         final TextView quantityText;
-        final MaterialButton increaseButton;
         final MaterialCheckBox deliveredCheckbox;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
-            customerInitial = itemView.findViewById(R.id.customerInitial);
-            customerName = itemView.findViewById(R.id.customerName);
-            serviceInfo = itemView.findViewById(R.id.serviceInfo);
-            decreaseButton = itemView.findViewById(R.id.decreaseButton);
-            quantityText = itemView.findViewById(R.id.quantityText);
-            increaseButton = itemView.findViewById(R.id.increaseButton);
-            deliveredCheckbox = itemView.findViewById(R.id.deliveryCheckbox);
+            customerName = itemView.findViewById(R.id.txtCustomerName);
+            serviceDetails = itemView.findViewById(R.id.txtServiceDetails);
+            quantityText = itemView.findViewById(R.id.txtQuantity);
+            deliveredCheckbox = itemView.findViewById(R.id.checkboxDelivered);
         }
     }
 }
