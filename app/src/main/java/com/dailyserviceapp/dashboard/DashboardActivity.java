@@ -229,47 +229,60 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
     }
     
     private void calculateTodaysSummary() {
-        // Get today's date range
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        long startOfDay = calendar.getTimeInMillis();
+        if (allCustomers.isEmpty()) {
+            txtTodayDelivered.setText(getString(R.string.delivered_format, 0, 0));
+            txtTodayAmount.setText(getString(R.string.rupee_zero));
+            return;
+        }
         
-        // Query today's service entries
-        firestore.collection("serviceEntries")
-            .whereEqualTo("providerId", providerId)
-            .get()
-            .addOnSuccessListener(querySnapshots -> {
-                int todayCount = 0;
-                double todayRevenue = 0;
-                
-                for (com.google.firebase.firestore.QueryDocumentSnapshot doc : querySnapshots) {
-                    com.google.firebase.Timestamp entryDate = doc.getTimestamp("date");
-                    if (entryDate != null && entryDate.toDate().getTime() >= startOfDay) {
-                        todayCount++;
-                        String customerId = doc.getString("customerId");
-                        Double quantity = doc.getDouble("quantity");
-                        
-                        // Find customer to get rate
-                        for (Customer customer : allCustomers) {
-                            if (customer.getId().equals(customerId)) {
-                                double rate = customer.getRatePerUnit();
-                                todayRevenue += (quantity != null ? quantity : 0) * rate;
-                                break;
-                            }
+        // Get today's date key (yyyyMMdd format)
+        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyyMMdd", java.util.Locale.US);
+        String todayKey = sdf.format(new java.util.Date());
+        
+        // Count deliveries and revenue for today
+        final int[] deliveredCount = {0};
+        final double[] todayRevenue = {0.0};
+        final int totalCustomers = allCustomers.size();
+        final int[] checkedCustomers = {0};
+        
+        // Check each customer's delivery status for today
+        for (Customer customer : allCustomers) {
+            firestore.collection("customers")
+                .document(customer.getId())
+                .collection("deliveries")
+                .document(todayKey)
+                .get()
+                .addOnSuccessListener(doc -> {
+                    checkedCustomers[0]++;
+                    
+                    if (doc.exists()) {
+                        Boolean delivered = doc.getBoolean("delivered");
+                        if (delivered != null && delivered) {
+                            deliveredCount[0]++;
+                            
+                            // Calculate revenue
+                            Double quantity = doc.getDouble("quantity");
+                            double rate = customer.getRatePerUnit();
+                            todayRevenue[0] += (quantity != null ? quantity : 1.0) * rate;
                         }
                     }
-                }
-                
-                txtTodayDelivered.setText(todayCount + "/" + allCustomers.size() + " delivered");
-                txtTodayAmount.setText(CurrencyUtils.formatIndianCurrency(todayRevenue));
-            })
-            .addOnFailureListener(e -> {
-                txtTodayDelivered.setText("0/" + allCustomers.size() + " delivered");
-                txtTodayAmount.setText("₹0");
-            });
+                    
+                    // Update UI when all customers checked
+                    if (checkedCustomers[0] == totalCustomers) {
+                        txtTodayDelivered.setText(getString(R.string.delivered_format, 
+                            deliveredCount[0], totalCustomers));
+                        txtTodayAmount.setText(CurrencyUtils.formatIndianCurrency(todayRevenue[0]));
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    checkedCustomers[0]++;
+                    if (checkedCustomers[0] == totalCustomers) {
+                        txtTodayDelivered.setText(getString(R.string.delivered_format, 
+                            deliveredCount[0], totalCustomers));
+                        txtTodayAmount.setText(CurrencyUtils.formatIndianCurrency(todayRevenue[0]));
+                    }
+                });
+        }
     }
     
     private void calculateCurrentMonthRevenue() {
