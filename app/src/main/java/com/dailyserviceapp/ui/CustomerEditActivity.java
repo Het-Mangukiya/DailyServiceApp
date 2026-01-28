@@ -84,6 +84,24 @@ public class CustomerEditActivity extends BaseActivity {
                 Toast.makeText(this, R.string.error_rate_must_be_number, Toast.LENGTH_LONG).show();
                 return;
             }
+            
+            // Comprehensive rate validation
+            if (rate <= 0) {
+                Toast.makeText(this, "Rate must be greater than zero", Toast.LENGTH_LONG).show();
+                return;
+            }
+            
+            if (rate > 100000) {
+                Toast.makeText(this, "Rate seems unreasonably high. Please check.", Toast.LENGTH_LONG).show();
+                return;
+            }
+            
+            // Validate max 2 decimal places
+            String[] parts = rateStr.split("\\.");
+            if (parts.length > 1 && parts[1].length() > 2) {
+                Toast.makeText(this, "Rate can have maximum 2 decimal places", Toast.LENGTH_LONG).show();
+                return;
+            }
 
             if (customerId != null) {
                 // UPDATE existing customer
@@ -124,34 +142,45 @@ public class CustomerEditActivity extends BaseActivity {
     private void loadCustomerData(TextInputEditText nameInput, TextInputEditText phoneInput, 
                                    TextInputEditText addressInput, TextInputEditText serviceInput, 
                                    TextInputEditText rateInput) {
-        FirebaseFirestore.getInstance()
-                .collection("customers")
-                .document(customerId)
-                .get()
-                .addOnSuccessListener(doc -> {
-                    if (doc.exists()) {
-                        existingCustomer = doc.toObject(Customer.class);
-                        if (existingCustomer != null) {
-                            existingCustomer.setId(doc.getId());
-                            nameInput.setText(existingCustomer.getName());
-                            phoneInput.setText(existingCustomer.getPhone());
-                            addressInput.setText(existingCustomer.getAddress());
-                            serviceInput.setText(existingCustomer.getServiceType());
-                            rateInput.setText(String.valueOf(existingCustomer.getRatePerUnit()));
-                        }
+        // Use repository instead of direct Firestore call (maintains consistency)
+        repo.getCustomer(customerId, 
+            doc -> {
+                if (doc.exists()) {
+                    existingCustomer = doc.toObject(Customer.class);
+                    if (existingCustomer != null) {
+                        existingCustomer.setId(doc.getId());
+                        nameInput.setText(existingCustomer.getName());
+                        phoneInput.setText(existingCustomer.getPhone());
+                        addressInput.setText(existingCustomer.getAddress());
+                        serviceInput.setText(existingCustomer.getServiceType());
+                        rateInput.setText(String.valueOf(existingCustomer.getRatePerUnit()));
                     }
-                })
-                .addOnFailureListener(e -> 
-                    Toast.makeText(this, R.string.error_loading_customer, Toast.LENGTH_SHORT).show()
-                );
+                } else {
+                    Toast.makeText(this, "Customer not found", Toast.LENGTH_SHORT).show();
+                    finish();
+                }
+            },
+            e -> {
+                Toast.makeText(this, R.string.error_loading_customer, Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        );
     }
 
     private void showDeleteConfirmation() {
+        // Enhanced warning with explicit consequences
         new MaterialAlertDialogBuilder(this)
-                .setTitle("Delete Customer")
-                .setMessage("Are you sure you want to delete this customer? This will also delete all delivery records and billing history.")
-                .setPositiveButton("Delete", (dialog, which) -> deleteCustomer())
+                .setTitle("⚠️ Delete Customer?")
+                .setMessage("Deleting this customer will permanently remove:\n\n" +
+                        "• All delivery records\n" +
+                        "• All bills and payment history\n" +
+                        "• Complete transaction history\n\n" +
+                        "⚠️ This action cannot be undone.\n\n" +
+                        "Are you absolutely sure?")
+                .setPositiveButton("Delete Permanently", (dialog, which) -> deleteCustomer())
                 .setNegativeButton("Cancel", null)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setCancelable(true)
                 .show();
     }
 

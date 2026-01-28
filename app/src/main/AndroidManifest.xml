@@ -50,12 +50,6 @@
             android:name=".dashboard.DashboardActivity"
             android:exported="false" />
 
-        <!-- Products -->
-        <activity
-            android:name=".products.ProductsActivity"
-            android:exported="false"
-            android:theme="@style/Theme.DailyServiceApp.NoActionBar" />
-
         <!-- Customer Management -->
         <activity
             android:name=".ui.CustomerEditActivity"

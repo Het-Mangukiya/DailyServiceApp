@@ -68,6 +68,21 @@ public class PaymentActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_payment_new);
         
+        // CRITICAL: Validate billId FIRST before any initialization
+        billId = getIntent().getStringExtra("billId");
+        if (billId == null || billId.isEmpty()) {
+            showToast("Error: Bill ID not provided. Please open from Bill Details.");
+            finish();
+            return;
+        }
+        
+        // CRITICAL: Check session
+        if (!isLoggedIn()) {
+            showToast("Please login first");
+            navigateToLogin();
+            return;
+        }
+        
         MaterialToolbar toolbar = findViewById(R.id.toolbar);
         setupToolbar(toolbar, "Record Payment", true);
         
@@ -99,13 +114,6 @@ public class PaymentActivity extends BaseActivity {
     
     private void initializeData() {
         repository = new FirestoreRepository();
-        billId = getIntent().getStringExtra("billId");
-        
-        if (billId == null || billId.isEmpty()) {
-            showToast("Error: Bill ID not provided. Please open from Bill Details.");
-            finish();
-            return;
-        }
         
         // Set current date as default payment date
         selectedPaymentDate = new Date();
@@ -180,6 +188,8 @@ public class PaymentActivity extends BaseActivity {
                 calendar.get(Calendar.MONTH),
                 calendar.get(Calendar.DAY_OF_MONTH)
         );
+        // Restrict to past and today only (no future payments)
+        datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis());
         datePickerDialog.show();
     }
     
@@ -192,7 +202,8 @@ public class PaymentActivity extends BaseActivity {
         // Validate input
         String amountStr = amountInput.getText() != null ? amountInput.getText().toString().trim() : "";
         if (amountStr.isEmpty()) {
-            showToast("Please enter payment amount");
+            amountInput.setError("Payment amount is required");
+            amountInput.requestFocus();
             return;
         }
         
@@ -200,11 +211,29 @@ public class PaymentActivity extends BaseActivity {
         try {
             amount = Double.parseDouble(amountStr);
             if (amount <= 0) {
-                showToast("Amount must be greater than 0");
+                amountInput.setError("Amount must be greater than 0");
+                amountInput.requestFocus();
                 return;
             }
+            
+            // Validate decimal places (max 2)
+            String[] parts = amountStr.split("\\.");
+            if (parts.length > 1 && parts[1].length() > 2) {
+                amountInput.setError("Maximum 2 decimal places allowed");
+                amountInput.requestFocus();
+                return;
+            }
+            
+            // Validate reasonable maximum (prevent typos like 999999)
+            if (amount > 1000000) {
+                amountInput.setError("Amount seems unusually large. Please verify.");
+                amountInput.requestFocus();
+                return;
+            }
+            
         } catch (NumberFormatException e) {
-            showToast("Invalid amount");
+            amountInput.setError("Invalid amount format");
+            amountInput.requestFocus();
             return;
         }
         
@@ -213,6 +242,25 @@ public class PaymentActivity extends BaseActivity {
             showToast("Please select payment method");
             return;
         }
+        
+        // Check for overpayment and warn user
+        if (amount > currentBill.getTotalAmount()) {
+            new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+                .setTitle("Overpayment Detected")
+                .setMessage(String.format("Payment amount (₹%.2f) exceeds bill total (₹%.2f). The excess will be credited. Continue?", 
+                    amount, currentBill.getTotalAmount()))
+                .setPositiveButton("Continue", (dialog, which) -> savePayment(amount, paymentMethod))
+                .setNegativeButton("Cancel", null)
+                .show();
+        } else {
+            savePayment(amount, paymentMethod);
+        }
+    }
+    
+    /**
+     * Actually save the payment after validation
+     */
+    private void savePayment(double amount, String paymentMethod) {
         
         String notes = notesInput.getText() != null ? notesInput.getText().toString().trim() : "";
         

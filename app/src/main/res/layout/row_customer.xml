@@ -87,6 +87,19 @@
 
         </LinearLayout>
 
+        <!-- Vacation Badge -->
+        <TextView
+            android:id="@+id/vacationBadge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="🏖️"
+            android:textSize="32sp"
+            android:visibility="gone"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/customerStatus"
+            android:layout_marginEnd="@dimen/spacing_sm" />
+
         <!-- Status Badge -->
         <com.google.android.material.chip.Chip
             android:id="@+id/customerStatus"

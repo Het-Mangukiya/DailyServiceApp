@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.dailyserviceapp.auth.LoginActivity;
 import com.dailyserviceapp.dashboard.DashboardActivity;
-import com.dailyserviceapp.utils.SessionManager;
+import com.dailyserviceapp.core.utils.PreferenceManager;
 
 /**
  * Splash screen activity displayed on app launch.
@@ -59,10 +59,10 @@ public class SplashActivity extends AppCompatActivity {
      * Finishes this activity to prevent returning to splash screen on back press.
      */
     private void navigateToNextScreen() {
-        SessionManager sessionManager = new SessionManager(this);
+        PreferenceManager preferenceManager = new PreferenceManager(this);
         Intent intent;
 
-        if (sessionManager.isLoggedIn()) {
+        if (preferenceManager.isLoggedIn()) {
             // User is logged in, go to dashboard
             intent = new Intent(SplashActivity.this, DashboardActivity.class);
         } else {
