@@ -13,6 +13,13 @@ public class ReportsActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reports);
         
+        // CRITICAL: Check session first
+        if (!isLoggedIn()) {
+            showToast("Please login first");
+            navigateToLogin();
+            return;
+        }
+        
         TextView placeholderText = findViewById(R.id.placeholderText);
         placeholderText.setText("Reports Module\n\nComing Soon:\n• Revenue reports\n• Payment summaries\n• Service statistics\n• Charts & graphs\n• Export to PDF/CSV");
     }

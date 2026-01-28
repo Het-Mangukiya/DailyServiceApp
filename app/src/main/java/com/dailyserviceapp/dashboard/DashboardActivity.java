@@ -2,6 +2,8 @@ package com.dailyserviceapp.dashboard;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.MenuItem;
@@ -15,11 +17,13 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.dailyserviceapp.R;
 import com.dailyserviceapp.auth.LoginActivity;
 import com.dailyserviceapp.billing.BillListActivity;
 import com.dailyserviceapp.core.base.BaseActivity;
+import com.dailyserviceapp.core.offline.OfflineCache;
 import com.dailyserviceapp.core.utils.CurrencyUtils;
 import com.dailyserviceapp.data.models.Customer;
 import com.dailyserviceapp.payment.PaymentActivity;
@@ -33,6 +37,9 @@ import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -58,20 +65,34 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private MaterialToolbar toolbar;
+    private SwipeRefreshLayout swipeRefreshLayout;
     
     private TextView totalCustomersCount, totalRevenueAmount;
     private TextView txtTodayDelivered, txtTodayAmount;
+    private com.google.android.material.chip.Chip syncStatusChip;
     private RecyclerView customerRecyclerView;
     private CustomerAdapter customerAdapter;
     private LinearLayout emptyState;
     private EditText searchEditText;
     private ExtendedFloatingActionButton addCustomerFab;
+    private com.google.android.material.button.MaterialButton sortButton;
     
     private FirebaseFirestore firestore;
+    private OfflineCache offlineCache;
+    private GoogleSignInClient googleSignInClient;
     private String providerId;
     private List<Customer> allCustomers = new ArrayList<>();
     private List<Customer> filteredCustomers = new ArrayList<>();
     private ListenerRegistration customersListener;
+    
+    // Search debouncing
+    private final Handler searchHandler = new Handler(Looper.getMainLooper());
+    private Runnable searchRunnable;
+    private static final long SEARCH_DELAY_MS = 300;
+    
+    // Sorting
+    private enum SortOrder { NAME, SERVICE_TYPE, ADDRESS }
+    private SortOrder currentSortOrder = SortOrder.NAME;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +106,14 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         
         providerId = getCurrentUserId();
         firestore = FirebaseFirestore.getInstance();
+        offlineCache = new OfflineCache(this);
+        
+        // Initialize Google Sign-In client for logout
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+        googleSignInClient = GoogleSignIn.getClient(this, gso);
         
         initializeViews();
         setupNavigationDrawer();
@@ -97,17 +126,32 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         drawerLayout = findViewById(R.id.drawerLayout);
         navigationView = findViewById(R.id.navigationView);
         toolbar = findViewById(R.id.topAppBar);
+        swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
         
         totalCustomersCount = findViewById(R.id.txtCustomerCount);
         totalRevenueAmount = findViewById(R.id.txtTotalValue);
         txtTodayDelivered = findViewById(R.id.txtTodayDelivered);
         txtTodayAmount = findViewById(R.id.txtTodayAmount);
+        syncStatusChip = findViewById(R.id.syncStatusChip);
         customerRecyclerView = findViewById(R.id.customerRecyclerView);
         emptyState = findViewById(R.id.emptyStateLayout);
         searchEditText = findViewById(R.id.edtSearch);
         addCustomerFab = findViewById(R.id.fabAddCustomer);
+        // sortButton will be set from menu in onCreateOptionsMenu
         
         setSupportActionBar(toolbar);
+        
+        // Setup swipe-to-refresh (if available in layout)
+        if (swipeRefreshLayout != null) {
+            swipeRefreshLayout.setColorSchemeResources(
+                R.color.md_theme_primary,
+                R.color.md_theme_secondary,
+                R.color.md_theme_tertiary
+            );
+            swipeRefreshLayout.setOnRefreshListener(() -> {
+                loadData();
+            });
+        }
     }
     
     private void setupNavigationDrawer() {
@@ -142,10 +186,8 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
     
     private void setupRecyclerView() {
         customerAdapter = new CustomerAdapter(customer -> {
-            // Handle customer click - navigate to detail or edit
-            Intent intent = new Intent(this, CustomerEditActivity.class);
-            intent.putExtra("customerId", customer.getId());
-            startActivity(intent);
+            // Show options dialog: View Details or Toggle Vacation
+            showCustomerOptions(customer);
         });
         customerAdapter.submit(filteredCustomers);
         customerRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -157,13 +199,22 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
             startActivity(new Intent(this, CustomerEditActivity.class));
         });
         
+        // Sort button is handled via menu onOptionsItemSelected
+        
         searchEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                filterCustomers(s.toString());
+                // Remove pending search callbacks
+                if (searchRunnable != null) {
+                    searchHandler.removeCallbacks(searchRunnable);
+                }
+                
+                // Post new search with 300ms delay
+                searchRunnable = () -> filterCustomers(s.toString());
+                searchHandler.postDelayed(searchRunnable, SEARCH_DELAY_MS);
             }
             
             @Override
@@ -193,6 +244,9 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
             .addSnapshotListener((queryDocumentSnapshots, error) -> {
                 if (error != null) {
                     showToast("Failed to load customers: " + error.getMessage());
+                    if (swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing()) {
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
                     return;
                 }
                 
@@ -207,12 +261,20 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
                         filteredCustomers.add(customer);
                     }
                     
+                    // Cache for offline access
+                    offlineCache.cacheCustomers(allCustomers);
+                    
                     // Update adapter using submit method
                     customerAdapter.submit(filteredCustomers);
                     updateEmptyState();
                     
                     // Load analytics after customers are loaded to avoid race condition
                     loadAnalytics();
+                    
+                    // Stop refresh animation
+                    if (swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing()) {
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
                 }
             });
     }
@@ -367,6 +429,9 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
             }
         }
         
+        // Apply current sort order
+        sortCustomers();
+        
         // Update adapter using submit method
         customerAdapter.submit(filteredCustomers);
         updateEmptyState();
@@ -380,6 +445,21 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
             emptyState.setVisibility(View.GONE);
             customerRecyclerView.setVisibility(View.VISIBLE);
         }
+    }
+    
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        
+        if (id == R.id.sortButton) {
+            showSortDialog();
+            return true;
+        } else if (id == R.id.action_calendar) {
+            startActivity(new Intent(this, ServiceEntryActivity.class));
+            return true;
+        }
+        
+        return super.onOptionsItemSelected(item);
     }
     
     @Override
@@ -449,15 +529,21 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
     }
     
     private void logout() {
+        // Clear SharedPreferences (critical - was missing)
+        preferenceManager.clearAllData();
+        
+        // Sign out from Firebase
         FirebaseAuth.getInstance().signOut();
-        navigateToLogin();
-    }
-    
-    private void navigateToLogin() {
-        Intent intent = new Intent(this, LoginActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
-        finish();
+        
+        // Sign out from Google (prevents account switching issues)
+        if (googleSignInClient != null) {
+            googleSignInClient.signOut().addOnCompleteListener(this, task -> {
+                // Navigate to login regardless of Google sign-out result
+                navigateToLogin();
+            });
+        } else {
+            navigateToLogin();
+        }
     }
     
     @Override
@@ -470,17 +556,143 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
     }
     
     @Override
+    protected void onPause() {
+        super.onPause();
+        // Remove listener when activity is paused to save resources
+        if (customersListener != null) {
+            customersListener.remove();
+            customersListener = null;
+        }
+    }
+    
+    @Override
     protected void onResume() {
         super.onResume();
-        loadData(); // Refresh data when returning to dashboard
+        // Reload data when returning to dashboard
+        loadData();
+        // Update sync status
+        updateSyncStatus();
+    }
+    
+    private void updateSyncStatus() {
+        if (syncStatusChip == null || offlineCache == null) {
+            return;
+        }
+        
+        int pendingCount = offlineCache.getPendingEntries().size();
+        if (pendingCount > 0) {
+            syncStatusChip.setVisibility(View.VISIBLE);
+            String text = pendingCount == 1 ? 
+                "📤 1 pending sync" : 
+                "📤 " + pendingCount + " pending sync";
+            syncStatusChip.setText(text);
+        } else {
+            syncStatusChip.setVisibility(View.GONE);
+        }
+    }
+    
+    private void showSortDialog() {
+        String[] options = {"Sort by Name (A-Z)", "Sort by Service Type", "Sort by Address"};
+        int currentSelection = currentSortOrder.ordinal();
+        
+        new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+            .setTitle("Sort Customers")
+            .setSingleChoiceItems(options, currentSelection, (dialog, which) -> {
+                currentSortOrder = SortOrder.values()[which];
+                filterCustomers(searchEditText.getText().toString());
+                dialog.dismiss();
+                String sortType = options[which].toLowerCase().replace("sort by ", "");
+                showToast("Sorted by " + sortType);
+            })
+            .setNegativeButton("Cancel", null)
+            .show();
+    }
+    
+    private void showCustomerOptions(Customer customer) {
+        String vacationText = customer.isOnVacation() ? "Remove from Vacation" : "Mark as On Vacation";
+        String[] options = {"View/Edit Details", vacationText};
+        
+        new MaterialAlertDialogBuilder(this)
+            .setTitle(customer.getName())
+            .setItems(options, (dialog, which) -> {
+                if (which == 0) {
+                    // View/Edit Details
+                    Intent intent = new Intent(this, CustomerEditActivity.class);
+                    intent.putExtra("customerId", customer.getId());
+                    startActivity(intent);
+                } else {
+                    // Toggle vacation mode
+                    toggleVacationMode(customer);
+                }
+            })
+            .show();
+    }
+    
+    private void toggleVacationMode(Customer customer) {
+        boolean newVacationStatus = !customer.isOnVacation();
+        
+        firestore.collection("customers")
+            .document(customer.getId())
+            .update("onVacation", newVacationStatus)
+            .addOnSuccessListener(aVoid -> {
+                String message = newVacationStatus ? 
+                    customer.getName() + " marked as on vacation 🏖️" :
+                    customer.getName() + " is back from vacation";
+                showToast(message);
+            })
+            .addOnFailureListener(e -> {
+                showToast("Failed to update vacation status");
+            });
+    }
+    
+    private void sortCustomers() {
+        switch (currentSortOrder) {
+            case NAME:
+                java.util.Collections.sort(filteredCustomers, (c1, c2) -> 
+                    c1.getName().compareToIgnoreCase(c2.getName()));
+                break;
+            case SERVICE_TYPE:
+                java.util.Collections.sort(filteredCustomers, (c1, c2) -> {
+                    int serviceCompare = c1.getServiceType().compareToIgnoreCase(c2.getServiceType());
+                    if (serviceCompare == 0) {
+                        return c1.getName().compareToIgnoreCase(c2.getName());
+                    }
+                    return serviceCompare;
+                });
+                break;
+            case ADDRESS:
+                java.util.Collections.sort(filteredCustomers, (c1, c2) -> {
+                    // Sort by area first, then by address, then by name
+                    String area1 = c1.getArea() != null && !c1.getArea().isEmpty() ? c1.getArea() : "ZZZ";
+                    String area2 = c2.getArea() != null && !c2.getArea().isEmpty() ? c2.getArea() : "ZZZ";
+                    int areaCompare = area1.compareToIgnoreCase(area2);
+                    if (areaCompare != 0) {
+                        return areaCompare;
+                    }
+                    
+                    String addr1 = c1.getAddress() != null ? c1.getAddress() : "";
+                    String addr2 = c2.getAddress() != null ? c2.getAddress() : "";
+                    int addrCompare = addr1.compareToIgnoreCase(addr2);
+                    if (addrCompare == 0) {
+                        return c1.getName().compareToIgnoreCase(c2.getName());
+                    }
+                    return addrCompare;
+                });
+                break;
+        }
     }
     
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        // Remove real-time listener to prevent memory leaks
+        // Clean up search handler to prevent memory leaks
+        if (searchRunnable != null) {
+            searchHandler.removeCallbacks(searchRunnable);
+        }
+        // Final cleanup - remove listener if still exists
         if (customersListener != null) {
             customersListener.remove();
+            customersListener = null;
         }
     }
 }

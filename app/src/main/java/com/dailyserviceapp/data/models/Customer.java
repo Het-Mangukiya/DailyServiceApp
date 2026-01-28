@@ -30,6 +30,9 @@ public class Customer {
     /** Customer address for service delivery */
     private String address;
     
+    /** Area/Locality for route planning (e.g., Sector 12, Downtown, etc.) */
+    private String area;
+    
     /** Type of service subscribed (Milk, Newspaper, Maid, Laundry) */
     private String serviceType;
     
@@ -51,6 +54,9 @@ public class Customer {
     /** Additional notes about the customer */
     private String notes;
     
+    /** Vacation mode - if true, customer is on vacation and service deliveries are paused */
+    private boolean onVacation;
+    
     /** Service subscription start date */
     private Timestamp startDate;
     
@@ -61,6 +67,7 @@ public class Customer {
         // Firestore requires a public no-arg constructor
         this.defaultQuantity = 1.0; // Default to 1 unit per day
         this.lentAmount = 0.0; // Default to no pending amount
+        this.onVacation = false; // Default to not on vacation
     }
 
     public Customer(String name, String phone, String address, String serviceType, double ratePerUnit, Timestamp createdAt) {
@@ -89,6 +96,10 @@ public class Customer {
 
     public String getAddress() {
         return address;
+    }
+    
+    public String getArea() {
+        return area;
     }
 
     public String getServiceType() {
@@ -119,6 +130,10 @@ public class Customer {
         return notes;
     }
     
+    public boolean isOnVacation() {
+        return onVacation;
+    }
+    
     public Timestamp getStartDate() {
         return startDate;
     }
@@ -141,6 +156,10 @@ public class Customer {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+    
+    public void setArea(String area) {
+        this.area = area;
     }
 
     public void setServiceType(String serviceType) {
@@ -169,6 +188,10 @@ public class Customer {
     
     public void setNotes(String notes) {
         this.notes = notes;
+    }
+    
+    public void setOnVacation(boolean onVacation) {
+        this.onVacation = onVacation;
     }
     
     public void setStartDate(Timestamp startDate) {

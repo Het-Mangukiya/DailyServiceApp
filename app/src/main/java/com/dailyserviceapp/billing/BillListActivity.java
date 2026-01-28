@@ -52,6 +52,7 @@ public class BillListActivity extends BaseActivity {
     private RecyclerView billsRecyclerView;
     private LinearLayout emptyStateLayout;
     private ExtendedFloatingActionButton generateBillsFab;
+    private android.widget.ProgressBar loadingProgress;
     
     private FirestoreRepository repository;
     private BillAdapter adapter;
@@ -61,14 +62,29 @@ public class BillListActivity extends BaseActivity {
     
     private List<Bill> currentBills = new ArrayList<>();
     private Map<String, Customer> customerMap = new HashMap<>();
+    private boolean customersLoaded = false; // Track if customers have been loaded
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bill_list_new);
         
+        // CRITICAL: Check session first
+        if (!isLoggedIn()) {
+            showToast("Please login first");
+            navigateToLogin();
+            return;
+        }
+        
         MaterialToolbar toolbar = findViewById(R.id.toolbar);
         setupToolbar(toolbar, "Bills", true);
+        
+        // Restore state if available
+        if (savedInstanceState != null) {
+            customersLoaded = savedInstanceState.getBoolean("customersLoaded", false);
+            selectedMonth = savedInstanceState.getInt("selectedMonth", Calendar.getInstance().get(Calendar.MONTH));
+            selectedYear = savedInstanceState.getInt("selectedYear", Calendar.getInstance().get(Calendar.YEAR));
+        }
         
         initializeViews();
         initializeData();
@@ -83,6 +99,7 @@ public class BillListActivity extends BaseActivity {
         billsRecyclerView = findViewById(R.id.billsRecyclerView);
         emptyStateLayout = findViewById(R.id.emptyState);
         generateBillsFab = findViewById(R.id.generateBillsFab);
+        loadingProgress = findViewById(R.id.loadingProgress);
         
         billsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
@@ -154,8 +171,11 @@ public class BillListActivity extends BaseActivity {
             return;
         }
         
-        // Only load customers if map is empty (first load or after clearing)
-        if (customerMap.isEmpty()) {
+        // Show loading instead of empty state
+        showLoading(true);
+        
+        // Load customers only if not already loaded (prevents redundant Firestore reads)
+        if (!customersLoaded) {
             repository.getCustomersByProvider(providerId, new FirestoreRepository.OnCustomersLoadedListener() {
                 @Override
                 public void onCustomersLoaded(List<Customer> customers) {
@@ -163,6 +183,7 @@ public class BillListActivity extends BaseActivity {
                     for (Customer customer : customers) {
                         customerMap.put(customer.getId(), customer);
                     }
+                    customersLoaded = true; // Mark as loaded
                     
                     // Then load bills
                     loadBills();
@@ -185,6 +206,7 @@ public class BillListActivity extends BaseActivity {
                 new FirestoreRepository.OnBillsLoadedListener() {
                     @Override
                     public void onBillsLoaded(List<Bill> bills) {
+                        showLoading(false);
                         currentBills = bills;
                         if (bills == null || bills.isEmpty()) {
                             showEmptyState(true);
@@ -205,6 +227,7 @@ public class BillListActivity extends BaseActivity {
 
                     @Override
                     public void onError(String error) {
+                        showLoading(false);
                         showToast("Error loading bills: " + error);
                         showEmptyState(true);
                     }
@@ -365,5 +388,23 @@ public class BillListActivity extends BaseActivity {
             billsRecyclerView.setVisibility(View.VISIBLE);
             emptyStateLayout.setVisibility(View.GONE);
         }
+    }
+    
+    private void showLoading(boolean show) {
+        if (loadingProgress != null) {
+            loadingProgress.setVisibility(show ? View.VISIBLE : View.GONE);
+        }
+        if (show) {
+            billsRecyclerView.setVisibility(View.GONE);
+            emptyStateLayout.setVisibility(View.GONE);
+        }
+    }
+    
+    @Override
+    protected void onSaveInstanceState(android.os.Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean("customersLoaded", customersLoaded);
+        outState.putInt("selectedMonth", selectedMonth);
+        outState.putInt("selectedYear", selectedYear);
     }
 }

@@ -58,7 +58,7 @@
                         android:layout_width="@dimen/card_size_md"
                         android:layout_height="@dimen/card_size_md"
                         android:src="@android:drawable/ic_menu_my_calendar"
-                        android:tint="@color/md_theme_primary"
+                        app:tint="@color/md_theme_primary"
                         android:layout_marginEnd="@dimen/spacing_base" />
 
                     <LinearLayout
@@ -114,6 +114,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:clipToPadding="false" />
+
+            <!-- Loading Progress -->
+            <ProgressBar
+                android:id="@+id/loadingProgress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/spacing_xl"
+                android:visibility="gone"
+                android:indeterminateTint="@color/md_theme_primary" />
 
             <!-- Empty State -->
             <LinearLayout

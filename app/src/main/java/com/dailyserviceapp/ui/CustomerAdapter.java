@@ -72,6 +72,15 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.ViewHo
         
         // Set status chip
         holder.customerStatus.setText(customer.getStatus() != null ? customer.getStatus() : "ACTIVE");
+        
+        // Show vacation badge if customer is on vacation
+        if (customer.isOnVacation()) {
+            holder.vacationBadge.setVisibility(View.VISIBLE);
+            holder.customerName.setAlpha(0.6f);
+        } else {
+            holder.vacationBadge.setVisibility(View.GONE);
+            holder.customerName.setAlpha(1.0f);
+        }
 
         holder.itemView.setOnClickListener(v -> listener.onCustomerClick(customer));
     }
@@ -87,6 +96,7 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.ViewHo
         final TextView customerPhone;
         final TextView customerInitial;
         final com.google.android.material.chip.Chip customerStatus;
+        final TextView vacationBadge;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -95,6 +105,7 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.ViewHo
             customerPhone = itemView.findViewById(R.id.customerPhone);
             customerInitial = itemView.findViewById(R.id.customerInitial);
             customerStatus = itemView.findViewById(R.id.customerStatus);
+            vacationBadge = itemView.findViewById(R.id.vacationBadge);
         }
     }
 }

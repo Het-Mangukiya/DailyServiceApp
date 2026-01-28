@@ -89,6 +89,19 @@
 
                     </LinearLayout>
 
+                    <!-- Offline/Sync Status Chip -->
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/syncStatusChip"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="📤 2 pending sync"
+                        android:textColor="@android:color/white"
+                        android:textSize="12sp"
+                        android:visibility="gone"
+                        android:layout_marginTop="8dp"
+                        app:chipBackgroundColor="@android:color/holo_orange_dark"
+                        app:chipStrokeWidth="0dp" />
+
                 </LinearLayout>
 
             </com.google.android.material.card.MaterialCardView>

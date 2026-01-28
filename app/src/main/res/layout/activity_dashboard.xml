@@ -31,12 +31,17 @@
 
         </com.google.android.material.appbar.AppBarLayout>
 
-        <!-- Main Content -->
-        <androidx.core.widget.NestedScrollView
+        <!-- Main Content with Swipe-to-Refresh -->
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipeRefreshLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:fillViewport="true"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <androidx.core.widget.NestedScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fillViewport="true">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -71,7 +76,7 @@
                                 android:layout_width="@dimen/card_size_md"
                                 android:layout_height="@dimen/card_size_md"
                                 android:src="@android:drawable/ic_menu_myplaces"
-                                android:tint="@android:color/white" />
+                                app:tint="@android:color/white" />
 
                             <TextView
                                 android:id="@+id/totalCustomersCount"
@@ -113,7 +118,7 @@
                                 android:layout_width="@dimen/card_size_md"
                                 android:layout_height="@dimen/card_size_md"
                                 android:src="@android:drawable/ic_menu_gallery"
-                                android:tint="@android:color/white" />
+                                app:tint="@android:color/white" />
 
                             <TextView
                                 android:id="@+id/totalRevenueAmount"
@@ -161,7 +166,7 @@
                             android:layout_width="24dp"
                             android:layout_height="24dp"
                             android:src="@android:drawable/ic_menu_search"
-                            android:tint="@color/md_theme_on_surface_variant"
+                            app:tint="@color/md_theme_on_surface_variant"
                             android:layout_marginEnd="@dimen/spacing_sm" />
 
                         <EditText
@@ -175,6 +180,16 @@
                             android:textColorHint="@color/md_theme_on_surface_variant"
                             android:background="@null"
                             android:inputType="text" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/sortButton"
+                            style="@style/Widget.Material3.Button.IconButton"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:contentDescription="Sort customers"
+                            app:icon="@android:drawable/ic_menu_sort_by_size"
+                            app:iconSize="20dp"
+                            app:iconTint="@color/md_theme_on_surface_variant" />
 
                     </LinearLayout>
 
@@ -231,6 +246,8 @@
             </LinearLayout>
 
         </androidx.core.widget.NestedScrollView>
+
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
         <!-- FAB with Menu -->
         <com.google.android.material.floatingactionbutton.FloatingActionButton

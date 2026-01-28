@@ -20,7 +20,25 @@
             android:layout_height="?attr/actionBarSize"
             app:navigationIcon="@android:drawable/ic_menu_revert"
             app:title="Service Entry"
-            app:titleTextColor="@android:color/white" />
+            app:titleTextColor="@android:color/white">
+            
+            <TextView
+                android:id="@+id/offlineIndicator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginEnd="16dp"
+                android:text="📴 Offline"
+                android:textColor="@android:color/white"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:visibility="gone"
+                android:padding="4dp"
+                android:background="@android:color/holo_red_dark"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="4dp" />
+                
+        </com.google.android.material.appbar.MaterialToolbar>
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -36,6 +54,30 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="@dimen/spacing_base">
+
+            <!-- Pending Sync Card (hidden by default) -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/pendingSyncCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/spacing_base"
+                android:visibility="gone"
+                app:cardCornerRadius="@dimen/corner_radius_md"
+                app:cardElevation="@dimen/elevation_base"
+                app:cardBackgroundColor="@android:color/holo_orange_light">
+
+                <TextView
+                    android:id="@+id/pendingSyncText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/spacing_base"
+                    android:text="📤 3 deliveries pending sync"
+                    android:textSize="@dimen/text_size_base"
+                    android:textStyle="bold"
+                    android:textColor="@android:color/black"
+                    android:gravity="center" />
+
+            </com.google.android.material.card.MaterialCardView>
 
             <!-- Date Selector Card -->
             <com.google.android.material.card.MaterialCardView
@@ -58,7 +100,7 @@
                         android:layout_width="@dimen/card_size_md"
                         android:layout_height="@dimen/card_size_md"
                         android:src="@android:drawable/ic_menu_my_calendar"
-                        android:tint="@color/md_theme_primary"
+                        app:tint="@color/md_theme_primary"
                         android:layout_marginEnd="@dimen/spacing_base" />
 
                     <LinearLayout

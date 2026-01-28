@@ -1,5 +1,6 @@
 package com.dailyserviceapp.core.base;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -146,6 +147,26 @@ public abstract class BaseActivity extends AppCompatActivity {
      */
     protected boolean isLoggedIn() {
         return preferenceManager.isLoggedIn();
+    }
+    
+    /**
+     * Navigate to login screen and clear activity stack
+     */
+    protected void navigateToLogin() {
+        Intent intent = new Intent(this, com.dailyserviceapp.auth.LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
+    }
+    
+    /**
+     * Perform logout: clear preferences and Firebase session
+     * Note: Activities using Google Sign-In should override to add googleSignInClient.signOut()
+     */
+    protected void performLogout() {
+        preferenceManager.clearAllData();
+        com.google.firebase.auth.FirebaseAuth.getInstance().signOut();
+        navigateToLogin();
     }
     
     @Override

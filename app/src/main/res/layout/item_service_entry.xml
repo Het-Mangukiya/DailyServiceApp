@@ -50,20 +50,65 @@
                 android:textSize="@dimen/text_size_sm"
                 android:textColor="@color/text_muted"
                 android:layout_marginTop="@dimen/spacing_xxs" />
+            
+            <TextView
+                android:id="@+id/txtAddress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Address"
+                android:textSize="11sp"
+                android:textColor="@color/text_muted"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:visibility="gone"
+                android:layout_marginTop="2dp" />
 
         </LinearLayout>
 
-        <!-- Quantity Display -->
-        <TextView
-            android:id="@+id/txtQuantity"
+        <!-- Quantity Controls -->
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="1.0"
-            android:textSize="@dimen/text_size_lg"
-            android:textStyle="bold"
-            android:textColor="@color/md_theme_primary"
-            android:minWidth="48dp"
-            android:gravity="center" />
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnDecreaseQty"
+                style="@style/Widget.Material3.Button.IconButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                app:icon="@android:drawable/ic_delete"
+                app:iconSize="20dp"
+                app:iconGravity="textStart"
+                app:iconPadding="0dp" />
+
+            <TextView
+                android:id="@+id/txtQuantity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1.0"
+                android:textSize="@dimen/text_size_lg"
+                android:textStyle="bold"
+                android:textColor="@color/md_theme_primary"
+                android:minWidth="48dp"
+                android:gravity="center"
+                android:layout_marginHorizontal="4dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnIncreaseQty"
+                style="@style/Widget.Material3.Button.IconButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                app:icon="@android:drawable/ic_input_add"
+                app:iconSize="20dp"
+                app:iconGravity="textStart"
+                app:iconPadding="0dp" />
+
+        </LinearLayout>
 
     </LinearLayout>
 

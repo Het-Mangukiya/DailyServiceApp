@@ -21,3 +21,5 @@ local.properties
 *.class
 *.dex
 
+test_screenshots/
+

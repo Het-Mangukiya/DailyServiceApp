@@ -242,16 +242,45 @@ public class SignupActivity extends BaseActivity {
                 hideLoading();
                 
                 if (task.isSuccessful()) {
+                    // Save user session (FIXED: was missing)
+                    preferenceManager.saveUserData(userId, email, name, role);
+                    
                     showToast("Account created successfully!");
                     
-                    // Navigate to login
-                    Intent intent = new Intent(this, LoginActivity.class);
+                    // Navigate to Dashboard (FIXED: was going to Login)
+                    Intent intent = new Intent(this, com.dailyserviceapp.dashboard.DashboardActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);
                     finish();
                 } else {
-                    showToast("Failed to create user profile");
+                    // Handle Firestore failure gracefully
+                    Exception exception = task.getException();
+                    if (exception != null && exception.getMessage() != null && 
+                        exception.getMessage().contains("network")) {
+                        // Network error during Firestore write
+                        showToast("Network error. Your account was created. Please login to continue.");
+                    } else {
+                        showToast("Failed to create user profile. Please try logging in.");
+                    }
+                    
+                    // Navigate to login since Firebase Auth succeeded
+                    android.util.Log.e("SignupActivity", "Firestore user creation failed", exception);
+                    navigateToLogin();
                 }
+            })
+            .addOnFailureListener(e -> {
+                hideLoading();
+                android.util.Log.e("SignupActivity", "Failed to create Firestore document", e);
+                
+                // Check if it's a network error
+                if (e.getMessage() != null && e.getMessage().toLowerCase().contains("network")) {
+                    showToast("Network error. Your account was created. Please login.");
+                } else {
+                    showToast("Error creating profile: " + e.getMessage());
+                }
+                
+                // Navigate to login since auth succeeded
+                navigateToLogin();
             });
     }
     
@@ -283,17 +312,96 @@ public class SignupActivity extends BaseActivity {
         AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
         firebaseAuth.signInWithCredential(credential)
             .addOnCompleteListener(this, task -> {
-                hideLoading();
                 if (task.isSuccessful()) {
-                    showToast("Account created successfully!");
-                    Intent intent = new Intent(this, LoginActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    startActivity(intent);
-                    finish();
+                    FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+                    if (firebaseUser != null) {
+                        // Check if user already exists in Firestore
+                        checkAndCreateGoogleUserProfile(firebaseUser);
+                    } else {
+                        hideLoading();
+                        showToast("Authentication failed");
+                    }
                 } else {
+                    hideLoading();
                     showToast("Authentication failed");
                 }
             });
+    }
+    
+    /**
+     * Check if Google user exists in Firestore, create if not
+     */
+    private void checkAndCreateGoogleUserProfile(FirebaseUser firebaseUser) {
+        String userId = firebaseUser.getUid();
+        
+        firestore.collection(Constants.COLLECTION_USERS)
+            .document(userId)
+            .get()
+            .addOnCompleteListener(task -> {
+                if (task.isSuccessful() && task.getResult() != null) {
+                    if (task.getResult().exists()) {
+                        // User already exists, just save session
+                        String existingEmail = task.getResult().getString("email");
+                        String existingName = task.getResult().getString("name");
+                        String existingRole = task.getResult().getString("role");
+                        
+                        preferenceManager.saveUserData(userId, existingEmail, existingName, existingRole);
+                        navigateToDashboard();
+                    } else {
+                        // New Google user, create profile with selected role
+                        String selectedRole = roleSpinner.getSelectedItemPosition() == 0 ? 
+                            Constants.ROLE_PROVIDER : Constants.ROLE_CUSTOMER;
+                        createGoogleUserDocument(firebaseUser, selectedRole);
+                    }
+                } else {
+                    hideLoading();
+                    showToast("Failed to verify user profile");
+                }
+            });
+    }
+    
+    /**
+     * Create Firestore document for new Google user
+     */
+    private void createGoogleUserDocument(FirebaseUser firebaseUser, String role) {
+        Map<String, Object> userData = new HashMap<>();
+        userData.put("id", firebaseUser.getUid());
+        userData.put("name", firebaseUser.getDisplayName() != null ? firebaseUser.getDisplayName() : "User");
+        userData.put("email", firebaseUser.getEmail());
+        userData.put("phone", firebaseUser.getPhoneNumber() != null ? firebaseUser.getPhoneNumber() : "");
+        userData.put("role", role);
+        userData.put("createdAt", System.currentTimeMillis());
+        
+        firestore.collection(Constants.COLLECTION_USERS)
+            .document(firebaseUser.getUid())
+            .set(userData)
+            .addOnCompleteListener(task -> {
+                hideLoading();
+                if (task.isSuccessful()) {
+                    // Save session
+                    preferenceManager.saveUserData(
+                        firebaseUser.getUid(),
+                        firebaseUser.getEmail(),
+                        firebaseUser.getDisplayName(),
+                        role
+                    );
+                    
+                    showToast("Account created successfully!");
+                    navigateToDashboard();
+                } else {
+                    showToast("Failed to create user profile");
+                }
+            });
+    }
+    
+    /**
+     * Navigate to Dashboard with proper flags
+     */
+    private void navigateToDashboard() {
+        Intent intent = new Intent(this, com.dailyserviceapp.dashboard.DashboardActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
     }
     
     private void showLoading() {

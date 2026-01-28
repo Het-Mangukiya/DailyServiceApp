@@ -110,6 +110,15 @@
             android:layout_gravity="center_vertical"
             android:layout_marginStart="12dp">
 
+            <!-- Vacation Badge -->
+            <TextView
+                android:id="@+id/vacationBadge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🏖️"
+                android:textSize="24sp"
+                android:visibility="gone"/>
+
             <TextView
                 android:id="@+id/statusBadge"
                 android:layout_width="wrap_content"
