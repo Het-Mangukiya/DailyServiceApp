@@ -247,6 +247,16 @@ public class ProviderDashboardActivity extends BaseActivity {
             .addOnSuccessListener(customerSnapshot -> {
                 int totalCustomers = customerSnapshot.size();
                 
+                // Build customer rate map for fallback
+                java.util.Map<String, Double> customerRates = new java.util.HashMap<>();
+                for (QueryDocumentSnapshot customerDoc : customerSnapshot) {
+                    String customerId = customerDoc.getId();
+                    Double rate = customerDoc.getDouble("ratePerUnit");
+                    if (rate != null) {
+                        customerRates.put(customerId, rate);
+                    }
+                }
+                
                 // Query service entries for today
                 firestore.collection("serviceEntries")
                     .whereEqualTo("providerId", providerId)
@@ -270,6 +280,12 @@ public class ProviderDashboardActivity extends BaseActivity {
                                     // Calculate earnings (rate × quantity)
                                     Double rate = doc.getDouble("rate");
                                     Double quantity = doc.getDouble("quantity");
+                                    String customerId = doc.getString("customerId");
+                                    
+                                    // Fallback to customer rate if entry doesn't have rate
+                                    if (rate == null && customerId != null) {
+                                        rate = customerRates.get(customerId);
+                                    }
                                     
                                     if (rate != null && quantity != null) {
                                         todayEarnings += (rate * quantity);
@@ -405,33 +421,55 @@ public class ProviderDashboardActivity extends BaseActivity {
         Timestamp startOfMonth = new Timestamp(monthStart.getTime());
         Timestamp endOfMonth = new Timestamp(monthEnd.getTime());
         
-        // Query service entries for this month
-        firestore.collection(COLLECTION_SERVICE_ENTRIES)
+        // Get customer rates for fallback
+        firestore.collection(COLLECTION_CUSTOMERS)
             .whereEqualTo(FIELD_PROVIDER_ID, providerId)
-            .whereEqualTo("delivered", true)
+            .whereEqualTo(FIELD_STATUS, STATUS_ACTIVE)
             .get()
-            .addOnSuccessListener(querySnapshot -> {
-                int monthlyDeliveries = 0;
-                double monthlyEarnings = 0.0;
+            .addOnSuccessListener(customerSnapshot -> {
+                // Build customer rate map for fallback
+                java.util.Map<String, Double> customerRates = new java.util.HashMap<>();
+                for (QueryDocumentSnapshot customerDoc : customerSnapshot) {
+                    String customerId = customerDoc.getId();
+                    Double rate = customerDoc.getDouble("ratePerUnit");
+                    if (rate != null) {
+                        customerRates.put(customerId, rate);
+                    }
+                }
                 
-                // Filter by month date range in memory
-                for (QueryDocumentSnapshot doc : querySnapshot) {
-                    Timestamp entryDate = doc.getTimestamp("date");
-                    if (entryDate != null) {
-                        Date entryDateObj = entryDate.toDate();
+                // Query service entries for this month
+                firestore.collection(COLLECTION_SERVICE_ENTRIES)
+                    .whereEqualTo(FIELD_PROVIDER_ID, providerId)
+                    .whereEqualTo("delivered", true)
+                    .get()
+                    .addOnSuccessListener(querySnapshot -> {
+                        int monthlyDeliveries = 0;
+                        double monthlyEarnings = 0.0;
                         
-                        // Check if entry is this month
-                        if (!entryDateObj.before(startOfMonth.toDate()) && 
-                            !entryDateObj.after(endOfMonth.toDate())) {
-                            monthlyDeliveries++;
-                            
-                            // Calculate earnings (rate × quantity)
-                            Double rate = doc.getDouble("rate");
-                            Double quantity = doc.getDouble("quantity");
-                            
-                            if (rate != null && quantity != null) {
-                                monthlyEarnings += (rate * quantity);
-                            }
+                        // Filter by month date range in memory
+                        for (QueryDocumentSnapshot doc : querySnapshot) {
+                            Timestamp entryDate = doc.getTimestamp("date");
+                            if (entryDate != null) {
+                                Date entryDateObj = entryDate.toDate();
+                                
+                                // Check if entry is this month
+                                if (!entryDateObj.before(startOfMonth.toDate()) && 
+                                    !entryDateObj.after(endOfMonth.toDate())) {
+                                    monthlyDeliveries++;
+                                    
+                                    // Calculate earnings (rate × quantity)
+                                    Double rate = doc.getDouble("rate");
+                                    Double quantity = doc.getDouble("quantity");
+                                    String customerId = doc.getString("customerId");
+                                    
+                                    // Fallback to customer rate if entry doesn't have rate
+                                    if (rate == null && customerId != null) {
+                                        rate = customerRates.get(customerId);
+                                    }
+                                    
+                                    if (rate != null && quantity != null) {
+                                        monthlyEarnings += (rate * quantity);
+                                    }
                         }
                     }
                 }
@@ -446,13 +484,22 @@ public class ProviderDashboardActivity extends BaseActivity {
                 });
             })
             .addOnFailureListener(e -> {
-                android.util.Log.e("Dashboard", "Error loading monthly overview: " + e.getMessage());
+                android.util.Log.e(TAG, "Error loading service entries for monthly", e);
                 runOnUiThread(() -> {
                     txtMonthlyDeliveries.setText("0");
-                    txtMonthlyEarnings.setText(CurrencyUtils.formatIndianCurrency(0.0));
+                    txtMonthlyEarnings.setText(CurrencyUtils.formatIndianCurrency(DEFAULT_AMOUNT));
                     checkLoadingComplete();
                 });
             });
+        })
+        .addOnFailureListener(e -> {
+            android.util.Log.e(TAG, "Error loading customers for monthly", e);
+            runOnUiThread(() -> {
+                txtMonthlyDeliveries.setText("0");
+                txtMonthlyEarnings.setText(CurrencyUtils.formatIndianCurrency(DEFAULT_AMOUNT));
+                checkLoadingComplete();
+            });
+        });
     }
     
     private int loadingTasks = 0;
