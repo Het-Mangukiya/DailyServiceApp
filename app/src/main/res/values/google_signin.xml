@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- TODO: Replace with your actual Web Client ID from Firebase Console -->
+    <!-- Go to: Firebase Console → Project Settings → Your Web App → Web client ID -->
+    <!-- Or download updated google-services.json after setting up Google Sign-In -->
+    <string name="default_web_client_id" translatable="false">717495606296-PLACEHOLDER.apps.googleusercontent.com</string>
+</resources>

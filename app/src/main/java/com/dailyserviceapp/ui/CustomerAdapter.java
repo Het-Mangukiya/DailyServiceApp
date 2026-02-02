@@ -9,7 +9,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.dailyserviceapp.R;
-import com.dailyserviceapp.data.Customer;
+import com.dailyserviceapp.core.utils.CurrencyUtils;
+import com.dailyserviceapp.data.models.Customer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,12 +46,41 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.ViewHo
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Customer customer = items.get(position);
-        holder.name.setText(customer.getName());
-
-        String subtitle = (customer.getServiceType() == null ? "" : customer.getServiceType())
+        
+        // Set customer name
+        holder.customerName.setText(customer.getName());
+        
+        // Set service info
+        String serviceInfo = (customer.getServiceType() == null ? "" : customer.getServiceType())
                 + " · "
-                + customer.getRatePerUnit();
-        holder.subtitle.setText(subtitle);
+                + CurrencyUtils.formatCurrency(customer.getRatePerUnit());
+        holder.customerService.setText(serviceInfo);
+        
+        // Set phone number (optional)
+        if (customer.getPhone() != null && !customer.getPhone().isEmpty()) {
+            holder.customerPhone.setText(customer.getPhone());
+            holder.customerPhone.setVisibility(View.VISIBLE);
+        } else {
+            holder.customerPhone.setVisibility(View.GONE);
+        }
+        
+        // Set customer initial
+        if (customer.getName() != null && !customer.getName().isEmpty()) {
+            String initial = customer.getName().substring(0, 1).toUpperCase();
+            holder.customerInitial.setText(initial);
+        }
+        
+        // Set status chip
+        holder.customerStatus.setText(customer.getStatus() != null ? customer.getStatus() : "ACTIVE");
+        
+        // Show vacation badge if customer is on vacation
+        if (customer.isOnVacation()) {
+            holder.vacationBadge.setVisibility(View.VISIBLE);
+            holder.customerName.setAlpha(0.6f);
+        } else {
+            holder.vacationBadge.setVisibility(View.GONE);
+            holder.customerName.setAlpha(1.0f);
+        }
 
         holder.itemView.setOnClickListener(v -> listener.onCustomerClick(customer));
     }
@@ -61,13 +91,21 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.ViewHo
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        final TextView name;
-        final TextView subtitle;
+        final TextView customerName;
+        final TextView customerService;
+        final TextView customerPhone;
+        final TextView customerInitial;
+        final com.google.android.material.chip.Chip customerStatus;
+        final TextView vacationBadge;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
-            name = itemView.findViewById(R.id.name);
-            subtitle = itemView.findViewById(R.id.subtitle);
+            customerName = itemView.findViewById(R.id.customerName);
+            customerService = itemView.findViewById(R.id.customerService);
+            customerPhone = itemView.findViewById(R.id.customerPhone);
+            customerInitial = itemView.findViewById(R.id.customerInitial);
+            customerStatus = itemView.findViewById(R.id.customerStatus);
+            vacationBadge = itemView.findViewById(R.id.vacationBadge);
         }
     }
 }

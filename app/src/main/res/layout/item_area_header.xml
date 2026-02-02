@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingStart="@dimen/spacing_base"
+    android:paddingEnd="@dimen/spacing_base"
+    android:paddingTop="@dimen/spacing_lg"
+    android:paddingBottom="@dimen/spacing_xs"
+    android:background="@color/md_theme_surface_variant">
+
+    <TextView
+        android:id="@+id/txtAreaName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Area Name"
+        android:textSize="@dimen/text_size_base"
+        android:textStyle="bold"
+        android:textColor="@color/md_theme_primary"
+        android:drawableStart="@android:drawable/ic_dialog_map"
+        android:drawablePadding="@dimen/spacing_xs"
+        android:drawableTint="@color/md_theme_primary" />
+
+</LinearLayout>

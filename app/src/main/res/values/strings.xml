@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">DailyServiceApp</string>
+    <string name="app_name">DailyDrop</string>
     <string name="customers">Customers</string>
     <string name="add_customer">Add customer</string>
     <string name="save">Save</string>
@@ -11,4 +11,44 @@
     <string name="mark_delivered_today">Mark delivered today</string>
     <string name="monthly_summary">Monthly summary</string>
     <string name="payment_status">Payment status</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="products">Products</string>
+    <string name="add_product">Add Product</string>
+    
+    <!-- Error messages -->
+    <string name="error_name_required">Name is required</string>
+    <string name="error_rate_required">Rate is required</string>
+    <string name="error_rate_must_be_number">Rate must be a number</string>
+    <string name="error_loading_customer">Error loading customer</string>
+    <string name="error_deleting_customer">Error deleting customer: %s</string>
+    <string name="error_loading_customers">Failed to load customers: %s</string>
+    <string name="error_loading_entries">Error loading entries: %s</string>
+    <string name="error_general">Error: %s</string>
+    <string name="error_no_deliveries">No deliveries to mark</string>
+    
+    <!-- Success messages -->
+    <string name="success_customer_added">Customer added</string>
+    <string name="success_customer_updated">Customer updated</string>
+    <string name="success_customer_deleted">Customer deleted</string>
+    <string name="success_deliveries_marked">Deliveries marked successfully</string>
+    
+    <!-- Validation messages -->
+    <string name="validation_no_internet">No internet connection</string>
+    <string name="validation_please_login">Please login again</string>
+    <string name="validation_no_customers_selected">No customers selected</string>
+    <string name="validation_future_date">Cannot mark deliveries for future dates</string>
+    
+    <!-- UI text -->
+    <string name="default_user_name">User</string>
+    <string name="default_user_email">user@example.com</string>
+    <string name="button_saving">Saving…</string>
+    <string name="button_mark_delivery">Mark Delivery</string>
+    <string name="today_prefix">Today - %s</string>
+    <string name="delivered_format">%1$d/%2$d delivered</string>
+    <string name="rupee_zero">₹0</string>
+    
+    <!-- Test data -->
+    <string name="test_generating">Generating test data…</string>
+    <string name="test_generated">✅ Generated %1$d customers and %2$d service entries</string>
 </resources>

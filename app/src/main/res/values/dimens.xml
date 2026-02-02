@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Spacing -->
+    <dimen name="spacing_xxs">2dp</dimen>
+    <dimen name="spacing_xs">4dp</dimen>
+    <dimen name="spacing_sm">8dp</dimen>
+    <dimen name="spacing_base">16dp</dimen>
+    <dimen name="spacing_md">20dp</dimen>
+    <dimen name="spacing_lg">24dp</dimen>
+    <dimen name="spacing_xl">32dp</dimen>
+    <dimen name="spacing_xxxl">48dp</dimen>
+    
+    <!-- Corner Radius -->
+    <dimen name="corner_radius_sm">8dp</dimen>
+    <dimen name="corner_radius_base">12dp</dimen>
+    <dimen name="corner_radius_button">12dp</dimen>
+    <dimen name="corner_radius_card">16dp</dimen>
+    <dimen name="corner_radius_md">16dp</dimen>
+    <dimen name="corner_radius_lg">20dp</dimen>
+    <dimen name="corner_radius_xl">24dp</dimen>
+    
+    <!-- Elevation -->
+    <dimen name="elevation_sm">2dp</dimen>
+    <dimen name="elevation_base">4dp</dimen>
+    <dimen name="elevation_card">4dp</dimen>
+    <dimen name="elevation_md">6dp</dimen>
+    
+    <!-- Card Sizes -->
+    <dimen name="card_size_md">40dp</dimen>
+    <dimen name="card_size_lg">64dp</dimen>
+    <dimen name="card_size_xl">96dp</dimen>
+    <dimen name="card_size_xxl">128dp</dimen>
+    
+    <!-- Icon Sizes -->
+    <dimen name="icon_size_md">24dp</dimen>
+    
+    <!-- Pill/Circle for full rounding -->
+    <dimen name="corner_radius_pill">999dp</dimen>
+    
+    <!-- Text Sizes -->
+    <dimen name="text_size_sm">14sp</dimen>
+    <dimen name="text_size_md">16sp</dimen>
+    <dimen name="text_size_base">16sp</dimen>
+    <dimen name="text_size_lg">20sp</dimen>
+    <dimen name="text_size_xl">24sp</dimen>
+    <dimen name="text_size_xxl">32sp</dimen>
+    
+    <!-- Button Sizes -->
+    <dimen name="button_height">48dp</dimen>
+    
+    <!-- Corner Radius Additional -->
+    <dimen name="corner_radius_round">999dp</dimen>
+</resources>
