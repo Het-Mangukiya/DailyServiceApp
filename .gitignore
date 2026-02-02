@@ -21,5 +21,10 @@ local.properties
 *.class
 *.dex
 
+# Test files with credentials
+test_*.sh
+test_*.py
+*_test.sh
+
 test_screenshots/
 
