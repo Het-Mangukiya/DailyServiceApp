@@ -266,6 +266,11 @@ public class ProviderDashboardActivity extends BaseActivity {
                         int deliveredCount = 0;
                         double todayEarnings = 0.0;
                         
+                        android.util.Log.d(TAG, "=== TODAY'S EARNINGS DEBUG ===");
+                        android.util.Log.d(TAG, "Total service entries: " + querySnapshot.size());
+                        android.util.Log.d(TAG, "Customer rates available: " + customerRates.size());
+                        android.util.Log.d(TAG, "Today range: " + startOfDay.toDate() + " to " + endOfDay.toDate());
+                        
                         // Filter by today's date in memory
                         for (QueryDocumentSnapshot doc : querySnapshot) {
                             Timestamp entryDate = doc.getTimestamp("date");
@@ -282,13 +287,20 @@ public class ProviderDashboardActivity extends BaseActivity {
                                     Double quantity = doc.getDouble("quantity");
                                     String customerId = doc.getString("customerId");
                                     
-                                    // Fallback to customer rate if entry doesn't have rate
-                                    if (rate == null && customerId != null) {
+                                    android.util.Log.d(TAG, "Entry - customerId: " + customerId + ", rate: " + rate + ", quantity: " + quantity);
+                                    
+                                    // Fallback to customer rate if entry doesn't have rate or rate is 0
+                                    if ((rate == null || rate == 0.0) && customerId != null) {
                                         rate = customerRates.get(customerId);
+                                        android.util.Log.d(TAG, "Using fallback rate: " + rate);
                                     }
                                     
                                     if (rate != null && quantity != null) {
-                                        todayEarnings += (rate * quantity);
+                                        double earning = rate * quantity;
+                                        todayEarnings += earning;
+                                        android.util.Log.d(TAG, "✓ Earning: ₹" + earning + " (rate: " + rate + " × qty: " + quantity + ")");
+                                    } else {
+                                        android.util.Log.w(TAG, "✗ Skipped - rate or quantity null");
                                     }
                                 }
                             }
@@ -297,6 +309,10 @@ public class ProviderDashboardActivity extends BaseActivity {
                         // Update UI
                         int finalDeliveredCount = deliveredCount;
                         double finalTodayEarnings = todayEarnings;
+                        android.util.Log.d(TAG, "=== FINAL TODAY'S RESULT ===");
+                        android.util.Log.d(TAG, "Delivered: " + finalDeliveredCount + " / " + totalCustomers);
+                        android.util.Log.d(TAG, "Total Earnings: ₹" + finalTodayEarnings);
+                        
                         runOnUiThread(() -> {
                             txtTodayDelivered.setText(finalDeliveredCount + " / " + totalCustomers);
                             txtTodayEarnings.setText(CurrencyUtils.formatIndianCurrency(finalTodayEarnings));
@@ -462,8 +478,8 @@ public class ProviderDashboardActivity extends BaseActivity {
                                     Double quantity = doc.getDouble("quantity");
                                     String customerId = doc.getString("customerId");
                                     
-                                    // Fallback to customer rate if entry doesn't have rate
-                                    if (rate == null && customerId != null) {
+                                    // Fallback to customer rate if entry doesn't have rate or rate is 0
+                                    if ((rate == null || rate == 0.0) && customerId != null) {
                                         rate = customerRates.get(customerId);
                                     }
                                     
