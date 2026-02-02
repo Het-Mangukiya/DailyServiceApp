@@ -37,6 +37,14 @@ public class BillDetailActivity extends BaseActivity {
     private MaterialButton markAsPaidButton;
     private MaterialButton shareBillButton;
     
+    /**
+     * Initializes the activity UI and starts loading bill details.
+     *
+     * Sets the content view, configures the toolbar title and navigation, binds view components,
+     * initializes data sources and listeners, and triggers the initial load of the bill details.
+     *
+     * @param savedInstanceState bundle containing activity state restored from a previous instance, or null
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,6 +58,11 @@ public class BillDetailActivity extends BaseActivity {
         loadBillDetails();
     }
     
+    /**
+     * Refreshes bill details when the activity resumes.
+     *
+     * If a valid `billId` is present, reloads the bill data to reflect any updates (for example after returning from PaymentActivity).
+     */
     @Override
     protected void onResume() {
         super.onResume();
@@ -59,6 +72,12 @@ public class BillDetailActivity extends BaseActivity {
         }
     }
     
+    /**
+     * Binds the activity's UI fields to their corresponding view instances.
+     *
+     * Initializes view references for customerNameText, billPeriodText, daysServedText,
+     * totalAmountText, paymentStatusChip, markAsPaidButton, and shareBillButton.
+     */
     private void initializeViews() {
         customerNameText = findViewById(R.id.customerName);
         billPeriodText = findViewById(R.id.billPeriod);
@@ -69,6 +88,13 @@ public class BillDetailActivity extends BaseActivity {
         shareBillButton = findViewById(R.id.shareBillButton);
     }
     
+    /**
+     * Initializes data dependencies and UI action handlers for the activity.
+     *
+     * Retrieves the bill ID from the intent, instantiates the Firestore repository,
+     * validates the bill ID (shows a toast and finishes the activity if invalid),
+     * and attaches click listeners to the "Mark as Paid" and "Share" buttons.
+     */
     private void initializeData() {
         repository = new FirestoreRepository();
         billId = getIntent().getStringExtra("billId");
@@ -83,6 +109,12 @@ public class BillDetailActivity extends BaseActivity {
         shareBillButton.setOnClickListener(v -> shareBill());
     }
     
+    /**
+     * Loads details for the activity's billId and updates the UI with the bill and its customer.
+     *
+     * On success the loaded bill is stored, displayed, and the associated customer information is requested.
+     * On failure a toast with the error is shown and the activity is finished.
+     */
     private void loadBillDetails() {
         repository.getBillById(billId, new FirestoreRepository.OnBillLoadedListener() {
             @Override
@@ -100,6 +132,15 @@ public class BillDetailActivity extends BaseActivity {
         });
     }
     
+    /**
+     * Populate UI fields with the bill's period, days served, total amount, and payment status.
+     *
+     * Sets the period text to the bill's month name and year, displays the number of days served
+     * and the formatted total amount, sets the payment status (defaults to "PENDING" when null),
+     * and updates the mark-as-paid button's enabled state and label based on whether the bill is paid.
+     *
+     * @param bill the Bill whose information will be displayed; month is expected to be 0-based (0 = January)
+     */
     private void displayBillInfo(Bill bill) {
         // Set bill period
         String[] monthNames = {"January", "February", "March", "April", "May", "June",
@@ -124,6 +165,14 @@ public class BillDetailActivity extends BaseActivity {
         }
     }
     
+    /**
+     * Fetches customer data for the given customer ID and updates the customer name TextView.
+     *
+     * If the customer is found, sets the customer's name in {@code customerNameText}; on fetch
+     * error sets {@code customerNameText} to "Unknown Customer".
+     *
+     * @param customerId the Firestore document ID of the customer to load
+     */
     private void loadCustomerInfo(String customerId) {
         repository.getCustomer(customerId, documentSnapshot -> {
             Customer customer = documentSnapshot.toObject(Customer.class);
@@ -135,6 +184,11 @@ public class BillDetailActivity extends BaseActivity {
         });
     }
     
+    /**
+     * Initiates recording a payment for the currently loaded bill by launching PaymentActivity.
+     *
+     * If no bill is loaded or its identifier is missing, shows an error toast and does not start the activity.
+     */
     private void markBillAsPaid() {
         if (currentBill == null || currentBill.getId() == null || currentBill.getId().isEmpty()) {
             showToast("Error: Bill data not loaded");
@@ -147,6 +201,11 @@ public class BillDetailActivity extends BaseActivity {
         startActivity(intent);
     }
     
+    /**
+     * Notify the user that PDF sharing is not yet implemented.
+     *
+     * Displays a short toast informing the user that the PDF sharing feature is coming soon.
+     */
     private void shareBill() {
         showToast("PDF sharing coming soon");
     }

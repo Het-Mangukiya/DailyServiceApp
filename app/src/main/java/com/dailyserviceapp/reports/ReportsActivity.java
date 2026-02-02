@@ -8,6 +8,14 @@ import com.dailyserviceapp.core.base.BaseActivity;
 
 public class ReportsActivity extends BaseActivity {
     
+    /**
+     * Initialize the activity's UI and enforce authentication before displaying reports.
+     *
+     * If the user is not logged in, shows a toast prompting login and navigates to the login screen,
+     * aborting further UI initialization.
+     *
+     * @param savedInstanceState optional saved state used to restore the activity's previous state
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

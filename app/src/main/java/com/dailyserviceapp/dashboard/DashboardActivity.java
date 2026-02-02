@@ -94,6 +94,11 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
     private enum SortOrder { NAME, SERVICE_TYPE, ADDRESS }
     private SortOrder currentSortOrder = SortOrder.NAME;
     
+    /**
+     * Initializes the dashboard activity: verifies user login, configures data and auth clients, sets up UI and listeners, and begins loading data.
+     *
+     * <p>If the user is not logged in, the method redirects to the login screen and exits initialization.</p>
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -122,6 +127,13 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         loadData();
     }
     
+    /**
+     * Bind and configure the activity's UI components.
+     *
+     * Binds view fields to their corresponding layout IDs, sets the toolbar as
+     * the support action bar, and configures the SwipeRefreshLayout's color
+     * scheme and refresh listener if the view is present in the layout.
+     */
     private void initializeViews() {
         drawerLayout = findViewById(R.id.drawerLayout);
         navigationView = findViewById(R.id.navigationView);
@@ -154,6 +166,14 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         }
     }
     
+    /**
+     * Configures the navigation drawer UI and populates its header with the current Firebase user.
+     *
+     * Sets up the ActionBarDrawerToggle for the DrawerLayout and toolbar, attaches the drawer
+     * listener and synchronizes its state, registers this activity as the navigation item
+     * selection listener, and fills the header's name, email, and initial from the signed-in
+     * FirebaseUser (falling back to localized defaults when name or email are unavailable).
+     */
     private void setupNavigationDrawer() {
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
             this, drawerLayout, toolbar,
@@ -184,6 +204,13 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         }
     }
     
+    /**
+     * Initialize the customer RecyclerView and its adapter.
+     *
+     * Creates a CustomerAdapter that opens customer options when an item is clicked,
+     * submits the current filtered customer list, and attaches a LinearLayoutManager
+     * and the adapter to the RecyclerView.
+     */
     private void setupRecyclerView() {
         customerAdapter = new CustomerAdapter(customer -> {
             // Show options dialog: View Details or Toggle Vacation
@@ -194,6 +221,12 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         customerRecyclerView.setAdapter(customerAdapter);
     }
     
+    /**
+     * Attaches UI event listeners for interactive controls on the dashboard.
+     *
+     * Sets the add-customer FAB to open the customer creation screen and attaches a debounced
+     * text-change listener to the search field that calls filterCustomers(...) after a short delay.
+     */
     private void setupListeners() {
         addCustomerFab.setOnClickListener(v -> {
             startActivity(new Intent(this, CustomerEditActivity.class));
@@ -222,6 +255,11 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         });
     }
     
+    /**
+     * Initiates loading of customers and related analytics for the current provider.
+     *
+     * <p>If the activity has no valid provider ID, no action is taken.</p>
+     */
     private void loadData() {
         if (providerId == null || providerId.isEmpty()) {
             return;
@@ -231,6 +269,19 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         loadCustomers();
     }
     
+    /**
+     * Subscribes to active customers for the current provider and updates in-memory lists, cache, UI, and analytics.
+     *
+     * Sets up a real-time Firestore listener for "customers" filtered by providerId and status "ACTIVE", replacing any existing listener.
+     * On successful updates the method:
+     * - refreshes allCustomers and filteredCustomers,
+     * - caches customers via OfflineCache,
+     * - updates the RecyclerView adapter and empty-state UI,
+     * - triggers analytics recalculation,
+     * - stops the SwipeRefreshLayout refresh animation if active.
+     *
+     * On error, it shows a toast with the failure message and stops the refresh animation if active.
+     */
     private void loadCustomers() {
         // Remove old listener if exists
         if (customersListener != null) {
@@ -279,6 +330,12 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
             });
     }
     
+    /**
+     * Update dashboard analytics displayed on the UI: total customer count, current-month revenue, and today's deliveries.
+     *
+     * <p>This refreshes the totalCustomersCount label and triggers recalculation of revenue for the current month
+     * and the summary of deliveries for today.</p>
+     */
     private void loadAnalytics() {
         // Load total customers
         totalCustomersCount.setText(String.valueOf(allCustomers.size()));
@@ -290,6 +347,11 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         calculateTodaysSummary();
     }
     
+    /**
+     * Computes today's delivered service count and total earnings for the current provider and updates the dashboard UI.
+     *
+     * Queries the "serviceEntries" collection for entries with the current providerId and delivered=true, filters entries to those occurring between the start and end of the current day, counts delivered entries, sums earnings as `rate * quantity`, and sets `txtTodayDelivered` and `txtTodayAmount` accordingly. If there are no customers the views are set to zero. On query failure the method logs the error and resets the displayed values to zero (delivered count shown as 0 out of total customers).
+     */
     private void calculateTodaysSummary() {
         if (allCustomers.isEmpty()) {
             txtTodayDelivered.setText(getString(R.string.delivered_format, 0, 0));
@@ -364,6 +426,18 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
             });
     }
     
+    /**
+     * Computes the total revenue for the current calendar month and updates the UI with the formatted amount.
+     *
+     * This method queries the `serviceEntries` collection for entries belonging to the current provider,
+     * filters entries whose `date` is on or after the first day of the current month, and sums each
+     * entry's `quantity` multiplied by the corresponding customer's `ratePerUnit` (matched by `customerId`).
+     * If no customers are loaded, the calculation is skipped and the displayed total remains "₹0".
+     *
+     * Side effects:
+     * - Updates the `totalRevenueAmount` TextView with the formatted Indian currency value (or "₹0" on failure).
+     * - Logs progress and errors to Android logs.
+     */
     private void calculateCurrentMonthRevenue() {
         // Reset counter
         totalRevenueAmount.setText("₹0");
@@ -426,6 +500,15 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
             });
     }
     
+    /**
+     * Filters the current customer list using the provided search query and updates the displayed results.
+     *
+     * Matches customers whose name or service type contains the query (case-insensitive) or whose phone contains the query (case-sensitive).
+     * If the query is null or empty, restores the full customer list. After filtering this method applies the current sort order,
+     * submits the results to the adapter, and updates the empty-state UI.
+     *
+     * @param query the search text to filter by; may be null or empty to clear filtering
+     */
     private void filterCustomers(String query) {
         filteredCustomers.clear();
         
@@ -454,6 +537,11 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         updateEmptyState();
     }
     
+    /**
+     * Toggles the UI between an empty-state view and the customer list based on whether any filtered customers exist.
+     *
+     * Sets emptyState visible and hides customerRecyclerView when filteredCustomers is empty; otherwise shows the list and hides the empty state.
+     */
     private void updateEmptyState() {
         if (filteredCustomers.isEmpty()) {
             emptyState.setVisibility(View.VISIBLE);
@@ -464,6 +552,15 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         }
     }
     
+    /**
+     * Handle toolbar menu selections for dashboard actions.
+     *
+     * Handles the sort action by showing the sort dialog and the calendar action by
+     * launching the service entry activity.
+     *
+     * @param item the selected menu item
+     * @return `true` if the selected menu item was handled, `false` otherwise
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -479,6 +576,12 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         return super.onOptionsItemSelected(item);
     }
     
+    /**
+     * Handle selection of items in the navigation drawer and navigate to the chosen screen.
+     *
+     * @param item the selected navigation menu item
+     * @return `true` to indicate the selection was handled
+     */
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -509,6 +612,14 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         return true;
     }
     
+    /**
+     * Prompts the user to confirm generation of sample data and, if confirmed,
+     * generates test customers and service entries, then refreshes the dashboard.
+     *
+     * <p>On successful generation this method displays a success toast with the
+     * counts of created customers and entries and calls {@code loadData()} to
+     * refresh the UI. On failure it displays an error toast.</p>
+     */
     private void generateTestData() {
         new MaterialAlertDialogBuilder(this)
             .setTitle("Generate Test Data")
@@ -539,6 +650,12 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
             .show();
     }
     
+    /**
+     * Opens the system share chooser to let the user share a prewritten message promoting the app.
+     *
+     * The chooser presents available apps that can handle plain-text sharing and pre-fills the
+     * subject and message text for the share action.
+     */
     private void shareApp() {
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.setType("text/plain");
@@ -547,6 +664,13 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         startActivity(Intent.createChooser(shareIntent, "Share via"));
     }
     
+    /**
+     * Signs the current user out and returns the app to the login screen.
+     *
+     * Clears stored preferences, signs out from Firebase Authentication, and attempts
+     * to sign out from Google Sign-In if a client is available. Navigation to the
+     * login screen occurs regardless of the Google sign-out result.
+     */
     private void logout() {
         // Clear SharedPreferences (critical - was missing)
         preferenceManager.clearAllData();
@@ -565,6 +689,9 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         }
     }
     
+    /**
+     * Closes the navigation drawer if it is open; otherwise delegates to the default back action.
+     */
     @Override
     public void onBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
@@ -574,6 +701,11 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         }
     }
     
+    /**
+     * Releases the real-time Firestore customers listener when the activity is paused to conserve resources.
+     *
+     * If a listener is registered, it is removed and the reference is cleared.
+     */
     @Override
     protected void onPause() {
         super.onPause();
@@ -584,6 +716,12 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         }
     }
     
+    /**
+     * Handles the activity resume lifecycle by reloading dashboard data and refreshing the sync status.
+     *
+     * <p>Invoked when the activity comes to the foreground to ensure the customer list, analytics,
+     * and sync indicator reflect the latest state.</p>
+     */
     @Override
     protected void onResume() {
         super.onResume();
@@ -593,6 +731,13 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         updateSyncStatus();
     }
     
+    /**
+     * Updates the sync status chip to reflect the number of pending offline entries.
+     *
+     * If there is at least one pending entry, the chip is made visible and its text is set to
+     * "📤 1 pending sync" for a single entry or "📤 N pending sync" for multiple entries.
+     * If there are no pending entries or required components are missing, the chip is hidden.
+     */
     private void updateSyncStatus() {
         if (syncStatusChip == null || offlineCache == null) {
             return;
@@ -610,6 +755,12 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         }
     }
     
+    /**
+     * Show a dialog allowing the user to pick a sort order for the customer list.
+     *
+     * Updates the activity's sort state, reapplies the current search filter, dismisses the dialog,
+     * and shows a toast describing the selected sort type.
+     */
     private void showSortDialog() {
         String[] options = {"Sort by Name (A-Z)", "Sort by Service Type", "Sort by Address"};
         int currentSelection = currentSortOrder.ordinal();
@@ -627,6 +778,11 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
             .show();
     }
     
+    /**
+     * Shows a dialog with actions for the given customer: open the customer's detail/edit screen or toggle their vacation status.
+     *
+     * @param customer the customer to present actions for
+     */
     private void showCustomerOptions(Customer customer) {
         String vacationText = customer.isOnVacation() ? "Remove from Vacation" : "Mark as On Vacation";
         String[] options = {"View/Edit Details", vacationText};
@@ -647,6 +803,15 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
             .show();
     }
     
+    /**
+     * Toggle the given customer's vacation status in Firestore and report the outcome with a toast.
+     *
+     * This flips the customer's `onVacation` flag, updates the corresponding Firestore document,
+     * and shows a success toast indicating whether the customer is now on vacation or back from vacation.
+     * On failure, shows a failure toast.
+     *
+     * @param customer the customer whose vacation status will be toggled
+     */
     private void toggleVacationMode(Customer customer) {
         boolean newVacationStatus = !customer.isOnVacation();
         
@@ -664,6 +829,16 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
             });
     }
     
+    /**
+     * Orders the current filteredCustomers list according to the active sort preference.
+     *
+     * When the sort order is:
+     * - NAME: sorts alphabetically by customer name (case-insensitive).
+     * - SERVICE_TYPE: sorts by service type (case-insensitive); ties are broken by name.
+     * - ADDRESS: sorts by area (missing areas treated as lexically last), then by address, then by name.
+     *
+     * This method mutates filteredCustomers in place to reflect the chosen ordering.
+     */
     private void sortCustomers() {
         switch (currentSortOrder) {
             case NAME:
@@ -701,6 +876,11 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         }
     }
     
+    /**
+     * Releases resources held by the activity and prevents background callbacks after it is destroyed.
+     *
+     * Removes any pending search debounce callbacks and unregisters the Firestore customers listener to avoid memory leaks.
+     */
     @Override
     protected void onDestroy() {
         super.onDestroy();

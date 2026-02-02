@@ -146,6 +146,15 @@ public class LoginActivity extends BaseActivity {
         });
     }
     
+    /**
+     * Validates credentials and signs the user in with Firebase using the entered email and password.
+     *
+     * <p>Performs client-side validation of email and password, checks network availability, shows a loading
+     * indicator, attempts Firebase email/password authentication, and on successful authentication
+     * proceeds to load the user's profile. On failure, hides the loading indicator, logs the error, and
+     * displays an appropriate user-facing message (e.g., incorrect password, no account found, network
+     * issues, too many attempts).</p>
+     */
     private void performLogin() {
         String email = emailInput.getText().toString().trim();
         String password = passwordInput.getText().toString().trim();
@@ -204,6 +213,16 @@ public class LoginActivity extends BaseActivity {
             });
     }
     
+    /**
+     * Loads the user's profile document from Firestore and advances the app flow based on the result.
+     *
+     * If the document exists, the method persists the user's id, email, name, and role to preferences,
+     * shows a success toast, and navigates to the dashboard. If the document does not exist or Firestore
+     * access is not permitted, the method attempts to create a user document from Firebase Auth data.
+     * If a network error occurs, a network error toast is shown.
+     *
+     * @param userId the Firebase UID of the user whose profile should be loaded
+     */
     private void loadUserData(String userId) {
         firestore.collection(Constants.COLLECTION_USERS)
             .document(userId)
@@ -252,8 +271,14 @@ public class LoginActivity extends BaseActivity {
     }
     
     /**
-     * Creates a user document in Firestore from Firebase Auth data.
-     * This handles cases where signup was interrupted or the document wasn't created.
+     * Create a Firestore user document from the current Firebase Auth account and persist the profile on success.
+     *
+     * Shows a loading indicator while constructing a user document (id, name, email, phone, role, createdAt) using Firebase Auth values with sensible defaults.
+     * If no authenticated Firebase user exists, the method hides loading and shows an authentication error toast.
+     * On successful write the method saves the user data to preferences, shows a success toast, and navigates to the dashboard.
+     * On failure the method hides loading and shows a failure toast.
+     *
+     * @param userId the Firebase UID to use as the Firestore document ID
      */
     private void createUserDocument(String userId) {
         showLoading();

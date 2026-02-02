@@ -74,6 +74,13 @@ public class ProviderDashboardActivity extends BaseActivity {
     private FirebaseFirestore firestore;
     private String providerId;
     
+    /**
+     * Initializes the provider dashboard: inflates the layout, validates login and provider ID, initializes Firestore,
+     * binds views, sets up listeners, and begins loading dashboard data. If the user is not logged in or the provider ID
+     * is missing, navigates to the login screen and aborts initialization.
+     *
+     * @param savedInstanceState bundle containing the activity's previously saved state, if any
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -98,6 +105,12 @@ public class ProviderDashboardActivity extends BaseActivity {
         loadDashboardData();
     }
     
+    /**
+     * Bind activity UI components to their layout views and configure the toolbar.
+     *
+     * Initializes fields for today's summary, payment overview, monthly overview, and quick-action buttons,
+     * then sets the toolbar as the support action bar and enables the Up (back) button when available.
+     */
     private void initializeViews() {
         toolbar = findViewById(R.id.toolbar);
         progressBar = findViewById(R.id.progressBar);
@@ -126,6 +139,14 @@ public class ProviderDashboardActivity extends BaseActivity {
         }
     }
     
+    /**
+     * Attach click handlers for the toolbar and dashboard quick-action buttons.
+     *
+     * Sets the toolbar's navigation to go back, and maps:
+     * - Service Entry button → ServiceEntryActivity
+     * - Bills button → BillListActivity
+     * - Customers button → DashboardActivity
+     */
     private void setupListeners() {
         toolbar.setNavigationOnClickListener(v -> onBackPressed());
         
@@ -142,6 +163,12 @@ public class ProviderDashboardActivity extends BaseActivity {
         });
     }
     
+    /**
+     * Starts loading all dashboard data and shows the progress indicator.
+     *
+     * Initiates parallel loading of today's summary, the payment overview, and the monthly overview
+     * while displaying the loading UI.
+     */
     private void loadDashboardData() {
         showLoading(true);
         
@@ -152,13 +179,9 @@ public class ProviderDashboardActivity extends BaseActivity {
     }
     
     /**
-     * Calculate today's deliveries and earnings from service_entries collection.
-     * 
-     * Logic:
-     * - Query all service entries for this provider where delivered = true
-     * - Filter by today's date
-     * - Count deliveries
-     * - Sum (rate × quantity) for today's earnings
+     * Loads and displays today's delivery count and earnings for the current provider.
+     *
+     * Queries Firestore's customers collection to determine the total active customer count and queries delivered service entries dated today to compute today's delivered count and sum of earnings; updates txtTodayDelivered and txtTodayEarnings on the main thread and advances the activity's loading tracker via checkLoadingComplete(). On query failures it logs the error and updates the UI with sensible default values.
      */
     private void loadTodaysSummary() {
         // Get today's date range
@@ -244,12 +267,12 @@ public class ProviderDashboardActivity extends BaseActivity {
     }
     
     /**
-     * Calculate payment overview from customers and payments collections.
-     * 
-     * Logic:
-     * - Total Lent = Sum of all customer lentAmount fields
-     * - Total Received = Sum of all payment amounts
-     * - Pending Amount = Total Lent - Total Received
+     * Aggregate customer lent amounts and provider payments, compute the pending balance, and update the dashboard UI.
+     *
+     * <p>Queries the customers collection to sum `lentAmount` and the payments collection to sum `amount`, computes
+     * pending as (total lent − total received), and updates txtTotalLent, txtTotalReceived, and txtPendingAmount
+     * with values formatted for Indian currency. On query failures, populates the UI with appropriate default values
+     * and signals completion via {@code checkLoadingComplete()}.</p>
      */
     private void loadPaymentOverview() {
         // Calculate total lent from customers
@@ -317,12 +340,11 @@ public class ProviderDashboardActivity extends BaseActivity {
     }
     
     /**
-     * Calculate monthly overview from service_entries collection.
-     * 
-     * Logic:
-     * - Query all service entries for current month
-     * - Count total deliveries
-     * - Sum (rate × quantity) for monthly earnings
+     * Loads and computes the current calendar month's deliveries and earnings from the service entries collection.
+     *
+     * Queries the provider's delivered service entries for the current month, computes the total number of deliveries
+     * and the sum of (rate × quantity) as monthly earnings, updates txtMonthlyDeliveries and txtMonthlyEarnings,
+     * and signals completion via checkLoadingComplete().
      */
     private void loadMonthlyOverview() {
         // Get current month date range
@@ -393,7 +415,12 @@ public class ProviderDashboardActivity extends BaseActivity {
     }
     
     private int loadingTasks = 0;
-    private final int TOTAL_TASKS = 3; // Today, Payment, Monthly
+    private final int TOTAL_TASKS = 3; /**
+     * Tracks completed dashboard loading subtasks and hides the progress indicator when all tasks finish.
+     *
+     * Increments the internal completed-task counter and calls showLoading(false) once the counter
+     * reaches or exceeds TOTAL_TASKS.
+     */
     
     private void checkLoadingComplete() {
         loadingTasks++;
@@ -402,12 +429,22 @@ public class ProviderDashboardActivity extends BaseActivity {
         }
     }
     
+    /**
+     * Toggle the dashboard's loading indicator visibility.
+     *
+     * @param show true to display the loading indicator, false to hide it
+     */
     private void showLoading(boolean show) {
         if (progressBar != null) {
             progressBar.setVisibility(show ? View.VISIBLE : View.GONE);
         }
     }
     
+    /**
+     * Refreshes dashboard data when the activity becomes visible again.
+     *
+     * Resets the internal loading task counter and triggers a reload of all dashboard metrics.
+     */
     @Override
     protected void onResume() {
         super.onResume();

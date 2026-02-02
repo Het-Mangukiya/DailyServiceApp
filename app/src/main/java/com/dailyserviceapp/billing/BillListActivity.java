@@ -62,7 +62,17 @@ public class BillListActivity extends BaseActivity {
     
     private List<Bill> currentBills = new ArrayList<>();
     private Map<String, Customer> customerMap = new HashMap<>();
-    private boolean customersLoaded = false; // Track if customers have been loaded
+    private boolean customersLoaded = false; /**
+     * Initializes the activity UI and data for viewing and managing monthly bills.
+     *
+     * Ensures the user is logged in (redirecting to login if not), sets the layout and toolbar,
+     * restores persisted month/year and customers-loaded state when available, initializes views,
+     * data, and click listeners, and starts loading bills for the selected month.
+     *
+     * @param savedInstanceState bundle that may contain previously saved values:
+     *                           "customersLoaded" (boolean), "selectedMonth" (int, Calendar month),
+     *                           and "selectedYear" (int, year)
+     */
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +102,13 @@ public class BillListActivity extends BaseActivity {
         loadData();
     }
     
+    /**
+     * Binds the activity's UI widgets to their fields and configures the bills list layout.
+     *
+     * Initializes view references for month navigation controls, the bills RecyclerView,
+     * the empty-state container, the generate-bills FAB, and the loading indicator, and
+     * sets a LinearLayoutManager on the RecyclerView.
+     */
     private void initializeViews() {
         selectedMonthText = findViewById(R.id.selectedMonthText);
         previousMonthButton = findViewById(R.id.previousMonthButton);
@@ -104,6 +121,13 @@ public class BillListActivity extends BaseActivity {
         billsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
     
+    /**
+     * Initialize core data for the activity and configure the bills RecyclerView adapter.
+     *
+     * Initializes the Firestore repository and provider ID, sets selectedMonth and selectedYear
+     * to the current date, creates a BillAdapter with handlers for viewing and sharing bills,
+     * assigns it to the RecyclerView, and updates the month display.
+     */
     private void initializeData() {
         repository = new FirestoreRepository();
         providerId = getCurrentUserId();
@@ -129,6 +153,12 @@ public class BillListActivity extends BaseActivity {
         updateMonthDisplay();
     }
     
+    /**
+     * Attaches click listeners to the previous/next month buttons and the generate bills FAB.
+     *
+     * When the previous/next buttons are tapped, adjusts selectedMonth and selectedYear as needed,
+     * updates the month display, and reloads data for the new month. Tapping the FAB triggers bill generation.
+     */
     private void setupClickListeners() {
         previousMonthButton.setOnClickListener(v -> {
             selectedMonth--;
@@ -153,12 +183,31 @@ public class BillListActivity extends BaseActivity {
         generateBillsFab.setOnClickListener(v -> generateBills());
     }
     
+    /**
+     * Updates the displayed month label to reflect the currently selected month and year.
+     *
+     * Sets the activity's month text view to the full month name (e.g., "January")
+     * followed by the selected year (e.g., "2026").
+     */
     private void updateMonthDisplay() {
         String[] monthNames = {"January", "February", "March", "April", "May", "June",
                                "July", "August", "September", "October", "November", "December"};
         selectedMonthText.setText(monthNames[selectedMonth] + " " + selectedYear);
     }
     
+    /**
+     * Load customers (if not already cached) and then load bills for the currently selected provider and month,
+     * updating UI state and showing user-facing messages for authentication or network problems.
+     *
+     * <p>Behavior:
+     * - If the provider ID is missing, shows a login prompt and displays the empty state.
+     * - If there is no network, shows a connectivity toast and aborts.
+     * - Shows a loading indicator while fetching data.
+     * - If customers are not yet loaded, fetches and caches them, marks them as loaded, and then fetches bills.
+     * - If customers are already cached, directly fetches bills for the selected month/year.</p>
+     *
+     * <p>Side effects: updates customerMap and customersLoaded, toggles loading/empty-state UI, and displays toasts on errors or missing authentication.</p>
+     */
     private void loadData() {
         if (providerId == null || providerId.isEmpty()) {
             showToast("Please login again");
@@ -201,6 +250,15 @@ public class BillListActivity extends BaseActivity {
         }
     }
     
+    /**
+     * Loads bills for the current provider and selected month/year, updates local state and the UI.
+     *
+     * <p>On success updates the activity's bill list, hides the loading indicator, shows the empty
+     * state if no bills were returned, or submits the bills and their corresponding customer names
+     * to the adapter for display.</p>
+     *
+     * <p>On error hides the loading indicator, shows an error toast, and displays the empty state.</p>
+     */
     private void loadBills() {
         repository.getBillsByProviderAndMonth(providerId, selectedMonth, selectedYear,
                 new FirestoreRepository.OnBillsLoadedListener() {
@@ -234,6 +292,14 @@ public class BillListActivity extends BaseActivity {
                 });
     }
     
+    /**
+     * Initiates generation of bills for the currently selected month and year.
+     *
+     * Shows a progress dialog, loads all customers for the current provider, fetches service entries
+     * within the selected month range, and delegates creation of bills to generateBillsFromEntries.
+     * If no customers are found or an error occurs while loading customers or service entries, the
+     * progress dialog is dismissed and an error or informational toast is shown.
+     */
     private void generateBills() {
         ProgressDialog progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Generating bills...");
@@ -286,6 +352,18 @@ public class BillListActivity extends BaseActivity {
         });
     }
     
+    /**
+     * Creates and saves bills for customers based on provided service entries for the selected month.
+     *
+     * Processes the list of service entries grouped by customer, generates a Bill for each customer
+     * with delivered entries whose total amount is greater than zero, saves each bill via the
+     * repository, dismisses the provided progress dialog, shows a toast summarizing the result,
+     * and reloads the bill list when one or more bills are generated.
+     *
+     * @param customers     list of customers to consider when generating bills
+     * @param entries       service entries (typically filtered to the selected month) used to compute bills
+     * @param progressDialog active ProgressDialog shown during generation; it will be dismissed by this method
+     */
     private void generateBillsFromEntries(List<Customer> customers, List<ServiceEntry> entries,
                                           ProgressDialog progressDialog) {
         // Group entries by customer
@@ -369,17 +447,36 @@ public class BillListActivity extends BaseActivity {
         }
     }
     
+    /**
+     * Open the bill details screen for the given bill.
+     *
+     * Starts BillDetailActivity and supplies the bill's identifier as an intent extra with key "billId".
+     *
+     * @param bill the Bill whose details should be displayed; its `id` is passed to the detail activity
+     */
     private void openBillDetails(Bill bill) {
         Intent intent = new Intent(this, BillDetailActivity.class);
         intent.putExtra("billId", bill.getId());
         startActivity(intent);
     }
     
+    /**
+     * Starts the process to export the specified bill as a PDF and share it via available apps.
+     *
+     * <p>Currently shows a placeholder toast until PDF generation and sharing are implemented.</p>
+     *
+     * @param bill the bill to export and share
+     */
     private void shareBill(Bill bill) {
         // TODO: Implement PDF generation and sharing
         showToast("Share bill feature coming soon");
     }
     
+    /**
+     * Toggle visibility between the bills list and the empty-state layout.
+     *
+     * @param show `true` to show the empty-state layout and hide the bills list, `false` to show the bills list and hide the empty state
+     */
     private void showEmptyState(boolean show) {
         if (show) {
             billsRecyclerView.setVisibility(View.GONE);
@@ -390,6 +487,14 @@ public class BillListActivity extends BaseActivity {
         }
     }
     
+    /**
+     * Toggles the loading indicator for the bills screen.
+     *
+     * When `show` is true, makes the loading progress visible and hides the bills list and empty-state view.
+     * When `show` is false, hides the loading progress and leaves the bills list and empty-state visibility unchanged.
+     *
+     * @param show `true` to show the loading indicator, `false` to hide it
+     */
     private void showLoading(boolean show) {
         if (loadingProgress != null) {
             loadingProgress.setVisibility(show ? View.VISIBLE : View.GONE);
@@ -400,6 +505,12 @@ public class BillListActivity extends BaseActivity {
         }
     }
     
+    /**
+     * Saves UI state required to restore the activity after recreation: the loaded-customers flag
+     * and the currently selected month and year.
+     *
+     * @param outState bundle in which to place the saved state values (`customersLoaded`, `selectedMonth`, `selectedYear`)
+     */
     @Override
     protected void onSaveInstanceState(android.os.Bundle outState) {
         super.onSaveInstanceState(outState);

@@ -43,6 +43,17 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.ViewHo
         return new ViewHolder(view);
     }
 
+    /**
+     * Binds the Customer at the given adapter position to the provided ViewHolder's views.
+     *
+     * Populates name, initial, service information (including formatted rate), status, and phone
+     * (hiding the phone view when absent). Displays a vacation badge and dims the name when the
+     * customer is on vacation. Attaches a click listener that notifies the adapter's
+     * OnCustomerClickListener with the bound Customer.
+     *
+     * @param holder   the ViewHolder whose views will be updated
+     * @param position the position of the Customer in the adapter's data list
+     */
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Customer customer = items.get(position);
@@ -98,6 +109,11 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.ViewHo
         final com.google.android.material.chip.Chip customerStatus;
         final TextView vacationBadge;
 
+        /**
+         * Initializes the ViewHolder and binds the row's child views to this holder's fields.
+         *
+         * @param itemView the root view of the customer row layout from which child views are retrieved
+         */
         ViewHolder(@NonNull View itemView) {
             super(itemView);
             customerName = itemView.findViewById(R.id.customerName);

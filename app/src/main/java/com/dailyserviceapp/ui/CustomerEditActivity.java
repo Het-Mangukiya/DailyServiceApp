@@ -25,6 +25,16 @@ public class CustomerEditActivity extends BaseActivity {
     private String customerId; // null for ADD, non-null for EDIT
     private Customer existingCustomer;
 
+    /**
+     * Initialize the activity UI and handle add vs. edit customer flows, input validation, save and delete actions.
+     *
+     * <p>Performs a login check and finishes the activity if not authenticated. Binds form inputs and configures
+     * the screen for "Add Customer" or "Edit Customer" based on an incoming customerId. When editing, loads
+     * existing customer data. Validates inputs on save (name required; rate required, numeric, greater than zero,
+     * at most 100000, and up to two decimal places). On save, updates the existing customer or creates a new
+     * customer (setting providerId and initial status "ACTIVE") via the FirestoreRepository, and shows success
+     * or error toasts. Wires the delete button to a confirmation dialog that triggers permanent deletion.
+     */
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -139,6 +149,19 @@ public class CustomerEditActivity extends BaseActivity {
         });
     }
 
+    /**
+     * Populate the provided input fields with the customer data for the activity's current customerId.
+     *
+     * Loads the customer via the repository; if the document exists, sets existingCustomer, assigns its id,
+     * and fills the name, phone, address, service, and rate inputs. If the customer is not found or loading
+     * fails, shows an error toast and finishes the activity.
+     *
+     * @param nameInput    input to populate with the customer's name
+     * @param phoneInput   input to populate with the customer's phone number
+     * @param addressInput input to populate with the customer's address
+     * @param serviceInput input to populate with the customer's service type
+     * @param rateInput    input to populate with the customer's rate per unit
+     */
     private void loadCustomerData(TextInputEditText nameInput, TextInputEditText phoneInput, 
                                    TextInputEditText addressInput, TextInputEditText serviceInput, 
                                    TextInputEditText rateInput) {
@@ -167,6 +190,12 @@ public class CustomerEditActivity extends BaseActivity {
         );
     }
 
+    /**
+     * Display a modal confirmation dialog warning that deleting the customer is permanent.
+     *
+     * <p>The dialog lists the consequences (removal of delivery records, bills/payments, and transaction history)
+     * and cannot be undone. Choosing "Delete Permanently" invokes {@code deleteCustomer()}, choosing "Cancel" dismisses the dialog.
+     */
     private void showDeleteConfirmation() {
         // Enhanced warning with explicit consequences
         new MaterialAlertDialogBuilder(this)
@@ -184,6 +213,12 @@ public class CustomerEditActivity extends BaseActivity {
                 .show();
     }
 
+    /**
+     * Deletes the customer identified by {@code customerId} and presents success or error feedback to the user.
+     *
+     * If {@code customerId} is null this method does nothing. On successful deletion it shows a success toast and
+     * finishes the activity; on failure it shows an error toast with the repository-provided message.
+     */
     private void deleteCustomer() {
         if (customerId == null) return;
         
@@ -201,7 +236,12 @@ public class CustomerEditActivity extends BaseActivity {
         });
     }
 
-    // Remove this method - use BaseActivity's getCurrentUserId() instead
+    /**
+     * Obtain the trimmed string value from a TextInputEditText, or an empty string if the input or its text is null.
+     *
+     * @param editText the TextInputEditText to read from; may be null
+     * @return the trimmed text content, or an empty string when absent
+     */
     
     private static String value(TextInputEditText editText) {
         if (editText == null || editText.getText() == null) return "";

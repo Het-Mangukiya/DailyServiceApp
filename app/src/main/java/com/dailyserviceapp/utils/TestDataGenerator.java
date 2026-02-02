@@ -29,6 +29,14 @@ public class TestDataGenerator {
     private final List<String> createdCustomerIds = new ArrayList<>();
     private final FirebaseFirestore db;
     
+    /**
+     * Creates a TestDataGenerator bound to the given Android context and provider.
+     *
+     * Initializes internal Firestore repository and Firestore instance used to write test data.
+     *
+     * @param context    the Android Context used for resource access and any context-bound operations
+     * @param providerId identifier of the provider for which test data will be generated
+     */
     public TestDataGenerator(Context context, String providerId) {
         this.context = context;
         this.providerId = providerId;
@@ -37,16 +45,32 @@ public class TestDataGenerator {
     }
     
     /**
-     * Generate complete test dataset: customers + service entries for January 2026
+     * Orchestrates generation of test customers and associated service entries for January 2026.
+     *
+     * <p>Creates a set of test customers, then generates service entries for those customers for
+     * January 2026. Any errors encountered during creation are reported through the provided listener.</p>
+     *
+     * @param listener callback invoked with the generated customer IDs and number of created service entries,
+     *                 or called with an error message if generation fails
      */
     public void generateCompleteTestData(OnTestDataGeneratedListener listener) {
         generateTestCustomers(new OnCustomersGeneratedListener() {
+            /**
+             * Handles newly generated customer IDs by recording them and initiating generation of service entries for January.
+             *
+             * @param customerIds list of created customer document IDs
+             */
             @Override
             public void onCustomersGenerated(List<String> customerIds) {
                 createdCustomerIds.addAll(customerIds);
                 generateServiceEntriesForJanuary(customerIds, listener);
             }
             
+            /**
+             * Forwards a customer-generation error to the parent listener, prefixed with "Failed to create customers: ".
+             *
+             * @param error the original error message describing the failure
+             */
             @Override
             public void onError(String error) {
                 listener.onError("Failed to create customers: " + error);
@@ -55,8 +79,14 @@ public class TestDataGenerator {
     }
     
     /**
-     * Create 5 test customers with different service types
-     */
+         * Generates five predefined test customers and writes them to Firestore.
+         *
+         * Writes five sample Customer records into the "customers" collection and, when the batch commit completes,
+         * invokes listener.onCustomersGenerated with the created document IDs; on failure invokes listener.onError
+         * with the error message.
+         *
+         * @param listener callback that receives the list of created customer IDs on success or an error message on failure
+         */
     private void generateTestCustomers(OnCustomersGeneratedListener listener) {
         String[][] customerData = {
             {"Rajesh Kumar", "9876543210", "House #123, MG Road, Bangalore", "Milk", "50"},
@@ -92,8 +122,24 @@ public class TestDataGenerator {
     }
     
     /**
-     * Create service entries for each customer for January 2026
-     * Varying patterns: some daily, some alternate days
+     * Generate service entries for each provided customer for January 2026 following predefined patterns.
+     *
+     * <p>Creates a set of ServiceEntry objects for January 1–28, 2026 using the following per-customer patterns:
+     * <ul>
+     *   <li>customerIds[0]: daily entries (28 days)</li>
+     *   <li>customerIds[1]: 25 entries (skips days 7, 15, 23)</li>
+     *   <li>customerIds[2]: 26 entries (skips days 10, 20)</li>
+     *   <li>customerIds[3]: alternate days (every other day)</li>
+     *   <li>customerIds[4]: 24 entries (skips every 7th day)</li>
+     * </ul>
+     * </p>
+     *
+     * <p>All entries are written in a single Firestore batch to the "serviceEntries" collection.
+     * On success invokes listener.onTestDataGenerated(createdCustomerIds, entriesCount).
+     * On failure invokes listener.onError(...) with the error message.</p>
+     *
+     * @param customerIds list of customer IDs to generate entries for; expected to contain at least five IDs
+     * @param listener callback to receive success or error notifications
      */
     private void generateServiceEntriesForJanuary(List<String> customerIds, OnTestDataGeneratedListener listener) {
         Calendar calendar = Calendar.getInstance();
@@ -149,6 +195,14 @@ public class TestDataGenerator {
                 .addOnFailureListener(e -> listener.onError("Failed to save service entries: " + e.getMessage()));
     }
     
+    /**
+     * Creates a ServiceEntry pre-populated for a test delivery.
+     *
+     * @param customerId the customer identifier for the entry
+     * @param date       the service date for the entry
+     * @param quantity   the delivered quantity for the entry
+     * @return           a ServiceEntry populated with providerId, customerId, date, quantity, a "Test delivery - {date}" note, and a creation timestamp
+     */
     private ServiceEntry createServiceEntry(String customerId, Date date, double quantity) {
         ServiceEntry entry = new ServiceEntry();
         entry.setProviderId(providerId);
@@ -162,12 +216,33 @@ public class TestDataGenerator {
     }
     
     public interface OnCustomersGeneratedListener {
-        void onCustomersGenerated(List<String> customerIds);
-        void onError(String error);
+        /**
+ * Callback invoked when test customers have been successfully created.
+ *
+ * @param customerIds the list of generated customer document IDs corresponding to the created customers
+ */
+void onCustomersGenerated(List<String> customerIds);
+        /**
+ * Notifies the caller that an error occurred during the operation.
+ *
+ * @param error a human-readable error message describing the failure
+ */
+void onError(String error);
     }
     
     public interface OnTestDataGeneratedListener {
-        void onTestDataGenerated(List<String> customerIds, int entriesCount);
-        void onError(String error);
+        /**
+ * Invoked after test data generation finishes, providing created customer IDs and the total number of service entries created.
+ *
+ * @param customerIds the list of generated customer document IDs
+ * @param entriesCount the total number of service entries created
+ */
+void onTestDataGenerated(List<String> customerIds, int entriesCount);
+        /**
+ * Notifies the caller that an error occurred during the operation.
+ *
+ * @param error a human-readable error message describing the failure
+ */
+void onError(String error);
     }
 }

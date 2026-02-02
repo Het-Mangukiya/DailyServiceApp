@@ -18,6 +18,16 @@ public class TestDataBroadcastReceiver extends BroadcastReceiver {
 
     private static final String TAG = "TestDataReceiver";
 
+    /**
+     * Handles the incoming broadcast to trigger generation of app test data for the currently signed-in Firebase user.
+     *
+     * If no user is signed in, displays a toast prompting the user to sign in and returns. If a user is signed in,
+     * initiates generation of complete test data for that user's UID and reports progress/results via toasts and log messages;
+     * on success, shows the number of generated customers and entries, and on error shows the error message.
+     *
+     * @param context the Context in which the receiver is running
+     * @param intent the Intent that triggered this broadcast
+     */
     @Override
     public void onReceive(Context context, Intent intent) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -47,6 +57,12 @@ public class TestDataBroadcastReceiver extends BroadcastReceiver {
         });
     }
 
+    /**
+     * Displays a Toast with the given message on the application's main thread.
+     *
+     * @param context the Context used to create the Toast
+     * @param message the text to show in the Toast
+     */
     private static void toast(Context context, String message) {
         new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(context, message, Toast.LENGTH_LONG).show());
     }

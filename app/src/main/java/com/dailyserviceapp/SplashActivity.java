@@ -53,10 +53,10 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     /**
-     * Determines the next screen to navigate to based on user's login status.
-     * If the user is logged in (session exists), navigates to the Dashboard.
-     * Otherwise, navigates to the Login screen.
-     * Finishes this activity to prevent returning to splash screen on back press.
+     * Navigate to the appropriate next activity based on the user's login state.
+     *
+     * Starts ProviderDashboardActivity when the user is logged in; otherwise starts LoginActivity.
+     * Finishes the splash activity after launching the next activity to prevent returning to it.
      */
     private void navigateToNextScreen() {
         PreferenceManager preferenceManager = new PreferenceManager(this);

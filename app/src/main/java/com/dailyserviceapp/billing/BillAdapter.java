@@ -32,23 +32,41 @@ public class BillAdapter extends RecyclerView.Adapter<BillAdapter.ViewHolder> {
      * Listener interface for bill actions.
      */
     public interface OnBillActionListener {
-        void onViewDetails(Bill bill);
-        void onShareBill(Bill bill);
+        /**
+ * Handle a user action to view details for the given bill.
+ *
+ * @param bill the bill whose detailed information should be presented
+ */
+void onViewDetails(Bill bill);
+        /**
+ * Share the specified bill with external apps or services.
+ *
+ * @param bill the bill to share
+ */
+void onShareBill(Bill bill);
     }
 
     private final List<Bill> bills = new ArrayList<>();
     private final List<String> customerNames = new ArrayList<>();
     private final OnBillActionListener listener;
 
+    /**
+     * Creates a BillAdapter and registers a listener to receive bill action events.
+     *
+     * @param listener callback invoked when a bill's "view details" or "share" action is triggered
+     */
     public BillAdapter(OnBillActionListener listener) {
         this.listener = listener;
     }
 
     /**
-     * Updates the adapter with bills and customer names.
-     * 
-     * @param billList List of bills to display
-     * @param names List of customer names corresponding to bills
+     * Replace the adapter's data with the provided bills and corresponding customer names.
+     *
+     * <p>This clears any existing items, adds all entries from {@code billList} and {@code names}
+     * when non-null, and refreshes the RecyclerView.</p>
+     *
+     * @param billList list of bills to display; if {@code null} the adapter's bill list is cleared
+     * @param names list of customer names aligned by index with {@code billList}; if {@code null} the adapter's name list is cleared
      */
     public void submitData(List<Bill> billList, List<String> names) {
         bills.clear();
@@ -65,6 +83,13 @@ public class BillAdapter extends RecyclerView.Adapter<BillAdapter.ViewHolder> {
         notifyDataSetChanged();
     }
 
+    /**
+     * Inflates the bill row layout and creates a ViewHolder for it.
+     *
+     * @param parent   the parent ViewGroup to which the new view will eventually be attached
+     * @param viewType the view type of the new view
+     * @return         a ViewHolder bound to the inflated row_bill layout
+     */
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -73,6 +98,16 @@ public class BillAdapter extends RecyclerView.Adapter<BillAdapter.ViewHolder> {
         return new ViewHolder(view);
     }
 
+    /**
+     * Binds bill data and UI interactions into the provided ViewHolder for the item at the given position.
+     *
+     * Sets the customer's initial and name (falls back to "Unknown" when a name is missing), constructs and displays
+     * the bill period from month/year and days served, formats and displays the total amount, maps the payment status
+     * (defaults to "PENDING") to a user-facing label and chip color, and attaches click listeners for view and share actions.
+     *
+     * @param holder   the ViewHolder whose views will be populated
+     * @param position the adapter position of the bill to bind; used to select the Bill and the corresponding customer name
+     */
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Bill bill = bills.get(position);
@@ -130,6 +165,11 @@ public class BillAdapter extends RecyclerView.Adapter<BillAdapter.ViewHolder> {
         holder.shareBillButton.setOnClickListener(v -> listener.onShareBill(bill));
     }
 
+    /**
+     * Return the number of bills currently held by the adapter.
+     *
+     * @return the number of bills in the adapter
+     */
     @Override
     public int getItemCount() {
         return bills.size();
@@ -144,6 +184,11 @@ public class BillAdapter extends RecyclerView.Adapter<BillAdapter.ViewHolder> {
         MaterialButton viewDetailsButton;
         MaterialButton shareBillButton;
 
+        /**
+         * Creates a ViewHolder and binds its child view references from the provided item view.
+         *
+         * @param itemView the root view of a bill row used to locate child UI elements
+         */
         ViewHolder(View itemView) {
             super(itemView);
             customerInitial = itemView.findViewById(R.id.customerInitial);

@@ -39,18 +39,23 @@ public class ServiceEntryAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private final List<Object> items = new ArrayList<>(); // Mix of String (headers) and Customer objects
     private final List<Customer> customers = new ArrayList<>();
     private final Map<String, Boolean> deliveryStatus = new HashMap<>(); // true = already delivered
-    private final Map<String, Double> quantityOverrides = new HashMap<>(); // custom quantities
+    private final Map<String, Double> quantityOverrides = new HashMap<>(); /**
+     * Creates a ServiceEntryAdapter configured to display customers grouped by area,
+     * track per-customer delivery status, and manage per-customer quantity overrides.
+     */
 
     public ServiceEntryAdapter() {
     }
 
     /**
-     * Updates adapter with customer list and existing service entries.
-     * Marks which customers already have deliveries for the selected date.
-     * Groups customers by area for route planning.
-     * 
-     * @param customerList List of customers
-     * @param serviceEntries Existing service entries for selected date
+     * Refreshes the adapter's data using the provided customers and service entries.
+     *
+     * Rebuilds the internal customer list, records which customers already have a delivered
+     * service entry for the selected date, groups customers by area (empty area -> "Other Areas"),
+     * and constructs the mixed items list consisting of area header strings followed by their customers.
+     *
+     * @param customerList   list of customers to display; if null the adapter will be cleared
+     * @param serviceEntries existing service entries for the selected date used to mark delivered customers
      */
     public void submitData(List<Customer> customerList, List<ServiceEntry> serviceEntries) {
         customers.clear();
@@ -97,11 +102,23 @@ public class ServiceEntryAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         notifyDataSetChanged();
     }
 
+    /**
+     * Selects the view type for the item at the given adapter position.
+     *
+     * @return VIEW_TYPE_HEADER if the item at the position is an area header (a String), VIEW_TYPE_CUSTOMER otherwise.
+     */
     @Override
     public int getItemViewType(int position) {
         return (items.get(position) instanceof String) ? VIEW_TYPE_HEADER : VIEW_TYPE_CUSTOMER;
     }
 
+    /**
+     * Create a ViewHolder instance matching the requested view type.
+     *
+     * @param parent   the parent ViewGroup used to inflate the item view
+     * @param viewType either {@code VIEW_TYPE_HEADER} for area headers or {@code VIEW_TYPE_CUSTOMER} for customer rows
+     * @return the created {@link RecyclerView.ViewHolder} appropriate for {@code viewType}
+     */
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -116,6 +133,12 @@ public class ServiceEntryAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
     }
 
+    /**
+     * Binds the adapter item at the given position to the provided view holder, handling both area headers and customer rows.
+     *
+     * @param holder the view holder, either {@link HeaderViewHolder} for area headers or {@link CustomerViewHolder} for customer rows
+     * @param position adapter position of the item to bind
+     */
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof HeaderViewHolder) {
@@ -127,6 +150,19 @@ public class ServiceEntryAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
     }
     
+    /**
+     * Bind a customer's data to the given CustomerViewHolder and wire quantity and delivery controls.
+     *
+     * This sets the customer's name, service details, address visibility, displayed quantity, and the
+     * delivered checkbox state based on the adapter's deliveryStatus. It also enables/disables the
+     * decrease/increase buttons according to delivery state and quantity limits, and installs click
+     * listeners that update quantityOverrides (clamped to 0.5–10.0) and call notifyItemChanged for the
+     * provided position.
+     *
+     * @param holder   the CustomerViewHolder to populate
+     * @param customer the Customer whose data will be displayed
+     * @param position the adapter position of this item (used when notifying item changes)
+     */
     private void bindCustomer(@NonNull CustomerViewHolder holder, Customer customer, int position) {
         boolean alreadyDelivered = deliveryStatus.getOrDefault(customer.getId(), false);
         
@@ -180,13 +216,22 @@ public class ServiceEntryAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         });
     }
 
+    /**
+     * Gets the total number of display items in the adapter.
+     *
+     * @return the number of items, including area header strings and customer entries
+     */
     @Override
     public int getItemCount() {
         return items.size();
     }
 
     /**
-     * Get customers who DON'T have deliveries yet (ready for marking)
+     * Collects delivery records for customers who have not yet been delivered.
+     *
+     * Each DeliveryItem uses a per-customer quantity override when present; otherwise it uses the customer's default quantity.
+     *
+     * @return a list of DeliveryItem for every customer without a recorded delivery; each item contains the customerId, quantity, rate per unit, and amount (rate × quantity)
      */
     public List<DeliveryItem> getSelectedDeliveries() {
         List<DeliveryItem> deliveries = new ArrayList<>();
@@ -218,13 +263,13 @@ public class ServiceEntryAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         public final double amount;
 
         /**
-         * Creates a new delivery item.
+         * Create a DeliveryItem with the given identifiers and amounts.
          *
-         * @param customerId The unique identifier of the customer
-         * @param quantity The quantity delivered
-         * @param rate The rate per unit
-         * @param amount The total amount (quantity * rate)
-         * @throws IllegalArgumentException if customerId is null/empty or values are negative
+         * @param customerId the non-null, non-empty customer identifier
+         * @param quantity the delivered quantity (must be >= 0)
+         * @param rate the rate per unit (must be >= 0)
+         * @param amount the total amount (quantity * rate, must be >= 0)
+         * @throws IllegalArgumentException if {@code customerId} is null or empty, or if {@code quantity}, {@code rate}, or {@code amount} is negative
          */
         public DeliveryItem(String customerId, double quantity, double rate, double amount) {
             if (customerId == null || customerId.trim().isEmpty()) {
@@ -243,6 +288,11 @@ public class ServiceEntryAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     static class HeaderViewHolder extends RecyclerView.ViewHolder {
         final TextView areaName;
 
+        /**
+         * Creates a HeaderViewHolder and binds the area name TextView for an area header row.
+         *
+         * @param itemView the root view of the header item layout
+         */
         HeaderViewHolder(@NonNull View itemView) {
             super(itemView);
             areaName = itemView.findViewById(R.id.txtAreaName);
@@ -258,6 +308,13 @@ public class ServiceEntryAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         final MaterialButton btnDecreaseQty;
         final MaterialButton btnIncreaseQty;
 
+        /**
+         * Initializes the view holder and binds its child views used to display a customer row.
+         *
+         * @param itemView the root view containing the customer row layout (must include views with IDs
+         *                 txtCustomerName, txtServiceDetails, txtAddress, txtQuantity,
+         *                 checkboxDelivered, btnDecreaseQty, and btnIncreaseQty)
+         */
         CustomerViewHolder(@NonNull View itemView) {
             super(itemView);
             customerName = itemView.findViewById(R.id.txtCustomerName);

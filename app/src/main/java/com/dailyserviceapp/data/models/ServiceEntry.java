@@ -105,18 +105,40 @@ public class ServiceEntry {
         return quantity;
     }
     
+    /**
+     * Set the amount of service delivered for this entry.
+     *
+     * Units depend on the service (for example: liters, items, hours).
+     *
+     * @param quantity the delivered amount
+     */
     public void setQuantity(double quantity) {
         this.quantity = quantity;
     }
     
+    /**
+     * Gets the per-unit rate applied to this service entry.
+     *
+     * @return the rate charged per unit for the service entry
+     */
     public double getRate() {
         return rate;
     }
     
+    /**
+     * Sets the rate per unit for this service entry.
+     *
+     * @param rate the rate per unit to assign to this entry
+     */
     public void setRate(double rate) {
         this.rate = rate;
     }
     
+    /**
+     * Indicates whether this service entry has been delivered.
+     *
+     * @return `true` if the service entry was delivered, `false` otherwise.
+     */
     public boolean isDelivered() {
         return delivered;
     }

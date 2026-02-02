@@ -110,6 +110,18 @@ public class FirestoreRepository {
                 .addOnFailureListener(onFailure);
     }
 
+    /**
+     * Mark a customer's payment for a specific month as paid and persist the payment status.
+     *
+     * Writes a PaymentStatus document (with paid=true, the paid amount, and current timestamp) to
+     * the customer's "payments" subcollection keyed by the given monthKey, replacing any existing document.
+     *
+     * @param customerId the ID of the customer document to update
+     * @param monthKey   a month identifier used as the payment document ID (e.g., "202601" for Jan 2026)
+     * @param paidAmount the amount recorded as paid for the month
+     * @param onSuccess  callback invoked when the write completes successfully
+     * @param onFailure  callback invoked if the write fails
+     */
     public void setPaymentPaid(String customerId, String monthKey, double paidAmount, OnSuccessListener<Void> onSuccess, OnFailureListener onFailure) {
         PaymentStatus status = new PaymentStatus(monthKey, true, paidAmount, Timestamp.now());
         customers()
@@ -141,11 +153,13 @@ public class FirestoreRepository {
     }
 
     /**
-     * Deletes a customer and all associated data.
-     * WARNING: This also deletes service entries, bills, and payments.
-     * 
-     * @param customerId Customer ID to delete
-     * @param listener Callback for completion
+     * Deletes the Firestore customer document with the given ID.
+     *
+     * Invokes the provided listener's onSuccess() when the delete completes successfully,
+     * or onError(String) with the failure message if the delete fails.
+     *
+     * @param customerId the ID of the customer document to delete
+     * @param listener callback invoked on success or error
      */
     public void deleteCustomer(String customerId, OnSaveCompleteListener listener) {
         customers()
@@ -182,10 +196,12 @@ public class FirestoreRepository {
     }
     
     /**
-     * Gets all customers for a specific provider.
-     * 
-     * @param providerId The provider's ID
-     * @param listener Callback for results
+     * Retrieve active customers belonging to the specified provider.
+     *
+     * Results are delivered to the provided listener: onCustomersLoaded receives the list of matching Customer objects (with IDs populated), and onError receives an error message if the query fails.
+     *
+     * @param providerId the provider's document ID to filter customers by
+     * @param listener callback that receives the loaded customers or an error message
      */
     public void getCustomersByProvider(String providerId, OnCustomersLoadedListener listener) {
         customers()
@@ -207,12 +223,14 @@ public class FirestoreRepository {
     }
     
     /**
-     * Listens to real-time updates for customers of a specific provider.
-     * Returns a ListenerRegistration that should be removed when done.
-     * 
-     * @param providerId The provider's ID
-     * @param listener Callback for real-time updates
-     * @return ListenerRegistration to remove listener
+     * Subscribe to real-time updates of ACTIVE customers for the given provider.
+     *
+     * The provided listener is invoked with the latest list of customers whenever the data changes,
+     * or with an error message if the listener encounters an error.
+     *
+     * @param providerId the provider's ID
+     * @param listener callback invoked on updates or errors
+     * @return a ListenerRegistration that can be used to remove the snapshot listener
      */
     public ListenerRegistration listenToCustomers(String providerId, OnCustomersLoadedListener listener) {
         return customers()
@@ -239,14 +257,18 @@ public class FirestoreRepository {
     }
     
     /**
-     * Gets service entries for a provider within a date range.
-     * Filters in memory to avoid complex Firestore index requirements.
-     * 
-     * @param providerId The provider's ID
-     * @param startDate Start of date range
-     * @param endDate End of date range
-     * @param listener Callback for results
-     */
+         * Retrieve service entries for a provider that fall within the inclusive date range.
+         *
+         * <p>Performs a provider-scoped query and filters results in memory to include entries whose
+         * date is greater than or equal to {@code startDate} and less than or equal to {@code endDate},
+         * avoiding the need for composite Firestore indexes.</p>
+         *
+         * @param providerId the provider's document ID to filter service entries
+         * @param startDate the start of the date range (inclusive)
+         * @param endDate the end of the date range (inclusive)
+         * @param listener callback that receives the matching entries via {@code onServiceEntriesLoaded}
+         *                 or an error message via {@code onError}
+         */
     public void getServiceEntriesByProviderAndDate(String providerId, Timestamp startDate, 
                                                     Timestamp endDate, OnServiceEntriesLoadedListener listener) {
         db.collection("serviceEntries")
@@ -274,10 +296,12 @@ public class FirestoreRepository {
     }
     
     /**
-     * Saves or updates a service entry.
-     * 
-     * @param entry The service entry to save
-     * @param listener Callback for completion
+     * Persists a ServiceEntry to Firestore, updating an existing document when the entry has an ID or creating a new document otherwise.
+     *
+     * If the entry contains a non-empty ID the corresponding document in the "serviceEntries" collection is overwritten; if the ID is absent or empty a new document is created. Completion and error results are reported through the provided listener.
+     *
+     * @param entry    the ServiceEntry to save or update
+     * @param listener callback invoked on success or with an error message on failure
      */
     public void saveServiceEntry(ServiceEntry entry, OnSaveCompleteListener listener) {
         if (entry.getId() != null && !entry.getId().isEmpty()) {
@@ -297,14 +321,15 @@ public class FirestoreRepository {
     }
     
     /**
-     * Saves a service entry and atomically updates customer's lent amount.
-     * Uses Firestore transaction to ensure atomicity (both succeed or both fail).
-     * Also checks for duplicate entry (one delivery per customer per day).
-     * 
-     * @param entry The service entry to save
-     * @param customerId Customer ID
-     * @param deliveryCost Cost to add to lent amount (rate × quantity)
-     * @param listener Callback for completion
+     * Save a service entry and atomically update the customer's lent amount.
+     *
+     * Performs a duplicate check to prevent more than one delivery for the same customer on the same day,
+     * and, if none is found, runs a Firestore transaction that updates the customer's lentAmount and creates the service entry together.
+     *
+     * @param entry       the ServiceEntry to persist
+     * @param customerId  the ID of the customer whose lent amount will be updated
+     * @param deliveryCost the amount to add to the customer's lentAmount (e.g., rate × quantity)
+     * @param listener    callback invoked on success or with an error message on failure
      */
     public void saveServiceEntryWithTransaction(ServiceEntry entry, String customerId, 
                                                  double deliveryCost, OnSaveCompleteListener listener) {
@@ -381,17 +406,29 @@ public class FirestoreRepository {
      * Listener interface for loading bills.
      */
     public interface OnBillsLoadedListener {
-        void onBillsLoaded(List<Bill> bills);
-        void onError(String error);
+        /**
+ * Called when the repository has retrieved the list of bills.
+ *
+ * @param bills the retrieved list of Bill objects; may be empty if no bills were found
+ */
+void onBillsLoaded(List<Bill> bills);
+        /**
+ * Called when an operation fails.
+ *
+ * @param error a human-readable message describing the failure
+ */
+void onError(String error);
     }
     
     /**
-     * Gets bills for a provider in a specific month and year.
-     * 
-     * @param providerId The provider's ID
-     * @param month The month (0-11, January=0)
-     * @param year The year
-     * @param listener Callback for results
+     * Retrieves all bills for the given provider within the specified month and year and delivers them to the listener.
+     *
+     * The month parameter uses 0-11 indexing (January = 0).
+     *
+     * @param providerId the provider's identifier
+     * @param month the month index (0-11, January = 0)
+     * @param year the calendar year
+     * @param listener callback invoked with the loaded bills or an error message
      */
     public void getBillsByProviderAndMonth(String providerId, int month, int year,
                                             OnBillsLoadedListener listener) {
@@ -415,10 +452,12 @@ public class FirestoreRepository {
     }
     
     /**
-     * Saves or updates a bill.
-     * 
-     * @param bill The bill to save
-     * @param listener Callback for completion
+     * Creates a new Bill document or updates an existing one in the "bills" collection.
+     *
+     * If the provided Bill has a non-empty id, the corresponding document is overwritten; otherwise a new document is created.
+     *
+     * @param bill     the Bill to persist; when `bill.getId()` is non-empty the existing document is updated
+     * @param listener callback invoked on successful completion or with an error message on failure
      */
     public void saveBill(Bill bill, OnSaveCompleteListener listener) {
         if (bill.getId() != null && !bill.getId().isEmpty()) {
@@ -438,11 +477,15 @@ public class FirestoreRepository {
     }
     
     /**
-     * Gets a single bill by ID.
-     * 
-     * @param billId The bill's ID
-     * @param listener Callback for results
-     */
+         * Retrieve a bill document by its ID and deliver the result via the provided listener.
+         *
+         * If the document exists it is converted to a Bill (its ID is set) and delivered via
+         * OnBillLoadedListener.onBillLoaded. If the document does not exist or a fetch error
+         * occurs, OnBillLoadedListener.onError is invoked with an error message.
+         *
+         * @param billId  the Firestore document ID of the bill
+         * @param listener callback receiving the loaded Bill or an error message
+         */
     public void getBillById(String billId, OnBillLoadedListener listener) {
         db.collection("bills")
                 .document(billId)
@@ -463,17 +506,30 @@ public class FirestoreRepository {
      * Listener interface for loading a single bill.
      */
     public interface OnBillLoadedListener {
-        void onBillLoaded(Bill bill);
-        void onError(String error);
+        /**
+ * Called when a bill has been retrieved successfully.
+ *
+ * @param bill the retrieved Bill matching the requested identifier
+ */
+void onBillLoaded(Bill bill);
+        /**
+ * Called when an operation fails.
+ *
+ * @param error a human-readable message describing the failure
+ */
+void onError(String error);
     }
     
     // ========== Payment Methods ==========
     
     /**
-     * Saves or updates a payment.
-     * 
-     * @param payment The payment to save
-     * @param listener Callback for completion
+     * Persists the given payment in Firestore by creating a new document or updating an existing one.
+     *
+     * <p>If the payment has a non-empty `id`, the corresponding document is overwritten; otherwise a
+     * new document is created.</p>
+     *
+     * @param payment  the Payment to persist; its `id` (if present) selects update mode
+     * @param listener callback invoked on successful completion or with an error message on failure
      */
     public void savePayment(Payment payment, OnSaveCompleteListener listener) {
         if (payment.getId() != null && !payment.getId().isEmpty()) {
@@ -493,10 +549,12 @@ public class FirestoreRepository {
     }
     
     /**
-     * Gets all payments for a specific bill.
-     * 
-     * @param billId The bill's ID
-     * @param listener Callback for results
+     * Loads all payments associated with the specified bill and notifies the listener.
+     *
+     * Results are delivered to the listener ordered by `paymentDate` in descending order.
+     *
+     * @param billId   the ID of the bill whose payments should be retrieved
+     * @param listener callback that receives the list of payments or an error message
      */
     public void getPaymentsByBill(String billId, OnPaymentsLoadedListener listener) {
         db.collection("payments")
@@ -521,8 +579,17 @@ public class FirestoreRepository {
      * Listener interface for loading payments.
      */
     public interface OnPaymentsLoadedListener {
-        void onPaymentsLoaded(List<Payment> payments);
-        void onError(String error);
+        /**
+ * Called when payments for a bill have been loaded.
+ *
+ * @param payments the list of payments associated with the bill; items are ordered by payment date in descending order (most recent first). This list may be empty if there are no payments.
+ */
+void onPaymentsLoaded(List<Payment> payments);
+        /**
+ * Called when an operation fails.
+ *
+ * @param error a human-readable message describing the failure
+ */
+void onError(String error);
     }
 }
-

@@ -63,6 +63,13 @@ public class PaymentActivity extends BaseActivity {
         "Other"
     };
     
+    /**
+     * Initializes the activity UI and prepares the flow for recording a payment.
+     *
+     * Performs critical startup validation (ensures a bill ID is present in the Intent and that the user is logged in), sets the content view and toolbar, initializes views, data, and event listeners, and begins loading the bill details.
+     *
+     * @param savedInstanceState state used to restore the activity's previous state, if any
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,6 +99,13 @@ public class PaymentActivity extends BaseActivity {
         loadBillDetails();
     }
     
+    /**
+     * Binds activity UI components to fields and configures the payment method dropdown.
+     *
+     * Initializes references for customer name, bill period, bill amount, amount input, payment method dropdown,
+     * payment date input, notes input, and the record payment button, then sets up the dropdown with available
+     * payment methods and preselects "Cash".
+     */
     private void initializeViews() {
         customerNameText = findViewById(R.id.customerNameText);
         billPeriodText = findViewById(R.id.billPeriodText);
@@ -112,6 +126,12 @@ public class PaymentActivity extends BaseActivity {
         paymentMethodDropdown.setText("Cash", false);
     }
     
+    /**
+     * Initializes data sources and default values used by the activity.
+     *
+     * Sets up the FirestoreRepository instance, sets the payment date to the current date,
+     * and refreshes the payment date display in the UI.
+     */
     private void initializeData() {
         repository = new FirestoreRepository();
         
@@ -120,11 +140,25 @@ public class PaymentActivity extends BaseActivity {
         updatePaymentDateDisplay();
     }
     
+    /**
+     * Attaches click handlers for the payment UI controls.
+     *
+     * Clicking the payment date input opens a date picker. Clicking the record payment
+     * button triggers validation and attempts to record the payment.
+     */
     private void setupClickListeners() {
         paymentDateInput.setOnClickListener(v -> showDatePicker());
         recordPaymentButton.setOnClickListener(v -> recordPayment());
     }
     
+    /**
+     * Loads bill data for the current billId and updates the UI and activity state accordingly.
+     *
+     * If billId is invalid, shows an error toast and finishes the activity. Otherwise retrieves the
+     * Bill from the repository, sets {@code currentBill}, displays bill information, loads the
+     * associated customer, and pre-fills the amount input with the bill's total. If loading fails,
+     * shows an error toast and finishes the activity.
+     */
     private void loadBillDetails() {
         if (billId == null || billId.isEmpty()) {
             showToast("Cannot load bill: Invalid ID");
@@ -151,6 +185,11 @@ public class PaymentActivity extends BaseActivity {
         });
     }
     
+    /**
+     * Updates the UI to show the bill's period (month and year) and the bill's total formatted as currency.
+     *
+     * @param bill the Bill whose month, year, and total amount should be displayed; expects {@code bill.getMonth()} to be a zero-based month index (0 = January)
+     */
     private void displayBillInfo(Bill bill) {
         // Set bill period
         String[] monthNames = {"January", "February", "March", "April", "May", "June",
@@ -161,6 +200,14 @@ public class PaymentActivity extends BaseActivity {
         billAmountText.setText(CurrencyUtils.formatCurrency(bill.getTotalAmount()));
     }
     
+    /**
+     * Loads the customer record for the given customer ID and updates the customer name text view.
+     *
+     * If a customer document is found, sets customerNameText to the customer's name; on error or if
+     * the document cannot be converted to a Customer, sets customerNameText to "Unknown Customer".
+     *
+     * @param customerId the Firestore document ID of the customer to load
+     */
     private void loadCustomerInfo(String customerId) {
         repository.getCustomer(customerId, documentSnapshot -> {
             Customer customer = documentSnapshot.toObject(Customer.class);
@@ -172,6 +219,9 @@ public class PaymentActivity extends BaseActivity {
         });
     }
     
+    /**
+     * Displays a date picker initialized to the current selected payment date, restricted to today or earlier, and updates the activity's selected payment date and its displayed value when the user chooses a date.
+     */
     private void showDatePicker() {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(selectedPaymentDate);
@@ -193,11 +243,21 @@ public class PaymentActivity extends BaseActivity {
         datePickerDialog.show();
     }
     
+    /**
+     * Formats the currently selected payment date and updates the payment date input field.
+     */
     private void updatePaymentDateDisplay() {
         String dateStr = DateUtils.formatShortDate(selectedPaymentDate);
         paymentDateInput.setText(dateStr);
     }
     
+    /**
+     * Validates the payment form inputs and proceeds to record the payment or prompt for confirmation when the entered amount exceeds the bill total.
+     *
+     * <p>Performs validation of the amount (presence, numeric format, > 0, at most two decimal places, and an upper bound) and the selected payment method.
+     * On validation failures it sets field errors or shows a toast as appropriate. If the amount exceeds the bill total, displays a confirmation dialog
+     * informing the user that the excess will be credited; on confirmation the payment is saved. Otherwise the payment is saved immediately.</p>
+     */
     private void recordPayment() {
         // Validate input
         String amountStr = amountInput.getText() != null ? amountInput.getText().toString().trim() : "";
@@ -258,7 +318,10 @@ public class PaymentActivity extends BaseActivity {
     }
     
     /**
-     * Actually save the payment after validation
+     * Persist the validated payment and update the associated bill's payment status.
+     *
+     * @param amount        the monetary amount to record for this payment
+     * @param paymentMethod the payment method label (e.g., "Cash", "Card") used for this payment
      */
     private void savePayment(double amount, String paymentMethod) {
         
@@ -278,12 +341,23 @@ public class PaymentActivity extends BaseActivity {
         // Save payment
         recordPaymentButton.setEnabled(false);
         repository.savePayment(payment, new FirestoreRepository.OnSaveCompleteListener() {
+            /**
+             * Update the associated bill's payment status based on the recorded payment amount.
+             *
+             * <p>If the recorded amount meets or exceeds the bill total, the bill will be marked paid;
+             * otherwise it will be marked partial.</p>
+             */
             @Override
             public void onSuccess() {
                 // Update bill payment status
                 updateBillPaymentStatus(amount);
             }
 
+            /**
+             * Re-enables the record payment button and displays an error message when saving a payment fails.
+             *
+             * @param error the error message describing why the payment could not be recorded
+             */
             @Override
             public void onError(String error) {
                 recordPaymentButton.setEnabled(true);
@@ -292,6 +366,15 @@ public class PaymentActivity extends BaseActivity {
         });
     }
     
+    /**
+     * Update the current bill's payment status based on the provided paid amount and persist the change.
+     *
+     * Sets the bill's payment status to "PAID" when the paid amount is greater than or equal to the bill total,
+     * otherwise sets it to "PARTIAL". Persists the updated bill; on successful save shows a success toast and
+     * finishes the activity, and on save error shows an error toast (including the repository error) and finishes.
+     *
+     * @param paidAmount the amount that was applied to the bill
+     */
     private void updateBillPaymentStatus(double paidAmount) {
         double billTotal = currentBill.getTotalAmount();
         

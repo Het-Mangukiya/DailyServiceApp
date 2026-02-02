@@ -226,6 +226,19 @@ public class SignupActivity extends BaseActivity {
             });
     }
     
+    /**
+     * Creates a Firestore user document for the given user and handles post-creation flow.
+     *
+     * Writes a user record to the users collection, saves session data on success, shows an appropriate
+     * toast, and navigates to the dashboard. If the Firestore write fails, shows an error message and
+     * navigates to the login screen.
+     *
+     * @param userId the Firebase Authentication UID for the user
+     * @param name   the user's display name
+     * @param email  the user's email address
+     * @param phone  the user's phone number (may be empty)
+     * @param role   the user's role (expected values: "Service Provider" or "Customer")
+     */
     private void createUserDocument(String userId, String name, String email, String phone, String role) {
         Map<String, Object> userData = new HashMap<>();
         userData.put("id", userId);
@@ -308,6 +321,13 @@ public class SignupActivity extends BaseActivity {
         }
     }
     
+    /**
+     * Authenticates with Firebase using the provided Google ID token and, on success,
+     * proceeds to verify or create the user's Firestore profile; on failure, hides the
+     * loading indicator and shows an authentication failure toast.
+     *
+     * @param idToken the Google ID token used to build Firebase credentials for sign-in
+     */
     private void firebaseAuthWithGoogle(String idToken) {
         AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
         firebaseAuth.signInWithCredential(credential)
@@ -329,7 +349,14 @@ public class SignupActivity extends BaseActivity {
     }
     
     /**
-     * Check if Google user exists in Firestore, create if not
+     * Ensure a Firestore user document exists for the given Google account and proceed accordingly.
+     *
+     * Checks Firestore for a user document matching the provided Firebase user's UID. If a document
+     * exists, saves the user's session data and navigates to the dashboard. If no document exists,
+     * creates a new user document using the currently selected role from the role spinner. On failure
+     * to read the document, hides the loading indicator and shows a verification failure toast.
+     *
+     * @param firebaseUser the authenticated Firebase user (from Google Sign-In) whose Firestore profile should be verified or created
      */
     private void checkAndCreateGoogleUserProfile(FirebaseUser firebaseUser) {
         String userId = firebaseUser.getUid();
@@ -361,7 +388,12 @@ public class SignupActivity extends BaseActivity {
     }
     
     /**
-     * Create Firestore document for new Google user
+     * Create a Firestore user document for a Google-authenticated user, persist the session, and navigate to the dashboard on success.
+     *
+     * Writes a document to the users collection using the FirebaseUser's UID and profile fields; on successful write it saves session data, shows a success toast, and opens the Dashboard. On failure it shows a failure toast.
+     *
+     * @param firebaseUser the authenticated FirebaseUser whose profile will be stored (must not be null)
+     * @param role the role to assign to the new user (for example "Service Provider" or "Customer")
      */
     private void createGoogleUserDocument(FirebaseUser firebaseUser, String role) {
         Map<String, Object> userData = new HashMap<>();
@@ -395,7 +427,7 @@ public class SignupActivity extends BaseActivity {
     }
     
     /**
-     * Navigate to Dashboard with proper flags
+     * Start DashboardActivity as a new task, clear the activity back stack, and finish the current activity.
      */
     private void navigateToDashboard() {
         Intent intent = new Intent(this, com.dailyserviceapp.dashboard.DashboardActivity.class);
@@ -404,6 +436,9 @@ public class SignupActivity extends BaseActivity {
         finish();
     }
     
+    /**
+     * Shows the signup loading state by displaying the progress indicator and disabling user actions.
+     */
     private void showLoading() {
         progressBar.setVisibility(View.VISIBLE);
         signupButton.setEnabled(false);

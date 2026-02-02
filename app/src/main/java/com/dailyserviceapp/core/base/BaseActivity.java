@@ -143,14 +143,19 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
     
     /**
-     * Check if user is logged in
+     * Determines whether a user is currently authenticated in the app.
+     *
+     * @return true if a user is currently logged in, false otherwise.
      */
     protected boolean isLoggedIn() {
         return preferenceManager.isLoggedIn();
     }
     
     /**
-     * Navigate to login screen and clear activity stack
+     * Starts the login screen and clears the existing activity task stack.
+     *
+     * <p>Launches LoginActivity as a new task, removes all existing activities from the back stack,
+     * and finishes the current activity.
      */
     protected void navigateToLogin() {
         Intent intent = new Intent(this, com.dailyserviceapp.auth.LoginActivity.class);
@@ -160,8 +165,13 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
     
     /**
-     * Perform logout: clear preferences and Firebase session
-     * Note: Activities using Google Sign-In should override to add googleSignInClient.signOut()
+     * Logs out the current user and redirects to the login screen.
+     *
+     * Clears all stored preferences and ends the Firebase authentication session,
+     * then navigates to the app's login activity.
+     *
+     * Activities that use Google Sign-In should override this method to also
+     * call GoogleSignInClient.signOut().
      */
     protected void performLogout() {
         preferenceManager.clearAllData();
@@ -169,6 +179,11 @@ public abstract class BaseActivity extends AppCompatActivity {
         navigateToLogin();
     }
     
+    /**
+     * Clean up resources when the activity is destroyed.
+     *
+     * If a NetworkMonitor is present, unregisters its network callback to prevent leaks, then completes destruction by delegating to the superclass.
+     */
     @Override
     protected void onDestroy() {
         super.onDestroy();

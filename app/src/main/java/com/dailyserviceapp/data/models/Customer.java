@@ -63,6 +63,11 @@ public class Customer {
     /** Customer record creation timestamp */
     private Timestamp createdAt;
 
+    /**
+     * Creates a Customer instance with default values required by Firestore.
+     *
+     * Initializes observable defaults: defaultQuantity = 1.0, lentAmount = 0.0, and onVacation = false.
+     */
     public Customer() {
         // Firestore requires a public no-arg constructor
         this.defaultQuantity = 1.0; // Default to 1 unit per day
@@ -70,6 +75,18 @@ public class Customer {
         this.onVacation = false; // Default to not on vacation
     }
 
+    /**
+     * Constructs a Customer with the given personal, service, and pricing details and marks the customer active.
+     *
+     * Default values applied: status set to "ACTIVE", defaultQuantity set to 1.0, and lentAmount set to 0.0.
+     *
+     * @param name       customer's full name
+     * @param phone      customer's phone number
+     * @param address    service delivery address
+     * @param serviceType type of subscribed service (e.g., "Milk", "Newspaper", "Maid", "Laundry")
+     * @param ratePerUnit price per unit of service
+     * @param createdAt  record creation timestamp
+     */
     public Customer(String name, String phone, String address, String serviceType, double ratePerUnit, Timestamp createdAt) {
         this.name = name;
         this.phone = phone;
@@ -82,6 +99,11 @@ public class Customer {
         this.lentAmount = 0.0; // Default to no pending amount
     }
 
+    /**
+     * Gets the Firestore document identifier for this customer.
+     *
+     * @return the Firestore document ID for the customer, or {@code null} if not set
+     */
     public String getId() {
         return id;
     }
@@ -94,30 +116,65 @@ public class Customer {
         return phone;
     }
 
+    /**
+     * Retrieves the customer's service delivery address.
+     *
+     * @return the customer's delivery address, or null if not set
+     */
     public String getAddress() {
         return address;
     }
     
+    /**
+     * Retrieves the customer's service area or locality.
+     *
+     * @return the customer's service area (locality), or null if not set
+     */
     public String getArea() {
         return area;
     }
 
+    /**
+     * Gets the customer's subscribed service type.
+     *
+     * @return the service type for the customer (e.g., "Milk", "Newspaper", "Maid", "Laundry")
+     */
     public String getServiceType() {
         return serviceType;
     }
 
+    /**
+     * The price charged per unit of the customer's subscribed service.
+     *
+     * @return the rate charged per unit of service
+     */
     public double getRatePerUnit() {
         return ratePerUnit;
     }
     
+    /**
+     * Retrieves the customer's default daily service quantity.
+     *
+     * @return the default quantity per day in units (for example, 1.0)
+     */
     public double getDefaultQuantity() {
         return defaultQuantity;
     }
     
+    /**
+     * Gets the total amount currently lent to the customer.
+     *
+     * @return the total amount lent to the customer
+     */
     public double getLentAmount() {
         return lentAmount;
     }
     
+    /**
+     * Retrieves the provider identifier for this customer.
+     *
+     * @return the provider identifier, or {@code null} if not set
+     */
     public String getProviderId() {
         return providerId;
     }
@@ -126,14 +183,29 @@ public class Customer {
         return status;
     }
     
+    /**
+     * Retrieves additional notes associated with the customer.
+     *
+     * @return the customer's notes, or {@code null} if none are set
+     */
     public String getNotes() {
         return notes;
     }
     
+    /**
+     * Indicates whether the customer's service deliveries are paused due to vacation.
+     *
+     * @return true if the customer is on vacation and deliveries are paused, false otherwise.
+     */
     public boolean isOnVacation() {
         return onVacation;
     }
     
+    /**
+     * Get the customer's service subscription start date.
+     *
+     * @return the subscription start date as a Firestore {@code Timestamp}, or {@code null} if not set
+     */
     public Timestamp getStartDate() {
         return startDate;
     }
@@ -154,30 +226,65 @@ public class Customer {
         this.phone = phone;
     }
 
+    /**
+     * Sets the customer's service delivery address.
+     *
+     * @param address the service delivery address
+     */
     public void setAddress(String address) {
         this.address = address;
     }
     
+    /**
+     * Sets the customer's service locality or area used for routing and delivery.
+     *
+     * @param area the locality or area name for the customer's address
+     */
     public void setArea(String area) {
         this.area = area;
     }
 
+    /**
+     * Set the customer's subscribed service type.
+     *
+     * @param serviceType the service type identifier (for example "Milk", "Newspaper", "Maid", or "Laundry")
+     */
     public void setServiceType(String serviceType) {
         this.serviceType = serviceType;
     }
 
+    /**
+     * Set the customer's price per unit of service.
+     *
+     * @param ratePerUnit the price charged for one unit of the service (in the app's default currency)
+     */
     public void setRatePerUnit(double ratePerUnit) {
         this.ratePerUnit = ratePerUnit;
     }
     
+    /**
+     * Sets the customer's default daily quantity of the subscribed service.
+     *
+     * @param defaultQuantity the quantity (units per day) to use by default for this customer
+     */
     public void setDefaultQuantity(double defaultQuantity) {
         this.defaultQuantity = defaultQuantity;
     }
     
+    /**
+     * Sets the customer's total amount lent (outstanding credit).
+     *
+     * @param lentAmount the total amount lent to the customer
+     */
     public void setLentAmount(double lentAmount) {
         this.lentAmount = lentAmount;
     }
     
+    /**
+     * Set the identifier of the provider responsible for this customer.
+     *
+     * @param providerId the provider's unique identifier or null to clear the association
+     */
     public void setProviderId(String providerId) {
         this.providerId = providerId;
     }
@@ -186,14 +293,31 @@ public class Customer {
         this.status = status;
     }
     
+    /**
+     * Sets free-form notes associated with the customer record.
+     *
+     * @param notes additional information or remarks about the customer; may be null or empty to clear existing notes
+     */
     public void setNotes(String notes) {
         this.notes = notes;
     }
     
+    /**
+     * Set the customer's vacation mode.
+     *
+     * When enabled, service deliveries for the customer are paused.
+     *
+     * @param onVacation true to pause deliveries for the customer, false to resume deliveries
+     */
     public void setOnVacation(boolean onVacation) {
         this.onVacation = onVacation;
     }
     
+    /**
+     * Set the customer's service subscription start date.
+     *
+     * @param startDate the subscription start date as a Firestore `Timestamp`
+     */
     public void setStartDate(Timestamp startDate) {
         this.startDate = startDate;
     }
