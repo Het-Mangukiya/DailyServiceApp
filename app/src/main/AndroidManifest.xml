@@ -49,6 +49,11 @@
         <activity
             android:name=".dashboard.DashboardActivity"
             android:exported="false" />
+        
+        <activity
+            android:name=".dashboard.ProviderDashboardActivity"
+            android:exported="false"
+            android:theme="@style/Theme.DailyServiceApp.NoActionBar" />
 
         <!-- Customer Management -->
         <activity

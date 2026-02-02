@@ -293,58 +293,75 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
     private void calculateTodaysSummary() {
         if (allCustomers.isEmpty()) {
             txtTodayDelivered.setText(getString(R.string.delivered_format, 0, 0));
-            txtTodayAmount.setText(getString(R.string.rupee_zero));
+            txtTodayAmount.setText(CurrencyUtils.formatIndianCurrency(0.0));
             return;
         }
         
-        // Get today's date key (yyyyMMdd format)
-        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyyMMdd", java.util.Locale.US);
-        String todayKey = sdf.format(new java.util.Date());
+        // Get today's date range
+        java.util.Calendar today = java.util.Calendar.getInstance();
+        today.set(java.util.Calendar.HOUR_OF_DAY, 0);
+        today.set(java.util.Calendar.MINUTE, 0);
+        today.set(java.util.Calendar.SECOND, 0);
+        today.set(java.util.Calendar.MILLISECOND, 0);
         
-        // Count deliveries and revenue for today
-        final int[] deliveredCount = {0};
-        final double[] todayRevenue = {0.0};
+        java.util.Calendar todayEnd = (java.util.Calendar) today.clone();
+        todayEnd.set(java.util.Calendar.HOUR_OF_DAY, 23);
+        todayEnd.set(java.util.Calendar.MINUTE, 59);
+        todayEnd.set(java.util.Calendar.SECOND, 59);
+        todayEnd.set(java.util.Calendar.MILLISECOND, 999);
+        
+        Timestamp startOfDay = new Timestamp(today.getTime());
+        Timestamp endOfDay = new Timestamp(todayEnd.getTime());
+        
         final int totalCustomers = allCustomers.size();
-        final int[] checkedCustomers = {0};
         
-        // Check each customer's delivery status for today
-        for (Customer customer : allCustomers) {
-            firestore.collection("customers")
-                .document(customer.getId())
-                .collection("deliveries")
-                .document(todayKey)
-                .get()
-                .addOnSuccessListener(doc -> {
-                    checkedCustomers[0]++;
-                    
-                    if (doc.exists()) {
-                        Boolean delivered = doc.getBoolean("delivered");
-                        if (delivered != null && delivered) {
-                            deliveredCount[0]++;
+        // Query service_entries collection for today's deliveries
+        firestore.collection("serviceEntries")
+            .whereEqualTo("providerId", providerId)
+            .whereEqualTo("delivered", true)
+            .get()
+            .addOnSuccessListener(querySnapshot -> {
+                int deliveredCount = 0;
+                double todayEarnings = 0.0;
+                
+                // Filter by today's date in memory
+                for (com.google.firebase.firestore.QueryDocumentSnapshot doc : querySnapshot) {
+                    Timestamp entryDate = doc.getTimestamp("date");
+                    if (entryDate != null) {
+                        long entryTime = entryDate.toDate().getTime();
+                        long startTime = startOfDay.toDate().getTime();
+                        long endTime = endOfDay.toDate().getTime();
+                        
+                        if (entryTime >= startTime && entryTime <= endTime) {
+                            deliveredCount++;
                             
-                            // Calculate revenue
+                            // Calculate earnings (rate × quantity)
+                            Double rate = doc.getDouble("rate");
                             Double quantity = doc.getDouble("quantity");
-                            double rate = customer.getRatePerUnit();
-                            todayRevenue[0] += (quantity != null ? quantity : 1.0) * rate;
+                            
+                            if (rate != null && quantity != null) {
+                                todayEarnings += (rate * quantity);
+                            }
                         }
                     }
-                    
-                    // Update UI when all customers checked
-                    if (checkedCustomers[0] == totalCustomers) {
-                        txtTodayDelivered.setText(getString(R.string.delivered_format, 
-                            deliveredCount[0], totalCustomers));
-                        txtTodayAmount.setText(CurrencyUtils.formatIndianCurrency(todayRevenue[0]));
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    checkedCustomers[0]++;
-                    if (checkedCustomers[0] == totalCustomers) {
-                        txtTodayDelivered.setText(getString(R.string.delivered_format, 
-                            deliveredCount[0], totalCustomers));
-                        txtTodayAmount.setText(CurrencyUtils.formatIndianCurrency(todayRevenue[0]));
-                    }
+                }
+                
+                // Update UI
+                int finalDeliveredCount = deliveredCount;
+                double finalTodayEarnings = todayEarnings;
+                runOnUiThread(() -> {
+                    txtTodayDelivered.setText(getString(R.string.delivered_format, 
+                        finalDeliveredCount, totalCustomers));
+                    txtTodayAmount.setText(CurrencyUtils.formatIndianCurrency(finalTodayEarnings));
                 });
-        }
+            })
+            .addOnFailureListener(e -> {
+                android.util.Log.e("Dashboard", "Error loading today's summary: " + e.getMessage());
+                runOnUiThread(() -> {
+                    txtTodayDelivered.setText(getString(R.string.delivered_format, 0, totalCustomers));
+                    txtTodayAmount.setText(CurrencyUtils.formatIndianCurrency(0.0));
+                });
+            });
     }
     
     private void calculateCurrentMonthRevenue() {
@@ -466,7 +483,9 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
         
-        if (id == R.id.nav_customers) {
+        if (id == R.id.nav_dashboard) {
+            startActivity(new Intent(this, ProviderDashboardActivity.class));
+        } else if (id == R.id.nav_customers) {
             // Already on customers page, just close drawer
         } else if (id == R.id.nav_service_entry) {
             startActivity(new Intent(this, ServiceEntryActivity.class));

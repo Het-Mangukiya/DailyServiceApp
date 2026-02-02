@@ -282,9 +282,16 @@ public class ServiceEntryActivity extends BaseActivity {
     }
     
     /**
-     * Actually perform the delivery marking operation
+     * Performs the delivery marking operation with transaction safety.
+     * Validates input and handles errors gracefully.
+     *
+     * @param deliveries List of delivery items to mark, must not be null or empty
      */
     private void performMarkDeliveries(List<ServiceEntryAdapter.DeliveryItem> deliveries) {
+        if (deliveries == null || deliveries.isEmpty()) {
+            showToast(getString(R.string.error_no_deliveries));
+            return;
+        }
         
         btnMarkDelivery.setEnabled(false);
         btnMarkDelivery.setText(R.string.button_saving);
@@ -301,6 +308,7 @@ public class ServiceEntryActivity extends BaseActivity {
                 item.quantity,
                 true  // All selected items are marked as delivered
             );
+            entry.setRate(item.rate);  // Set the rate for earnings calculation
             
             // Use atomic transaction to save entry and update lent amount
             repository.saveServiceEntryWithTransaction(entry, item.customerId, item.amount,
