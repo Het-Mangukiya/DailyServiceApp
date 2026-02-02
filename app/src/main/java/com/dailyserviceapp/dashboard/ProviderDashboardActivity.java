@@ -2,9 +2,15 @@ package com.dailyserviceapp.dashboard;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.dailyserviceapp.R;
 import com.dailyserviceapp.billing.BillListActivity;
@@ -13,6 +19,7 @@ import com.dailyserviceapp.core.utils.CurrencyUtils;
 import com.dailyserviceapp.service.ServiceEntryActivity;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -52,6 +59,9 @@ public class ProviderDashboardActivity extends BaseActivity {
     
     private MaterialToolbar toolbar;
     private ProgressBar progressBar;
+    private DrawerLayout drawerLayout;
+    private NavigationView navigationView;
+    private ActionBarDrawerToggle drawerToggle;
     
     // Today's Summary
     private TextView txtTodayDelivered;
@@ -101,6 +111,8 @@ public class ProviderDashboardActivity extends BaseActivity {
     private void initializeViews() {
         toolbar = findViewById(R.id.toolbar);
         progressBar = findViewById(R.id.progressBar);
+        drawerLayout = findViewById(R.id.drawerLayout);
+        navigationView = findViewById(R.id.navigationView);
         
         // Today's Summary
         txtTodayDelivered = findViewById(R.id.txtTodayDelivered);
@@ -120,15 +132,26 @@ public class ProviderDashboardActivity extends BaseActivity {
         btnBills = findViewById(R.id.btnBills);
         btnCustomers = findViewById(R.id.btnCustomers);
         
+        // Setup toolbar with drawer
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         }
+        
+        // Setup drawer toggle
+        drawerToggle = new ActionBarDrawerToggle(
+            this, drawerLayout, toolbar,
+            R.string.navigation_drawer_open,
+            R.string.navigation_drawer_close
+        );
+        drawerLayout.addDrawerListener(drawerToggle);
+        drawerToggle.syncState();
+        
+        // Setup navigation menu
+        setupNavigationMenu();
     }
     
     private void setupListeners() {
-        toolbar.setNavigationOnClickListener(v -> onBackPressed());
-        
         btnServiceEntry.setOnClickListener(v -> {
             startActivity(new Intent(this, ServiceEntryActivity.class));
         });
@@ -140,6 +163,46 @@ public class ProviderDashboardActivity extends BaseActivity {
         btnCustomers.setOnClickListener(v -> {
             startActivity(new Intent(this, DashboardActivity.class));
         });
+    }
+    
+    private void setupNavigationMenu() {
+        navigationView.setNavigationItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            
+            if (itemId == R.id.nav_dashboard) {
+                // Already on dashboard, just close drawer
+                drawerLayout.closeDrawer(GravityCompat.START);
+            } else if (itemId == R.id.nav_service_entry) {
+                startActivity(new Intent(this, ServiceEntryActivity.class));
+            } else if (itemId == R.id.nav_customers) {
+                startActivity(new Intent(this, DashboardActivity.class));
+            } else if (itemId == R.id.nav_bills) {
+                startActivity(new Intent(this, BillListActivity.class));
+            } else if (itemId == R.id.nav_logout) {
+                logout();
+            }
+            
+            drawerLayout.closeDrawer(GravityCompat.START);
+            return true;
+        });
+    }
+    
+    @Override
+    public void onBackPressed() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START);
+        } else {
+            // This is the main landing page, exit app
+            finishAffinity();
+        }
+    }
+    
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (drawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
     
     private void loadDashboardData() {
@@ -400,6 +463,15 @@ public class ProviderDashboardActivity extends BaseActivity {
         if (loadingTasks >= TOTAL_TASKS) {
             showLoading(false);
         }
+    }
+    
+    private void logout() {
+        // Clear session and navigate to login
+        com.dailyserviceapp.core.utils.PreferenceManager prefManager = 
+            new com.dailyserviceapp.core.utils.PreferenceManager(this);
+        prefManager.clearAllData();
+        navigateToLogin();
+        finishAffinity();
     }
     
     private void showLoading(boolean show) {
