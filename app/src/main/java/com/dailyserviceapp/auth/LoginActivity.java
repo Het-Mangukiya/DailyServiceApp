@@ -30,6 +30,9 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Login Activity for DailyDrop application.
  * Provides email/password authentication and Google Sign-In functionality.
@@ -172,13 +175,31 @@ public class LoginActivity extends BaseActivity {
                 if (task.isSuccessful()) {
                     FirebaseUser user = firebaseAuth.getCurrentUser();
                     if (user != null) {
+                        android.util.Log.d("LoginActivity", "Firebase Auth successful for user: " + user.getUid());
                         loadUserData(user.getUid());
+                    } else {
+                        hideLoading();
+                        showToast("Authentication error. Please try again.");
                     }
                 } else {
                     hideLoading();
-                    String error = task.getException() != null ? 
-                        task.getException().getMessage() : "Login failed";
-                    showToast(error);
+                    Exception exception = task.getException();
+                    String error = exception != null ? exception.getMessage() : "Login failed";
+                    
+                    android.util.Log.e("LoginActivity", "Login failed: " + error, exception);
+                    
+                    // Provide user-friendly error messages
+                    if (error.contains("password")) {
+                        showToast("Incorrect password. Please try again.");
+                    } else if (error.contains("no user record")) {
+                        showToast("No account found with this email. Please sign up.");
+                    } else if (error.contains("network")) {
+                        showToast("Network error. Please check your connection.");
+                    } else if (error.contains("too many requests")) {
+                        showToast("Too many failed attempts. Please try again later.");
+                    } else {
+                        showToast(error);
+                    }
                 }
             });
     }
@@ -203,10 +224,77 @@ public class LoginActivity extends BaseActivity {
                         showToast("Login successful!");
                         navigateToDashboard();
                     } else {
-                        showToast("User data not found");
+                        // User document doesn't exist - create it from Firebase Auth data
+                        android.util.Log.w("LoginActivity", "User document not found for userId: " + userId + ". Creating document...");
+                        createUserDocument(userId);
                     }
                 } else {
-                    showToast("Failed to load user data");
+                    // Network or permissions error
+                    Exception exception = task.getException();
+                    String errorMsg = exception != null ? exception.getMessage() : "Unknown error";
+                    
+                    android.util.Log.e("LoginActivity", "Failed to load user data: " + errorMsg, exception);
+                    
+                    // Check if it's a permissions error
+                    if (errorMsg != null && errorMsg.toLowerCase().contains("permission")) {
+                        // Permissions error - try to create document anyway
+                        android.util.Log.w("LoginActivity", "Permissions error detected. Attempting to create user document...");
+                        createUserDocument(userId);
+                    } else if (errorMsg != null && errorMsg.toLowerCase().contains("network")) {
+                        showToast("Network error. Please check your connection and try again.");
+                    } else {
+                        // Unknown error - try to create document as fallback
+                        android.util.Log.w("LoginActivity", "Unknown error. Attempting to create user document as fallback...");
+                        createUserDocument(userId);
+                    }
+                }
+            });
+    }
+    
+    /**
+     * Creates a user document in Firestore from Firebase Auth data.
+     * This handles cases where signup was interrupted or the document wasn't created.
+     */
+    private void createUserDocument(String userId) {
+        showLoading();
+        
+        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+        if (currentUser == null) {
+            hideLoading();
+            showToast("Authentication error. Please try again.");
+            return;
+        }
+        
+        // Get user data from Firebase Auth
+        String email = currentUser.getEmail();
+        String name = currentUser.getDisplayName();
+        
+        // Default to PROVIDER role if not specified
+        String role = "PROVIDER";
+        
+        Map<String, Object> userData = new HashMap<>();
+        userData.put("id", userId);
+        userData.put("name", name != null ? name : email);
+        userData.put("email", email);
+        userData.put("phone", "");
+        userData.put("role", role);
+        userData.put("createdAt", System.currentTimeMillis());
+        
+        firestore.collection(Constants.COLLECTION_USERS)
+            .document(userId)
+            .set(userData)
+            .addOnCompleteListener(task -> {
+                hideLoading();
+                
+                if (task.isSuccessful()) {
+                    // Save to preferences
+                    preferenceManager.saveUserData(userId, email, 
+                        name != null ? name : email, role);
+                    
+                    showToast("Login successful!");
+                    navigateToDashboard();
+                } else {
+                    showToast("Failed to create user profile. Please try again.");
                 }
             });
     }

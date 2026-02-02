@@ -25,6 +25,7 @@
     <string name="error_loading_customers">Failed to load customers: %s</string>
     <string name="error_loading_entries">Error loading entries: %s</string>
     <string name="error_general">Error: %s</string>
+    <string name="error_no_deliveries">No deliveries to mark</string>
     
     <!-- Success messages -->
     <string name="success_customer_added">Customer added</string>

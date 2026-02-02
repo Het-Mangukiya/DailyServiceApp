@@ -8,7 +8,7 @@ import android.os.Looper;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.dailyserviceapp.auth.LoginActivity;
-import com.dailyserviceapp.dashboard.DashboardActivity;
+import com.dailyserviceapp.dashboard.ProviderDashboardActivity;
 import com.dailyserviceapp.core.utils.PreferenceManager;
 
 /**
@@ -63,8 +63,8 @@ public class SplashActivity extends AppCompatActivity {
         Intent intent;
 
         if (preferenceManager.isLoggedIn()) {
-            // User is logged in, go to dashboard
-            intent = new Intent(SplashActivity.this, DashboardActivity.class);
+            // User is logged in, go to provider dashboard
+            intent = new Intent(SplashActivity.this, ProviderDashboardActivity.class);
         } else {
             // User not logged in, go to login
             intent = new Intent(SplashActivity.this, LoginActivity.class);

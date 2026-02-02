@@ -197,6 +197,7 @@ public class ServiceEntryAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 deliveries.add(new DeliveryItem(
                     customer.getId(),
                     quantity,
+                    customer.getRatePerUnit(),
                     customer.getRatePerUnit() * quantity
                 ));
             }
@@ -205,16 +206,36 @@ public class ServiceEntryAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     /**
-     * Simple data class for delivery marking
+     * Simple data class for delivery marking.
+     * Immutable value object to ensure data integrity.
+     *
+     * @since 2.0
      */
     public static class DeliveryItem {
         public final String customerId;
         public final double quantity;
+        public final double rate;
         public final double amount;
 
-        public DeliveryItem(String customerId, double quantity, double amount) {
+        /**
+         * Creates a new delivery item.
+         *
+         * @param customerId The unique identifier of the customer
+         * @param quantity The quantity delivered
+         * @param rate The rate per unit
+         * @param amount The total amount (quantity * rate)
+         * @throws IllegalArgumentException if customerId is null/empty or values are negative
+         */
+        public DeliveryItem(String customerId, double quantity, double rate, double amount) {
+            if (customerId == null || customerId.trim().isEmpty()) {
+                throw new IllegalArgumentException("Customer ID cannot be null or empty");
+            }
+            if (quantity < 0 || rate < 0 || amount < 0) {
+                throw new IllegalArgumentException("Quantity, rate, and amount must be non-negative");
+            }
             this.customerId = customerId;
             this.quantity = quantity;
+            this.rate = rate;
             this.amount = amount;
         }
     }
