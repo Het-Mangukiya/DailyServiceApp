@@ -156,7 +156,7 @@ public class SignupActivity extends BaseActivity {
     private void performSignup() {
         String name = nameInput.getText().toString().trim();
         String email = emailInput.getText().toString().trim();
-        String phone = phoneInput.getText().toString().trim();
+        String phoneRaw = phoneInput.getText().toString().trim();
         String password = passwordInput.getText().toString().trim();
         String confirmPassword = confirmPasswordInput.getText().toString().trim();
         String selectedRole = roleSpinner.getSelectedItemPosition() == 0 ? 
@@ -175,11 +175,13 @@ public class SignupActivity extends BaseActivity {
             return;
         }
         
-        if (!ValidationUtils.isValidPhone(phone)) {
-            phoneInput.setError("Please enter a valid 10-digit phone number");
+        if (!ValidationUtils.isValidPhone(phoneRaw)) {
+            phoneInput.setError("Please enter a valid phone number");
             phoneInput.requestFocus();
             return;
         }
+        
+        String phone = ValidationUtils.normalizePhoneNumber(phoneRaw);
         
         if (!ValidationUtils.isValidPassword(password)) {
             passwordInput.setError("Password must be at least 8 characters with letters and numbers");
@@ -206,15 +208,19 @@ public class SignupActivity extends BaseActivity {
                 if (task.isSuccessful()) {
                     FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
                     if (firebaseUser != null) {
+                        // Save session immediately so login can proceed even if Firestore fails
+                        preferenceManager.saveUserData(firebaseUser.getUid(), email, name, selectedRole);
                         createUserDocument(firebaseUser.getUid(), name, email, phone, selectedRole);
+                    } else {
+                        hideLoading();
+                        showToast("Signup failed: user not available. Please try again.");
                     }
                 } else {
                     hideLoading();
-                    String error = "Signup failed";
+                    String error = getAuthErrorMessage(task.getException());
                     if (task.getException() != null) {
-                        error = task.getException().getMessage();
                         // Log the full error for debugging
-                        android.util.Log.e("SignupActivity", "Signup error: " + error, task.getException());
+                        android.util.Log.e("SignupActivity", "Signup error: " + task.getException().getMessage(), task.getException());
                     }
                     showToast(error);
                 }
@@ -242,9 +248,6 @@ public class SignupActivity extends BaseActivity {
                 hideLoading();
                 
                 if (task.isSuccessful()) {
-                    // Save user session (FIXED: was missing)
-                    preferenceManager.saveUserData(userId, email, name, role);
-                    
                     showToast("Account created successfully!");
                     
                     // Navigate to Dashboard (FIXED: was going to Login)
@@ -253,34 +256,17 @@ public class SignupActivity extends BaseActivity {
                     startActivity(intent);
                     finish();
                 } else {
-                    // Handle Firestore failure gracefully
                     Exception exception = task.getException();
-                    if (exception != null && exception.getMessage() != null && 
-                        exception.getMessage().contains("network")) {
-                        // Network error during Firestore write
-                        showToast("Network error. Your account was created. Please login to continue.");
-                    } else {
-                        showToast("Failed to create user profile. Please try logging in.");
-                    }
-                    
-                    // Navigate to login since Firebase Auth succeeded
                     android.util.Log.e("SignupActivity", "Firestore user creation failed", exception);
-                    navigateToLogin();
+                    showToast("Account created, but profile sync failed. You can continue.");
+                    navigateToDashboard();
                 }
             })
             .addOnFailureListener(e -> {
                 hideLoading();
                 android.util.Log.e("SignupActivity", "Failed to create Firestore document", e);
-                
-                // Check if it's a network error
-                if (e.getMessage() != null && e.getMessage().toLowerCase().contains("network")) {
-                    showToast("Network error. Your account was created. Please login.");
-                } else {
-                    showToast("Error creating profile: " + e.getMessage());
-                }
-                
-                // Navigate to login since auth succeeded
-                navigateToLogin();
+                showToast("Account created, but profile sync failed. You can continue.");
+                navigateToDashboard();
             });
     }
     
@@ -355,7 +341,15 @@ public class SignupActivity extends BaseActivity {
                     }
                 } else {
                     hideLoading();
-                    showToast("Failed to verify user profile");
+                    // Continue with local session if Firestore is unavailable
+                    preferenceManager.saveUserData(
+                        userId,
+                        firebaseUser.getEmail(),
+                        firebaseUser.getDisplayName(),
+                        Constants.ROLE_CUSTOMER
+                    );
+                    showToast("Signed in, but profile sync failed. You can continue.");
+                    navigateToDashboard();
                 }
             });
     }
@@ -389,7 +383,14 @@ public class SignupActivity extends BaseActivity {
                     showToast("Account created successfully!");
                     navigateToDashboard();
                 } else {
-                    showToast("Failed to create user profile");
+                    preferenceManager.saveUserData(
+                        firebaseUser.getUid(),
+                        firebaseUser.getEmail(),
+                        firebaseUser.getDisplayName(),
+                        role
+                    );
+                    showToast("Account created, but profile sync failed. You can continue.");
+                    navigateToDashboard();
                 }
             });
     }
@@ -414,5 +415,29 @@ public class SignupActivity extends BaseActivity {
         progressBar.setVisibility(View.GONE);
         signupButton.setEnabled(true);
         googleSignInButton.setEnabled(true);
+    }
+
+    private String getAuthErrorMessage(Exception exception) {
+        if (exception == null) return "Signup failed. Please try again.";
+        String message = exception.getMessage() != null ? exception.getMessage() : "Signup failed.";
+        if (exception instanceof com.google.firebase.auth.FirebaseAuthException) {
+            String code = ((com.google.firebase.auth.FirebaseAuthException) exception).getErrorCode();
+            if ("ERROR_EMAIL_ALREADY_IN_USE".equals(code)) {
+                return "Email already registered. Please login.";
+            }
+            if ("ERROR_INVALID_EMAIL".equals(code)) {
+                return "Invalid email address.";
+            }
+            if ("ERROR_WEAK_PASSWORD".equals(code)) {
+                return "Password is too weak.";
+            }
+            if ("ERROR_OPERATION_NOT_ALLOWED".equals(code)) {
+                return "Email/password sign-up is disabled in Firebase.";
+            }
+            if ("ERROR_NETWORK_REQUEST_FAILED".equals(code)) {
+                return "Network error. Please check your connection.";
+            }
+        }
+        return message;
     }
 }

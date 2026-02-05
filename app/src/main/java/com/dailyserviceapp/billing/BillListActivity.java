@@ -266,7 +266,21 @@ public class BillListActivity extends BaseActivity {
                         new FirestoreRepository.OnServiceEntriesLoadedListener() {
                             @Override
                             public void onServiceEntriesLoaded(List<ServiceEntry> entries) {
-                                generateBillsFromEntries(customers, entries, progressDialog);
+                                // Load existing bills to prevent duplicates
+                                repository.getBillsByProviderAndMonth(providerId, selectedMonth, selectedYear,
+                                        new FirestoreRepository.OnBillsLoadedListener() {
+                                            @Override
+                                            public void onBillsLoaded(List<Bill> bills) {
+                                                generateBillsFromEntries(customers, entries, bills, progressDialog);
+                                            }
+
+                                            @Override
+                                            public void onError(String error) {
+                                                // If we can't load existing bills, proceed but warn
+                                                showToast("Warning: Could not check existing bills. " + error);
+                                                generateBillsFromEntries(customers, entries, new ArrayList<>(), progressDialog);
+                                            }
+                                        });
                             }
 
                             @Override
@@ -287,7 +301,7 @@ public class BillListActivity extends BaseActivity {
     }
     
     private void generateBillsFromEntries(List<Customer> customers, List<ServiceEntry> entries,
-                                          ProgressDialog progressDialog) {
+                                          List<Bill> existingBills, ProgressDialog progressDialog) {
         // Group entries by customer
         Map<String, List<ServiceEntry>> entriesByCustomer = new HashMap<>();
         for (ServiceEntry entry : entries) {
@@ -297,10 +311,26 @@ public class BillListActivity extends BaseActivity {
             entriesByCustomer.get(entry.getCustomerId()).add(entry);
         }
         
+        java.util.Set<String> billedCustomerIds = new java.util.HashSet<>();
+        if (existingBills != null) {
+            for (Bill bill : existingBills) {
+                if (bill.getCustomerId() != null) {
+                    billedCustomerIds.add(bill.getCustomerId());
+                }
+            }
+        }
+        
         int billsGenerated = 0;
         int customersProcessed = 0;
+        int billsSkipped = 0;
         
         for (Customer customer : customers) {
+            if (billedCustomerIds.contains(customer.getId())) {
+                billsSkipped++;
+                customersProcessed++;
+                continue;
+            }
+            
             List<ServiceEntry> customerEntries = entriesByCustomer.get(customer.getId());
             
             if (customerEntries != null && !customerEntries.isEmpty()) {
@@ -362,10 +392,18 @@ public class BillListActivity extends BaseActivity {
         progressDialog.dismiss();
         
         if (billsGenerated > 0) {
-            showToast("Generated " + billsGenerated + " bills");
+            String message = "Generated " + billsGenerated + " bills";
+            if (billsSkipped > 0) {
+                message += " (" + billsSkipped + " already billed)";
+            }
+            showToast(message);
             loadData(); // Reload the list
         } else {
-            showToast("No bills to generate (no service entries found)");
+            if (billsSkipped > 0) {
+                showToast("No new bills generated (" + billsSkipped + " already billed)");
+            } else {
+                showToast("No bills to generate (no service entries found)");
+            }
         }
     }
     

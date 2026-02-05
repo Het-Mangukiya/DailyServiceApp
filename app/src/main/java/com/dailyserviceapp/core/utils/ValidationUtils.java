@@ -99,8 +99,17 @@ public class ValidationUtils {
     public static boolean isValidPhone(String phone) {
         if (TextUtils.isEmpty(phone)) return false;
         
-        String cleanPhone = phone.replaceAll("[^0-9]", "");
-        return cleanPhone.length() == Constants.MAX_PHONE_LENGTH;
+        String cleanPhone = cleanPhoneNumber(phone);
+        if (cleanPhone.length() == Constants.MAX_PHONE_LENGTH) {
+            return true;
+        }
+        if (cleanPhone.length() == 11 && cleanPhone.startsWith("0")) {
+            return true;
+        }
+        if (cleanPhone.length() == 12 && cleanPhone.startsWith("91")) {
+            return true;
+        }
+        return false;
     }
     
     /**
@@ -180,6 +189,24 @@ public class ValidationUtils {
     public static String cleanPhoneNumber(String phone) {
         if (TextUtils.isEmpty(phone)) return "";
         return phone.replaceAll("[^0-9]", "");
+    }
+
+    /**
+     * Normalize phone number to 10 digits.
+     * Handles formats like +91XXXXXXXXXX or 0XXXXXXXXXX.
+     */
+    public static String normalizePhoneNumber(String phone) {
+        String cleanPhone = cleanPhoneNumber(phone);
+        if (cleanPhone.length() == 12 && cleanPhone.startsWith("91")) {
+            return cleanPhone.substring(2);
+        }
+        if (cleanPhone.length() == 11 && cleanPhone.startsWith("0")) {
+            return cleanPhone.substring(1);
+        }
+        if (cleanPhone.length() > Constants.MAX_PHONE_LENGTH) {
+            return cleanPhone.substring(cleanPhone.length() - Constants.MAX_PHONE_LENGTH);
+        }
+        return cleanPhone;
     }
     
     /**

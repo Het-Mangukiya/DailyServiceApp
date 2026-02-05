@@ -31,6 +31,20 @@ public class Constants {
     
     /** Key for storing login status */
     public static final String KEY_IS_LOGGED_IN = "isLoggedIn";
+
+    // Dashboard Cache (SharedPreferences)
+    public static final String PREF_DASHBOARD_TOTAL_CUSTOMERS = "dash_total_customers";
+    public static final String PREF_DASHBOARD_TODAY_DELIVERED = "dash_today_delivered";
+    public static final String PREF_DASHBOARD_TODAY_AMOUNT = "dash_today_amount";
+    public static final String PREF_DASHBOARD_MONTHLY_REVENUE = "dash_monthly_revenue";
+
+    public static final String PREF_PROVIDER_TODAY_DELIVERED = "provider_today_delivered";
+    public static final String PREF_PROVIDER_TODAY_EARNINGS = "provider_today_earnings";
+    public static final String PREF_PROVIDER_TOTAL_LENT = "provider_total_lent";
+    public static final String PREF_PROVIDER_TOTAL_RECEIVED = "provider_total_received";
+    public static final String PREF_PROVIDER_PENDING_AMOUNT = "provider_pending_amount";
+    public static final String PREF_PROVIDER_MONTHLY_EARNINGS = "provider_monthly_earnings";
+    public static final String PREF_PROVIDER_MONTHLY_DELIVERIES = "provider_monthly_deliveries";
     
     // User Roles
     /** Service provider role constant */

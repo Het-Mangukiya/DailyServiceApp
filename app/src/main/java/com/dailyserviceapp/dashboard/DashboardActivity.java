@@ -24,6 +24,7 @@ import com.dailyserviceapp.auth.LoginActivity;
 import com.dailyserviceapp.billing.BillListActivity;
 import com.dailyserviceapp.core.base.BaseActivity;
 import com.dailyserviceapp.core.offline.OfflineCache;
+import com.dailyserviceapp.core.utils.Constants;
 import com.dailyserviceapp.core.utils.CurrencyUtils;
 import com.dailyserviceapp.data.models.Customer;
 import com.dailyserviceapp.payment.PaymentActivity;
@@ -119,6 +120,7 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         setupNavigationDrawer();
         setupRecyclerView();
         setupListeners();
+        loadCachedDashboardMetrics();
         loadData();
     }
     
@@ -282,6 +284,7 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
     private void loadAnalytics() {
         // Load total customers
         totalCustomersCount.setText(String.valueOf(allCustomers.size()));
+        cacheDashboardValue(Constants.PREF_DASHBOARD_TOTAL_CUSTOMERS, totalCustomersCount.getText().toString());
         
         // Calculate current month revenue from deliveries
         calculateCurrentMonthRevenue();
@@ -304,69 +307,23 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         today.set(java.util.Calendar.SECOND, 0);
         today.set(java.util.Calendar.MILLISECOND, 0);
         
-        java.util.Calendar todayEnd = (java.util.Calendar) today.clone();
-        todayEnd.set(java.util.Calendar.HOUR_OF_DAY, 23);
-        todayEnd.set(java.util.Calendar.MINUTE, 59);
-        todayEnd.set(java.util.Calendar.SECOND, 59);
-        todayEnd.set(java.util.Calendar.MILLISECOND, 999);
+        java.util.Calendar tomorrow = (java.util.Calendar) today.clone();
+        tomorrow.add(java.util.Calendar.DAY_OF_YEAR, 1);
         
         Timestamp startOfDay = new Timestamp(today.getTime());
-        Timestamp endOfDay = new Timestamp(todayEnd.getTime());
+        Timestamp endExclusive = new Timestamp(tomorrow.getTime());
         
         final int totalCustomers = allCustomers.size();
-        
-        // Query service_entries collection for today's deliveries
-        firestore.collection("serviceEntries")
-            .whereEqualTo("providerId", providerId)
-            .whereEqualTo("delivered", true)
-            .get()
-            .addOnSuccessListener(querySnapshot -> {
-                int deliveredCount = 0;
-                double todayEarnings = 0.0;
-                
-                // Filter by today's date in memory
-                for (com.google.firebase.firestore.QueryDocumentSnapshot doc : querySnapshot) {
-                    Timestamp entryDate = doc.getTimestamp("date");
-                    if (entryDate != null) {
-                        long entryTime = entryDate.toDate().getTime();
-                        long startTime = startOfDay.toDate().getTime();
-                        long endTime = endOfDay.toDate().getTime();
-                        
-                        if (entryTime >= startTime && entryTime <= endTime) {
-                            deliveredCount++;
-                            
-                            // Calculate earnings (rate × quantity)
-                            Double rate = doc.getDouble("rate");
-                            Double quantity = doc.getDouble("quantity");
-                            
-                            if (rate != null && quantity != null) {
-                                todayEarnings += (rate * quantity);
-                            }
-                        }
-                    }
-                }
-                
-                // Update UI
-                int finalDeliveredCount = deliveredCount;
-                double finalTodayEarnings = todayEarnings;
-                runOnUiThread(() -> {
-                    txtTodayDelivered.setText(getString(R.string.delivered_format, 
-                        finalDeliveredCount, totalCustomers));
-                    txtTodayAmount.setText(CurrencyUtils.formatIndianCurrency(finalTodayEarnings));
-                });
-            })
-            .addOnFailureListener(e -> {
-                android.util.Log.e("Dashboard", "Error loading today's summary: " + e.getMessage());
-                runOnUiThread(() -> {
-                    txtTodayDelivered.setText(getString(R.string.delivered_format, 0, totalCustomers));
-                    txtTodayAmount.setText(CurrencyUtils.formatIndianCurrency(0.0));
-                });
-            });
+
+        java.util.Map<String, Double> rateMap = buildCustomerRateMap();
+        loadTodaysSummaryOptimized(startOfDay, endExclusive, totalCustomers, rateMap);
     }
     
     private void calculateCurrentMonthRevenue() {
-        // Reset counter
-        totalRevenueAmount.setText("₹0");
+        // Reset counter only if no cached value exists
+        if (totalRevenueAmount.getText() == null || totalRevenueAmount.getText().toString().trim().isEmpty()) {
+            totalRevenueAmount.setText("₹0");
+        }
         
         if (allCustomers.isEmpty()) {
             android.util.Log.d("DashboardActivity", "No customers loaded yet, skipping revenue calculation");
@@ -381,44 +338,190 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
         
-        long startOfMonthMillis = calendar.getTimeInMillis();
-        
+        Timestamp startOfMonth = new Timestamp(calendar.getTime());
+        Calendar nextMonth = (Calendar) calendar.clone();
+        nextMonth.add(Calendar.MONTH, 1);
+        Timestamp endExclusive = new Timestamp(nextMonth.getTime());
+
         android.util.Log.d("DashboardActivity", "Calculating revenue for providerId: " + providerId + ", customers count: " + allCustomers.size());
-        
-        // Query all service entries for this provider (without date filter to avoid index requirement)
+        java.util.Map<String, Double> rateMap = buildCustomerRateMap();
+        loadMonthlyRevenueOptimized(startOfMonth, endExclusive, rateMap);
+    }
+
+    private java.util.Map<String, Double> buildCustomerRateMap() {
+        java.util.Map<String, Double> rateMap = new java.util.HashMap<>();
+        for (Customer customer : allCustomers) {
+            if (customer.getId() != null) {
+                rateMap.put(customer.getId(), customer.getRatePerUnit());
+            }
+        }
+        return rateMap;
+    }
+
+    private void loadTodaysSummaryOptimized(Timestamp startOfDay, Timestamp endExclusive,
+                                            int totalCustomers, java.util.Map<String, Double> rateMap) {
+        firestore.collection("serviceEntries")
+            .whereEqualTo("providerId", providerId)
+            .whereEqualTo("delivered", true)
+            .whereGreaterThanOrEqualTo("date", startOfDay)
+            .whereLessThan("date", endExclusive)
+            .get()
+            .addOnSuccessListener(querySnapshot -> {
+                int deliveredCount = 0;
+                double todayEarnings = 0.0;
+
+                for (com.google.firebase.firestore.QueryDocumentSnapshot doc : querySnapshot) {
+                    deliveredCount++;
+                    Double rate = doc.getDouble("rate");
+                    Double quantity = doc.getDouble("quantity");
+                    String customerId = doc.getString("customerId");
+
+                    if ((rate == null || rate == 0.0) && customerId != null) {
+                        rate = rateMap.get(customerId);
+                    }
+
+                    if (rate != null && quantity != null) {
+                        todayEarnings += (rate * quantity);
+                    }
+                }
+
+                int finalDeliveredCount = deliveredCount;
+                double finalTodayEarnings = todayEarnings;
+                runOnUiThread(() -> {
+                    String deliveredText = getString(R.string.delivered_format,
+                        finalDeliveredCount, totalCustomers);
+                    String amountText = CurrencyUtils.formatIndianCurrency(finalTodayEarnings);
+                    txtTodayDelivered.setText(deliveredText);
+                    txtTodayAmount.setText(amountText);
+                    cacheDashboardValue(Constants.PREF_DASHBOARD_TODAY_DELIVERED, deliveredText);
+                    cacheDashboardValue(Constants.PREF_DASHBOARD_TODAY_AMOUNT, amountText);
+                });
+            })
+            .addOnFailureListener(e -> {
+                android.util.Log.w("Dashboard", "Optimized today query failed, falling back: " + e.getMessage());
+                loadTodaysSummaryFallback(startOfDay, endExclusive, totalCustomers, rateMap);
+            });
+    }
+
+    private void loadTodaysSummaryFallback(Timestamp startOfDay, Timestamp endExclusive,
+                                           int totalCustomers, java.util.Map<String, Double> rateMap) {
+        firestore.collection("serviceEntries")
+            .whereEqualTo("providerId", providerId)
+            .whereEqualTo("delivered", true)
+            .get()
+            .addOnSuccessListener(querySnapshot -> {
+                int deliveredCount = 0;
+                double todayEarnings = 0.0;
+
+                long startTime = startOfDay.toDate().getTime();
+                long endTime = endExclusive.toDate().getTime();
+
+                for (com.google.firebase.firestore.QueryDocumentSnapshot doc : querySnapshot) {
+                    Timestamp entryDate = doc.getTimestamp("date");
+                    if (entryDate == null) continue;
+                    long entryTime = entryDate.toDate().getTime();
+                    if (entryTime >= startTime && entryTime < endTime) {
+                        deliveredCount++;
+                        Double rate = doc.getDouble("rate");
+                        Double quantity = doc.getDouble("quantity");
+                        String customerId = doc.getString("customerId");
+
+                        if ((rate == null || rate == 0.0) && customerId != null) {
+                            rate = rateMap.get(customerId);
+                        }
+                        if (rate != null && quantity != null) {
+                            todayEarnings += (rate * quantity);
+                        }
+                    }
+                }
+
+                int finalDeliveredCount = deliveredCount;
+                double finalTodayEarnings = todayEarnings;
+                runOnUiThread(() -> {
+                    String deliveredText = getString(R.string.delivered_format,
+                        finalDeliveredCount, totalCustomers);
+                    String amountText = CurrencyUtils.formatIndianCurrency(finalTodayEarnings);
+                    txtTodayDelivered.setText(deliveredText);
+                    txtTodayAmount.setText(amountText);
+                    cacheDashboardValue(Constants.PREF_DASHBOARD_TODAY_DELIVERED, deliveredText);
+                    cacheDashboardValue(Constants.PREF_DASHBOARD_TODAY_AMOUNT, amountText);
+                });
+            })
+            .addOnFailureListener(e -> {
+                android.util.Log.e("Dashboard", "Error loading today's summary: " + e.getMessage());
+                runOnUiThread(() -> {
+                    txtTodayDelivered.setText(getString(R.string.delivered_format, 0, totalCustomers));
+                    txtTodayAmount.setText(CurrencyUtils.formatIndianCurrency(0.0));
+                });
+            });
+    }
+
+    private void loadMonthlyRevenueOptimized(Timestamp startOfMonth, Timestamp endExclusive,
+                                             java.util.Map<String, Double> rateMap) {
+        firestore.collection("serviceEntries")
+            .whereEqualTo("providerId", providerId)
+            .whereEqualTo("delivered", true)
+            .whereGreaterThanOrEqualTo("date", startOfMonth)
+            .whereLessThan("date", endExclusive)
+            .get()
+            .addOnSuccessListener(querySnapshots -> {
+                double totalRevenue = 0;
+
+                for (QueryDocumentSnapshot doc : querySnapshots) {
+                    Double rate = doc.getDouble("rate");
+                    Double quantity = doc.getDouble("quantity");
+                    String customerId = doc.getString("customerId");
+
+                    if ((rate == null || rate == 0.0) && customerId != null) {
+                        rate = rateMap.get(customerId);
+                    }
+
+                    if (rate != null && quantity != null) {
+                        totalRevenue += (rate * quantity);
+                    }
+                }
+
+                String formattedAmount = CurrencyUtils.formatIndianCurrency(totalRevenue);
+                totalRevenueAmount.setText(formattedAmount);
+                cacheDashboardValue(Constants.PREF_DASHBOARD_MONTHLY_REVENUE, formattedAmount);
+            })
+            .addOnFailureListener(e -> {
+                android.util.Log.w("DashboardActivity", "Optimized revenue query failed, falling back", e);
+                loadMonthlyRevenueFallback(startOfMonth, endExclusive, rateMap);
+            });
+    }
+
+    private void loadMonthlyRevenueFallback(Timestamp startOfMonth, Timestamp endExclusive,
+                                            java.util.Map<String, Double> rateMap) {
+        long startMillis = startOfMonth.toDate().getTime();
+        long endMillis = endExclusive.toDate().getTime();
+
         firestore.collection("serviceEntries")
             .whereEqualTo("providerId", providerId)
             .get()
             .addOnSuccessListener(querySnapshots -> {
-                android.util.Log.d("DashboardActivity", "Found " + querySnapshots.size() + " total service entries");
                 double totalRevenue = 0;
-                int currentMonthCount = 0;
-                
+
                 for (QueryDocumentSnapshot doc : querySnapshots) {
-                    // Filter by date in memory
                     Timestamp entryDate = doc.getTimestamp("date");
-                    if (entryDate != null && entryDate.toDate().getTime() >= startOfMonthMillis) {
-                        currentMonthCount++;
+                    if (entryDate == null) continue;
+                    long entryTime = entryDate.toDate().getTime();
+                    if (entryTime >= startMillis && entryTime < endMillis) {
+                        Double rate = doc.getDouble("rate");
+                        Double quantity = doc.getDouble("quantity");
                         String customerId = doc.getString("customerId");
-                        Double quantityObj = doc.getDouble("quantity");
-                        double quantity = quantityObj != null ? quantityObj : 0;
-                        
-                        // Find customer to get rate
-                        for (Customer customer : allCustomers) {
-                            if (customer.getId().equals(customerId)) {
-                                double rate = customer.getRatePerUnit();
-                                double entryRevenue = quantity * rate;
-                                totalRevenue += entryRevenue;
-                                break;
-                            }
+
+                        if ((rate == null || rate == 0.0) && customerId != null) {
+                            rate = rateMap.get(customerId);
+                        }
+                        if (rate != null && quantity != null) {
+                            totalRevenue += (rate * quantity);
                         }
                     }
                 }
-                
-                android.util.Log.d("DashboardActivity", "Current month entries: " + currentMonthCount + ", Total revenue: " + totalRevenue);
-                String formattedAmount = CurrencyUtils.formatIndianCurrency(totalRevenue);
-                android.util.Log.d("DashboardActivity", "Formatted amount: " + formattedAmount);
-                totalRevenueAmount.setText(formattedAmount);
+
+                totalRevenueAmount.setText(CurrencyUtils.formatIndianCurrency(totalRevenue));
+                cacheDashboardValue(Constants.PREF_DASHBOARD_MONTHLY_REVENUE, totalRevenueAmount.getText().toString());
             })
             .addOnFailureListener(e -> {
                 android.util.Log.e("DashboardActivity", "Error loading revenue", e);
@@ -608,6 +711,40 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         } else {
             syncStatusChip.setVisibility(View.GONE);
         }
+    }
+
+    private void loadCachedDashboardMetrics() {
+        String totalCustomers = preferenceManager.getString(prefKey(Constants.PREF_DASHBOARD_TOTAL_CUSTOMERS), null);
+        if (totalCustomers != null && totalCustomersCount != null) {
+            totalCustomersCount.setText(totalCustomers);
+        }
+
+        String todayDelivered = preferenceManager.getString(prefKey(Constants.PREF_DASHBOARD_TODAY_DELIVERED), null);
+        if (todayDelivered != null && txtTodayDelivered != null) {
+            txtTodayDelivered.setText(todayDelivered);
+        }
+
+        String todayAmount = preferenceManager.getString(prefKey(Constants.PREF_DASHBOARD_TODAY_AMOUNT), null);
+        if (todayAmount != null && txtTodayAmount != null) {
+            txtTodayAmount.setText(todayAmount);
+        }
+
+        String monthlyRevenue = preferenceManager.getString(prefKey(Constants.PREF_DASHBOARD_MONTHLY_REVENUE), null);
+        if (monthlyRevenue != null && totalRevenueAmount != null) {
+            totalRevenueAmount.setText(monthlyRevenue);
+        }
+    }
+
+    private void cacheDashboardValue(String key, String value) {
+        if (value == null) return;
+        preferenceManager.putString(prefKey(key), value);
+    }
+
+    private String prefKey(String key) {
+        if (providerId == null || providerId.isEmpty()) {
+            return key;
+        }
+        return key + "_" + providerId;
     }
     
     private void showSortDialog() {

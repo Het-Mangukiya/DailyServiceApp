@@ -40,6 +40,7 @@ public class ServiceEntryAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private final List<Customer> customers = new ArrayList<>();
     private final Map<String, Boolean> deliveryStatus = new HashMap<>(); // true = already delivered
     private final Map<String, Double> quantityOverrides = new HashMap<>(); // custom quantities
+    private final Map<String, Boolean> selectionState = new HashMap<>(); // true = selected for marking
 
     public ServiceEntryAdapter() {
     }
@@ -55,6 +56,7 @@ public class ServiceEntryAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public void submitData(List<Customer> customerList, List<ServiceEntry> serviceEntries) {
         customers.clear();
         deliveryStatus.clear();
+        selectionState.clear();
         items.clear();
         
         if (customerList != null) {
@@ -72,6 +74,7 @@ public class ServiceEntryAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     }
                 }
                 deliveryStatus.put(customer.getId(), hasEntry);
+                selectionState.put(customer.getId(), false);
             }
             
             // Group customers by area for route planning
@@ -157,8 +160,21 @@ public class ServiceEntryAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         
         // Checkbox: checked = already delivered (read-only), unchecked = ready to mark
         holder.deliveredCheckbox.setOnCheckedChangeListener(null);
-        holder.deliveredCheckbox.setChecked(alreadyDelivered);
-        holder.deliveredCheckbox.setEnabled(!alreadyDelivered); // Disable if already delivered
+        if (alreadyDelivered) {
+            holder.deliveredCheckbox.setChecked(true);
+            holder.deliveredCheckbox.setEnabled(false);
+            holder.itemView.setOnClickListener(null);
+        } else {
+            boolean isSelected = selectionState.getOrDefault(customer.getId(), false);
+            holder.deliveredCheckbox.setChecked(isSelected);
+            holder.deliveredCheckbox.setEnabled(true);
+            holder.deliveredCheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                selectionState.put(customer.getId(), isChecked);
+            });
+            holder.itemView.setOnClickListener(v ->
+                holder.deliveredCheckbox.setChecked(!holder.deliveredCheckbox.isChecked())
+            );
+        }
         
         // Quantity controls - only enabled if not already delivered
         boolean enableControls = !alreadyDelivered;
@@ -192,7 +208,9 @@ public class ServiceEntryAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         List<DeliveryItem> deliveries = new ArrayList<>();
         for (Customer customer : customers) {
             // Only include customers who DON'T have deliveries yet
-            if (!deliveryStatus.getOrDefault(customer.getId(), false)) {
+            boolean alreadyDelivered = deliveryStatus.getOrDefault(customer.getId(), false);
+            boolean isSelected = selectionState.getOrDefault(customer.getId(), false);
+            if (!alreadyDelivered && isSelected) {
                 double quantity = quantityOverrides.getOrDefault(customer.getId(), customer.getDefaultQuantity());
                 deliveries.add(new DeliveryItem(
                     customer.getId(),
@@ -203,6 +221,39 @@ public class ServiceEntryAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             }
         }
         return deliveries;
+    }
+
+    /**
+     * Selects all customers that are eligible for delivery marking.
+     *
+     * @return count of customers selected
+     */
+    public int selectAllAvailable() {
+        int selectedCount = 0;
+        for (Customer customer : customers) {
+            String customerId = customer.getId();
+            if (customerId == null) continue;
+            boolean alreadyDelivered = deliveryStatus.getOrDefault(customerId, false);
+            if (!alreadyDelivered) {
+                selectionState.put(customerId, true);
+                selectedCount++;
+            }
+        }
+        notifyDataSetChanged();
+        return selectedCount;
+    }
+
+    /**
+     * Clears all current selections.
+     */
+    public void clearSelection() {
+        for (Customer customer : customers) {
+            String customerId = customer.getId();
+            if (customerId != null) {
+                selectionState.put(customerId, false);
+            }
+        }
+        notifyDataSetChanged();
     }
 
     /**

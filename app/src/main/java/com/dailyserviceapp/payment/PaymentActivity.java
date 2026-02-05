@@ -281,7 +281,7 @@ public class PaymentActivity extends BaseActivity {
             @Override
             public void onSuccess() {
                 // Update bill payment status
-                updateBillPaymentStatus(amount);
+                updateBillPaymentStatus();
             }
 
             @Override
@@ -292,25 +292,46 @@ public class PaymentActivity extends BaseActivity {
         });
     }
     
-    private void updateBillPaymentStatus(double paidAmount) {
+    private void updateBillPaymentStatus() {
         double billTotal = currentBill.getTotalAmount();
+        final double epsilon = 0.01; // Handle rounding
         
-        if (paidAmount >= billTotal) {
-            currentBill.setPaymentStatus("PAID");
-        } else {
-            currentBill.setPaymentStatus("PARTIAL");
-        }
-        
-        repository.saveBill(currentBill, new FirestoreRepository.OnSaveCompleteListener() {
+        repository.getPaymentsByBill(billId, new FirestoreRepository.OnPaymentsLoadedListener() {
             @Override
-            public void onSuccess() {
-                showToast("Payment recorded successfully");
-                finish();
+            public void onPaymentsLoaded(java.util.List<Payment> payments) {
+                double totalPaid = 0.0;
+                if (payments != null) {
+                    for (Payment payment : payments) {
+                        totalPaid += payment.getAmount();
+                    }
+                }
+                
+                if (totalPaid <= 0) {
+                    currentBill.setPaymentStatus("PENDING");
+                } else if (totalPaid + epsilon >= billTotal) {
+                    currentBill.setPaymentStatus("PAID");
+                } else {
+                    currentBill.setPaymentStatus("PARTIAL");
+                }
+                
+                repository.saveBill(currentBill, new FirestoreRepository.OnSaveCompleteListener() {
+                    @Override
+                    public void onSuccess() {
+                        showToast("Payment recorded successfully");
+                        finish();
+                    }
+
+                    @Override
+                    public void onError(String error) {
+                        showToast("Payment saved but status update failed: " + error);
+                        finish();
+                    }
+                });
             }
 
             @Override
             public void onError(String error) {
-                showToast("Payment saved but status update failed: " + error);
+                showToast("Payment saved but failed to recalculate status: " + error);
                 finish();
             }
         });

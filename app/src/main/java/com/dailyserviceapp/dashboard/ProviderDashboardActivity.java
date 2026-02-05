@@ -15,6 +15,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import com.dailyserviceapp.R;
 import com.dailyserviceapp.billing.BillListActivity;
 import com.dailyserviceapp.core.base.BaseActivity;
+import com.dailyserviceapp.core.utils.Constants;
 import com.dailyserviceapp.core.utils.CurrencyUtils;
 import com.dailyserviceapp.service.ServiceEntryActivity;
 import com.google.android.material.appbar.MaterialToolbar;
@@ -105,6 +106,7 @@ public class ProviderDashboardActivity extends BaseActivity {
         
         initializeViews();
         setupListeners();
+        loadCachedProviderMetrics();
         loadDashboardData();
     }
     
@@ -231,13 +233,11 @@ public class ProviderDashboardActivity extends BaseActivity {
         today.set(Calendar.SECOND, 0);
         today.set(Calendar.MILLISECOND, 0);
         
-        Calendar todayEnd = (Calendar) today.clone();
-        todayEnd.set(Calendar.HOUR_OF_DAY, 23);
-        todayEnd.set(Calendar.MINUTE, 59);
-        todayEnd.set(Calendar.SECOND, 59);
+        Calendar tomorrow = (Calendar) today.clone();
+        tomorrow.add(Calendar.DAY_OF_YEAR, 1);
         
         Timestamp startOfDay = new Timestamp(today.getTime());
-        Timestamp endOfDay = new Timestamp(todayEnd.getTime());
+        Timestamp endExclusive = new Timestamp(tomorrow.getTime());
         
         // Get total customer count for "X / Total" display
         firestore.collection("customers")
@@ -257,76 +257,7 @@ public class ProviderDashboardActivity extends BaseActivity {
                     }
                 }
                 
-                // Query service entries for today
-                firestore.collection("serviceEntries")
-                    .whereEqualTo("providerId", providerId)
-                    .whereEqualTo("delivered", true)
-                    .get()
-                    .addOnSuccessListener(querySnapshot -> {
-                        int deliveredCount = 0;
-                        double todayEarnings = 0.0;
-                        
-                        android.util.Log.d(TAG, "=== TODAY'S EARNINGS DEBUG ===");
-                        android.util.Log.d(TAG, "Total service entries: " + querySnapshot.size());
-                        android.util.Log.d(TAG, "Customer rates available: " + customerRates.size());
-                        android.util.Log.d(TAG, "Today range: " + startOfDay.toDate() + " to " + endOfDay.toDate());
-                        
-                        // Filter by today's date in memory
-                        for (QueryDocumentSnapshot doc : querySnapshot) {
-                            Timestamp entryDate = doc.getTimestamp("date");
-                            if (entryDate != null) {
-                                Date entryDateObj = entryDate.toDate();
-                                
-                                // Check if entry is today
-                                if (!entryDateObj.before(startOfDay.toDate()) && 
-                                    !entryDateObj.after(endOfDay.toDate())) {
-                                    deliveredCount++;
-                                    
-                                    // Calculate earnings (rate × quantity)
-                                    Double rate = doc.getDouble("rate");
-                                    Double quantity = doc.getDouble("quantity");
-                                    String customerId = doc.getString("customerId");
-                                    
-                                    android.util.Log.d(TAG, "Entry - customerId: " + customerId + ", rate: " + rate + ", quantity: " + quantity);
-                                    
-                                    // Fallback to customer rate if entry doesn't have rate or rate is 0
-                                    if ((rate == null || rate == 0.0) && customerId != null) {
-                                        rate = customerRates.get(customerId);
-                                        android.util.Log.d(TAG, "Using fallback rate: " + rate);
-                                    }
-                                    
-                                    if (rate != null && quantity != null) {
-                                        double earning = rate * quantity;
-                                        todayEarnings += earning;
-                                        android.util.Log.d(TAG, "✓ Earning: ₹" + earning + " (rate: " + rate + " × qty: " + quantity + ")");
-                                    } else {
-                                        android.util.Log.w(TAG, "✗ Skipped - rate or quantity null");
-                                    }
-                                }
-                            }
-                        }
-                        
-                        // Update UI
-                        int finalDeliveredCount = deliveredCount;
-                        double finalTodayEarnings = todayEarnings;
-                        android.util.Log.d(TAG, "=== FINAL TODAY'S RESULT ===");
-                        android.util.Log.d(TAG, "Delivered: " + finalDeliveredCount + " / " + totalCustomers);
-                        android.util.Log.d(TAG, "Total Earnings: ₹" + finalTodayEarnings);
-                        
-                        runOnUiThread(() -> {
-                            txtTodayDelivered.setText(finalDeliveredCount + " / " + totalCustomers);
-                            txtTodayEarnings.setText(CurrencyUtils.formatIndianCurrency(finalTodayEarnings));
-                            checkLoadingComplete();
-                        });
-                    })
-                    .addOnFailureListener(e -> {
-                        android.util.Log.e(TAG, "Error loading today's summary", e);
-                        runOnUiThread(() -> {
-                            txtTodayDelivered.setText("0 / " + totalCustomers);
-                            txtTodayEarnings.setText(CurrencyUtils.formatIndianCurrency(DEFAULT_AMOUNT));
-                            checkLoadingComplete();
-                        });
-                    });
+                loadTodaysEntriesOptimized(totalCustomers, customerRates, startOfDay, endExclusive);
             })
             .addOnFailureListener(e -> {
                 android.util.Log.e(TAG, "Error loading customers", e);
@@ -384,9 +315,15 @@ public class ProviderDashboardActivity extends BaseActivity {
                         
                         // Update UI
                         runOnUiThread(() -> {
-                            txtTotalLent.setText(CurrencyUtils.formatIndianCurrency(finalTotalLent));
-                            txtTotalReceived.setText(CurrencyUtils.formatIndianCurrency(finalTotalReceived));
-                            txtPendingAmount.setText(CurrencyUtils.formatIndianCurrency(pendingAmount));
+                            String lentText = CurrencyUtils.formatIndianCurrency(finalTotalLent);
+                            String receivedText = CurrencyUtils.formatIndianCurrency(finalTotalReceived);
+                            String pendingText = CurrencyUtils.formatIndianCurrency(pendingAmount);
+                            txtTotalLent.setText(lentText);
+                            txtTotalReceived.setText(receivedText);
+                            txtPendingAmount.setText(pendingText);
+                            cacheProviderValue(Constants.PREF_PROVIDER_TOTAL_LENT, lentText);
+                            cacheProviderValue(Constants.PREF_PROVIDER_TOTAL_RECEIVED, receivedText);
+                            cacheProviderValue(Constants.PREF_PROVIDER_PENDING_AMOUNT, pendingText);
                             checkLoadingComplete();
                         });
                     })
@@ -428,14 +365,10 @@ public class ProviderDashboardActivity extends BaseActivity {
         monthStart.set(Calendar.SECOND, 0);
         monthStart.set(Calendar.MILLISECOND, 0);
         
-        Calendar monthEnd = Calendar.getInstance();
-        monthEnd.set(Calendar.DAY_OF_MONTH, monthEnd.getActualMaximum(Calendar.DAY_OF_MONTH));
-        monthEnd.set(Calendar.HOUR_OF_DAY, 23);
-        monthEnd.set(Calendar.MINUTE, 59);
-        monthEnd.set(Calendar.SECOND, 59);
-        
         Timestamp startOfMonth = new Timestamp(monthStart.getTime());
-        Timestamp endOfMonth = new Timestamp(monthEnd.getTime());
+        Calendar nextMonth = (Calendar) monthStart.clone();
+        nextMonth.add(Calendar.MONTH, 1);
+        Timestamp endExclusive = new Timestamp(nextMonth.getTime());
         
         // Get customer rates for fallback
         firestore.collection(COLLECTION_CUSTOMERS)
@@ -453,49 +386,201 @@ public class ProviderDashboardActivity extends BaseActivity {
                     }
                 }
                 
-                // Query service entries for this month
-                firestore.collection(COLLECTION_SERVICE_ENTRIES)
-                    .whereEqualTo(FIELD_PROVIDER_ID, providerId)
-                    .whereEqualTo("delivered", true)
-                    .get()
-                    .addOnSuccessListener(querySnapshot -> {
-                        int monthlyDeliveries = 0;
-                        double monthlyEarnings = 0.0;
-                        
-                        // Filter by month date range in memory
-                        for (QueryDocumentSnapshot doc : querySnapshot) {
-                            Timestamp entryDate = doc.getTimestamp("date");
-                            if (entryDate != null) {
-                                Date entryDateObj = entryDate.toDate();
-                                
-                                // Check if entry is this month
-                                if (!entryDateObj.before(startOfMonth.toDate()) && 
-                                    !entryDateObj.after(endOfMonth.toDate())) {
-                                    monthlyDeliveries++;
-                                    
-                                    // Calculate earnings (rate × quantity)
-                                    Double rate = doc.getDouble("rate");
-                                    Double quantity = doc.getDouble("quantity");
-                                    String customerId = doc.getString("customerId");
-                                    
-                                    // Fallback to customer rate if entry doesn't have rate or rate is 0
-                                    if ((rate == null || rate == 0.0) && customerId != null) {
-                                        rate = customerRates.get(customerId);
-                                    }
-                                    
-                                    if (rate != null && quantity != null) {
-                                        monthlyEarnings += (rate * quantity);
-                                    }
+                loadMonthlyEntriesOptimized(customerRates, startOfMonth, endExclusive);
+        })
+        .addOnFailureListener(e -> {
+            android.util.Log.e(TAG, "Error loading customers for monthly", e);
+            runOnUiThread(() -> {
+                txtMonthlyDeliveries.setText("0");
+                txtMonthlyEarnings.setText(CurrencyUtils.formatIndianCurrency(DEFAULT_AMOUNT));
+                checkLoadingComplete();
+            });
+        });
+    }
+
+    private void loadTodaysEntriesOptimized(int totalCustomers, java.util.Map<String, Double> customerRates,
+                                            Timestamp startOfDay, Timestamp endExclusive) {
+        firestore.collection(COLLECTION_SERVICE_ENTRIES)
+            .whereEqualTo(FIELD_PROVIDER_ID, providerId)
+            .whereEqualTo("delivered", true)
+            .whereGreaterThanOrEqualTo("date", startOfDay)
+            .whereLessThan("date", endExclusive)
+            .get()
+            .addOnSuccessListener(querySnapshot -> {
+                int deliveredCount = 0;
+                double todayEarnings = 0.0;
+
+                for (QueryDocumentSnapshot doc : querySnapshot) {
+                    deliveredCount++;
+                    Double rate = doc.getDouble("rate");
+                    Double quantity = doc.getDouble("quantity");
+                    String customerId = doc.getString("customerId");
+
+                    if ((rate == null || rate == 0.0) && customerId != null) {
+                        rate = customerRates.get(customerId);
+                    }
+                    if (rate != null && quantity != null) {
+                        todayEarnings += (rate * quantity);
+                    }
+                }
+
+                int finalDeliveredCount = deliveredCount;
+                double finalTodayEarnings = todayEarnings;
+                runOnUiThread(() -> {
+                    String deliveredText = finalDeliveredCount + " / " + totalCustomers;
+                    String earningsText = CurrencyUtils.formatIndianCurrency(finalTodayEarnings);
+                    txtTodayDelivered.setText(deliveredText);
+                    txtTodayEarnings.setText(earningsText);
+                    cacheProviderValue(Constants.PREF_PROVIDER_TODAY_DELIVERED, deliveredText);
+                    cacheProviderValue(Constants.PREF_PROVIDER_TODAY_EARNINGS, earningsText);
+                    checkLoadingComplete();
+                });
+            })
+            .addOnFailureListener(e -> {
+                android.util.Log.w(TAG, "Optimized today query failed, falling back", e);
+                loadTodaysEntriesFallback(totalCustomers, customerRates, startOfDay, endExclusive);
+            });
+    }
+
+    private void loadTodaysEntriesFallback(int totalCustomers, java.util.Map<String, Double> customerRates,
+                                           Timestamp startOfDay, Timestamp endExclusive) {
+        firestore.collection(COLLECTION_SERVICE_ENTRIES)
+            .whereEqualTo(FIELD_PROVIDER_ID, providerId)
+            .whereEqualTo("delivered", true)
+            .get()
+            .addOnSuccessListener(querySnapshot -> {
+                int deliveredCount = 0;
+                double todayEarnings = 0.0;
+
+                long startTime = startOfDay.toDate().getTime();
+                long endTime = endExclusive.toDate().getTime();
+
+                for (QueryDocumentSnapshot doc : querySnapshot) {
+                    Timestamp entryDate = doc.getTimestamp("date");
+                    if (entryDate == null) continue;
+                    long entryTime = entryDate.toDate().getTime();
+                    if (entryTime >= startTime && entryTime < endTime) {
+                        deliveredCount++;
+                        Double rate = doc.getDouble("rate");
+                        Double quantity = doc.getDouble("quantity");
+                        String customerId = doc.getString("customerId");
+
+                        if ((rate == null || rate == 0.0) && customerId != null) {
+                            rate = customerRates.get(customerId);
+                        }
+                        if (rate != null && quantity != null) {
+                            todayEarnings += (rate * quantity);
                         }
                     }
                 }
-                
-                // Update UI
+
+                int finalDeliveredCount = deliveredCount;
+                double finalTodayEarnings = todayEarnings;
+                runOnUiThread(() -> {
+                    String deliveredText = finalDeliveredCount + " / " + totalCustomers;
+                    String earningsText = CurrencyUtils.formatIndianCurrency(finalTodayEarnings);
+                    txtTodayDelivered.setText(deliveredText);
+                    txtTodayEarnings.setText(earningsText);
+                    cacheProviderValue(Constants.PREF_PROVIDER_TODAY_DELIVERED, deliveredText);
+                    cacheProviderValue(Constants.PREF_PROVIDER_TODAY_EARNINGS, earningsText);
+                    checkLoadingComplete();
+                });
+            })
+            .addOnFailureListener(e -> {
+                android.util.Log.e(TAG, "Error loading today's summary", e);
+                runOnUiThread(() -> {
+                    txtTodayDelivered.setText("0 / " + totalCustomers);
+                    txtTodayEarnings.setText(CurrencyUtils.formatIndianCurrency(DEFAULT_AMOUNT));
+                    checkLoadingComplete();
+                });
+            });
+    }
+
+    private void loadMonthlyEntriesOptimized(java.util.Map<String, Double> customerRates,
+                                             Timestamp startOfMonth, Timestamp endExclusive) {
+        firestore.collection(COLLECTION_SERVICE_ENTRIES)
+            .whereEqualTo(FIELD_PROVIDER_ID, providerId)
+            .whereEqualTo("delivered", true)
+            .whereGreaterThanOrEqualTo("date", startOfMonth)
+            .whereLessThan("date", endExclusive)
+            .get()
+            .addOnSuccessListener(querySnapshot -> {
+                int monthlyDeliveries = 0;
+                double monthlyEarnings = 0.0;
+
+                for (QueryDocumentSnapshot doc : querySnapshot) {
+                    monthlyDeliveries++;
+                    Double rate = doc.getDouble("rate");
+                    Double quantity = doc.getDouble("quantity");
+                    String customerId = doc.getString("customerId");
+
+                    if ((rate == null || rate == 0.0) && customerId != null) {
+                        rate = customerRates.get(customerId);
+                    }
+                    if (rate != null && quantity != null) {
+                        monthlyEarnings += (rate * quantity);
+                    }
+                }
+
                 int finalMonthlyDeliveries = monthlyDeliveries;
                 double finalMonthlyEarnings = monthlyEarnings;
                 runOnUiThread(() -> {
-                    txtMonthlyDeliveries.setText(String.valueOf(finalMonthlyDeliveries));
-                    txtMonthlyEarnings.setText(CurrencyUtils.formatIndianCurrency(finalMonthlyEarnings));
+                    String deliveriesText = String.valueOf(finalMonthlyDeliveries);
+                    String earningsText = CurrencyUtils.formatIndianCurrency(finalMonthlyEarnings);
+                    txtMonthlyDeliveries.setText(deliveriesText);
+                    txtMonthlyEarnings.setText(earningsText);
+                    cacheProviderValue(Constants.PREF_PROVIDER_MONTHLY_DELIVERIES, deliveriesText);
+                    cacheProviderValue(Constants.PREF_PROVIDER_MONTHLY_EARNINGS, earningsText);
+                    checkLoadingComplete();
+                });
+            })
+            .addOnFailureListener(e -> {
+                android.util.Log.w(TAG, "Optimized monthly query failed, falling back", e);
+                loadMonthlyEntriesFallback(customerRates, startOfMonth, endExclusive);
+            });
+    }
+
+    private void loadMonthlyEntriesFallback(java.util.Map<String, Double> customerRates,
+                                            Timestamp startOfMonth, Timestamp endExclusive) {
+        firestore.collection(COLLECTION_SERVICE_ENTRIES)
+            .whereEqualTo(FIELD_PROVIDER_ID, providerId)
+            .whereEqualTo("delivered", true)
+            .get()
+            .addOnSuccessListener(querySnapshot -> {
+                int monthlyDeliveries = 0;
+                double monthlyEarnings = 0.0;
+
+                long startTime = startOfMonth.toDate().getTime();
+                long endTime = endExclusive.toDate().getTime();
+
+                for (QueryDocumentSnapshot doc : querySnapshot) {
+                    Timestamp entryDate = doc.getTimestamp("date");
+                    if (entryDate == null) continue;
+                    long entryTime = entryDate.toDate().getTime();
+                    if (entryTime >= startTime && entryTime < endTime) {
+                        monthlyDeliveries++;
+                        Double rate = doc.getDouble("rate");
+                        Double quantity = doc.getDouble("quantity");
+                        String customerId = doc.getString("customerId");
+
+                        if ((rate == null || rate == 0.0) && customerId != null) {
+                            rate = customerRates.get(customerId);
+                        }
+                        if (rate != null && quantity != null) {
+                            monthlyEarnings += (rate * quantity);
+                        }
+                    }
+                }
+
+                int finalMonthlyDeliveries = monthlyDeliveries;
+                double finalMonthlyEarnings = monthlyEarnings;
+                runOnUiThread(() -> {
+                    String deliveriesText = String.valueOf(finalMonthlyDeliveries);
+                    String earningsText = CurrencyUtils.formatIndianCurrency(finalMonthlyEarnings);
+                    txtMonthlyDeliveries.setText(deliveriesText);
+                    txtMonthlyEarnings.setText(earningsText);
+                    cacheProviderValue(Constants.PREF_PROVIDER_MONTHLY_DELIVERIES, deliveriesText);
+                    cacheProviderValue(Constants.PREF_PROVIDER_MONTHLY_EARNINGS, earningsText);
                     checkLoadingComplete();
                 });
             })
@@ -507,19 +592,59 @@ public class ProviderDashboardActivity extends BaseActivity {
                     checkLoadingComplete();
                 });
             });
-        })
-        .addOnFailureListener(e -> {
-            android.util.Log.e(TAG, "Error loading customers for monthly", e);
-            runOnUiThread(() -> {
-                txtMonthlyDeliveries.setText("0");
-                txtMonthlyEarnings.setText(CurrencyUtils.formatIndianCurrency(DEFAULT_AMOUNT));
-                checkLoadingComplete();
-            });
-        });
     }
     
     private int loadingTasks = 0;
     private final int TOTAL_TASKS = 3; // Today, Payment, Monthly
+
+    private void loadCachedProviderMetrics() {
+        String todayDelivered = preferenceManager.getString(prefKey(Constants.PREF_PROVIDER_TODAY_DELIVERED), null);
+        if (todayDelivered != null && txtTodayDelivered != null) {
+            txtTodayDelivered.setText(todayDelivered);
+        }
+
+        String todayEarnings = preferenceManager.getString(prefKey(Constants.PREF_PROVIDER_TODAY_EARNINGS), null);
+        if (todayEarnings != null && txtTodayEarnings != null) {
+            txtTodayEarnings.setText(todayEarnings);
+        }
+
+        String totalLent = preferenceManager.getString(prefKey(Constants.PREF_PROVIDER_TOTAL_LENT), null);
+        if (totalLent != null && txtTotalLent != null) {
+            txtTotalLent.setText(totalLent);
+        }
+
+        String totalReceived = preferenceManager.getString(prefKey(Constants.PREF_PROVIDER_TOTAL_RECEIVED), null);
+        if (totalReceived != null && txtTotalReceived != null) {
+            txtTotalReceived.setText(totalReceived);
+        }
+
+        String pendingAmount = preferenceManager.getString(prefKey(Constants.PREF_PROVIDER_PENDING_AMOUNT), null);
+        if (pendingAmount != null && txtPendingAmount != null) {
+            txtPendingAmount.setText(pendingAmount);
+        }
+
+        String monthlyEarnings = preferenceManager.getString(prefKey(Constants.PREF_PROVIDER_MONTHLY_EARNINGS), null);
+        if (monthlyEarnings != null && txtMonthlyEarnings != null) {
+            txtMonthlyEarnings.setText(monthlyEarnings);
+        }
+
+        String monthlyDeliveries = preferenceManager.getString(prefKey(Constants.PREF_PROVIDER_MONTHLY_DELIVERIES), null);
+        if (monthlyDeliveries != null && txtMonthlyDeliveries != null) {
+            txtMonthlyDeliveries.setText(monthlyDeliveries);
+        }
+    }
+
+    private void cacheProviderValue(String key, String value) {
+        if (value == null) return;
+        preferenceManager.putString(prefKey(key), value);
+    }
+
+    private String prefKey(String key) {
+        if (providerId == null || providerId.isEmpty()) {
+            return key;
+        }
+        return key + "_" + providerId;
+    }
     
     private void checkLoadingComplete() {
         loadingTasks++;

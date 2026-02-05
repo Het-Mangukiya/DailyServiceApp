@@ -42,6 +42,8 @@ public class ServiceEntryActivity extends BaseActivity {
     private TextView pendingSyncText;
     private com.google.android.material.card.MaterialCardView pendingSyncCard;
     private Button changeDateButton;
+    private com.google.android.material.button.MaterialButton btnSelectAll;
+    private com.google.android.material.button.MaterialButton btnClearAll;
     private RecyclerView serviceEntriesRecycler;
     private LinearLayout emptyStateLayout;
     private MaterialButton btnMarkDelivery;
@@ -82,6 +84,8 @@ public class ServiceEntryActivity extends BaseActivity {
         pendingSyncCard = findViewById(R.id.pendingSyncCard);
         pendingSyncText = findViewById(R.id.pendingSyncText);
         changeDateButton = findViewById(R.id.changeDateButton);
+        btnSelectAll = findViewById(R.id.btnSelectAll);
+        btnClearAll = findViewById(R.id.btnClearAll);
         serviceEntriesRecycler = findViewById(R.id.recyclerView);
         emptyStateLayout = findViewById(R.id.emptyState);
         btnMarkDelivery = findViewById(R.id.btnMarkDelivery);
@@ -105,6 +109,20 @@ public class ServiceEntryActivity extends BaseActivity {
     private void setupClickListeners() {
         changeDateButton.setOnClickListener(v -> showDatePicker());
         btnMarkDelivery.setOnClickListener(v -> markDeliveries());
+        
+        btnSelectAll.setOnClickListener(v -> {
+            int selectedCount = adapter.selectAllAvailable();
+            if (selectedCount == 0) {
+                showToast("No customers available to select");
+            } else {
+                showToast("Selected " + selectedCount + " customers");
+            }
+        });
+        
+        btnClearAll.setOnClickListener(v -> {
+            adapter.clearSelection();
+            showToast("Selection cleared");
+        });
     }
     
     private void showDatePicker() {

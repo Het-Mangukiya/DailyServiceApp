@@ -63,6 +63,11 @@ public class FirestoreRepository {
                 .addOnFailureListener(onFailure);
     }
 
+    /**
+     * Legacy method using per-customer subcollections.
+     * Prefer serviceEntries collection instead.
+     */
+    @Deprecated
     public void markDeliveredToday(String customerId, OnSuccessListener<Void> onSuccess, OnFailureListener onFailure) {
         LocalDate today = LocalDate.now();
         String dateKey = today.format(DATE_KEY);
@@ -77,6 +82,11 @@ public class FirestoreRepository {
                 .addOnFailureListener(onFailure);
     }
 
+    /**
+     * Legacy method using per-customer subcollections.
+     * Prefer serviceEntries collection instead.
+     */
+    @Deprecated
     public void countDeliveredInMonth(String customerId, String monthKey, OnSuccessListener<Integer> onSuccess, OnFailureListener onFailure) {
         // monthKey: yyyyMM, deliveries stored as yyyyMMdd in doc id, so range query on doc id.
         String start = monthKey + "01";
@@ -94,6 +104,11 @@ public class FirestoreRepository {
                 .addOnFailureListener(onFailure);
     }
 
+    /**
+     * Legacy method using per-customer subcollections.
+     * Prefer bills/payments collections instead.
+     */
+    @Deprecated
     public void getPaymentStatus(String customerId, String monthKey, OnSuccessListener<PaymentStatus> onSuccess, OnFailureListener onFailure) {
         customers()
                 .document(customerId)
@@ -110,6 +125,11 @@ public class FirestoreRepository {
                 .addOnFailureListener(onFailure);
     }
 
+    /**
+     * Legacy method using per-customer subcollections.
+     * Prefer bills/payments collections instead.
+     */
+    @Deprecated
     public void setPaymentPaid(String customerId, String monthKey, double paidAmount, OnSuccessListener<Void> onSuccess, OnFailureListener onFailure) {
         PaymentStatus status = new PaymentStatus(monthKey, true, paidAmount, Timestamp.now());
         customers()
@@ -150,8 +170,117 @@ public class FirestoreRepository {
     public void deleteCustomer(String customerId, OnSaveCompleteListener listener) {
         customers()
                 .document(customerId)
-                .delete()
-                .addOnSuccessListener(aVoid -> listener.onSuccess())
+                .get()
+                .addOnSuccessListener(doc -> {
+                    if (!doc.exists()) {
+                        listener.onError("Customer not found");
+                        return;
+                    }
+
+                    // Cascade delete in sequence to avoid orphaned data
+                    deleteDocuments(db.collection("serviceEntries")
+                                    .whereEqualTo("customerId", customerId),
+                            new OnSaveCompleteListener() {
+                                @Override
+                                public void onSuccess() {
+                                    deleteDocuments(db.collection("payments")
+                                                    .whereEqualTo("customerId", customerId),
+                                            new OnSaveCompleteListener() {
+                                                @Override
+                                                public void onSuccess() {
+                                                    deleteDocuments(db.collection("bills")
+                                                                    .whereEqualTo("customerId", customerId),
+                                                            new OnSaveCompleteListener() {
+                                                                @Override
+                                                                public void onSuccess() {
+                                                                    // Legacy subcollections cleanup
+                                                                    deleteDocuments(customers()
+                                                                                    .document(customerId)
+                                                                                    .collection("deliveries"),
+                                                                            new OnSaveCompleteListener() {
+                                                                                @Override
+                                                                                public void onSuccess() {
+                                                                                    deleteDocuments(customers()
+                                                                                                    .document(customerId)
+                                                                                                    .collection("payments"),
+                                                                                            new OnSaveCompleteListener() {
+                                                                                                @Override
+                                                                                                public void onSuccess() {
+                                                                                                    // Finally delete customer doc
+                                                                                                    customers()
+                                                                                                            .document(customerId)
+                                                                                                            .delete()
+                                                                                                            .addOnSuccessListener(aVoid -> listener.onSuccess())
+                                                                                                            .addOnFailureListener(e -> listener.onError(e.getMessage()));
+                                                                                                }
+
+                                                                                                @Override
+                                                                                                public void onError(String error) {
+                                                                                                    listener.onError(error);
+                                                                                                }
+                                                                                            });
+                                                                                }
+
+                                                                                @Override
+                                                                                public void onError(String error) {
+                                                                                    listener.onError(error);
+                                                                                }
+                                                                            });
+                                                                }
+
+                                                                @Override
+                                                                public void onError(String error) {
+                                                                    listener.onError(error);
+                                                                }
+                                                            });
+                                                }
+
+                                                @Override
+                                                public void onError(String error) {
+                                                    listener.onError(error);
+                                                }
+                                            });
+                                }
+
+                                @Override
+                                public void onError(String error) {
+                                    listener.onError(error);
+                                }
+                            });
+                })
+                .addOnFailureListener(e -> listener.onError(e.getMessage()));
+    }
+
+    /**
+     * Deletes all documents from a query in batches.
+     */
+    private void deleteDocuments(Query query, OnSaveCompleteListener listener) {
+        final int batchSize = 400;
+
+        query.limit(batchSize)
+                .get()
+                .addOnSuccessListener(snapshot -> {
+                    if (snapshot == null || snapshot.isEmpty()) {
+                        listener.onSuccess();
+                        return;
+                    }
+
+                    WriteBatch batch = db.batch();
+                    for (DocumentSnapshot doc : snapshot.getDocuments()) {
+                        batch.delete(doc.getReference());
+                    }
+
+                    batch.commit()
+                            .addOnSuccessListener(aVoid -> {
+                                if (snapshot.size() >= batchSize) {
+                                    // There may be more documents; repeat
+                                    deleteDocuments(query, listener);
+                                } else {
+                                    listener.onSuccess();
+                                }
+                            })
+                            .addOnFailureListener(e -> listener.onError(e.getMessage()));
+                })
                 .addOnFailureListener(e -> listener.onError(e.getMessage()));
     }
     
@@ -263,6 +392,41 @@ public class FirestoreRepository {
                             Timestamp entryDate = entry.getDate();
                             if (entryDate != null && 
                                 !entryDate.toDate().before(startDate.toDate()) && 
+                                !entryDate.toDate().after(endDate.toDate())) {
+                                entries.add(entry);
+                            }
+                        }
+                    }
+                    listener.onServiceEntriesLoaded(entries);
+                })
+                .addOnFailureListener(e -> listener.onError(e.getMessage()));
+    }
+
+    /**
+     * Gets service entries for a specific customer within a date range.
+     * Filters in memory to avoid complex Firestore index requirements.
+     *
+     * @param customerId Customer ID
+     * @param startDate Start of date range
+     * @param endDate End of date range
+     * @param listener Callback for results
+     */
+    public void getServiceEntriesByCustomerAndDate(String customerId, Timestamp startDate,
+                                                   Timestamp endDate, OnServiceEntriesLoadedListener listener) {
+        db.collection("serviceEntries")
+                .whereEqualTo("customerId", customerId)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    List<ServiceEntry> entries = new ArrayList<>();
+                    for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
+                        ServiceEntry entry = doc.toObject(ServiceEntry.class);
+                        if (entry != null) {
+                            entry.setId(doc.getId());
+                            
+                            // Filter by date range in memory
+                            Timestamp entryDate = entry.getDate();
+                            if (entryDate != null &&
+                                !entryDate.toDate().before(startDate.toDate()) &&
                                 !entryDate.toDate().after(endDate.toDate())) {
                                 entries.add(entry);
                             }
@@ -413,6 +577,31 @@ public class FirestoreRepository {
                 })
                 .addOnFailureListener(e -> listener.onError(e.getMessage()));
     }
+
+    /**
+     * Gets all bills for a specific customer.
+     * Filters in memory for month/year on the caller side if needed.
+     *
+     * @param customerId Customer ID
+     * @param listener Callback for results
+     */
+    public void getBillsByCustomer(String customerId, OnBillsLoadedListener listener) {
+        db.collection("bills")
+                .whereEqualTo("customerId", customerId)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    List<Bill> bills = new ArrayList<>();
+                    for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
+                        Bill bill = doc.toObject(Bill.class);
+                        if (bill != null) {
+                            bill.setId(doc.getId());
+                            bills.add(bill);
+                        }
+                    }
+                    listener.onBillsLoaded(bills);
+                })
+                .addOnFailureListener(e -> listener.onError(e.getMessage()));
+    }
     
     /**
      * Saves or updates a bill.
@@ -525,4 +714,3 @@ public class FirestoreRepository {
         void onError(String error);
     }
 }
-
