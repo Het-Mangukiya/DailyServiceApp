@@ -38,6 +38,9 @@ public class CustomerLedgerSummary {
     }
 
     public void setDeliveredEntries(int deliveredEntries) {
+        if (deliveredEntries < 0) {
+            throw new IllegalArgumentException("deliveredEntries must be non-negative");
+        }
         this.deliveredEntries = deliveredEntries;
     }
 

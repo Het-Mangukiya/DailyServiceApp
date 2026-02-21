@@ -12,7 +12,9 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Offline cache manager for storing data locally when network is unavailable.
@@ -42,8 +44,8 @@ public class OfflineCache {
      * Cache customer list for offline access
      */
     public void cacheCustomers(List<Customer> customers) {
-        String json = gson.toJson(customers);
         synchronized (syncLock) {
+            String json = gson.toJson(customers);
             prefs.edit()
                 .putString(KEY_CUSTOMERS, json)
                 .putLong(KEY_LAST_SYNC, System.currentTimeMillis())
@@ -97,6 +99,46 @@ public class OfflineCache {
     public void replacePendingEntries(List<PendingServiceEntry> entries) {
         synchronized (syncLock) {
             setPendingEntries(entries);
+        }
+    }
+
+    /**
+     * Reconciles a sync pass without clobbering entries queued concurrently.
+     * Keeps entries added after snapshot retrieval and appends retry entries.
+     */
+    public void reconcilePendingEntriesAfterSync(List<PendingServiceEntry> processedSnapshot,
+                                                 List<PendingServiceEntry> retryEntries) {
+        synchronized (syncLock) {
+            List<PendingServiceEntry> current = getPendingEntries();
+            Set<String> processedKeys = new HashSet<>();
+            if (processedSnapshot != null) {
+                for (PendingServiceEntry entry : processedSnapshot) {
+                    processedKeys.add(pendingKey(entry));
+                }
+            }
+
+            List<PendingServiceEntry> merged = new ArrayList<>();
+            Set<String> mergedKeys = new HashSet<>();
+            for (PendingServiceEntry entry : current) {
+                String key = pendingKey(entry);
+                if (processedKeys.contains(key)) {
+                    continue;
+                }
+                if (mergedKeys.add(key)) {
+                    merged.add(entry);
+                }
+            }
+
+            if (retryEntries != null) {
+                for (PendingServiceEntry entry : retryEntries) {
+                    String key = pendingKey(entry);
+                    if (mergedKeys.add(key)) {
+                        merged.add(entry);
+                    }
+                }
+            }
+
+            setPendingEntries(merged);
         }
     }
     
@@ -183,5 +225,19 @@ public class OfflineCache {
     private void setPendingEntries(List<PendingServiceEntry> entries) {
         String json = gson.toJson(entries == null ? new ArrayList<>() : entries);
         prefs.edit().putString(KEY_PENDING_ENTRIES, json).apply();
+    }
+
+    private String pendingKey(PendingServiceEntry entry) {
+        if (entry == null) return "";
+        return safe(entry.providerId) + "|"
+            + safe(entry.customerId) + "|"
+            + entry.timestamp + "|"
+            + entry.quantity + "|"
+            + entry.amount + "|"
+            + entry.delivered;
+    }
+
+    private String safe(String value) {
+        return value == null ? "" : value;
     }
 }

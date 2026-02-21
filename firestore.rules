@@ -56,9 +56,7 @@ service cloud.firestore {
           && (resource == null || resource.data.providerId == request.auth.uid));
       allow list, delete: if isSignedIn() && resource.data.providerId == request.auth.uid;
       allow create: if isSignedIn()
-        && request.resource.data.providerId == request.auth.uid
-        && request.resource.data.customerId is string
-        && ownsCustomer(request.resource.data.customerId);
+        && request.resource.data.providerId == request.auth.uid;
       allow update: if isSignedIn()
         && resource.data.providerId == request.auth.uid
         && request.resource.data.providerId == resource.data.providerId;
@@ -109,7 +107,9 @@ service cloud.firestore {
       allow delete: if isSignedIn()
         && resource.data.providerId == request.auth.uid;
       allow create: if isSignedIn()
-        && request.resource.data.providerId == request.auth.uid;
+        && request.resource.data.providerId == request.auth.uid
+        && request.resource.data.customerId is string
+        && ownsCustomer(request.resource.data.customerId);
       allow update: if isSignedIn()
         && resource.data.providerId == request.auth.uid
         && request.resource.data.providerId == resource.data.providerId;

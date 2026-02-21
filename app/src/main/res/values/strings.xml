@@ -109,6 +109,15 @@
     <string name="reports_overdue_content_desc">Overdue card</string>
     <string name="reports_icon_revenue">Revenue icon</string>
     <string name="reports_icon_delivery">Delivery icon</string>
+    <string name="reports_icon_customers">Customers icon</string>
+    <string name="reports_icon_payments">Payments icon</string>
+    <string name="reports_icon_overdue">Overdue icon</string>
+    <string name="overdue_bills_zero">0</string>
+    <string name="profile_initial_description">Profile initial</string>
+    <string name="month_ring_placeholder">Month:\n--</string>
+    <string name="month_ring_format">Month:\n%1$s</string>
+    <string name="phone_label">Phone: %1$s</string>
+    <string name="address_label">Address: %1$s</string>
 
     <!-- Test data -->
     <string name="test_generating">Generating test data…</string>

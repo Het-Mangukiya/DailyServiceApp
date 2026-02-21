@@ -15,6 +15,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -438,7 +439,15 @@ public class FirestoreRepository {
                     listener.onServiceEntriesLoaded(entries);
                 })
                 .addOnFailureListener(e -> {
+                    if (!isMissingIndexError(e)) {
+                        Log.e("FirestoreRepository",
+                            "Failed to load delivered entries for provider: " + providerId, e);
+                        listener.onError(e.getMessage());
+                        return;
+                    }
                     // Fallback for environments without composite index support.
+                    Log.w("FirestoreRepository",
+                        "Missing index for delivered entries query; using in-memory filter", e);
                     db.collection("serviceEntries")
                             .whereEqualTo("providerId", providerId)
                             .get()
@@ -481,7 +490,15 @@ public class FirestoreRepository {
                     listener.onServiceEntriesLoaded(entries);
                 })
                 .addOnFailureListener(e -> {
+                    if (!isMissingIndexError(e)) {
+                        Log.e("FirestoreRepository",
+                            "Failed to load delivered entries in range for provider: " + providerId, e);
+                        listener.onError(e.getMessage());
+                        return;
+                    }
                     // Fallback: use broader query and filter in memory while preserving delivered=true.
+                    Log.w("FirestoreRepository",
+                        "Missing index for delivered range query; using in-memory filter", e);
                     final long startMillis = startDate != null ? startDate.toDate().getTime() : Long.MIN_VALUE;
                     final long endMillis = endDate != null ? endDate.toDate().getTime() : Long.MAX_VALUE;
 
@@ -920,6 +937,18 @@ public class FirestoreRepository {
                     listener.onBillsLoaded(bills);
                 })
                 .addOnFailureListener(e -> listener.onError(e.getMessage()));
+    }
+
+    private boolean isMissingIndexError(Exception e) {
+        if (!(e instanceof FirebaseFirestoreException)) {
+            return false;
+        }
+        FirebaseFirestoreException firestoreException = (FirebaseFirestoreException) e;
+        if (firestoreException.getCode() != FirebaseFirestoreException.Code.FAILED_PRECONDITION) {
+            return false;
+        }
+        String message = firestoreException.getMessage();
+        return message != null && message.toLowerCase().contains("index");
     }
     
     /**

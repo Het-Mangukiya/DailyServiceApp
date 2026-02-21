@@ -217,7 +217,7 @@ public class CustomerEditActivity extends BaseActivity {
         });
     }
 
-    // Remove this method - use BaseActivity's getCurrentUserId() instead
+    // Returns true when this activity can safely update the UI.
     private boolean isUiActive() {
         return binding != null && !isFinishing() && !isDestroyed();
     }

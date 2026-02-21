@@ -70,7 +70,8 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.ViewHo
                        safeEquals(oldItem.getServiceType(), newItem.getServiceType()) &&
                        Double.compare(oldItem.getRatePerUnit(), newItem.getRatePerUnit()) == 0 &&
                        oldItem.isOnVacation() == newItem.isOnVacation() &&
-                       safeEquals(oldItem.getStatus(), newItem.getStatus());
+                       safeEquals(oldItem.getStatus(), newItem.getStatus()) &&
+                       safeEquals(oldItem.getPhone(), newItem.getPhone());
             }
         });
         

@@ -130,6 +130,9 @@ public class QRCodeActivity extends BaseActivity {
 
     private void ensureProviderRecord(String displayName, Runnable onReady) {
         if (currentProviderId == null || currentProviderId.trim().isEmpty()) {
+            if (onReady != null) {
+                onReady.run();
+            }
             return;
         }
         firestore.collection("providers")
@@ -161,11 +164,17 @@ public class QRCodeActivity extends BaseActivity {
                     .addOnFailureListener(e -> {
                         Log.e("QRCodeActivity", "Failed to ensure provider record for " + currentProviderId, e);
                         showToast("Failed to sync provider code");
+                        if (onReady != null) {
+                            onReady.run();
+                        }
                     });
             })
             .addOnFailureListener(e -> {
                 Log.e("QRCodeActivity", "Failed to read provider record for " + currentProviderId, e);
                 showToast("Failed to verify provider profile");
+                if (onReady != null) {
+                    onReady.run();
+                }
             });
     }
 

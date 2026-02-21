@@ -152,7 +152,7 @@ public class CustomerDetailActivity extends BaseActivity {
         String rateText = CurrencyUtils.formatCurrency(customer.getRatePerUnit());
         customerMeta.setText(service + " • " + rateText + "/unit");
 
-        customerPhone.setText("Phone: " + safeText(customer.getPhone(), "-"));
+        customerPhone.setText(getString(R.string.phone_label, safeText(customer.getPhone(), "-")));
 
         StringBuilder address = new StringBuilder();
         if (!TextUtils.isEmpty(customer.getAddress())) {
@@ -162,13 +162,16 @@ public class CustomerDetailActivity extends BaseActivity {
             if (address.length() > 0) address.append(", ");
             address.append(customer.getArea());
         }
-        customerAddress.setText("Address: " + (address.length() > 0 ? address.toString() : "-"));
+        customerAddress.setText(getString(
+            R.string.address_label,
+            address.length() > 0 ? address.toString() : "-"
+        ));
 
         String status = safeText(customer.getStatus(), "ACTIVE").toUpperCase();
         customerStatusChip.setText(status);
 
         if (customer.isOnVacation()) {
-            customerVacationChip.setText("ON VACATION");
+            customerVacationChip.setText(R.string.on_vacation);
             customerVacationChip.setVisibility(android.view.View.VISIBLE);
         } else {
             customerVacationChip.setVisibility(android.view.View.GONE);
@@ -217,7 +220,7 @@ public class CustomerDetailActivity extends BaseActivity {
                     }
 
                     String monthText = DateUtils.formatMonthYear(new Date());
-                    monthRingLabel.setText("Month:\n" + monthText);
+                    monthRingLabel.setText(getString(R.string.month_ring_format, monthText));
                     monthValue.setText(monthText);
                     deliveredEntriesValue.setText(String.valueOf(deliveredCount));
                     totalQuantityValue.setText(String.format(Locale.US, "%.1f", totalQty));
@@ -292,7 +295,7 @@ public class CustomerDetailActivity extends BaseActivity {
 
     private void setMonthlySummaryFallback() {
         String monthText = DateUtils.formatMonthYear(new Date());
-        monthRingLabel.setText("Month:\n" + monthText);
+        monthRingLabel.setText(getString(R.string.month_ring_format, monthText));
         monthValue.setText(monthText);
         deliveredEntriesValue.setText("-");
         totalQuantityValue.setText("-");

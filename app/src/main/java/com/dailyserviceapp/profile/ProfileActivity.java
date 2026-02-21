@@ -191,6 +191,7 @@ public class ProfileActivity extends BaseActivity {
             .document(providerId)
             .get()
             .addOnSuccessListener(documentSnapshot -> {
+                if (!isUiActive()) return;
                 showLoading(false);
                 if (documentSnapshot == null || !documentSnapshot.exists()) {
                     hasExistingProfile = false;
@@ -237,6 +238,7 @@ public class ProfileActivity extends BaseActivity {
                 }
             })
             .addOnFailureListener(e -> {
+                if (!isUiActive()) return;
                 showLoading(false);
                 setEditMode(true);
                 showToast("Failed to load profile: " + e.getMessage());
@@ -323,6 +325,7 @@ public class ProfileActivity extends BaseActivity {
             .document(providerId)
             .set(data, SetOptions.merge())
             .addOnSuccessListener(unused -> {
+                if (!isUiActive()) return;
                 showLoading(false);
                 hasExistingProfile = true;
                 setEditMode(false);
@@ -333,6 +336,7 @@ public class ProfileActivity extends BaseActivity {
                 }
             })
             .addOnFailureListener(e -> {
+                if (!isUiActive()) return;
                 showLoading(false);
                 showToast("Failed to save profile: " + e.getMessage());
             });
@@ -513,6 +517,10 @@ public class ProfileActivity extends BaseActivity {
         String trimmed = id.trim();
         if (trimmed.length() <= 8) return trimmed.toUpperCase(Locale.US);
         return trimmed.substring(0, 8).toUpperCase(Locale.US);
+    }
+
+    private boolean isUiActive() {
+        return binding != null && !isFinishing() && !isDestroyed();
     }
 
     private void navigateToDashboard() {

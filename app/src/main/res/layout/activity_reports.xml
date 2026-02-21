@@ -247,11 +247,17 @@
                         android:padding="12dp"
                         android:gravity="center">
 
-                        <TextView
+                        <ImageView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="👥"
-                            android:textSize="24sp" />
+                            android:layout_marginBottom="4dp"
+                            android:contentDescription="@string/reports_icon_customers"
+                            android:src="@drawable/ic_reports_customers"
+                            app:tint="@android:color/white"
+                            android:minWidth="24dp"
+                            android:minHeight="24dp"
+                            android:maxWidth="24dp"
+                            android:maxHeight="24dp" />
 
                         <TextView
                             android:id="@+id/txtTotalCustomers"
@@ -293,11 +299,17 @@
                         android:padding="12dp"
                         android:gravity="center">
 
-                        <TextView
+                        <ImageView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="💵"
-                            android:textSize="24sp" />
+                            android:layout_marginBottom="4dp"
+                            android:contentDescription="@string/reports_icon_payments"
+                            android:src="@drawable/ic_reports_payments"
+                            app:tint="@android:color/white"
+                            android:minWidth="24dp"
+                            android:minHeight="24dp"
+                            android:maxWidth="24dp"
+                            android:maxHeight="24dp" />
 
                         <TextView
                             android:id="@+id/txtTotalPayments"
@@ -338,11 +350,17 @@
                         android:padding="12dp"
                         android:gravity="center">
 
-                        <TextView
+                        <ImageView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="⚠️"
-                            android:textSize="24sp" />
+                            android:layout_marginBottom="4dp"
+                            android:contentDescription="@string/reports_icon_overdue"
+                            android:src="@drawable/ic_reports_overdue"
+                            app:tint="@android:color/white"
+                            android:minWidth="24dp"
+                            android:minHeight="24dp"
+                            android:maxWidth="24dp"
+                            android:maxHeight="24dp" />
 
                         <TextView
                             android:id="@+id/txtOverdueBills"

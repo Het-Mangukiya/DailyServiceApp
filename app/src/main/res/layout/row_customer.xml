@@ -116,7 +116,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_xs"
                 android:text="@string/status_active"
-                android:textColor="?attr/colorOnPrimary"
+                android:textColor="@color/color_on_customers"
                 android:textSize="@dimen/text_size_sm"
                 app:chipBackgroundColor="@color/color_customers"
                 app:chipStrokeWidth="0dp"

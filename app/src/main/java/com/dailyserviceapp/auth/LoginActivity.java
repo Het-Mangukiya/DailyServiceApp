@@ -97,6 +97,7 @@ public class LoginActivity extends BaseActivity {
             String currentUserId = getCurrentUserId();
             if (currentUserId == null || currentUserId.trim().isEmpty()) {
                 preferenceManager.clearAllData();
+                firebaseAuth.signOut();
             } else {
                 routeAfterLogin(currentUserId, getCurrentUserRole());
                 return;

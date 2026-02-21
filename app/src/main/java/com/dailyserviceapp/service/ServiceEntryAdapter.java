@@ -142,8 +142,9 @@ public class ServiceEntryAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     boolean newDelivered = deliveryStatus.getOrDefault(newCustomer.getId(), false);
                     return Objects.equals(oldCustomer.getName(), newCustomer.getName()) &&
                            Objects.equals(oldCustomer.getServiceType(), newCustomer.getServiceType()) &&
-                           oldCustomer.getRatePerUnit() == newCustomer.getRatePerUnit() &&
-                           oldCustomer.getDefaultQuantity() == newCustomer.getDefaultQuantity() &&
+                           Objects.equals(oldCustomer.getAddress(), newCustomer.getAddress()) &&
+                           Double.compare(oldCustomer.getRatePerUnit(), newCustomer.getRatePerUnit()) == 0 &&
+                           Double.compare(oldCustomer.getDefaultQuantity(), newCustomer.getDefaultQuantity()) == 0 &&
                            oldDelivered == newDelivered;
                 }
                 return false;

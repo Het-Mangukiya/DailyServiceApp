@@ -41,6 +41,7 @@ public class BillDetailActivity extends BaseActivity {
     private List<ServiceEntry> currentEntries = new ArrayList<>();
     private List<Payment> currentPayments = new ArrayList<>();
     private CustomerLedgerSummary currentSummary;
+    private boolean skipNextResumeReload = true;
 
     private TextView customerNameText;
     private TextView billPeriodText;
@@ -68,6 +69,10 @@ public class BillDetailActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        if (skipNextResumeReload) {
+            skipNextResumeReload = false;
+            return;
+        }
         if (!TextUtils.isEmpty(customerId)) {
             loadLedgerData();
         }
@@ -230,7 +235,21 @@ public class BillDetailActivity extends BaseActivity {
         Customer fallback = new Customer();
         fallback.setId(customerId);
         fallback.setName(customerNameText.getText() != null ? customerNameText.getText().toString() : "Unknown");
+        double fallbackRate = resolveFallbackRateFromEntries();
+        if (fallbackRate > 0) {
+            fallback.setRatePerUnit(fallbackRate);
+        }
         return fallback;
+    }
+
+    private double resolveFallbackRateFromEntries() {
+        if (currentEntries == null) return 0.0;
+        for (ServiceEntry entry : currentEntries) {
+            if (entry != null && entry.getRate() > 0) {
+                return entry.getRate();
+            }
+        }
+        return 0.0;
     }
 
     private void displaySummary(CustomerLedgerSummary summary) {

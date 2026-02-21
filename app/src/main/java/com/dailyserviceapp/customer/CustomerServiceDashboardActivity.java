@@ -1,6 +1,7 @@
 package com.dailyserviceapp.customer;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -117,7 +118,8 @@ public class CustomerServiceDashboardActivity extends BaseActivity {
             .addOnFailureListener(e -> {
                 if (!isUiActive()) return;
                 setLoading(false);
-                showToast("Failed to load provider link: " + e.getMessage());
+                Log.e("CustomerServiceDashboard", "Failed to load provider link", e);
+                showToast("Failed to load provider link. Please try again.");
             });
     }
 
@@ -378,8 +380,9 @@ public class CustomerServiceDashboardActivity extends BaseActivity {
             ServiceEntry entry = serviceEntries.get(i);
             if (entry == null) continue;
 
-            double quantity = entry.getQuantity() > 0 ? entry.getQuantity() : 1.0;
-            double rate = entry.getRate() > 0 ? entry.getRate() : fallbackRate;
+            double quantity = Math.max(entry.getQuantity(), 1.0);
+            double normalizedFallbackRate = Math.max(fallbackRate, 0.0);
+            double rate = entry.getRate() > 0 ? entry.getRate() : normalizedFallbackRate;
             double amount = quantity * rate;
 
             String title = (entry.isDelivered() ? "Delivered" : "Not delivered") + " • "
@@ -414,7 +417,7 @@ public class CustomerServiceDashboardActivity extends BaseActivity {
             if (!safeTrim(payment.getNotes()).isEmpty()) {
                 subtitle += " • " + payment.getNotes().trim();
             }
-            String value = CurrencyUtils.formatCurrency(payment.getAmount());
+            String value = CurrencyUtils.formatCurrency(Math.max(0.0, payment.getAmount()));
             addHistoryRow(binding.paymentHistoryContainer, title, subtitle, value);
         }
     }

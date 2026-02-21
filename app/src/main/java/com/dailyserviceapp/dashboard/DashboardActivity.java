@@ -101,7 +101,7 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
     private List<Customer> filteredCustomers = new ArrayList<>();
     private ListenerRegistration customersListener;
     private LiveData<PagingData<Customer>> pagedCustomersLiveData;
-    private boolean pagingMode = true;
+    private boolean pagingMode = false;
     
     // Search debouncing
     private final Handler searchHandler = new Handler(Looper.getMainLooper());
@@ -187,6 +187,9 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         
         // Set user info in navigation header
         View headerView = navigationView.getHeaderView(0);
+        if (headerView == null) {
+            return;
+        }
         NavHeaderBinding headerBinding = NavHeaderBinding.bind(headerView);
         TextView userName = headerBinding.userName;
         TextView userEmail = headerBinding.userEmail;

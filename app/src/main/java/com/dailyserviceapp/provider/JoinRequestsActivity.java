@@ -99,6 +99,7 @@ public class JoinRequestsActivity extends BaseActivity {
         requestsListener = firestore.collection(Constants.COLLECTION_CUSTOMER_LINKS)
             .whereEqualTo("providerId", providerId)
             .addSnapshotListener((snapshot, error) -> {
+                if (!isUiActive()) return;
                 showLoading(false);
 
                 if (error != null) {
@@ -161,10 +162,12 @@ public class JoinRequestsActivity extends BaseActivity {
             .document(providerId)
             .get()
             .addOnSuccessListener(providerDoc -> {
+                if (!isUiActive()) return;
                 String defaultService = resolveDefaultService(providerDoc);
                 createOrUpdateCustomerFromJoinRequest(item, defaultService);
             })
             .addOnFailureListener(e -> {
+                if (!isUiActive()) return;
                 createOrUpdateCustomerFromJoinRequest(item, "Service");
             });
     }
@@ -194,16 +197,21 @@ public class JoinRequestsActivity extends BaseActivity {
     }
 
     private void createOrUpdateCustomerFromJoinRequest(JoinRequestItem item, String defaultService) {
+        if (!isUiActive()) return;
         String customerDocId = safeTrim(item.getCustomerId());
         if (customerDocId.isEmpty()) {
-            showLoading(false);
-            showToast("Invalid request data: missing customer id");
+            if (isUiActive()) {
+                showLoading(false);
+                showToast("Invalid request data: missing customer id");
+            }
             return;
         }
         String linkId = safeTrim(item.getLinkId());
         if (linkId.isEmpty()) {
-            showLoading(false);
-            showToast("Invalid request data: missing link id");
+            if (isUiActive()) {
+                showLoading(false);
+                showToast("Invalid request data: missing link id");
+            }
             return;
         }
 
@@ -277,14 +285,14 @@ public class JoinRequestsActivity extends BaseActivity {
             data.put("email", email);
         }
 
-        data.put("address", "");
         data.put("serviceType", safeTrim(defaultService).isEmpty() ? "Service" : defaultService);
-        data.put("ratePerUnit", 0.0);
-        data.put("defaultQuantity", 1.0);
-        data.put("lentAmount", 0.0);
-        data.put("notes", "Joined via QR request");
-        data.put("onVacation", false);
         if (isNewCustomer) {
+            data.put("address", "");
+            data.put("ratePerUnit", 0.0);
+            data.put("defaultQuantity", 1.0);
+            data.put("lentAmount", 0.0);
+            data.put("notes", "Joined via QR request");
+            data.put("onVacation", false);
             data.put("startDate", FieldValue.serverTimestamp());
             data.put("createdAt", FieldValue.serverTimestamp());
         }

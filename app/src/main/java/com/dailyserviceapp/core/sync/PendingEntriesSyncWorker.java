@@ -62,7 +62,7 @@ public class PendingEntriesSyncWorker extends Worker {
             }
         }
 
-        offlineCache.replacePendingEntries(retryEntries);
+        offlineCache.reconcilePendingEntriesAfterSync(pendingEntries, retryEntries);
         if (syncedCount > 0 || droppedCount > 0) {
             offlineCache.markSyncCompleted();
         }

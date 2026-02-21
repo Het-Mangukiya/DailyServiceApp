@@ -222,13 +222,16 @@ public class ReportsActivity extends BaseActivity {
         repository.getCustomersByProvider(providerId, new FirestoreRepository.OnCustomersLoadedListener() {
             @Override
             public void onCustomersLoaded(List<Customer> customers) {
-                customerMap.clear();
-                if (customers != null) {
-                    for (Customer customer : customers) {
-                        customerMap.put(customer.getId(), customer);
+                runOnUiThread(() -> {
+                    if (!isUiActive()) return;
+                    customerMap.clear();
+                    if (customers != null) {
+                        for (Customer customer : customers) {
+                            customerMap.put(customer.getId(), customer);
+                        }
                     }
-                }
-                onComplete.run();
+                    onComplete.run();
+                });
             }
 
             @Override
@@ -256,6 +259,7 @@ public class ReportsActivity extends BaseActivity {
             new FirestoreRepository.OnServiceEntriesLoadedListener() {
                 @Override
                 public void onServiceEntriesLoaded(List<ServiceEntry> entries) {
+                    if (!isUiActive()) return;
                     runOnUiThread(() -> {
                         if (!isUiActive()) return;
                         handleEntries(entries);
@@ -287,8 +291,12 @@ public class ReportsActivity extends BaseActivity {
                         }
                     }
                     double finalPayments = totalPayments;
-                    runOnUiThread(() -> animateCounter(txtTotalPayments, 0, finalPayments, true));
-                    loadOverdueBills();
+                    if (!isUiActive()) return;
+                    runOnUiThread(() -> {
+                        if (!isUiActive()) return;
+                        animateCounter(txtTotalPayments, 0, finalPayments, true);
+                        loadOverdueBills();
+                    });
                 }
 
                 @Override
@@ -330,7 +338,8 @@ public class ReportsActivity extends BaseActivity {
             @Override
             public void onError(String error) {
                 runOnUiThread(() -> {
-                    txtOverdueBills.setText("Overdue Bills: 0");
+                    if (!isUiActive()) return;
+                    txtOverdueBills.setText(getString(R.string.overdue_bills_zero));
                     showLoading(false);
                 });
             }
@@ -636,6 +645,9 @@ public class ReportsActivity extends BaseActivity {
         activeAnimators.add(animator);
         
         animator.addUpdateListener(animation -> {
+            if (!isUiActive() || textView == null || !textView.isAttachedToWindow()) {
+                return;
+            }
             float value = (float) animation.getAnimatedValue();
             if (isCurrency) {
                 textView.setText(CurrencyUtils.formatIndianCurrency(value));

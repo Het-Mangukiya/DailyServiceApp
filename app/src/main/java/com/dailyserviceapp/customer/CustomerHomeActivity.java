@@ -3,6 +3,7 @@ package com.dailyserviceapp.customer;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 
 import com.dailyserviceapp.R;
@@ -185,7 +186,8 @@ public class CustomerHomeActivity extends BaseActivity {
             .addOnFailureListener(e -> {
                 if (!isUiActive()) return;
                 setLoading(false);
-                showToast("Failed to verify provider: " + e.getMessage());
+                Log.e("CustomerHomeActivity", "Failed to verify provider by id", e);
+                showToast("Failed to verify provider");
             });
     }
 
@@ -205,7 +207,8 @@ public class CustomerHomeActivity extends BaseActivity {
             .addOnFailureListener(e -> {
                 if (!isUiActive()) return;
                 setLoading(false);
-                showToast("Failed to verify provider code: " + e.getMessage());
+                Log.e("CustomerHomeActivity", "Failed to verify provider code", e);
+                showToast("Failed to verify provider code");
             });
     }
 
@@ -311,7 +314,8 @@ public class CustomerHomeActivity extends BaseActivity {
             .addOnFailureListener(e -> {
                 if (!isUiActive()) return;
                 setLoading(false);
-                showToast("Failed to check existing link: " + e.getMessage());
+                Log.e("CustomerHomeActivity", "Failed to check existing provider link", e);
+                showToast("Failed to check existing link");
             });
     }
 
@@ -338,7 +342,8 @@ public class CustomerHomeActivity extends BaseActivity {
             .addOnFailureListener(e -> {
                 if (!isUiActive()) return;
                 setLoading(false);
-                showToast("Failed to save provider link: " + e.getMessage());
+                Log.e("CustomerHomeActivity", "Failed to save provider link", e);
+                showToast("Failed to save provider link");
             });
     }
 
@@ -403,7 +408,8 @@ public class CustomerHomeActivity extends BaseActivity {
             .addOnFailureListener(e -> {
                 if (!isUiActive()) return;
                 setLoading(false);
-                showToast("Failed to remove provider link: " + e.getMessage());
+                Log.e("CustomerHomeActivity", "Failed to remove provider link", e);
+                showToast("Failed to remove provider link");
             });
     }
 

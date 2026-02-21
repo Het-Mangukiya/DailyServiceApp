@@ -460,7 +460,7 @@ public class SignupActivity extends BaseActivity {
 
     private void checkProviderProfileAndRoute(String userId) {
         if (userId == null || userId.trim().isEmpty()) {
-            navigateToProviderHome();
+            navigateToProfileSetup();
             return;
         }
 

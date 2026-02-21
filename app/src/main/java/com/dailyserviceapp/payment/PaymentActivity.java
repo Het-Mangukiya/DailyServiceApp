@@ -26,6 +26,7 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.Timestamp;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -294,13 +295,17 @@ public class PaymentActivity extends BaseActivity {
     }
 
     private void displayBillInfo(Bill bill) {
-        String[] monthNames = {"January", "February", "March", "April", "May", "June",
-            "July", "August", "September", "October", "November", "December"};
         int monthIndex = bill.getMonth();
-        if (monthIndex < 0 || monthIndex >= monthNames.length) {
+        if (monthIndex < 0 || monthIndex >= 12) {
             monthIndex = 0;
         }
-        billPeriodText.setText(monthNames[monthIndex] + " " + bill.getYear());
+        Calendar periodCalendar = Calendar.getInstance();
+        periodCalendar.set(Calendar.YEAR, bill.getYear());
+        periodCalendar.set(Calendar.MONTH, monthIndex);
+        periodCalendar.set(Calendar.DAY_OF_MONTH, 1);
+        String periodText = new SimpleDateFormat("MMMM yyyy", Locale.getDefault())
+            .format(periodCalendar.getTime());
+        billPeriodText.setText(periodText);
         billAmountText.setText(CurrencyUtils.formatCurrency(bill.getTotalAmount()));
     }
 
