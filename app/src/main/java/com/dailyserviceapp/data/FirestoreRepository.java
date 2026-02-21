@@ -537,10 +537,13 @@ public class FirestoreRepository {
                             Timestamp entryDate = entry.getDate();
                             if (entryDate != null) {
                                 long entryMillis = entryDate.toDate().getTime();
-                                if (entryMillis < startMillis || entryMillis > endMillis) {
+                                if (entryMillis < startMillis || entryMillis >= endMillis) {
                                     continue;
                                 }
                                 entries.add(entry);
+                            } else {
+                                Log.w("FirestoreRepository",
+                                    "Skipping service entry with null date: " + doc.getId());
                             }
                         }
                     }
@@ -866,6 +869,9 @@ public class FirestoreRepository {
                                     continue;
                                 }
                                 payments.add(payment);
+                            } else {
+                                Log.w("FirestoreRepository",
+                                    "Skipping payment with null date: " + doc.getId());
                             }
                         }
                     }

@@ -226,8 +226,12 @@ public class PaymentActivity extends BaseActivity {
                 List<Payment> providerPayments = filterProviderPayments(payments);
                 Customer customer = currentCustomer != null ? currentCustomer : new Customer();
                 customer.setId(customerId);
-                if (!TextUtils.isEmpty(customerNameText.getText())) {
-                    customer.setName(customerNameText.getText().toString());
+                String displayedName = customerNameText.getText() != null
+                    ? customerNameText.getText().toString().trim() : "";
+                if (!TextUtils.isEmpty(displayedName) && !"Loading...".equalsIgnoreCase(displayedName)) {
+                    customer.setName(displayedName);
+                } else if (!TextUtils.isEmpty(customerNameFromIntent)) {
+                    customer.setName(customerNameFromIntent);
                 }
 
                 CustomerLedgerSummary summary = CustomerLedgerCalculator.calculate(
@@ -427,6 +431,10 @@ public class PaymentActivity extends BaseActivity {
     }
 
     private void saveBillLinkedPayment(double amount, String paymentMethod) {
+        if (currentBill == null) {
+            showToast("Bill details not loaded yet");
+            return;
+        }
         String notes = notesInput.getText() != null ? notesInput.getText().toString().trim() : "";
 
         Payment payment = new Payment(

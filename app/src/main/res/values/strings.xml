@@ -98,6 +98,17 @@
     <string name="customer_actions_expand">Expand customer actions</string>
     <string name="navigate_back">Navigate back</string>
     <string name="loading">Loading</string>
+    <string name="profile_title">Profile</string>
+    <string name="view_profile">View Profile</string>
+    <string name="edit_customer">Edit Customer</string>
+    <string name="mark_on_vacation">Mark as On Vacation</string>
+    <string name="remove_from_vacation">Remove from Vacation</string>
+    <string name="on_vacation">ON VACATION</string>
+    <string name="reports_customers_content_desc">Customers card</string>
+    <string name="reports_payments_content_desc">Payments card</string>
+    <string name="reports_overdue_content_desc">Overdue card</string>
+    <string name="reports_icon_revenue">Revenue icon</string>
+    <string name="reports_icon_delivery">Delivery icon</string>
 
     <!-- Test data -->
     <string name="test_generating">Generating test data…</string>

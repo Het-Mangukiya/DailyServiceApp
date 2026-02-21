@@ -1,5 +1,7 @@
 package com.dailyserviceapp.billing;
 
+import android.util.Log;
+
 import com.dailyserviceapp.data.models.Customer;
 import com.dailyserviceapp.data.models.Payment;
 import com.dailyserviceapp.data.models.ServiceEntry;
@@ -87,6 +89,11 @@ public final class CustomerLedgerCalculator {
                     }
                 }
                 if (dueFromDate == null) {
+                    String customerIdForLog = customer != null ? customer.getId() : "unknown";
+                    Log.w("CustomerLedgerCalculator",
+                        "dueFromDate fallback to firstServiceDate for customer=" + customerIdForLog
+                            + ", outstanding=" + outstanding
+                            + ", paidTillDate=" + (paidTillDate != null ? paidTillDate.toDate() : null));
                     dueFromDate = firstServiceDate;
                 }
             }

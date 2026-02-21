@@ -105,10 +105,7 @@ public class QRCodeActivity extends BaseActivity {
                         
                         providerName.setText(displayName);
                         providerId.setText("ID: " + currentProviderId.substring(0, 8).toUpperCase());
-                        ensureProviderRecord(displayName);
-                        
-                        // Generate QR Code
-                        generateQRCode(currentProviderId);
+                        ensureProviderRecord(displayName, () -> generateQRCode(currentProviderId));
                     } else {
                         // Use basic user info if provider document doesn't exist
                         String displayName = user.getDisplayName() != null 
@@ -116,10 +113,7 @@ public class QRCodeActivity extends BaseActivity {
                                 : "Service Provider";
                         providerName.setText(displayName);
                         providerId.setText("ID: " + currentProviderId.substring(0, 8).toUpperCase());
-                        ensureProviderRecord(displayName);
-                        
-                        // Generate QR Code
-                        generateQRCode(currentProviderId);
+                        ensureProviderRecord(displayName, () -> generateQRCode(currentProviderId));
                     }
                 })
                 .addOnFailureListener(e -> {
@@ -130,32 +124,48 @@ public class QRCodeActivity extends BaseActivity {
                             : "Service Provider";
                     providerName.setText(displayName);
                     providerId.setText("ID: " + currentProviderId.substring(0, 8).toUpperCase());
-                    ensureProviderRecord(displayName);
-                    generateQRCode(currentProviderId);
+                    ensureProviderRecord(displayName, () -> generateQRCode(currentProviderId));
                 });
     }
 
-    private void ensureProviderRecord(String displayName) {
+    private void ensureProviderRecord(String displayName, Runnable onReady) {
         if (currentProviderId == null || currentProviderId.trim().isEmpty()) {
             return;
         }
-
-        Map<String, Object> providerData = new HashMap<>();
-        providerData.put("id", currentProviderId);
-        providerData.put("userId", currentProviderId);
-        providerData.put("providerCode", shortProviderCode(currentProviderId));
-        providerData.put("updatedAt", System.currentTimeMillis());
-
-        if (displayName != null && !displayName.trim().isEmpty()) {
-            providerData.put("name", displayName.trim());
-        }
-
         firestore.collection("providers")
             .document(currentProviderId)
-            .set(providerData, com.google.firebase.firestore.SetOptions.merge())
+            .get()
+            .addOnSuccessListener(existingDoc -> {
+                Map<String, Object> providerData = new HashMap<>();
+                providerData.put("id", currentProviderId);
+                providerData.put("userId", currentProviderId);
+                providerData.put("providerCode", shortProviderCode(currentProviderId));
+                providerData.put("updatedAt", System.currentTimeMillis());
+
+                boolean hasExistingName = existingDoc != null
+                    && existingDoc.exists()
+                    && existingDoc.getString("name") != null
+                    && !existingDoc.getString("name").trim().isEmpty();
+                if (!hasExistingName && displayName != null && !displayName.trim().isEmpty()) {
+                    providerData.put("name", displayName.trim());
+                }
+
+                firestore.collection("providers")
+                    .document(currentProviderId)
+                    .set(providerData, com.google.firebase.firestore.SetOptions.merge())
+                    .addOnSuccessListener(unused -> {
+                        if (onReady != null) {
+                            onReady.run();
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.e("QRCodeActivity", "Failed to ensure provider record for " + currentProviderId, e);
+                        showToast("Failed to sync provider code");
+                    });
+            })
             .addOnFailureListener(e -> {
-                Log.e("QRCodeActivity", "Failed to ensure provider record for " + currentProviderId, e);
-                showToast("Failed to sync provider code");
+                Log.e("QRCodeActivity", "Failed to read provider record for " + currentProviderId, e);
+                showToast("Failed to verify provider profile");
             });
     }
 

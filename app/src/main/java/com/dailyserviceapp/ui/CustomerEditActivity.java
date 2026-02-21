@@ -108,6 +108,10 @@ public class CustomerEditActivity extends BaseActivity {
             }
 
             if (customerId != null) {
+                if (existingCustomer == null) {
+                    Toast.makeText(this, "Customer data is still loading", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 // UPDATE existing customer
                 existingCustomer.setName(name);
                 existingCustomer.setPhone(phone);
@@ -118,12 +122,14 @@ public class CustomerEditActivity extends BaseActivity {
                 repo.updateCustomer(existingCustomer, new FirestoreRepository.OnSaveCompleteListener() {
                     @Override
                     public void onSuccess() {
+                        if (!isUiActive()) return;
                         Toast.makeText(CustomerEditActivity.this, R.string.success_customer_updated, Toast.LENGTH_SHORT).show();
                         finish();
                     }
 
                     @Override
                     public void onError(String error) {
+                        if (!isUiActive()) return;
                         Toast.makeText(CustomerEditActivity.this, error, Toast.LENGTH_LONG).show();
                     }
                 });
@@ -134,10 +140,14 @@ public class CustomerEditActivity extends BaseActivity {
                 customer.setStatus("ACTIVE"); // Set initial status
                 repo.addCustomer(customer,
                         ref -> {
+                            if (!isUiActive()) return;
                             Toast.makeText(this, R.string.success_customer_added, Toast.LENGTH_SHORT).show();
                             finish();
                         },
-                        e -> Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show()
+                        e -> {
+                            if (!isUiActive()) return;
+                            Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+                        }
                 );
             }
         });
@@ -147,6 +157,7 @@ public class CustomerEditActivity extends BaseActivity {
         // Use repository instead of direct Firestore call (maintains consistency)
         repo.getCustomer(customerId, 
             doc -> {
+                if (!isUiActive()) return;
                 if (doc.exists()) {
                     existingCustomer = doc.toObject(Customer.class);
                     if (existingCustomer != null) {
@@ -163,6 +174,7 @@ public class CustomerEditActivity extends BaseActivity {
                 }
             },
             e -> {
+                if (!isUiActive()) return;
                 Toast.makeText(this, R.string.error_loading_customer, Toast.LENGTH_SHORT).show();
                 finish();
             }
@@ -192,18 +204,23 @@ public class CustomerEditActivity extends BaseActivity {
         repo.deleteCustomer(customerId, new FirestoreRepository.OnSaveCompleteListener() {
             @Override
             public void onSuccess() {
+                if (!isUiActive()) return;
                 Toast.makeText(CustomerEditActivity.this, R.string.success_customer_deleted, Toast.LENGTH_SHORT).show();
                 finish();
             }
 
             @Override
             public void onError(String error) {
+                if (!isUiActive()) return;
                 Toast.makeText(CustomerEditActivity.this, getString(R.string.error_deleting_customer, error), Toast.LENGTH_LONG).show();
             }
         });
     }
 
     // Remove this method - use BaseActivity's getCurrentUserId() instead
+    private boolean isUiActive() {
+        return binding != null && !isFinishing() && !isDestroyed();
+    }
     
     private static String value(TextInputEditText editText) {
         if (editText == null || editText.getText() == null) return "";

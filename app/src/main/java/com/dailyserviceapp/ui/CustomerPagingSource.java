@@ -57,11 +57,12 @@ public class CustomerPagingSource extends PagingSource<DocumentSnapshot, Custome
                 );
             }
 
+            int requestedLimit = Math.max(params.getLoadSize(), pageSize);
             Query query = firestore.collection("customers")
                 .whereEqualTo("providerId", providerId)
                 .whereEqualTo("status", "ACTIVE")
                 .orderBy(sortField, Query.Direction.ASCENDING)
-                .limit(Math.max(params.getLoadSize(), pageSize));
+                .limit(requestedLimit);
 
             if (params.getKey() != null) {
                 query = query.startAfter(params.getKey());
@@ -79,7 +80,9 @@ public class CustomerPagingSource extends PagingSource<DocumentSnapshot, Custome
                 }
             }
 
-            DocumentSnapshot nextKey = docs.isEmpty() ? null : docs.get(docs.size() - 1);
+            DocumentSnapshot nextKey = docs.size() < requestedLimit
+                ? null
+                : docs.get(docs.size() - 1);
             return new LoadResult.Page<>(customers, null, nextKey);
         } catch (Exception e) {
             return new LoadResult.Error<>(e);

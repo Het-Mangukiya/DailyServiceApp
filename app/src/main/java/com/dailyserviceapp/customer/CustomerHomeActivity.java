@@ -327,7 +327,7 @@ public class CustomerHomeActivity extends BaseActivity {
 
         firestore.collection(Constants.COLLECTION_CUSTOMER_LINKS)
             .document(customerId)
-            .set(linkData, SetOptions.merge())
+            .set(linkData)
             .addOnSuccessListener(unused -> {
                 if (!isUiActive()) return;
                 setLoading(false);

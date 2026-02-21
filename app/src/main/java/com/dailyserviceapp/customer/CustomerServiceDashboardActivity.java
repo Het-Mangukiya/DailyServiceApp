@@ -191,8 +191,13 @@ public class CustomerServiceDashboardActivity extends BaseActivity {
     }
 
     private void loadServiceEntries() {
+        if (providerId == null || providerId.trim().isEmpty()) {
+            markLoadComplete();
+            return;
+        }
         firestore.collection(Constants.COLLECTION_SERVICE_ENTRIES)
             .whereEqualTo("customerId", customerId)
+            .whereEqualTo("providerId", providerId)
             .limit(1000)
             .get()
             .addOnSuccessListener(query -> {
@@ -202,11 +207,6 @@ public class CustomerServiceDashboardActivity extends BaseActivity {
                         ServiceEntry entry = doc.toObject(ServiceEntry.class);
                         if (entry == null) continue;
                         entry.setId(doc.getId());
-
-                        // Keep only entries for linked provider.
-                        if (!providerId.equals(safeTrim(entry.getProviderId()))) {
-                            continue;
-                        }
                         serviceEntries.add(entry);
                     }
                 }
@@ -225,8 +225,13 @@ public class CustomerServiceDashboardActivity extends BaseActivity {
     }
 
     private void loadPayments() {
+        if (providerId == null || providerId.trim().isEmpty()) {
+            markLoadComplete();
+            return;
+        }
         firestore.collection(Constants.COLLECTION_PAYMENTS)
             .whereEqualTo("customerId", customerId)
+            .whereEqualTo("providerId", providerId)
             .limit(1000)
             .get()
             .addOnSuccessListener(query -> {
@@ -236,10 +241,6 @@ public class CustomerServiceDashboardActivity extends BaseActivity {
                         Payment payment = doc.toObject(Payment.class);
                         if (payment == null) continue;
                         payment.setId(doc.getId());
-
-                        if (!providerId.equals(safeTrim(payment.getProviderId()))) {
-                            continue;
-                        }
                         payments.add(payment);
                     }
                 }

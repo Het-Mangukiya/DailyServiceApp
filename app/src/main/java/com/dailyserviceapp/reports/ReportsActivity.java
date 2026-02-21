@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.animation.Animator;
 
 import com.dailyserviceapp.R;
 import com.dailyserviceapp.core.base.BaseActivity;
@@ -70,6 +71,7 @@ public class ReportsActivity extends BaseActivity {
     private FirestoreRepository repository;
     private String providerId;
     private Map<String, Customer> customerMap = new HashMap<>();
+    private final List<ValueAnimator> activeAnimators = new ArrayList<>();
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -231,8 +233,11 @@ public class ReportsActivity extends BaseActivity {
 
             @Override
             public void onError(String error) {
-                showLoading(false);
-                showToast("Failed to load customers: " + error);
+                runOnUiThread(() -> {
+                    if (!isUiActive()) return;
+                    showToast("Failed to load customers: " + error);
+                    onComplete.run();
+                });
             }
         });
     }
@@ -260,8 +265,11 @@ public class ReportsActivity extends BaseActivity {
 
                 @Override
                 public void onError(String error) {
-                    showLoading(false);
-                    showToast("Failed to load entries: " + error);
+                    runOnUiThread(() -> {
+                        if (!isUiActive()) return;
+                        showLoading(false);
+                        showToast("Failed to load entries: " + error);
+                    });
                 }
             }
         );
@@ -285,8 +293,11 @@ public class ReportsActivity extends BaseActivity {
 
                 @Override
                 public void onError(String error) {
-                    showToast("Failed to load payments: " + error);
-                    loadOverdueBills();
+                    runOnUiThread(() -> {
+                        if (!isUiActive()) return;
+                        showToast("Failed to load payments: " + error);
+                        loadOverdueBills();
+                    });
                 }
             }
         );
@@ -309,8 +320,11 @@ public class ReportsActivity extends BaseActivity {
                     }
                 }
                 int finalOverdue = overdueCount;
-                runOnUiThread(() -> animateCounter(txtOverdueBills, 0, finalOverdue, false));
-                showLoading(false);
+                runOnUiThread(() -> {
+                    if (!isUiActive()) return;
+                    animateCounter(txtOverdueBills, 0, finalOverdue, false);
+                    showLoading(false);
+                });
             }
 
             @Override
@@ -619,6 +633,7 @@ public class ReportsActivity extends BaseActivity {
         ValueAnimator animator = ValueAnimator.ofFloat((float) from, (float) to);
         animator.setDuration(1200);
         animator.setInterpolator(new DecelerateInterpolator());
+        activeAnimators.add(animator);
         
         animator.addUpdateListener(animation -> {
             float value = (float) animation.getAnimatedValue();
@@ -626,6 +641,17 @@ public class ReportsActivity extends BaseActivity {
                 textView.setText(CurrencyUtils.formatIndianCurrency(value));
             } else {
                 textView.setText(String.valueOf((int) value));
+            }
+        });
+        animator.addListener(new android.animation.AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationCancel(Animator animation) {
+                activeAnimators.remove(animator);
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                activeAnimators.remove(animator);
             }
         });
         
@@ -647,6 +673,11 @@ public class ReportsActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
+        List<ValueAnimator> animators = new ArrayList<>(activeAnimators);
+        activeAnimators.clear();
+        for (ValueAnimator animator : animators) {
+            animator.cancel();
+        }
         super.onDestroy();
         binding = null;
     }

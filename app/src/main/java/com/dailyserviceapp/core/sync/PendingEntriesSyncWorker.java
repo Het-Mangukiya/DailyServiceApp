@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Background worker that syncs queued offline service entries to Firestore.
@@ -101,7 +103,7 @@ public class PendingEntriesSyncWorker extends Worker {
     }
 
     private void persistEntryWithTransaction(OfflineCache.PendingServiceEntry pending)
-        throws ExecutionException, InterruptedException {
+        throws ExecutionException, InterruptedException, TimeoutException {
         DocumentReference customerRef = firestore.collection(Constants.COLLECTION_CUSTOMERS)
             .document(pending.customerId);
 
@@ -136,7 +138,7 @@ public class PendingEntriesSyncWorker extends Worker {
 
             transaction.set(entryRef, entry);
             return null;
-        }));
+        }), 30, TimeUnit.SECONDS);
     }
 
     private String buildEntryId(String customerId, Calendar day) {

@@ -214,8 +214,8 @@
                                 android:layout_height="108dp"
                                 android:layout_gravity="center"
                                 android:background="@drawable/bg_month_ring_teal"
-                                android:translationX="6dp"
-                                android:translationY="-2dp" />
+                                android:translationX="@dimen/month_ring_offset_x"
+                                android:translationY="@dimen/month_ring_offset_y" />
 
                             <TextView
                                 android:id="@+id/monthRingLabel"

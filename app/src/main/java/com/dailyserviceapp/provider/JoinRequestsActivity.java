@@ -214,6 +214,7 @@ public class JoinRequestsActivity extends BaseActivity {
 
         customerRef.get()
             .addOnSuccessListener(existingCustomerDoc -> {
+                if (!isUiActive()) return;
                 Map<String, Object> customerData = buildCustomerData(
                     item,
                     defaultService,
@@ -284,9 +285,7 @@ public class JoinRequestsActivity extends BaseActivity {
         data.put("notes", "Joined via QR request");
         data.put("onVacation", false);
         if (isNewCustomer) {
-            data.put("startDate", Timestamp.now());
-        }
-        if (isNewCustomer) {
+            data.put("startDate", FieldValue.serverTimestamp());
             data.put("createdAt", FieldValue.serverTimestamp());
         }
         return data;
@@ -303,16 +302,23 @@ public class JoinRequestsActivity extends BaseActivity {
 
     private void rejectRequest(JoinRequestItem item) {
         if (item == null) return;
+        String linkId = safeTrim(item.getLinkId());
+        if (linkId.isEmpty()) {
+            showToast("Invalid request data: missing link id");
+            return;
+        }
 
         showLoading(true);
         firestore.collection(Constants.COLLECTION_CUSTOMER_LINKS)
-            .document(item.getLinkId())
+            .document(linkId)
             .set(buildRejectUpdate(), SetOptions.merge())
             .addOnSuccessListener(unused -> {
+                if (!isUiActive()) return;
                 showLoading(false);
                 showToast("Request rejected");
             })
             .addOnFailureListener(e -> {
+                if (!isUiActive()) return;
                 showLoading(false);
                 showToast("Failed to reject request: " + e.getMessage());
             });

@@ -88,7 +88,9 @@ public class PagedCustomerAdapter extends PagingDataAdapter<Customer, PagedCusto
             isExpanded ? R.drawable.ic_expand_less : R.drawable.ic_expand_more
         );
 
-        String vacationText = customer.isOnVacation() ? "Remove from Vacation" : "Mark as On Vacation";
+        String vacationText = customer.isOnVacation()
+            ? holder.itemView.getContext().getString(R.string.remove_from_vacation)
+            : holder.itemView.getContext().getString(R.string.mark_on_vacation);
         holder.vacationActionButton.setText(vacationText);
 
         holder.customerMenuButton.setOnClickListener(v -> toggleExpanded(customer));

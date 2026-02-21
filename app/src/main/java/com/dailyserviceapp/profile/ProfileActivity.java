@@ -281,7 +281,8 @@ public class ProfileActivity extends BaseActivity {
         }
 
         List<String> services = getSelectedServices();
-        if (services.isEmpty()) {
+        boolean hasOtherSelected = chipOther != null && chipOther.isChecked();
+        if (services.isEmpty() && !hasOtherSelected) {
             showToast("Please select at least one service");
             return;
         }

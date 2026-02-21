@@ -57,10 +57,10 @@
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:maxLines="1"
-                    android:text="Customer Name"
                     android:textColor="@color/md_theme_on_surface"
                     android:textSize="@dimen/text_size_base"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    tools:text="Customer Name" />
 
                 <TextView
                     android:id="@+id/customerService"
@@ -69,9 +69,9 @@
                     android:layout_marginTop="@dimen/spacing_xs"
                     android:ellipsize="end"
                     android:maxLines="1"
-                    android:text="Service Type · ₹0.00"
                     android:textColor="@color/md_theme_on_surface_variant"
-                    android:textSize="@dimen/text_size_sm" />
+                    android:textSize="@dimen/text_size_sm"
+                    tools:text="Service Type · ₹0.00" />
 
                 <TextView
                     android:id="@+id/customerPhone"
@@ -80,18 +80,18 @@
                     android:layout_marginTop="@dimen/spacing_xs"
                     android:ellipsize="end"
                     android:maxLines="1"
-                    android:text="9876543210"
                     android:textColor="@color/md_theme_on_surface_variant"
-                    android:textSize="@dimen/text_size_sm" />
+                    android:textSize="@dimen/text_size_sm"
+                    tools:text="9876543210" />
 
                 <TextView
                     android:id="@+id/vacationBadge"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_xs"
-                    android:text="ON VACATION"
+                    android:text="@string/on_vacation"
                     android:textColor="@color/md_theme_error"
-                    android:textSize="12sp"
+                    android:textSize="@dimen/text_size_xs"
                     android:textStyle="bold"
                     android:visibility="gone" />
 
@@ -150,7 +150,7 @@
                     android:gravity="start|center_vertical"
                     android:insetTop="0dp"
                     android:insetBottom="0dp"
-                    android:text="View Profile"
+                    android:text="@string/view_profile"
                     android:textAllCaps="false" />
 
                 <com.google.android.material.button.MaterialButton
@@ -161,7 +161,7 @@
                     android:gravity="start|center_vertical"
                     android:insetTop="0dp"
                     android:insetBottom="0dp"
-                    android:text="Edit Customer"
+                    android:text="@string/edit_customer"
                     android:textAllCaps="false" />
 
                 <com.google.android.material.button.MaterialButton
@@ -172,7 +172,7 @@
                     android:gravity="start|center_vertical"
                     android:insetTop="0dp"
                     android:insetBottom="0dp"
-                    android:text="Mark as On Vacation"
+                    android:text="@string/mark_on_vacation"
                     android:textAllCaps="false" />
 
             </LinearLayout>

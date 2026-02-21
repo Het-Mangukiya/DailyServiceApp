@@ -67,8 +67,8 @@ public class BillListActivity extends BaseActivity {
     }
 
     private static class LedgerFetchState {
-        List<ServiceEntry> entries = new ArrayList<>();
-        List<Payment> payments = new ArrayList<>();
+        volatile List<ServiceEntry> entries = new ArrayList<>();
+        volatile List<Payment> payments = new ArrayList<>();
         AtomicInteger completedRequests = new AtomicInteger(0);
     }
 
