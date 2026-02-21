@@ -22,6 +22,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Simplified adapter for service entry marking.
@@ -56,6 +57,7 @@ public class ServiceEntryAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
      */
     public void submitData(List<Customer> customerList, List<ServiceEntry> serviceEntries) {
         List<Object> oldItems = new ArrayList<>(items);
+        Map<String, Boolean> oldDeliveryStatus = new HashMap<>(deliveryStatus);
         
         customers.clear();
         deliveryStatus.clear();
@@ -136,10 +138,13 @@ public class ServiceEntryAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 } else if (oldItem instanceof Customer && newItem instanceof Customer) {
                     Customer oldCustomer = (Customer) oldItem;
                     Customer newCustomer = (Customer) newItem;
-                    return oldCustomer.getName().equals(newCustomer.getName()) &&
-                           oldCustomer.getServiceType().equals(newCustomer.getServiceType()) &&
+                    boolean oldDelivered = oldDeliveryStatus.getOrDefault(oldCustomer.getId(), false);
+                    boolean newDelivered = deliveryStatus.getOrDefault(newCustomer.getId(), false);
+                    return Objects.equals(oldCustomer.getName(), newCustomer.getName()) &&
+                           Objects.equals(oldCustomer.getServiceType(), newCustomer.getServiceType()) &&
                            oldCustomer.getRatePerUnit() == newCustomer.getRatePerUnit() &&
-                           oldCustomer.getDefaultQuantity() == newCustomer.getDefaultQuantity();
+                           oldCustomer.getDefaultQuantity() == newCustomer.getDefaultQuantity() &&
+                           oldDelivered == newDelivered;
                 }
                 return false;
             }

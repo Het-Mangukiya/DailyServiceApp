@@ -181,10 +181,12 @@ public class JoinRequestsActivity extends BaseActivity {
 
         Object servicesObj = providerDoc.get("services");
         if (servicesObj instanceof List) {
-            @SuppressWarnings("unchecked")
-            List<String> services = (List<String>) servicesObj;
-            if (!services.isEmpty() && services.get(0) != null && !services.get(0).trim().isEmpty()) {
-                return services.get(0).trim();
+            List<?> services = (List<?>) servicesObj;
+            if (!services.isEmpty() && services.get(0) instanceof String) {
+                String first = ((String) services.get(0)).trim();
+                if (!first.isEmpty()) {
+                    return first;
+                }
             }
         }
 
@@ -198,40 +200,60 @@ public class JoinRequestsActivity extends BaseActivity {
             showToast("Invalid request data: missing customer id");
             return;
         }
+        String linkId = safeTrim(item.getLinkId());
+        if (linkId.isEmpty()) {
+            showLoading(false);
+            showToast("Invalid request data: missing link id");
+            return;
+        }
 
         DocumentReference customerRef = firestore.collection(Constants.COLLECTION_CUSTOMERS)
             .document(customerDocId);
         DocumentReference linkRef = firestore.collection(Constants.COLLECTION_CUSTOMER_LINKS)
-            .document(item.getLinkId());
+            .document(linkId);
 
-        Map<String, Object> customerData = buildCustomerData(item, defaultService);
+        customerRef.get()
+            .addOnSuccessListener(existingCustomerDoc -> {
+                Map<String, Object> customerData = buildCustomerData(
+                    item,
+                    defaultService,
+                    existingCustomerDoc == null || !existingCustomerDoc.exists()
+                );
 
-        Map<String, Object> linkData = new HashMap<>();
-        linkData.put("status", "ACTIVE");
-        linkData.put("updatedAt", FieldValue.serverTimestamp());
-        linkData.put("respondedAt", FieldValue.serverTimestamp());
+                Map<String, Object> linkData = new HashMap<>();
+                linkData.put("status", "ACTIVE");
+                linkData.put("updatedAt", FieldValue.serverTimestamp());
+                linkData.put("respondedAt", FieldValue.serverTimestamp());
 
-        WriteBatch batch = firestore.batch();
-        batch.set(customerRef, customerData, SetOptions.merge());
-        batch.set(linkRef, linkData, SetOptions.merge());
+                WriteBatch batch = firestore.batch();
+                batch.set(customerRef, customerData, SetOptions.merge());
+                batch.set(linkRef, linkData, SetOptions.merge());
 
-        batch.commit()
-            .addOnSuccessListener(unused -> {
-                showLoading(false);
-                showToast("Request approved. Customer added to your list.");
+                batch.commit()
+                    .addOnSuccessListener(unused -> {
+                        if (!isUiActive()) return;
+                        showLoading(false);
+                        showToast("Request approved. Customer added to your list.");
+                    })
+                    .addOnFailureListener(e -> {
+                        if (!isUiActive()) return;
+                        showLoading(false);
+                        String msg = e.getMessage() != null ? e.getMessage() : "";
+                        if (msg.contains("PERMISSION_DENIED") || msg.contains("Missing or insufficient permissions")) {
+                            showToast("Approval failed: customer is linked to another provider.");
+                        } else {
+                            showToast("Failed to approve request: " + msg);
+                        }
+                    });
             })
             .addOnFailureListener(e -> {
+                if (!isUiActive()) return;
                 showLoading(false);
-                String msg = e.getMessage() != null ? e.getMessage() : "";
-                if (msg.contains("PERMISSION_DENIED") || msg.contains("Missing or insufficient permissions")) {
-                    showToast("Approval failed: customer is linked to another provider.");
-                } else {
-                    showToast("Failed to approve request: " + msg);
-                }
+                showToast("Failed to read customer record: " + e.getMessage());
             });
     }
 
-    private Map<String, Object> buildCustomerData(JoinRequestItem item, String defaultService) {
+    private Map<String, Object> buildCustomerData(JoinRequestItem item, String defaultService, boolean isNewCustomer) {
         Map<String, Object> data = new HashMap<>();
 
         String name = safeTrim(item.getCustomerName());
@@ -261,8 +283,12 @@ public class JoinRequestsActivity extends BaseActivity {
         data.put("lentAmount", 0.0);
         data.put("notes", "Joined via QR request");
         data.put("onVacation", false);
-        data.put("startDate", Timestamp.now());
-        data.put("createdAt", FieldValue.serverTimestamp());
+        if (isNewCustomer) {
+            data.put("startDate", Timestamp.now());
+        }
+        if (isNewCustomer) {
+            data.put("createdAt", FieldValue.serverTimestamp());
+        }
         return data;
     }
 
@@ -313,6 +339,10 @@ public class JoinRequestsActivity extends BaseActivity {
 
     private void showLoading(boolean loading) {
         binding.progressBar.setVisibility(loading ? View.VISIBLE : View.GONE);
+    }
+
+    private boolean isUiActive() {
+        return binding != null && !isFinishing() && !isDestroyed();
     }
 
     @Override

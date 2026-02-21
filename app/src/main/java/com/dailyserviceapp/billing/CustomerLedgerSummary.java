@@ -46,6 +46,9 @@ public class CustomerLedgerSummary {
     }
 
     public void setTotalServiceAmount(double totalServiceAmount) {
+        if (totalServiceAmount < 0) {
+            throw new IllegalArgumentException("totalServiceAmount must be non-negative");
+        }
         this.totalServiceAmount = totalServiceAmount;
     }
 
@@ -54,6 +57,9 @@ public class CustomerLedgerSummary {
     }
 
     public void setTotalPaidAmount(double totalPaidAmount) {
+        if (totalPaidAmount < 0) {
+            throw new IllegalArgumentException("totalPaidAmount must be non-negative");
+        }
         this.totalPaidAmount = totalPaidAmount;
     }
 
@@ -62,6 +68,9 @@ public class CustomerLedgerSummary {
     }
 
     public void setOutstandingAmount(double outstandingAmount) {
+        if (outstandingAmount < 0) {
+            throw new IllegalArgumentException("outstandingAmount must be non-negative");
+        }
         this.outstandingAmount = outstandingAmount;
     }
 

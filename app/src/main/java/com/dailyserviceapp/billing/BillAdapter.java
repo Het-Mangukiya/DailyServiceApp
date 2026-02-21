@@ -18,6 +18,7 @@ import com.google.firebase.Timestamp;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Adapter for displaying customer-wise billing ledgers in a RecyclerView.
@@ -41,7 +42,7 @@ public class BillAdapter extends RecyclerView.Adapter<BillAdapter.ViewHolder> {
     private final OnBillActionListener listener;
 
     public BillAdapter(OnBillActionListener listener) {
-        this.listener = listener;
+        this.listener = Objects.requireNonNull(listener, "OnBillActionListener is required");
     }
 
     /**
@@ -75,7 +76,7 @@ public class BillAdapter extends RecyclerView.Adapter<BillAdapter.ViewHolder> {
                 CustomerLedgerSummary newSummary = summaries.get(newItemPosition);
                 String oldId = oldSummary.getCustomerId();
                 String newId = newSummary.getCustomerId();
-                return oldId != null && oldId.equals(newId);
+                return Objects.equals(oldId, newId);
             }
 
             @Override
@@ -154,8 +155,16 @@ public class BillAdapter extends RecyclerView.Adapter<BillAdapter.ViewHolder> {
 
         holder.viewDetailsButton.setText("Ledger");
         holder.shareBillButton.setText("Share");
-        holder.viewDetailsButton.setOnClickListener(v -> listener.onViewDetails(summary));
-        holder.shareBillButton.setOnClickListener(v -> listener.onShareBill(summary));
+        holder.viewDetailsButton.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onViewDetails(summary);
+            }
+        });
+        holder.shareBillButton.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onShareBill(summary);
+            }
+        });
     }
 
     @Override

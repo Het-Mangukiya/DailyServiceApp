@@ -15,6 +15,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import kotlin.coroutines.Continuation;
@@ -30,10 +31,19 @@ public class CustomerPagingSource extends PagingSource<DocumentSnapshot, Custome
     private final String sortField;
 
     public CustomerPagingSource(FirebaseFirestore firestore, String providerId, int pageSize, String sortField) {
-        this.firestore = firestore;
-        this.providerId = providerId;
+        this.firestore = Objects.requireNonNull(firestore, "firestore must not be null");
+        if (providerId == null || providerId.trim().isEmpty()) {
+            throw new IllegalArgumentException("providerId must not be empty");
+        }
+        if (sortField == null || sortField.trim().isEmpty()) {
+            throw new IllegalArgumentException("sortField must not be empty");
+        }
+        if (pageSize <= 0) {
+            throw new IllegalArgumentException("pageSize must be > 0");
+        }
+        this.providerId = providerId.trim();
         this.pageSize = pageSize;
-        this.sortField = sortField;
+        this.sortField = sortField.trim();
     }
 
     @Override
@@ -49,6 +59,7 @@ public class CustomerPagingSource extends PagingSource<DocumentSnapshot, Custome
 
             Query query = firestore.collection("customers")
                 .whereEqualTo("providerId", providerId)
+                .whereEqualTo("status", "ACTIVE")
                 .orderBy(sortField, Query.Direction.ASCENDING)
                 .limit(Math.max(params.getLoadSize(), pageSize));
 
@@ -61,10 +72,6 @@ public class CustomerPagingSource extends PagingSource<DocumentSnapshot, Custome
             List<DocumentSnapshot> docs = querySnapshot.getDocuments();
 
             for (DocumentSnapshot doc : docs) {
-                String status = doc.getString("status");
-                if (status != null && !status.trim().isEmpty() && !"ACTIVE".equalsIgnoreCase(status)) {
-                    continue;
-                }
                 Customer customer = doc.toObject(Customer.class);
                 if (customer != null) {
                     customer.setId(doc.getId());

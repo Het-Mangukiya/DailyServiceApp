@@ -215,8 +215,7 @@ public class ProfileActivity extends BaseActivity {
                 setTextIfPresent(upiInput, documentSnapshot.getString("upiId"));
                 setTextIfPresent(notesInput, documentSnapshot.getString("notes"));
 
-                @SuppressWarnings("unchecked")
-                List<String> services = (List<String>) documentSnapshot.get("services");
+                List<String> services = extractServices(documentSnapshot.get("services"));
                 if (services == null || services.isEmpty()) {
                     String singleService = documentSnapshot.getString("serviceType");
                     if (singleService != null && !singleService.trim().isEmpty()) {
@@ -353,12 +352,12 @@ public class ProfileActivity extends BaseActivity {
         if (services == null) services = new ArrayList<>();
 
         Set<String> known = new HashSet<>();
-        known.add("Milk");
-        known.add("Newspaper");
-        known.add("Water");
-        known.add("Tiffin");
-        known.add("Laundry");
-        known.add("Maid");
+        known.add("milk");
+        known.add("newspaper");
+        known.add("water");
+        known.add("tiffin");
+        known.add("laundry");
+        known.add("maid");
 
         for (String service : services) {
             if ("Milk".equalsIgnoreCase(service) && chipMilk != null) chipMilk.setChecked(true);
@@ -372,7 +371,8 @@ public class ProfileActivity extends BaseActivity {
         String otherValue = otherServiceValue;
         if ((otherValue == null || otherValue.trim().isEmpty())) {
             for (String service : services) {
-                if (!known.contains(service)) {
+                String normalized = safeTrim(service).toLowerCase(Locale.US);
+                if (!normalized.isEmpty() && !known.contains(normalized)) {
                     otherValue = service;
                     break;
                 }
@@ -464,8 +464,7 @@ public class ProfileActivity extends BaseActivity {
         String phone = safeTrim(documentSnapshot.getString("phone"));
         String address = safeTrim(documentSnapshot.getString("address"));
 
-        @SuppressWarnings("unchecked")
-        List<String> services = (List<String>) documentSnapshot.get("services");
+        List<String> services = extractServices(documentSnapshot.get("services"));
         String serviceType = safeTrim(documentSnapshot.getString("serviceType"));
         boolean hasService = (services != null && !services.isEmpty()) || !serviceType.isEmpty();
 
@@ -478,6 +477,23 @@ public class ProfileActivity extends BaseActivity {
 
     private String safeTrim(String value) {
         return value == null ? "" : value.trim();
+    }
+
+    private List<String> extractServices(Object rawServices) {
+        List<String> services = new ArrayList<>();
+        if (!(rawServices instanceof List)) {
+            return services;
+        }
+        List<?> source = (List<?>) rawServices;
+        for (Object item : source) {
+            if (item instanceof String) {
+                String value = safeTrim((String) item);
+                if (!value.isEmpty()) {
+                    services.add(value);
+                }
+            }
+        }
+        return services;
     }
 
     private void setTextIfPresent(TextInputEditText editText, String value) {

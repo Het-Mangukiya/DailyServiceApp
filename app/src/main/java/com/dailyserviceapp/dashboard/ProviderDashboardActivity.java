@@ -281,7 +281,7 @@ public class ProviderDashboardActivity extends BaseActivity {
             })
             .addOnFailureListener(e -> {
                 android.util.Log.e(TAG, "Error loading customers", e);
-                runOnUiThread(() -> {
+                runOnSafeUi(() -> {
                     txtTodayDelivered.setText("0 / 0");
                     txtTodayEarnings.setText(CurrencyUtils.formatIndianCurrency(DEFAULT_AMOUNT));
                     checkLoadingComplete();
@@ -334,7 +334,7 @@ public class ProviderDashboardActivity extends BaseActivity {
                         double pendingAmount = finalTotalLent - finalTotalReceived;
                         
                         // Update UI
-                        runOnUiThread(() -> {
+                        runOnSafeUi(() -> {
                             String lentText = CurrencyUtils.formatIndianCurrency(finalTotalLent);
                             String receivedText = CurrencyUtils.formatIndianCurrency(finalTotalReceived);
                             String pendingText = CurrencyUtils.formatIndianCurrency(pendingAmount);
@@ -349,7 +349,7 @@ public class ProviderDashboardActivity extends BaseActivity {
                     })
                     .addOnFailureListener(e -> {
                         android.util.Log.e(TAG, "Error loading payments", e);
-                        runOnUiThread(() -> {
+                        runOnSafeUi(() -> {
                             txtTotalLent.setText(CurrencyUtils.formatIndianCurrency(finalTotalLent));
                             txtTotalReceived.setText(CurrencyUtils.formatIndianCurrency(DEFAULT_AMOUNT));
                             txtPendingAmount.setText(CurrencyUtils.formatIndianCurrency(finalTotalLent));
@@ -359,7 +359,7 @@ public class ProviderDashboardActivity extends BaseActivity {
             })
             .addOnFailureListener(e -> {
                 android.util.Log.e(TAG, "Error loading customers for payment", e);
-                runOnUiThread(() -> {
+                runOnSafeUi(() -> {
                     txtTotalLent.setText(CurrencyUtils.formatIndianCurrency(DEFAULT_AMOUNT));
                     txtTotalReceived.setText(CurrencyUtils.formatIndianCurrency(DEFAULT_AMOUNT));
                     txtPendingAmount.setText(CurrencyUtils.formatIndianCurrency(DEFAULT_AMOUNT));
@@ -410,7 +410,7 @@ public class ProviderDashboardActivity extends BaseActivity {
         })
         .addOnFailureListener(e -> {
             android.util.Log.e(TAG, "Error loading customers for monthly", e);
-            runOnUiThread(() -> {
+            runOnSafeUi(() -> {
                 txtMonthlyDeliveries.setText("0");
                 txtMonthlyEarnings.setText(CurrencyUtils.formatIndianCurrency(DEFAULT_AMOUNT));
                 checkLoadingComplete();
@@ -446,7 +446,7 @@ public class ProviderDashboardActivity extends BaseActivity {
 
                 int finalDeliveredCount = deliveredCount;
                 double finalTodayEarnings = todayEarnings;
-                runOnUiThread(() -> {
+                runOnSafeUi(() -> {
                     String deliveredText = finalDeliveredCount + " / " + totalCustomers;
                     String earningsText = CurrencyUtils.formatIndianCurrency(finalTodayEarnings);
                     txtTodayDelivered.setText(deliveredText);
@@ -496,7 +496,7 @@ public class ProviderDashboardActivity extends BaseActivity {
 
                 int finalDeliveredCount = deliveredCount;
                 double finalTodayEarnings = todayEarnings;
-                runOnUiThread(() -> {
+                runOnSafeUi(() -> {
                     String deliveredText = finalDeliveredCount + " / " + totalCustomers;
                     String earningsText = CurrencyUtils.formatIndianCurrency(finalTodayEarnings);
                     txtTodayDelivered.setText(deliveredText);
@@ -508,7 +508,7 @@ public class ProviderDashboardActivity extends BaseActivity {
             })
             .addOnFailureListener(e -> {
                 android.util.Log.e(TAG, "Error loading today's summary", e);
-                runOnUiThread(() -> {
+                runOnSafeUi(() -> {
                     txtTodayDelivered.setText("0 / " + totalCustomers);
                     txtTodayEarnings.setText(CurrencyUtils.formatIndianCurrency(DEFAULT_AMOUNT));
                     checkLoadingComplete();
@@ -544,7 +544,7 @@ public class ProviderDashboardActivity extends BaseActivity {
 
                 int finalMonthlyDeliveries = monthlyDeliveries;
                 double finalMonthlyEarnings = monthlyEarnings;
-                runOnUiThread(() -> {
+                runOnSafeUi(() -> {
                     String deliveriesText = String.valueOf(finalMonthlyDeliveries);
                     String earningsText = CurrencyUtils.formatIndianCurrency(finalMonthlyEarnings);
                     txtMonthlyDeliveries.setText(deliveriesText);
@@ -594,7 +594,7 @@ public class ProviderDashboardActivity extends BaseActivity {
 
                 int finalMonthlyDeliveries = monthlyDeliveries;
                 double finalMonthlyEarnings = monthlyEarnings;
-                runOnUiThread(() -> {
+                runOnSafeUi(() -> {
                     String deliveriesText = String.valueOf(finalMonthlyDeliveries);
                     String earningsText = CurrencyUtils.formatIndianCurrency(finalMonthlyEarnings);
                     txtMonthlyDeliveries.setText(deliveriesText);
@@ -606,7 +606,7 @@ public class ProviderDashboardActivity extends BaseActivity {
             })
             .addOnFailureListener(e -> {
                 android.util.Log.e(TAG, "Error loading service entries for monthly", e);
-                runOnUiThread(() -> {
+                runOnSafeUi(() -> {
                     txtMonthlyDeliveries.setText("0");
                     txtMonthlyEarnings.setText(CurrencyUtils.formatIndianCurrency(DEFAULT_AMOUNT));
                     checkLoadingComplete();
@@ -683,9 +683,20 @@ public class ProviderDashboardActivity extends BaseActivity {
     }
     
     private void showLoading(boolean show) {
+        if (isFinishing() || isDestroyed()) {
+            return;
+        }
         if (progressBar != null) {
             progressBar.setVisibility(show ? View.VISIBLE : View.GONE);
         }
+    }
+
+    private void runOnSafeUi(Runnable action) {
+        if (action == null) return;
+        runOnUiThread(() -> {
+            if (isFinishing() || isDestroyed()) return;
+            action.run();
+        });
     }
     
     @Override

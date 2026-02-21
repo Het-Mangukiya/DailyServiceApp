@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -151,7 +152,11 @@ public class QRCodeActivity extends BaseActivity {
 
         firestore.collection("providers")
             .document(currentProviderId)
-            .set(providerData, com.google.firebase.firestore.SetOptions.merge());
+            .set(providerData, com.google.firebase.firestore.SetOptions.merge())
+            .addOnFailureListener(e -> {
+                Log.e("QRCodeActivity", "Failed to ensure provider record for " + currentProviderId, e);
+                showToast("Failed to sync provider code");
+            });
     }
 
     private String shortProviderCode(String id) {

@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5">
+    android:background="@color/md_theme_background">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
@@ -16,8 +16,8 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@color/md_theme_primary"
-            app:navigationIcon="@android:drawable/ic_menu_revert"
-            app:title="Reports &amp; Analytics"
+            app:navigationIcon="@drawable/ic_back"
+            app:title="@string/reports_title"
             app:titleTextColor="@android:color/white" />
 
     </com.google.android.material.appbar.AppBarLayout>
@@ -41,7 +41,7 @@
                 android:layout_marginBottom="16dp"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="4dp"
-                app:cardBackgroundColor="@android:color/white">
+                app:cardBackgroundColor="?attr/colorSurface">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -52,10 +52,10 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="📅 Select Date Range"
+                        android:text="@string/reports_select_date_range"
                         android:textStyle="bold"
                         android:textSize="18sp"
-                        android:textColor="#1A1A1A"
+                        android:textColor="@color/md_theme_on_surface"
                         android:layout_marginBottom="16dp" />
 
                     <LinearLayout
@@ -70,7 +70,7 @@
                             android:layout_width="0dp"
                             android:layout_height="56dp"
                             android:layout_weight="1"
-                            android:text="Start Date"
+                            android:text="@string/reports_start_date"
                             app:cornerRadius="12dp"
                             app:strokeWidth="2dp" />
 
@@ -84,7 +84,7 @@
                             android:layout_width="0dp"
                             android:layout_height="56dp"
                             android:layout_weight="1"
-                            android:text="End Date"
+                            android:text="@string/reports_end_date"
                             app:cornerRadius="12dp"
                             app:strokeWidth="2dp" />
 
@@ -95,7 +95,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="56dp"
                         android:layout_marginTop="16dp"
-                        android:text="Generate Report"
+                        android:text="@string/reports_generate_report"
                         android:textSize="16sp"
                         android:textStyle="bold"
                         app:cornerRadius="12dp"
@@ -116,12 +116,14 @@
                 <!-- Total Revenue Card -->
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="0dp"
-                    android:layout_height="140dp"
+                    android:layout_height="wrap_content"
+                    android:minHeight="140dp"
                     android:layout_weight="1"
                     android:layout_marginEnd="8dp"
                     app:cardCornerRadius="16dp"
                     app:cardElevation="4dp"
-                    app:cardBackgroundColor="#4CAF50">
+                    app:cardBackgroundColor="@color/color_payments"
+                    android:contentDescription="@string/reports_total_revenue_content_desc">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -141,7 +143,7 @@
                             android:id="@+id/txtTotalRevenue"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="₹0"
+                            android:text="@string/reports_default_currency_value"
                             android:textSize="24sp"
                             android:textStyle="bold"
                             android:textColor="@android:color/white" />
@@ -149,7 +151,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Total Revenue"
+                            android:text="@string/reports_total_revenue"
                             android:textSize="12sp"
                             android:textColor="@android:color/white"
                             android:alpha="0.9" />
@@ -161,12 +163,14 @@
                 <!-- Total Deliveries Card -->
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="0dp"
-                    android:layout_height="140dp"
+                    android:layout_height="wrap_content"
+                    android:minHeight="140dp"
                     android:layout_weight="1"
                     android:layout_marginStart="8dp"
                     app:cardCornerRadius="16dp"
                     app:cardElevation="4dp"
-                    app:cardBackgroundColor="#2196F3">
+                    app:cardBackgroundColor="@color/color_service_entry"
+                    android:contentDescription="@string/reports_total_deliveries_content_desc">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -186,7 +190,7 @@
                             android:id="@+id/txtTotalDeliveries"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="0"
+                            android:text="@string/reports_default_count_value"
                             android:textSize="24sp"
                             android:textStyle="bold"
                             android:textColor="@android:color/white" />
@@ -194,7 +198,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Deliveries"
+                            android:text="@string/reports_deliveries"
                             android:textSize="12sp"
                             android:textColor="@android:color/white"
                             android:alpha="0.9" />
@@ -221,7 +225,7 @@
                     android:layout_marginEnd="8dp"
                     app:cardCornerRadius="16dp"
                     app:cardElevation="4dp"
-                    app:cardBackgroundColor="#FF9800">
+                    app:cardBackgroundColor="@color/color_reports">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -240,7 +244,7 @@
                             android:id="@+id/txtTotalCustomers"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="0"
+                            android:text="@string/reports_default_count_value"
                             android:textSize="20sp"
                             android:textStyle="bold"
                             android:textColor="@android:color/white" />
@@ -248,7 +252,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Customers"
+                            android:text="@string/reports_customers"
                             android:textSize="10sp"
                             android:textColor="@android:color/white"
                             android:alpha="0.9" />
@@ -266,7 +270,7 @@
                     android:layout_marginEnd="4dp"
                     app:cardCornerRadius="16dp"
                     app:cardElevation="4dp"
-                    app:cardBackgroundColor="#9C27B0">
+                    app:cardBackgroundColor="@color/md_theme_primary">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -285,7 +289,7 @@
                             android:id="@+id/txtTotalPayments"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="₹0"
+                            android:text="@string/reports_default_currency_value"
                             android:textSize="16sp"
                             android:textStyle="bold"
                             android:textColor="@android:color/white" />
@@ -293,7 +297,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Payments"
+                            android:text="@string/reports_payments"
                             android:textSize="10sp"
                             android:textColor="@android:color/white"
                             android:alpha="0.9" />
@@ -310,7 +314,7 @@
                     android:layout_marginStart="8dp"
                     app:cardCornerRadius="16dp"
                     app:cardElevation="4dp"
-                    app:cardBackgroundColor="#F44336">
+                    app:cardBackgroundColor="@color/md_theme_error">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -329,7 +333,7 @@
                             android:id="@+id/txtOverdueBills"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="0"
+                            android:text="@string/reports_default_count_value"
                             android:textSize="20sp"
                             android:textStyle="bold"
                             android:textColor="@android:color/white" />
@@ -337,7 +341,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Overdue"
+                            android:text="@string/reports_overdue"
                             android:textSize="10sp"
                             android:textColor="@android:color/white"
                             android:alpha="0.9" />
@@ -355,7 +359,7 @@
                 android:layout_marginBottom="16dp"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="4dp"
-                app:cardBackgroundColor="@android:color/white">
+                app:cardBackgroundColor="?attr/colorSurface">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -366,10 +370,10 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="📊 Top 5 Customers"
+                        android:text="@string/reports_top_customers_chart"
                         android:textStyle="bold"
                         android:textSize="18sp"
-                        android:textColor="#1A1A1A"
+                        android:textColor="@color/md_theme_on_surface"
                         android:layout_marginBottom="16dp" />
 
                     <com.github.mikephil.charting.charts.BarChart
@@ -388,7 +392,7 @@
                 android:layout_marginBottom="16dp"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="4dp"
-                app:cardBackgroundColor="@android:color/white">
+                app:cardBackgroundColor="?attr/colorSurface">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -399,10 +403,10 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="🎯 Service Breakdown"
+                        android:text="@string/reports_service_breakdown"
                         android:textStyle="bold"
                         android:textSize="18sp"
-                        android:textColor="#1A1A1A"
+                        android:textColor="@color/md_theme_on_surface"
                         android:layout_marginBottom="16dp" />
 
                     <LinearLayout
@@ -422,7 +426,7 @@
                 android:layout_marginBottom="16dp"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="4dp"
-                app:cardBackgroundColor="@android:color/white">
+                app:cardBackgroundColor="?attr/colorSurface">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -433,10 +437,10 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="🏆 Top Customers"
+                        android:text="@string/reports_top_customers"
                         android:textStyle="bold"
                         android:textSize="18sp"
-                        android:textColor="#1A1A1A"
+                        android:textColor="@color/md_theme_on_surface"
                         android:layout_marginBottom="16dp" />
 
                     <LinearLayout

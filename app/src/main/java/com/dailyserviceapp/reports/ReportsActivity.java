@@ -2,6 +2,7 @@ package com.dailyserviceapp.reports;
 
 import android.os.Bundle;
 import android.app.DatePickerDialog;
+import android.os.Looper;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -38,6 +39,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Locale;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Collections;
@@ -156,23 +158,29 @@ public class ReportsActivity extends BaseActivity {
             (view, year, month, dayOfMonth) -> {
                 Calendar selected = Calendar.getInstance();
                 selected.set(year, month, dayOfMonth);
+                Date candidateDate;
                 if (isStart) {
                     selected.set(Calendar.HOUR_OF_DAY, 0);
                     selected.set(Calendar.MINUTE, 0);
                     selected.set(Calendar.SECOND, 0);
                     selected.set(Calendar.MILLISECOND, 0);
-                    startDate = selected.getTime();
+                    candidateDate = selected.getTime();
+                    if (candidateDate.after(endDate)) {
+                        showToast("Start date must be before end date");
+                        return;
+                    }
+                    startDate = candidateDate;
                 } else {
                     selected.set(Calendar.HOUR_OF_DAY, 23);
                     selected.set(Calendar.MINUTE, 59);
                     selected.set(Calendar.SECOND, 59);
                     selected.set(Calendar.MILLISECOND, 999);
-                    endDate = selected.getTime();
-                }
-
-                if (startDate.after(endDate)) {
-                    showToast("Start date must be before end date");
-                    return;
+                    candidateDate = selected.getTime();
+                    if (startDate.after(candidateDate)) {
+                        showToast("End date must be after start date");
+                        return;
+                    }
+                    endDate = candidateDate;
                 }
 
                 updateDateButtons();
@@ -191,7 +199,7 @@ public class ReportsActivity extends BaseActivity {
     }
 
     private String formatDate(Date date) {
-        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd MMM yyyy");
+        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd MMM yyyy", Locale.getDefault());
         return sdf.format(date);
     }
 
@@ -243,7 +251,10 @@ public class ReportsActivity extends BaseActivity {
             new FirestoreRepository.OnServiceEntriesLoadedListener() {
                 @Override
                 public void onServiceEntriesLoaded(List<ServiceEntry> entries) {
-                    handleEntries(entries);
+                    runOnUiThread(() -> {
+                        if (!isUiActive()) return;
+                        handleEntries(entries);
+                    });
                     loadPayments(start, endExclusive);
                 }
 
@@ -304,8 +315,10 @@ public class ReportsActivity extends BaseActivity {
 
             @Override
             public void onError(String error) {
-                txtOverdueBills.setText("Overdue Bills: 0");
-                showLoading(false);
+                runOnUiThread(() -> {
+                    txtOverdueBills.setText("Overdue Bills: 0");
+                    showLoading(false);
+                });
             }
         });
     }
@@ -345,13 +358,25 @@ public class ReportsActivity extends BaseActivity {
             }
         }
 
-        animateCounter(txtTotalRevenue, 0, totalRevenue, true);
-        animateCounter(txtTotalDeliveries, 0, totalDeliveries, false);
-        animateCounter(txtTotalCustomers, 0, uniqueCustomers.size(), false);
+        final double finalTotalRevenue = totalRevenue;
+        final int finalTotalDeliveries = totalDeliveries;
+        final int finalUniqueCustomers = uniqueCustomers.size();
 
-        renderServiceBreakdown(revenueByService);
-        renderTopCustomers(revenueByCustomer);
-        updateBarChart(revenueByCustomer);
+        Runnable updateUi = () -> {
+            animateCounter(txtTotalRevenue, 0, finalTotalRevenue, true);
+            animateCounter(txtTotalDeliveries, 0, finalTotalDeliveries, false);
+            animateCounter(txtTotalCustomers, 0, finalUniqueCustomers, false);
+
+            renderServiceBreakdown(revenueByService);
+            renderTopCustomers(revenueByCustomer);
+            updateBarChart(revenueByCustomer);
+        };
+
+        if (Looper.myLooper() == Looper.getMainLooper()) {
+            updateUi.run();
+        } else {
+            runOnUiThread(updateUi);
+        }
     }
 
     private void renderServiceBreakdown(Map<String, Double> revenueByService) {
@@ -611,7 +636,13 @@ public class ReportsActivity extends BaseActivity {
         if (progressBar != null) {
             progressBar.setVisibility(show ? View.VISIBLE : View.GONE);
         }
-        btnApply.setEnabled(!show);
+        if (btnApply != null) {
+            btnApply.setEnabled(!show);
+        }
+    }
+
+    private boolean isUiActive() {
+        return binding != null && !isFinishing() && !isDestroyed();
     }
 
     @Override

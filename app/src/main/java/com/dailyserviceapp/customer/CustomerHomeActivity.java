@@ -179,9 +179,11 @@ public class CustomerHomeActivity extends BaseActivity {
             .document(providerId)
             .get()
             .addOnSuccessListener(documentSnapshot -> {
+                if (!isUiActive()) return;
                 handleResolvedProviderDocument(documentSnapshot);
             })
             .addOnFailureListener(e -> {
+                if (!isUiActive()) return;
                 setLoading(false);
                 showToast("Failed to verify provider: " + e.getMessage());
             });
@@ -193,56 +195,23 @@ public class CustomerHomeActivity extends BaseActivity {
             .limit(1)
             .get()
             .addOnSuccessListener(querySnapshot -> {
+                if (!isUiActive()) return;
                 if (querySnapshot != null && !querySnapshot.isEmpty()) {
                     handleResolvedProviderDocument(querySnapshot.getDocuments().get(0));
                     return;
                 }
-                resolveProviderFromShortCodeFallback(shortCode);
+                resolveProviderFromShortCodeFallback();
             })
             .addOnFailureListener(e -> {
+                if (!isUiActive()) return;
                 setLoading(false);
                 showToast("Failed to verify provider code: " + e.getMessage());
             });
     }
 
-    private void resolveProviderFromShortCodeFallback(String shortCode) {
-        firestore.collection(Constants.COLLECTION_PROVIDERS)
-            .limit(500)
-            .get()
-            .addOnSuccessListener(querySnapshot -> {
-                DocumentSnapshot match = null;
-                int matchCount = 0;
-
-                if (querySnapshot != null) {
-                    for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
-                        String id = doc.getId();
-                        if (id == null || id.length() < shortCode.length()) {
-                            continue;
-                        }
-                        if (id.substring(0, shortCode.length()).toUpperCase(Locale.US).equals(shortCode)) {
-                            match = doc;
-                            matchCount++;
-                            if (matchCount > 1) break;
-                        }
-                    }
-                }
-
-                if (matchCount == 1 && match != null) {
-                    handleResolvedProviderDocument(match);
-                    return;
-                }
-
-                setLoading(false);
-                if (matchCount > 1) {
-                    binding.providerCodeLayout.setError("Multiple providers matched. Please scan QR.");
-                } else {
-                    binding.providerCodeLayout.setError("Provider not found. Ask provider to share QR again.");
-                }
-            })
-            .addOnFailureListener(e -> {
-                setLoading(false);
-                showToast("Failed to verify provider code: " + e.getMessage());
-            });
+    private void resolveProviderFromShortCodeFallback() {
+        setLoading(false);
+        binding.providerCodeLayout.setError("Provider not found. Ask provider to share QR again.");
     }
 
     private void handleResolvedProviderDocument(DocumentSnapshot documentSnapshot) {
@@ -307,34 +276,67 @@ public class CustomerHomeActivity extends BaseActivity {
     }
 
     private void saveCustomerProviderLink(String providerId, String providerName) {
+        firestore.collection(Constants.COLLECTION_CUSTOMER_LINKS)
+            .document(customerId)
+            .get()
+            .addOnSuccessListener(existingLink -> {
+                if (!isUiActive()) return;
+
+                if (existingLink != null && existingLink.exists()) {
+                    String existingProviderId = safeTrim(existingLink.getString("providerId"));
+                    String existingProviderName = safeTrim(existingLink.getString("providerName"));
+                    String existingStatus = safeTrim(existingLink.getString("status")).toUpperCase(Locale.US);
+
+                    boolean hasDifferentActiveLink = "ACTIVE".equals(existingStatus)
+                        && !existingProviderId.isEmpty()
+                        && !existingProviderId.equals(providerId);
+                    if (hasDifferentActiveLink) {
+                        String displayExisting = existingProviderName.isEmpty()
+                            ? shortProviderId(existingProviderId)
+                            : existingProviderName;
+                        new MaterialAlertDialogBuilder(this)
+                            .setTitle("Replace linked provider?")
+                            .setMessage("You are currently linked with " + displayExisting
+                                + ". Do you want to request connection with " + providerName + "?")
+                            .setNegativeButton("Cancel", (dialog, which) -> setLoading(false))
+                            .setPositiveButton("Replace", (dialog, which) ->
+                                performSaveCustomerProviderLink(providerId, providerName))
+                            .show();
+                        return;
+                    }
+                }
+
+                performSaveCustomerProviderLink(providerId, providerName);
+            })
+            .addOnFailureListener(e -> {
+                if (!isUiActive()) return;
+                setLoading(false);
+                showToast("Failed to check existing link: " + e.getMessage());
+            });
+    }
+
+    private void performSaveCustomerProviderLink(String providerId, String providerName) {
         Map<String, Object> linkData = new HashMap<>();
         linkData.put("customerId", customerId);
         linkData.put("providerId", providerId);
         linkData.put("providerName", providerName);
         linkData.put("customerName", safeTrim(preferenceManager.getUserName()));
-        linkData.put("customerEmail", safeTrim(preferenceManager.getUserEmail()));
         linkData.put("status", "PENDING");
         linkData.put("requestedAt", FieldValue.serverTimestamp());
         linkData.put("updatedAt", FieldValue.serverTimestamp());
-
-        FirebaseAuth auth = FirebaseAuth.getInstance();
-        if (auth.getCurrentUser() != null) {
-            String phoneFromAuth = safeTrim(auth.getCurrentUser().getPhoneNumber());
-            if (!phoneFromAuth.isEmpty()) {
-                linkData.put("customerPhone", phoneFromAuth);
-            }
-        }
 
         firestore.collection(Constants.COLLECTION_CUSTOMER_LINKS)
             .document(customerId)
             .set(linkData, SetOptions.merge())
             .addOnSuccessListener(unused -> {
+                if (!isUiActive()) return;
                 setLoading(false);
                 binding.providerCodeLayout.setError(null);
                 renderLinkedProvider(providerName, providerId, "PENDING");
                 showToast("Join request sent to " + providerName);
             })
             .addOnFailureListener(e -> {
+                if (!isUiActive()) return;
                 setLoading(false);
                 showToast("Failed to save provider link: " + e.getMessage());
             });
@@ -346,6 +348,7 @@ public class CustomerHomeActivity extends BaseActivity {
             .document(customerId)
             .get()
             .addOnSuccessListener(documentSnapshot -> {
+                if (!isUiActive()) return;
                 setLoading(false);
                 if (documentSnapshot == null || !documentSnapshot.exists()) {
                     showUnlinkedState();
@@ -370,6 +373,7 @@ public class CustomerHomeActivity extends BaseActivity {
                 renderLinkedProvider(providerName, providerId, status);
             })
             .addOnFailureListener(e -> {
+                if (!isUiActive()) return;
                 setLoading(false);
                 showUnlinkedState();
                 showToast("Could not load provider link");
@@ -391,11 +395,13 @@ public class CustomerHomeActivity extends BaseActivity {
             .document(customerId)
             .delete()
             .addOnSuccessListener(unused -> {
+                if (!isUiActive()) return;
                 setLoading(false);
                 showUnlinkedState();
                 showToast("Provider link removed");
             })
             .addOnFailureListener(e -> {
+                if (!isUiActive()) return;
                 setLoading(false);
                 showToast("Failed to remove provider link: " + e.getMessage());
             });
@@ -442,10 +448,15 @@ public class CustomerHomeActivity extends BaseActivity {
     }
 
     private void setLoading(boolean loading) {
+        if (!isUiActive()) return;
         binding.progressBar.setVisibility(loading ? View.VISIBLE : View.GONE);
         binding.btnJoinProvider.setEnabled(!loading);
         binding.btnScanProviderQr.setEnabled(!loading);
         binding.btnUnlinkProvider.setEnabled(!loading);
+    }
+
+    private boolean isUiActive() {
+        return binding != null && !isFinishing() && !isDestroyed();
     }
 
     @Override

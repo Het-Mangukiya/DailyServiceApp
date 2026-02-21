@@ -48,7 +48,29 @@
     <string name="delivered_format">%1$d/%2$d delivered</string>
     <string name="rupee_zero">₹0</string>
     <string name="customer_home_welcome">Welcome, %1$s</string>
+    <string name="customer_home_welcome_label">Welcome</string>
+    <string name="customer_home_title">Customer Home</string>
     <string name="customer_home_provider_id">ID: %1$s</string>
+    <string name="signup_role_label">I am a:</string>
+    <string name="role_spinner_description">Select your role</string>
+    <string name="reports_title">Reports &amp; Analytics</string>
+    <string name="reports_select_date_range">Select Date Range</string>
+    <string name="reports_start_date">Start Date</string>
+    <string name="reports_end_date">End Date</string>
+    <string name="reports_generate_report">Generate Report</string>
+    <string name="reports_default_currency_value">₹0</string>
+    <string name="reports_default_count_value">0</string>
+    <string name="reports_total_revenue">Total Revenue</string>
+    <string name="reports_deliveries">Deliveries</string>
+    <string name="reports_customers">Customers</string>
+    <string name="reports_payments">Payments</string>
+    <string name="reports_overdue">Overdue</string>
+    <string name="reports_top_customers_chart">Top 5 Customers</string>
+    <string name="reports_service_breakdown">Service Breakdown</string>
+    <string name="reports_top_customers">Top Customers</string>
+    <string name="reports_total_revenue_content_desc">Total Revenue card</string>
+    <string name="reports_total_deliveries_content_desc">Total Deliveries card</string>
+    <string name="profile_initial_for">Profile initial for %1$s</string>
     <string name="btn_reject_request">Reject</string>
     <string name="btn_approve_request">Approve</string>
     <string name="action_edit_profile">Edit</string>
@@ -62,6 +84,7 @@
     <string name="customer_home_join_title">Join Your Service Provider</string>
     <string name="customer_home_join_subtitle">Scan provider QR or enter provider code manually.</string>
     <string name="customer_home_provider_code_hint">Provider code</string>
+    <string name="customer_home_provider_icon_desc">Provider code scanner icon</string>
     <string name="customer_home_scan_qr">Scan QR</string>
     <string name="customer_home_connect">Connect</string>
     <string name="customer_home_linked_provider">Linked Provider</string>
@@ -72,6 +95,9 @@
     <string name="customer_home_open_dashboard">Open My Service Dashboard</string>
     <string name="customer_home_personal_tracking_title">Personal Tracking</string>
     <string name="customer_home_personal_tracking_description">If your provider is not using the app, manual personal tracking can be enabled next.</string>
+    <string name="customer_actions_expand">Expand customer actions</string>
+    <string name="navigate_back">Navigate back</string>
+    <string name="loading">Loading</string>
 
     <!-- Test data -->
     <string name="test_generating">Generating test data…</string>

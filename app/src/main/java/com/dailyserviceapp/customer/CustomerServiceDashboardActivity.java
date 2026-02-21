@@ -28,6 +28,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Customer dashboard after provider link approval.
@@ -46,7 +47,7 @@ public class CustomerServiceDashboardActivity extends BaseActivity {
     private final List<ServiceEntry> serviceEntries = new ArrayList<>();
     private final List<Payment> payments = new ArrayList<>();
 
-    private int pendingLoads;
+    private final AtomicInteger pendingLoads = new AtomicInteger(0);
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -86,6 +87,7 @@ public class CustomerServiceDashboardActivity extends BaseActivity {
             .document(customerId)
             .get()
             .addOnSuccessListener(linkDoc -> {
+                if (!isUiActive()) return;
                 if (linkDoc == null || !linkDoc.exists()) {
                     setLoading(false);
                     showToast("No provider link found. Please connect first.");
@@ -113,6 +115,7 @@ public class CustomerServiceDashboardActivity extends BaseActivity {
                 loadAllDashboardData();
             })
             .addOnFailureListener(e -> {
+                if (!isUiActive()) return;
                 setLoading(false);
                 showToast("Failed to load provider link: " + e.getMessage());
             });
@@ -121,7 +124,7 @@ public class CustomerServiceDashboardActivity extends BaseActivity {
     private void loadAllDashboardData() {
         serviceEntries.clear();
         payments.clear();
-        pendingLoads = 4;
+        pendingLoads.set(4);
 
         loadCustomerDocument();
         loadProviderDocument();
@@ -134,6 +137,7 @@ public class CustomerServiceDashboardActivity extends BaseActivity {
             .document(customerId)
             .get()
             .addOnSuccessListener(doc -> {
+                if (!isUiActive()) return;
                 customer = doc != null ? doc.toObject(Customer.class) : null;
                 if (customer == null) {
                     customer = new Customer();
@@ -145,6 +149,7 @@ public class CustomerServiceDashboardActivity extends BaseActivity {
                 markLoadComplete();
             })
             .addOnFailureListener(e -> {
+                if (!isUiActive()) return;
                 customer = new Customer();
                 customer.setId(customerId);
                 customer.setName(preferenceManager.getUserName());
@@ -157,6 +162,7 @@ public class CustomerServiceDashboardActivity extends BaseActivity {
             .document(providerId)
             .get()
             .addOnSuccessListener(doc -> {
+                if (!isUiActive()) return;
                 if (doc != null && doc.exists()) {
                     String businessName = safeTrim(doc.getString("businessName"));
                     String ownerName = safeTrim(doc.getString("name"));
@@ -169,17 +175,19 @@ public class CustomerServiceDashboardActivity extends BaseActivity {
                     if (providerServiceType.isEmpty()) {
                         Object servicesObj = doc.get("services");
                         if (servicesObj instanceof List) {
-                            @SuppressWarnings("unchecked")
-                            List<String> services = (List<String>) servicesObj;
-                            if (!services.isEmpty() && services.get(0) != null) {
-                                providerServiceType = services.get(0).trim();
+                            List<?> services = (List<?>) servicesObj;
+                            if (!services.isEmpty() && services.get(0) instanceof String) {
+                                providerServiceType = ((String) services.get(0)).trim();
                             }
                         }
                     }
                 }
                 markLoadComplete();
             })
-            .addOnFailureListener(e -> markLoadComplete());
+            .addOnFailureListener(e -> {
+                if (!isUiActive()) return;
+                markLoadComplete();
+            });
     }
 
     private void loadServiceEntries() {
@@ -188,6 +196,7 @@ public class CustomerServiceDashboardActivity extends BaseActivity {
             .limit(1000)
             .get()
             .addOnSuccessListener(query -> {
+                if (!isUiActive()) return;
                 if (query != null) {
                     for (DocumentSnapshot doc : query.getDocuments()) {
                         ServiceEntry entry = doc.toObject(ServiceEntry.class);
@@ -209,7 +218,10 @@ public class CustomerServiceDashboardActivity extends BaseActivity {
                 });
                 markLoadComplete();
             })
-            .addOnFailureListener(e -> markLoadComplete());
+            .addOnFailureListener(e -> {
+                if (!isUiActive()) return;
+                markLoadComplete();
+            });
     }
 
     private void loadPayments() {
@@ -218,6 +230,7 @@ public class CustomerServiceDashboardActivity extends BaseActivity {
             .limit(1000)
             .get()
             .addOnSuccessListener(query -> {
+                if (!isUiActive()) return;
                 if (query != null) {
                     for (DocumentSnapshot doc : query.getDocuments()) {
                         Payment payment = doc.toObject(Payment.class);
@@ -238,18 +251,22 @@ public class CustomerServiceDashboardActivity extends BaseActivity {
                 });
                 markLoadComplete();
             })
-            .addOnFailureListener(e -> markLoadComplete());
+            .addOnFailureListener(e -> {
+                if (!isUiActive()) return;
+                markLoadComplete();
+            });
     }
 
     private void markLoadComplete() {
-        pendingLoads--;
-        if (pendingLoads <= 0) {
+        if (!isUiActive()) return;
+        if (pendingLoads.decrementAndGet() <= 0) {
             setLoading(false);
             renderDashboard();
         }
     }
 
     private void renderDashboard() {
+        if (!isUiActive()) return;
         String displayProviderName = safeTrim(providerName);
         if (displayProviderName.isEmpty()) {
             displayProviderName = "Service Provider";
@@ -427,8 +444,13 @@ public class CustomerServiceDashboardActivity extends BaseActivity {
     }
 
     private void setLoading(boolean loading) {
+        if (!isUiActive()) return;
         binding.progressBar.setVisibility(loading ? View.VISIBLE : View.GONE);
         binding.btnRefreshData.setEnabled(!loading);
+    }
+
+    private boolean isUiActive() {
+        return binding != null && !isFinishing() && !isDestroyed();
     }
 
     @Override

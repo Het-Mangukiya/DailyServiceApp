@@ -15,6 +15,7 @@ import com.dailyserviceapp.data.models.Customer;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.ViewHolder> {
 
@@ -29,7 +30,7 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.ViewHo
     private String expandedCustomerId;
 
     public CustomerAdapter(OnCustomerActionListener listener) {
-        this.listener = listener;
+        this.listener = Objects.requireNonNull(listener, "OnCustomerActionListener cannot be null");
     }
 
     public void submit(List<Customer> customers) {
@@ -58,7 +59,7 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.ViewHo
             public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
                 Customer oldItem = oldList.get(oldItemPosition);
                 Customer newItem = items.get(newItemPosition);
-                return oldItem.getId() != null && oldItem.getId().equals(newItem.getId());
+                return Objects.equals(oldItem.getId(), newItem.getId());
             }
 
             @Override
@@ -67,7 +68,7 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.ViewHo
                 Customer newItem = items.get(newItemPosition);
                 return safeEquals(oldItem.getName(), newItem.getName()) &&
                        safeEquals(oldItem.getServiceType(), newItem.getServiceType()) &&
-                       oldItem.getRatePerUnit() == newItem.getRatePerUnit() &&
+                       Double.compare(oldItem.getRatePerUnit(), newItem.getRatePerUnit()) == 0 &&
                        oldItem.isOnVacation() == newItem.isOnVacation() &&
                        safeEquals(oldItem.getStatus(), newItem.getStatus());
             }
@@ -91,9 +92,9 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.ViewHo
         holder.customerName.setText(customer.getName());
         
         // Set service info
-        String serviceInfo = (customer.getServiceType() == null ? "" : customer.getServiceType())
-                + " · "
-                + CurrencyUtils.formatCurrency(customer.getRatePerUnit());
+        String serviceType = customer.getServiceType() == null ? "" : customer.getServiceType().trim();
+        String rateText = CurrencyUtils.formatCurrency(customer.getRatePerUnit());
+        String serviceInfo = serviceType.isEmpty() ? rateText : serviceType + " · " + rateText;
         holder.customerService.setText(serviceInfo);
         
         // Set phone number (optional)
@@ -125,7 +126,7 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.ViewHo
         boolean isExpanded = isExpanded(customer);
         holder.expandableActions.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
         holder.customerMenuButton.setIconResource(
-            isExpanded ? android.R.drawable.arrow_up_float : android.R.drawable.arrow_down_float
+            isExpanded ? R.drawable.ic_expand_less : R.drawable.ic_expand_more
         );
 
         String vacationText = customer.isOnVacation() ? "Remove from Vacation" : "Mark as On Vacation";

@@ -423,7 +423,6 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
             .whereEqualTo("delivered", true)
             .whereGreaterThanOrEqualTo("date", startOfDay)
             .whereLessThan("date", endExclusive)
-            .limit(1000) // Prevent excessive data transfer
             .get()
             .addOnSuccessListener(querySnapshot -> {
                 int deliveredCount = 0;
@@ -523,7 +522,6 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
             .whereEqualTo("delivered", true)
             .whereGreaterThanOrEqualTo("date", startOfMonth)
             .whereLessThan("date", endExclusive)
-            .limit(10000) // Safety limit for monthly data
             .get()
             .addOnSuccessListener(querySnapshots -> {
                 double totalRevenue = 0;

@@ -11,13 +11,10 @@ import com.dailyserviceapp.core.offline.OfflineCache;
 import com.dailyserviceapp.core.utils.Constants;
 import com.dailyserviceapp.data.models.ServiceEntry;
 import com.google.android.gms.tasks.Tasks;
-import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -81,10 +78,6 @@ public class PendingEntriesSyncWorker extends Worker {
         }
 
         try {
-            if (isDuplicateForDay(pending)) {
-                return SyncOutcome.DROPPED;
-            }
-
             persistEntryWithTransaction(pending);
             return SyncOutcome.SYNCED;
         } catch (Exception e) {
@@ -107,37 +100,6 @@ public class PendingEntriesSyncWorker extends Worker {
             && pending.amount >= 0;
     }
 
-    private boolean isDuplicateForDay(OfflineCache.PendingServiceEntry pending)
-        throws ExecutionException, InterruptedException {
-        QuerySnapshot querySnapshot = Tasks.await(
-            firestore.collection(Constants.COLLECTION_SERVICE_ENTRIES)
-                .whereEqualTo("customerId", pending.customerId)
-                .get()
-        );
-
-        Calendar target = Calendar.getInstance();
-        target.setTimeInMillis(pending.timestamp);
-        int targetYear = target.get(Calendar.YEAR);
-        int targetMonth = target.get(Calendar.MONTH);
-        int targetDay = target.get(Calendar.DAY_OF_MONTH);
-
-        for (QueryDocumentSnapshot doc : querySnapshot) {
-            Timestamp date = doc.getTimestamp("date");
-            if (date == null) {
-                continue;
-            }
-            Calendar existing = Calendar.getInstance();
-            existing.setTime(date.toDate());
-            if (existing.get(Calendar.YEAR) == targetYear
-                && existing.get(Calendar.MONTH) == targetMonth
-                && existing.get(Calendar.DAY_OF_MONTH) == targetDay) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     private void persistEntryWithTransaction(OfflineCache.PendingServiceEntry pending)
         throws ExecutionException, InterruptedException {
         DocumentReference customerRef = firestore.collection(Constants.COLLECTION_CUSTOMERS)
@@ -148,10 +110,21 @@ public class PendingEntriesSyncWorker extends Worker {
             entry.setRate(pending.amount / pending.quantity);
         }
 
+        Calendar targetDay = Calendar.getInstance();
+        targetDay.setTimeInMillis(pending.timestamp);
+        String entryId = buildEntryId(pending.customerId, targetDay);
+        DocumentReference entryRef = firestore.collection(Constants.COLLECTION_SERVICE_ENTRIES)
+            .document(entryId);
+
         Tasks.await(firestore.runTransaction(transaction -> {
             DocumentSnapshot customerDoc = transaction.get(customerRef);
             if (!customerDoc.exists()) {
                 throw new IllegalStateException("Customer missing for pending sync");
+            }
+
+            DocumentSnapshot existingEntry = transaction.get(entryRef);
+            if (existingEntry != null && existingEntry.exists()) {
+                throw new IllegalStateException("Duplicate service entry for day");
             }
 
             Double currentLent = customerDoc.getDouble("lentAmount");
@@ -161,11 +134,16 @@ public class PendingEntriesSyncWorker extends Worker {
 
             transaction.update(customerRef, "lentAmount", currentLent + pending.amount);
 
-            DocumentReference entryRef = firestore.collection(Constants.COLLECTION_SERVICE_ENTRIES)
-                .document();
             transaction.set(entryRef, entry);
             return null;
         }));
+    }
+
+    private String buildEntryId(String customerId, Calendar day) {
+        int year = day.get(Calendar.YEAR);
+        int month = day.get(Calendar.MONTH) + 1;
+        int dayOfMonth = day.get(Calendar.DAY_OF_MONTH);
+        return customerId + "_" + String.format(java.util.Locale.US, "%04d%02d%02d", year, month, dayOfMonth);
     }
 
     private boolean isPermanentFailure(Throwable throwable) {

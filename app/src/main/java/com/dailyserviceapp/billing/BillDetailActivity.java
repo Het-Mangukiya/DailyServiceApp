@@ -113,6 +113,12 @@ public class BillDetailActivity extends BaseActivity {
         repository.getBillById(billId, new FirestoreRepository.OnBillLoadedListener() {
             @Override
             public void onBillLoaded(com.dailyserviceapp.data.models.Bill bill) {
+                if (!isUiActive()) return;
+                if (bill == null || TextUtils.isEmpty(bill.getCustomerId())) {
+                    showToast("Invalid bill data");
+                    finish();
+                    return;
+                }
                 customerId = bill.getCustomerId();
                 loadCustomerAndLedger();
             }
@@ -133,6 +139,7 @@ public class BillDetailActivity extends BaseActivity {
         }
 
         repository.getCustomer(customerId, documentSnapshot -> {
+            if (!isUiActive()) return;
             Customer customer = documentSnapshot.toObject(Customer.class);
             if (customer != null) {
                 customer.setId(documentSnapshot.getId());
@@ -143,6 +150,7 @@ public class BillDetailActivity extends BaseActivity {
             }
             loadLedgerData();
         }, e -> {
+            if (!isUiActive()) return;
             if (TextUtils.isEmpty(customerNameText.getText())) {
                 customerNameText.setText("Unknown Customer");
             }
@@ -160,12 +168,14 @@ public class BillDetailActivity extends BaseActivity {
             new FirestoreRepository.OnServiceEntriesLoadedListener() {
                 @Override
                 public void onServiceEntriesLoaded(List<ServiceEntry> entries) {
+                    if (!isUiActive()) return;
                     currentEntries = entries != null ? entries : new ArrayList<>();
                     loadPaymentsAndRender();
                 }
 
                 @Override
                 public void onError(String error) {
+                    if (!isUiActive()) return;
                     currentEntries = new ArrayList<>();
                     showToast("Warning: service history unavailable (" + error + ")");
                     loadPaymentsAndRender();
@@ -177,12 +187,14 @@ public class BillDetailActivity extends BaseActivity {
         repository.getPaymentsByCustomer(customerId, new FirestoreRepository.OnPaymentsLoadedListener() {
             @Override
             public void onPaymentsLoaded(List<Payment> payments) {
+                if (!isUiActive()) return;
                 currentPayments = filterProviderPayments(payments);
                 renderLedger();
             }
 
             @Override
             public void onError(String error) {
+                if (!isUiActive()) return;
                 currentPayments = new ArrayList<>();
                 showToast("Warning: payment history unavailable (" + error + ")");
                 renderLedger();
@@ -195,9 +207,10 @@ public class BillDetailActivity extends BaseActivity {
         if (payments == null) return filtered;
 
         String providerId = getCurrentUserId();
+        if (providerId == null || providerId.trim().isEmpty()) return filtered;
         for (Payment payment : payments) {
             if (payment == null) continue;
-            if (providerId == null || providerId.equals(payment.getProviderId())) {
+            if (providerId.equals(payment.getProviderId())) {
                 filtered.add(payment);
             }
         }
@@ -267,7 +280,11 @@ public class BillDetailActivity extends BaseActivity {
         }
 
         List<Payment> sortedPayments = new ArrayList<>(payments);
-        sortedPayments.sort((p1, p2) -> p2.getPaymentDate().toDate().compareTo(p1.getPaymentDate().toDate()));
+        sortedPayments.sort((p1, p2) -> {
+            Date d1 = p1 != null && p1.getPaymentDate() != null ? p1.getPaymentDate().toDate() : new Date(0);
+            Date d2 = p2 != null && p2.getPaymentDate() != null ? p2.getPaymentDate().toDate() : new Date(0);
+            return d2.compareTo(d1);
+        });
 
         StringBuilder builder = new StringBuilder();
         double totalPaid = 0.0;
@@ -278,7 +295,9 @@ public class BillDetailActivity extends BaseActivity {
 
         for (int i = 0; i < limit; i++) {
             Payment payment = sortedPayments.get(i);
-            String date = DateUtils.formatShortDate(payment.getPaymentDate().toDate());
+            String date = payment.getPaymentDate() != null
+                ? DateUtils.formatShortDate(payment.getPaymentDate().toDate())
+                : "-";
             String method = payment.getPaymentMethod() != null ? payment.getPaymentMethod() : "Unknown";
             builder.append(date)
                 .append(" • ")
@@ -418,6 +437,10 @@ public class BillDetailActivity extends BaseActivity {
         shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Customer Ledger - " + currentSummary.getCustomerName());
         shareIntent.putExtra(Intent.EXTRA_TEXT, text);
         startActivity(Intent.createChooser(shareIntent, "Share ledger"));
+    }
+
+    private boolean isUiActive() {
+        return binding != null && !isFinishing() && !isDestroyed();
     }
 
     @Override

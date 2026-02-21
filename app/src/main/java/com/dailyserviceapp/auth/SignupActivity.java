@@ -490,8 +490,19 @@ public class SignupActivity extends BaseActivity {
         String phone = safeTrim(documentSnapshot.getString("phone"));
         String address = safeTrim(documentSnapshot.getString("address"));
 
-        @SuppressWarnings("unchecked")
-        java.util.List<String> services = (java.util.List<String>) documentSnapshot.get("services");
+        java.util.List<String> services = new java.util.ArrayList<>();
+        Object rawServices = documentSnapshot.get("services");
+        if (rawServices instanceof java.util.List) {
+            java.util.List<?> casted = (java.util.List<?>) rawServices;
+            for (Object item : casted) {
+                if (item instanceof String) {
+                    String value = safeTrim((String) item);
+                    if (!value.isEmpty()) {
+                        services.add(value);
+                    }
+                }
+            }
+        }
         String serviceType = safeTrim(documentSnapshot.getString("serviceType"));
         boolean hasService = (services != null && !services.isEmpty()) || !serviceType.isEmpty();
 

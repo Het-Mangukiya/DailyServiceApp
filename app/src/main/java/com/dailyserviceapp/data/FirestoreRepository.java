@@ -1,5 +1,7 @@
 package com.dailyserviceapp.data;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import com.dailyserviceapp.data.models.Bill;
@@ -399,10 +401,14 @@ public class FirestoreRepository {
                             Timestamp entryDate = entry.getDate();
                             if (entryDate != null) {
                                 long entryMillis = entryDate.toDate().getTime();
-                                if (entryMillis < startMillis || entryMillis > endMillis) {
+                                // Keep [start, end) semantics consistent with Firestore whereLessThan(end).
+                                if (entryMillis < startMillis || entryMillis >= endMillis) {
                                     continue;
                                 }
                                 entries.add(entry);
+                            } else {
+                                Log.w("FirestoreRepository",
+                                    "Skipping service entry with null date: " + doc.getId());
                             }
                         }
                     }
@@ -475,8 +481,32 @@ public class FirestoreRepository {
                     listener.onServiceEntriesLoaded(entries);
                 })
                 .addOnFailureListener(e -> {
-                    // Fallback: use broader query and filter in memory
-                    getServiceEntriesByProviderAndDate(providerId, startDate, endDate, listener);
+                    // Fallback: use broader query and filter in memory while preserving delivered=true.
+                    final long startMillis = startDate != null ? startDate.toDate().getTime() : Long.MIN_VALUE;
+                    final long endMillis = endDate != null ? endDate.toDate().getTime() : Long.MAX_VALUE;
+
+                    db.collection("serviceEntries")
+                            .whereEqualTo("providerId", providerId)
+                            .get()
+                            .addOnSuccessListener(querySnapshot -> {
+                                List<ServiceEntry> entries = new ArrayList<>();
+                                for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
+                                    ServiceEntry entry = doc.toObject(ServiceEntry.class);
+                                    if (entry == null || !entry.isDelivered() || entry.getDate() == null) {
+                                        continue;
+                                    }
+
+                                    long entryMillis = entry.getDate().toDate().getTime();
+                                    if (entryMillis < startMillis || entryMillis >= endMillis) {
+                                        continue;
+                                    }
+
+                                    entry.setId(doc.getId());
+                                    entries.add(entry);
+                                }
+                                listener.onServiceEntriesLoaded(entries);
+                            })
+                            .addOnFailureListener(inner -> listener.onError(inner.getMessage()));
                 });
     }
 
@@ -491,6 +521,8 @@ public class FirestoreRepository {
      */
     public void getServiceEntriesByCustomerAndDate(String customerId, Timestamp startDate,
                                                    Timestamp endDate, OnServiceEntriesLoadedListener listener) {
+        final long startMillis = startDate != null ? startDate.toDate().getTime() : Long.MIN_VALUE;
+        final long endMillis = endDate != null ? endDate.toDate().getTime() : Long.MAX_VALUE;
         db.collection("serviceEntries")
                 .whereEqualTo("customerId", customerId)
                 .get()
@@ -503,9 +535,11 @@ public class FirestoreRepository {
                             
                             // Filter by date range in memory
                             Timestamp entryDate = entry.getDate();
-                            if (entryDate != null &&
-                                !entryDate.toDate().before(startDate.toDate()) &&
-                                !entryDate.toDate().after(endDate.toDate())) {
+                            if (entryDate != null) {
+                                long entryMillis = entryDate.toDate().getTime();
+                                if (entryMillis < startMillis || entryMillis > endMillis) {
+                                    continue;
+                                }
                                 entries.add(entry);
                             }
                         }

@@ -130,7 +130,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="I am a:"
+                    android:text="@string/signup_role_label"
                     android:textAppearance="@style/TextAppearance.App.Label"
                     android:layout_marginBottom="@dimen/spacing_sm" />
 
@@ -138,6 +138,7 @@
                     android:id="@+id/roleSpinner"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/button_height"
+                    android:contentDescription="@string/role_spinner_description"
                     android:entries="@array/role_options"
                     android:popupBackground="?attr/colorSurface"
                     android:padding="@dimen/spacing_md"

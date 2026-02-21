@@ -15,6 +15,8 @@ import com.dailyserviceapp.R;
 import com.dailyserviceapp.core.utils.CurrencyUtils;
 import com.dailyserviceapp.data.models.Customer;
 
+import java.util.Objects;
+
 /**
  * PagingDataAdapter for customer list.
  */
@@ -31,7 +33,7 @@ public class PagedCustomerAdapter extends PagingDataAdapter<Customer, PagedCusto
 
     public PagedCustomerAdapter(OnCustomerActionListener listener) {
         super(DIFF_CALLBACK);
-        this.listener = listener;
+        this.listener = Objects.requireNonNull(listener, "OnCustomerActionListener cannot be null");
     }
 
     @NonNull
@@ -52,9 +54,9 @@ public class PagedCustomerAdapter extends PagingDataAdapter<Customer, PagedCusto
 
         holder.customerName.setText(customer.getName());
 
-        String serviceInfo = (customer.getServiceType() == null ? "" : customer.getServiceType())
-            + " · "
-            + CurrencyUtils.formatCurrency(customer.getRatePerUnit());
+        String serviceType = customer.getServiceType() == null ? "" : customer.getServiceType().trim();
+        String rateText = CurrencyUtils.formatCurrency(customer.getRatePerUnit());
+        String serviceInfo = serviceType.isEmpty() ? rateText : serviceType + " · " + rateText;
         holder.customerService.setText(serviceInfo);
 
         if (customer.getPhone() != null && !customer.getPhone().isEmpty()) {
@@ -83,7 +85,7 @@ public class PagedCustomerAdapter extends PagingDataAdapter<Customer, PagedCusto
         boolean isExpanded = customer.getId() != null && customer.getId().equals(expandedCustomerId);
         holder.expandableActions.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
         holder.customerMenuButton.setIconResource(
-            isExpanded ? android.R.drawable.arrow_up_float : android.R.drawable.arrow_down_float
+            isExpanded ? R.drawable.ic_expand_less : R.drawable.ic_expand_more
         );
 
         String vacationText = customer.isOnVacation() ? "Remove from Vacation" : "Mark as On Vacation";
@@ -172,7 +174,7 @@ public class PagedCustomerAdapter extends PagingDataAdapter<Customer, PagedCusto
                 && safeEquals(oldItem.getPhone(), newItem.getPhone())
                 && safeEquals(oldItem.getStatus(), newItem.getStatus())
                 && oldItem.isOnVacation() == newItem.isOnVacation()
-                && oldItem.getRatePerUnit() == newItem.getRatePerUnit();
+                && Double.compare(oldItem.getRatePerUnit(), newItem.getRatePerUnit()) == 0;
         }
 
         private boolean safeEquals(@Nullable String a, @Nullable String b) {

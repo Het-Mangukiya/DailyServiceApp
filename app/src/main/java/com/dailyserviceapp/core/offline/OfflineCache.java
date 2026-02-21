@@ -55,55 +55,67 @@ public class OfflineCache {
      * Retrieve cached customers
      */
     public List<Customer> getCachedCustomers() {
-        String json = prefs.getString(KEY_CUSTOMERS, null);
-        if (json == null) {
-            return new ArrayList<>();
+        synchronized (syncLock) {
+            String json = prefs.getString(KEY_CUSTOMERS, null);
+            if (json == null) {
+                return new ArrayList<>();
+            }
+            Type type = new TypeToken<List<Customer>>(){}.getType();
+            return gson.fromJson(json, type);
         }
-        Type type = new TypeToken<List<Customer>>(){}.getType();
-        return gson.fromJson(json, type);
     }
     
     /**
      * Queue a service entry for later sync when offline
      */
-    public synchronized void queuePendingEntry(PendingServiceEntry entry) {
-        List<PendingServiceEntry> pending = getPendingEntries();
-        pending.add(entry);
-        setPendingEntries(pending);
+    public void queuePendingEntry(PendingServiceEntry entry) {
+        synchronized (syncLock) {
+            List<PendingServiceEntry> pending = getPendingEntries();
+            pending.add(entry);
+            setPendingEntries(pending);
+        }
     }
     
     /**
      * Get all pending service entries waiting to be synced
      */
-    public synchronized List<PendingServiceEntry> getPendingEntries() {
-        String json = prefs.getString(KEY_PENDING_ENTRIES, null);
-        if (json == null) {
-            return new ArrayList<>();
+    public List<PendingServiceEntry> getPendingEntries() {
+        synchronized (syncLock) {
+            String json = prefs.getString(KEY_PENDING_ENTRIES, null);
+            if (json == null) {
+                return new ArrayList<>();
+            }
+            Type type = new TypeToken<List<PendingServiceEntry>>(){}.getType();
+            List<PendingServiceEntry> entries = gson.fromJson(json, type);
+            return entries != null ? entries : new ArrayList<>();
         }
-        Type type = new TypeToken<List<PendingServiceEntry>>(){}.getType();
-        List<PendingServiceEntry> entries = gson.fromJson(json, type);
-        return entries != null ? entries : new ArrayList<>();
     }
 
     /**
      * Replace all pending entries after a sync pass.
      */
-    public synchronized void replacePendingEntries(List<PendingServiceEntry> entries) {
-        setPendingEntries(entries);
+    public void replacePendingEntries(List<PendingServiceEntry> entries) {
+        synchronized (syncLock) {
+            setPendingEntries(entries);
+        }
     }
     
     /**
      * Clear pending entries after successful sync
      */
-    public synchronized void clearPendingEntries() {
-        prefs.edit().remove(KEY_PENDING_ENTRIES).apply();
+    public void clearPendingEntries() {
+        synchronized (syncLock) {
+            prefs.edit().remove(KEY_PENDING_ENTRIES).apply();
+        }
     }
     
     /**
      * Get timestamp of last successful sync
      */
     public long getLastSyncTime() {
-        return prefs.getLong(KEY_LAST_SYNC, 0);
+        synchronized (syncLock) {
+            return prefs.getLong(KEY_LAST_SYNC, 0);
+        }
     }
 
     /**
@@ -119,7 +131,9 @@ public class OfflineCache {
      * Check if cached data exists
      */
     public boolean hasCachedData() {
-        return prefs.contains(KEY_CUSTOMERS);
+        synchronized (syncLock) {
+            return prefs.contains(KEY_CUSTOMERS);
+        }
     }
     
     /**
@@ -133,7 +147,9 @@ public class OfflineCache {
      * Clear all cached data
      */
     public void clearAll() {
-        prefs.edit().clear().apply();
+        synchronized (syncLock) {
+            prefs.edit().clear().apply();
+        }
     }
     
     /**

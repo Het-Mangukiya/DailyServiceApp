@@ -12,6 +12,7 @@ service cloud.firestore {
 
     function ownsCustomer(customerId) {
       return isSignedIn()
+        && exists(/databases/$(database)/documents/customers/$(customerId))
         && get(/databases/$(database)/documents/customers/$(customerId)).data.providerId == request.auth.uid;
     }
 
@@ -34,7 +35,8 @@ service cloud.firestore {
     match /customerLinks/{customerId} {
       // Customer-owned link document used for provider QR linking.
       allow read: if isOwner(customerId)
-        || (isSignedIn() && resource.data.providerId == request.auth.uid);
+        || (isSignedIn()
+          && (resource == null || resource.data.providerId == request.auth.uid));
       allow delete: if isOwner(customerId);
       allow create: if isOwner(customerId)
         && request.resource.data.customerId == request.auth.uid;

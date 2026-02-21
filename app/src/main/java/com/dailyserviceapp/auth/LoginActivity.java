@@ -101,7 +101,6 @@ public class LoginActivity extends BaseActivity {
                 routeAfterLogin(currentUserId, getCurrentUserRole());
                 return;
             }
-            return;
         }
         
         initializeGoogleSignIn();
@@ -294,8 +293,8 @@ public class LoginActivity extends BaseActivity {
         String email = currentUser.getEmail();
         String name = currentUser.getDisplayName();
         
-        // Default to PROVIDER role if not specified
-        String role = Constants.ROLE_PROVIDER;
+        // Use least-privilege default role when legacy records need recovery.
+        String role = Constants.ROLE_CUSTOMER;
         
         Map<String, Object> userData = new HashMap<>();
         userData.put("id", userId);
@@ -465,12 +464,19 @@ public class LoginActivity extends BaseActivity {
                     : null;
                 if (role != null && !role.trim().isEmpty()) {
                     preferenceManager.setUserRole(role);
+                    routeAfterLogin(userId, role);
+                    return;
                 }
-                routeAfterLogin(userId, role);
+                hideLoading();
+                showToast("Account role is missing. Please sign in again.");
+                preferenceManager.clearAllData();
+                firebaseAuth.signOut();
+                navigateToLogin();
             })
             .addOnFailureListener(e -> {
                 hideLoading();
-                navigateToProviderHome();
+                showToast("Failed to load account role. Please try again.");
+                navigateToLogin();
             });
     }
 
@@ -501,8 +507,19 @@ public class LoginActivity extends BaseActivity {
         String phone = safeTrim(documentSnapshot.getString("phone"));
         String address = safeTrim(documentSnapshot.getString("address"));
 
-        @SuppressWarnings("unchecked")
-        java.util.List<String> services = (java.util.List<String>) documentSnapshot.get("services");
+        java.util.List<String> services = new java.util.ArrayList<>();
+        Object rawServices = documentSnapshot.get("services");
+        if (rawServices instanceof java.util.List) {
+            java.util.List<?> casted = (java.util.List<?>) rawServices;
+            for (Object item : casted) {
+                if (item instanceof String) {
+                    String value = safeTrim((String) item);
+                    if (!value.isEmpty()) {
+                        services.add(value);
+                    }
+                }
+            }
+        }
         String serviceType = safeTrim(documentSnapshot.getString("serviceType"));
         boolean hasService = (services != null && !services.isEmpty()) || !serviceType.isEmpty();
 

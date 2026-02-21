@@ -7,6 +7,7 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
+import com.dailyserviceapp.R;
 import com.dailyserviceapp.billing.CustomerLedgerCalculator;
 import com.dailyserviceapp.billing.CustomerLedgerSummary;
 import com.dailyserviceapp.core.base.BaseActivity;
@@ -120,6 +121,7 @@ public class CustomerDetailActivity extends BaseActivity {
     private void loadCustomer() {
         repo.getCustomer(customerId,
             doc -> {
+                if (!isUiActive()) return;
                 customer = doc.toObject(Customer.class);
                 if (customer == null) {
                     Toast.makeText(this, "Customer not found", Toast.LENGTH_LONG).show();
@@ -131,7 +133,10 @@ public class CustomerDetailActivity extends BaseActivity {
                 loadMonthlySummary();
                 loadLedgerStatus();
             },
-            e -> Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show()
+            e -> {
+                if (!isUiActive()) return;
+                Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+            }
         );
     }
 
@@ -141,6 +146,7 @@ public class CustomerDetailActivity extends BaseActivity {
         String name = safeText(customer.getName(), "Customer");
         customerName.setText(name);
         profileInitial.setText(name.substring(0, 1).toUpperCase());
+        profileInitial.setContentDescription(getString(R.string.profile_initial_for, name));
 
         String service = safeText(customer.getServiceType(), "Service not set");
         String rateText = CurrencyUtils.formatCurrency(customer.getRatePerUnit());
@@ -193,6 +199,7 @@ public class CustomerDetailActivity extends BaseActivity {
             new FirestoreRepository.OnServiceEntriesLoadedListener() {
                 @Override
                 public void onServiceEntriesLoaded(List<ServiceEntry> entries) {
+                    if (!isUiActive()) return;
                     int deliveredCount = 0;
                     double totalQty = 0.0;
                     double totalAmount = 0.0;
@@ -219,6 +226,7 @@ public class CustomerDetailActivity extends BaseActivity {
 
                 @Override
                 public void onError(String error) {
+                    if (!isUiActive()) return;
                     Toast.makeText(CustomerDetailActivity.this, error, Toast.LENGTH_LONG).show();
                     setMonthlySummaryFallback();
                 }
@@ -238,9 +246,11 @@ public class CustomerDetailActivity extends BaseActivity {
             new FirestoreRepository.OnServiceEntriesLoadedListener() {
                 @Override
                 public void onServiceEntriesLoaded(List<ServiceEntry> entries) {
+                    if (!isUiActive()) return;
                     repo.getPaymentsByCustomer(customerId, new FirestoreRepository.OnPaymentsLoadedListener() {
                         @Override
                         public void onPaymentsLoaded(List<Payment> payments) {
+                            if (!isUiActive()) return;
                             List<Payment> providerPayments = filterProviderPayments(payments);
                             CustomerLedgerSummary summary = CustomerLedgerCalculator.calculate(
                                 customer,
@@ -264,6 +274,7 @@ public class CustomerDetailActivity extends BaseActivity {
 
                         @Override
                         public void onError(String error) {
+                            if (!isUiActive()) return;
                             Toast.makeText(CustomerDetailActivity.this, error, Toast.LENGTH_LONG).show();
                             setPaymentStatusFallback();
                         }
@@ -272,6 +283,7 @@ public class CustomerDetailActivity extends BaseActivity {
 
                 @Override
                 public void onError(String error) {
+                    if (!isUiActive()) return;
                     Toast.makeText(CustomerDetailActivity.this, error, Toast.LENGTH_LONG).show();
                     setPaymentStatusFallback();
                 }
@@ -298,10 +310,11 @@ public class CustomerDetailActivity extends BaseActivity {
     private List<Payment> filterProviderPayments(List<Payment> payments) {
         List<Payment> filtered = new ArrayList<>();
         if (payments == null) return filtered;
+        if (providerId == null || providerId.trim().isEmpty()) return filtered;
 
         for (Payment payment : payments) {
             if (payment == null) continue;
-            if (providerId == null || providerId.equals(payment.getProviderId())) {
+            if (providerId.equals(payment.getProviderId())) {
                 filtered.add(payment);
             }
         }
@@ -333,6 +346,7 @@ public class CustomerDetailActivity extends BaseActivity {
             new FirestoreRepository.OnSaveCompleteListener() {
                 @Override
                 public void onSuccess() {
+                    if (!isUiActive()) return;
                     Toast.makeText(CustomerDetailActivity.this, "Marked delivered", Toast.LENGTH_SHORT).show();
                     loadMonthlySummary();
                     loadLedgerStatus();
@@ -340,9 +354,14 @@ public class CustomerDetailActivity extends BaseActivity {
 
                 @Override
                 public void onError(String error) {
+                    if (!isUiActive()) return;
                     Toast.makeText(CustomerDetailActivity.this, error, Toast.LENGTH_LONG).show();
                 }
             });
+    }
+
+    private boolean isUiActive() {
+        return binding != null && !isFinishing() && !isDestroyed();
     }
 
     @Override

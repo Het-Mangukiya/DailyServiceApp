@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -16,6 +17,9 @@ import com.dailyserviceapp.dashboard.DashboardActivity;
 import com.dailyserviceapp.profile.ProfileActivity;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Splash screen activity displayed on app launch.
@@ -59,6 +63,7 @@ public class SplashActivity extends AppCompatActivity {
 
         // Delay and navigate
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            if (isActivityInactive()) return;
             navigateToNextScreen();
         }, SPLASH_DELAY);
     }
@@ -70,6 +75,7 @@ public class SplashActivity extends AppCompatActivity {
      * Finishes this activity to prevent returning to splash screen on back press.
      */
     private void navigateToNextScreen() {
+        if (isActivityInactive()) return;
         PreferenceManager preferenceManager = new PreferenceManager(this);
         if (!preferenceManager.isLoggedIn()) {
             openLogin();
@@ -102,6 +108,7 @@ public class SplashActivity extends AppCompatActivity {
             .document(userId)
             .get()
             .addOnSuccessListener(documentSnapshot -> {
+                if (isActivityInactive()) return;
                 String role = documentSnapshot != null && documentSnapshot.exists()
                     ? documentSnapshot.getString("role")
                     : null;
@@ -122,6 +129,8 @@ public class SplashActivity extends AppCompatActivity {
                 openLogin();
             })
             .addOnFailureListener(e -> {
+                if (isActivityInactive()) return;
+                Log.w("SplashActivity", "Failed to resolve role", e);
                 preferenceManager.clearAllData();
                 openLogin();
             });
@@ -132,13 +141,18 @@ public class SplashActivity extends AppCompatActivity {
             .document(userId)
             .get()
             .addOnSuccessListener(documentSnapshot -> {
+                if (isActivityInactive()) return;
                 if (isProviderProfileComplete(documentSnapshot)) {
                     openDashboard();
                 } else {
                     openProfileSetup();
                 }
             })
-            .addOnFailureListener(e -> openProfileSetup());
+            .addOnFailureListener(e -> {
+                if (isActivityInactive()) return;
+                Log.w("SplashActivity", "Failed to fetch provider profile", e);
+                openProfileSetup();
+            });
     }
 
     private boolean isProviderProfileComplete(DocumentSnapshot documentSnapshot) {
@@ -149,8 +163,19 @@ public class SplashActivity extends AppCompatActivity {
         String phone = safeTrim(documentSnapshot.getString("phone"));
         String address = safeTrim(documentSnapshot.getString("address"));
 
-        @SuppressWarnings("unchecked")
-        java.util.List<String> services = (java.util.List<String>) documentSnapshot.get("services");
+        List<String> services = new ArrayList<>();
+        Object rawServices = documentSnapshot.get("services");
+        if (rawServices instanceof List) {
+            List<?> casted = (List<?>) rawServices;
+            for (Object item : casted) {
+                if (item instanceof String) {
+                    String value = safeTrim((String) item);
+                    if (!value.isEmpty()) {
+                        services.add(value);
+                    }
+                }
+            }
+        }
         String serviceType = safeTrim(documentSnapshot.getString("serviceType"));
         boolean hasService = (services != null && !services.isEmpty()) || !serviceType.isEmpty();
 
@@ -185,5 +210,9 @@ public class SplashActivity extends AppCompatActivity {
         intent.putExtra(Constants.EXTRA_FORCE_PROFILE_SETUP, true);
         startActivity(intent);
         finish();
+    }
+
+    private boolean isActivityInactive() {
+        return isFinishing() || isDestroyed();
     }
 }

@@ -2,6 +2,7 @@ package com.dailyserviceapp.billing;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.LruCache;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -25,6 +26,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Customer-wise billing ledger derived from service entries and payments.
@@ -33,7 +35,8 @@ public class BillListActivity extends BaseActivity {
 
     private static final long MANUAL_REFRESH_COOLDOWN_MS = 3000L;
     private static final long CACHE_FRESH_WINDOW_MS = 60000L;
-    private static final Map<String, CacheEntry> LEDGER_CACHE = new HashMap<>();
+    private static final int MAX_CACHE_ENTRIES = 5;
+    private static final LruCache<String, CacheEntry> LEDGER_CACHE = new LruCache<>(MAX_CACHE_ENTRIES);
 
     private ActivityBillListNewBinding binding;
 
@@ -66,7 +69,7 @@ public class BillListActivity extends BaseActivity {
     private static class LedgerFetchState {
         List<ServiceEntry> entries = new ArrayList<>();
         List<Payment> payments = new ArrayList<>();
-        int completedRequests = 0;
+        AtomicInteger completedRequests = new AtomicInteger(0);
     }
 
     @Override
@@ -177,6 +180,7 @@ public class BillListActivity extends BaseActivity {
         repository.getCustomersByProvider(providerId, new FirestoreRepository.OnCustomersLoadedListener() {
             @Override
             public void onCustomersLoaded(List<Customer> customers) {
+                if (!isUiActive()) return;
                 if (customers == null || customers.isEmpty()) {
                     isLoadingData = false;
                     showLoading(false);
@@ -191,6 +195,7 @@ public class BillListActivity extends BaseActivity {
 
             @Override
             public void onError(String error) {
+                if (!isUiActive()) return;
                 isLoadingData = false;
                 showLoading(false);
                 showToast("Error loading customers: " + error);
@@ -205,8 +210,7 @@ public class BillListActivity extends BaseActivity {
         final LedgerFetchState state = new LedgerFetchState();
 
         Runnable maybeBuild = () -> {
-            state.completedRequests++;
-            if (state.completedRequests == 2) {
+            if (state.completedRequests.incrementAndGet() == 2) {
                 buildSummaries(customers, state.entries, state.payments);
             }
         };
@@ -215,12 +219,14 @@ public class BillListActivity extends BaseActivity {
             new FirestoreRepository.OnServiceEntriesLoadedListener() {
                 @Override
                 public void onServiceEntriesLoaded(List<ServiceEntry> entries) {
+                    if (!isUiActive()) return;
                     state.entries = entries != null ? entries : new ArrayList<>();
                     maybeBuild.run();
                 }
 
                 @Override
                 public void onError(String error) {
+                    if (!isUiActive()) return;
                     showToast("Warning: service entries could not be loaded (" + error + ")");
                     state.entries = new ArrayList<>();
                     maybeBuild.run();
@@ -230,12 +236,14 @@ public class BillListActivity extends BaseActivity {
         repository.getPaymentsByProvider(providerId, new FirestoreRepository.OnPaymentsLoadedListener() {
             @Override
             public void onPaymentsLoaded(List<Payment> payments) {
+                if (!isUiActive()) return;
                 state.payments = payments != null ? payments : new ArrayList<>();
                 maybeBuild.run();
             }
 
             @Override
             public void onError(String error) {
+                if (!isUiActive()) return;
                 showToast("Warning: payments could not be loaded (" + error + ")");
                 state.payments = new ArrayList<>();
                 maybeBuild.run();
@@ -244,6 +252,7 @@ public class BillListActivity extends BaseActivity {
     }
 
     private void buildSummaries(List<Customer> customers, List<ServiceEntry> entries, List<Payment> payments) {
+        if (!isUiActive()) return;
         Map<String, List<ServiceEntry>> entriesByCustomer = new HashMap<>();
         if (entries != null) {
             for (ServiceEntry entry : entries) {
@@ -366,7 +375,10 @@ public class BillListActivity extends BaseActivity {
     }
 
     private void restoreCachedSummaries() {
-        CacheEntry cacheEntry = LEDGER_CACHE.get(cacheKey());
+        CacheEntry cacheEntry;
+        synchronized (LEDGER_CACHE) {
+            cacheEntry = LEDGER_CACHE.get(cacheKey());
+        }
         if (cacheEntry == null || cacheEntry.summaries == null || cacheEntry.summaries.isEmpty()) {
             return;
         }
@@ -378,7 +390,10 @@ public class BillListActivity extends BaseActivity {
     }
 
     private boolean hasFreshCache() {
-        CacheEntry cacheEntry = LEDGER_CACHE.get(cacheKey());
+        CacheEntry cacheEntry;
+        synchronized (LEDGER_CACHE) {
+            cacheEntry = LEDGER_CACHE.get(cacheKey());
+        }
         if (cacheEntry == null) return false;
         return (System.currentTimeMillis() - cacheEntry.cachedAt) < CACHE_FRESH_WINDOW_MS;
     }
@@ -387,11 +402,17 @@ public class BillListActivity extends BaseActivity {
         if (providerId == null || providerId.trim().isEmpty() || summaries == null) {
             return;
         }
-        LEDGER_CACHE.put(cacheKey(), new CacheEntry(new ArrayList<>(summaries), System.currentTimeMillis()));
+        synchronized (LEDGER_CACHE) {
+            LEDGER_CACHE.put(cacheKey(), new CacheEntry(new ArrayList<>(summaries), System.currentTimeMillis()));
+        }
     }
 
     private String cacheKey() {
         return providerId == null ? "unknown" : providerId;
+    }
+
+    private boolean isUiActive() {
+        return binding != null && !isFinishing() && !isDestroyed();
     }
 
     @Override

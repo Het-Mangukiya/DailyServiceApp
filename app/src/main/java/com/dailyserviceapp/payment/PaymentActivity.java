@@ -2,7 +2,9 @@ package com.dailyserviceapp.payment;
 
 import android.app.DatePickerDialog;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.TextView;
@@ -52,6 +54,8 @@ public class PaymentActivity extends BaseActivity {
     private double currentOutstandingAmount;
 
     private Date selectedPaymentDate;
+    private boolean hasUserEditedAmount;
+    private boolean isProgrammaticAmountUpdate;
 
     private TextView customerNameText;
     private TextView billPeriodText;
@@ -130,6 +134,24 @@ public class PaymentActivity extends BaseActivity {
         );
         paymentMethodDropdown.setAdapter(adapter);
         paymentMethodDropdown.setText("Cash", false);
+        amountInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // No-op
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (!isProgrammaticAmountUpdate && amountInput.hasFocus()) {
+                    hasUserEditedAmount = true;
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                // No-op
+            }
+        });
     }
 
     private void initializeData() {
@@ -159,7 +181,7 @@ public class PaymentActivity extends BaseActivity {
 
         billAmountText.setText(CurrencyUtils.formatCurrency(currentOutstandingAmount));
         if (currentOutstandingAmount > EPSILON) {
-            amountInput.setText(String.format(Locale.getDefault(), "%.2f", currentOutstandingAmount));
+            setAmountInputValue(String.format(Locale.getDefault(), "%.2f", currentOutstandingAmount));
         }
 
         repository.getCustomer(customerId, documentSnapshot -> {
@@ -221,8 +243,8 @@ public class PaymentActivity extends BaseActivity {
                     billPeriodText.setText("Due from " + DateUtils.formatShortDate(summary.getDueFromDate().toDate()));
                 }
 
-                if (currentOutstandingAmount > EPSILON) {
-                    amountInput.setText(String.format(Locale.getDefault(), "%.2f", currentOutstandingAmount));
+                if (!hasUserEditedAmount && currentOutstandingAmount > EPSILON) {
+                    setAmountInputValue(String.format(Locale.getDefault(), "%.2f", currentOutstandingAmount));
                 }
             }
 
@@ -238,9 +260,10 @@ public class PaymentActivity extends BaseActivity {
         if (payments == null) return filtered;
 
         String providerId = getCurrentUserId();
+        if (providerId == null || providerId.trim().isEmpty()) return filtered;
         for (Payment payment : payments) {
             if (payment == null) continue;
-            if (providerId == null || providerId.equals(payment.getProviderId())) {
+            if (providerId.equals(payment.getProviderId())) {
                 filtered.add(payment);
             }
         }
@@ -255,7 +278,7 @@ public class PaymentActivity extends BaseActivity {
                 displayBillInfo(bill);
                 loadCustomerInfo(bill.getCustomerId());
                 currentOutstandingAmount = bill.getTotalAmount();
-                amountInput.setText(String.format(Locale.getDefault(), "%.2f", bill.getTotalAmount()));
+                setAmountInputValue(String.format(Locale.getDefault(), "%.2f", bill.getTotalAmount()));
             }
 
             @Override
@@ -269,7 +292,11 @@ public class PaymentActivity extends BaseActivity {
     private void displayBillInfo(Bill bill) {
         String[] monthNames = {"January", "February", "March", "April", "May", "June",
             "July", "August", "September", "October", "November", "December"};
-        billPeriodText.setText(monthNames[bill.getMonth()] + " " + bill.getYear());
+        int monthIndex = bill.getMonth();
+        if (monthIndex < 0 || monthIndex >= monthNames.length) {
+            monthIndex = 0;
+        }
+        billPeriodText.setText(monthNames[monthIndex] + " " + bill.getYear());
         billAmountText.setText(CurrencyUtils.formatCurrency(bill.getTotalAmount()));
     }
 
@@ -324,8 +351,7 @@ public class PaymentActivity extends BaseActivity {
                 return;
             }
 
-            String[] parts = amountStr.split("\\.");
-            if (parts.length > 1 && parts[1].length() > 2) {
+            if (!amountStr.matches("^\\d*(?:\\.\\d{0,2})?$")) {
                 amountInput.setError("Maximum 2 decimal places allowed");
                 amountInput.requestFocus();
                 return;
@@ -470,6 +496,12 @@ public class PaymentActivity extends BaseActivity {
                 finish();
             }
         });
+    }
+
+    private void setAmountInputValue(String value) {
+        isProgrammaticAmountUpdate = true;
+        amountInput.setText(value);
+        isProgrammaticAmountUpdate = false;
     }
 
     @Override

@@ -18,6 +18,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.Timestamp;
 
 import java.util.List;
+import java.util.Locale;
 
 public class CustomerEditActivity extends BaseActivity {
 
@@ -154,7 +155,7 @@ public class CustomerEditActivity extends BaseActivity {
                         binding.phoneInput.setText(existingCustomer.getPhone());
                         binding.addressInput.setText(existingCustomer.getAddress());
                         binding.serviceInput.setText(existingCustomer.getServiceType());
-                        binding.rateInput.setText(String.valueOf(existingCustomer.getRatePerUnit()));
+                        binding.rateInput.setText(String.format(Locale.US, "%.2f", existingCustomer.getRatePerUnit()));
                     }
                 } else {
                     Toast.makeText(this, "Customer not found", Toast.LENGTH_SHORT).show();
