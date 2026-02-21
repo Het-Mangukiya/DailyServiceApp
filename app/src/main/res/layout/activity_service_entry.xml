@@ -221,6 +221,14 @@
 
     </androidx.core.widget.NestedScrollView>
 
+    <!-- Loading Progress -->
+    <ProgressBar
+        android:id="@+id/loadingProgress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone" />
+
     <!-- Mark Delivery Button -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnMarkDelivery"

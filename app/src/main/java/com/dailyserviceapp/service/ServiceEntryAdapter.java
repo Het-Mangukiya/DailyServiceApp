@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.dailyserviceapp.R;
@@ -46,7 +47,7 @@ public class ServiceEntryAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     /**
-     * Updates adapter with customer list and existing service entries.
+     * Updates adapter with customer list and existing service entries using DiffUtil.
      * Marks which customers already have deliveries for the selected date.
      * Groups customers by area for route planning.
      * 
@@ -54,6 +55,8 @@ public class ServiceEntryAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
      * @param serviceEntries Existing service entries for selected date
      */
     public void submitData(List<Customer> customerList, List<ServiceEntry> serviceEntries) {
+        List<Object> oldItems = new ArrayList<>(items);
+        
         customers.clear();
         deliveryStatus.clear();
         selectionState.clear();
@@ -97,7 +100,52 @@ public class ServiceEntryAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             }
         }
         
-        notifyDataSetChanged();
+        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new DiffUtil.Callback() {
+            @Override
+            public int getOldListSize() {
+                return oldItems.size();
+            }
+
+            @Override
+            public int getNewListSize() {
+                return items.size();
+            }
+
+            @Override
+            public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
+                Object oldItem = oldItems.get(oldItemPosition);
+                Object newItem = items.get(newItemPosition);
+                
+                if (oldItem instanceof String && newItem instanceof String) {
+                    return oldItem.equals(newItem);
+                } else if (oldItem instanceof Customer && newItem instanceof Customer) {
+                    Customer oldCustomer = (Customer) oldItem;
+                    Customer newCustomer = (Customer) newItem;
+                    return oldCustomer.getId() != null && oldCustomer.getId().equals(newCustomer.getId());
+                }
+                return false;
+            }
+
+            @Override
+            public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
+                Object oldItem = oldItems.get(oldItemPosition);
+                Object newItem = items.get(newItemPosition);
+                
+                if (oldItem instanceof String && newItem instanceof String) {
+                    return oldItem.equals(newItem);
+                } else if (oldItem instanceof Customer && newItem instanceof Customer) {
+                    Customer oldCustomer = (Customer) oldItem;
+                    Customer newCustomer = (Customer) newItem;
+                    return oldCustomer.getName().equals(newCustomer.getName()) &&
+                           oldCustomer.getServiceType().equals(newCustomer.getServiceType()) &&
+                           oldCustomer.getRatePerUnit() == newCustomer.getRatePerUnit() &&
+                           oldCustomer.getDefaultQuantity() == newCustomer.getDefaultQuantity();
+                }
+                return false;
+            }
+        });
+        
+        diffResult.dispatchUpdatesTo(this);
     }
 
     @Override

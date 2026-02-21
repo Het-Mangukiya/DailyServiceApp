@@ -40,12 +40,10 @@
             <!-- Month Selector Card -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/monthSelectorCard"
+                style="@style/Widget.App.Card.Elevated"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/spacing_base"
-                app:cardCornerRadius="@dimen/corner_radius_md"
-                app:cardElevation="@dimen/elevation_base"
-                app:cardBackgroundColor="@color/md_theme_surface">
+                android:layout_marginBottom="@dimen/spacing_base">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -70,7 +68,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Billing Period"
+                            android:text="Ledger Snapshot"
                             android:textSize="@dimen/text_size_sm"
                             android:textColor="@color/md_theme_on_surface_variant" />
 
@@ -78,7 +76,7 @@
                             android:id="@+id/selectedMonthText"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="January 2026"
+                            android:text="Live customer ledger"
                             android:textSize="@dimen/text_size_lg"
                             android:textStyle="bold"
                             android:textColor="@color/md_theme_on_surface"
@@ -145,7 +143,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="No Bills for This Month"
+                    android:text="No Customer Ledger Data"
                     android:textSize="@dimen/text_size_lg"
                     android:textStyle="bold"
                     android:textColor="@color/md_theme_on_surface"
@@ -154,7 +152,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Generate bills from service entries"
+                    android:text="Add customers and service entries to start tracking dues"
                     android:textSize="@dimen/text_size_base"
                     android:textColor="@color/md_theme_on_surface_variant"
                     android:gravity="center" />
@@ -172,7 +170,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/spacing_base"
-        android:text="Generate Bills"
+        android:text="Refresh"
         android:textColor="@android:color/white"
         app:icon="@android:drawable/ic_input_add"
         app:iconTint="@android:color/white"

@@ -11,6 +11,7 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -30,6 +31,7 @@ public class OfflineCache {
     
     private final SharedPreferences prefs;
     private final Gson gson;
+    private final Object syncLock = new Object();
     
     public OfflineCache(Context context) {
         this.prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
@@ -41,10 +43,12 @@ public class OfflineCache {
      */
     public void cacheCustomers(List<Customer> customers) {
         String json = gson.toJson(customers);
-        prefs.edit()
-            .putString(KEY_CUSTOMERS, json)
-            .putLong(KEY_LAST_SYNC, System.currentTimeMillis())
-            .apply();
+        synchronized (syncLock) {
+            prefs.edit()
+                .putString(KEY_CUSTOMERS, json)
+                .putLong(KEY_LAST_SYNC, System.currentTimeMillis())
+                .apply();
+        }
     }
     
     /**
@@ -62,29 +66,36 @@ public class OfflineCache {
     /**
      * Queue a service entry for later sync when offline
      */
-    public void queuePendingEntry(PendingServiceEntry entry) {
+    public synchronized void queuePendingEntry(PendingServiceEntry entry) {
         List<PendingServiceEntry> pending = getPendingEntries();
         pending.add(entry);
-        String json = gson.toJson(pending);
-        prefs.edit().putString(KEY_PENDING_ENTRIES, json).apply();
+        setPendingEntries(pending);
     }
     
     /**
      * Get all pending service entries waiting to be synced
      */
-    public List<PendingServiceEntry> getPendingEntries() {
+    public synchronized List<PendingServiceEntry> getPendingEntries() {
         String json = prefs.getString(KEY_PENDING_ENTRIES, null);
         if (json == null) {
             return new ArrayList<>();
         }
         Type type = new TypeToken<List<PendingServiceEntry>>(){}.getType();
-        return gson.fromJson(json, type);
+        List<PendingServiceEntry> entries = gson.fromJson(json, type);
+        return entries != null ? entries : new ArrayList<>();
+    }
+
+    /**
+     * Replace all pending entries after a sync pass.
+     */
+    public synchronized void replacePendingEntries(List<PendingServiceEntry> entries) {
+        setPendingEntries(entries);
     }
     
     /**
      * Clear pending entries after successful sync
      */
-    public void clearPendingEntries() {
+    public synchronized void clearPendingEntries() {
         prefs.edit().remove(KEY_PENDING_ENTRIES).apply();
     }
     
@@ -93,6 +104,15 @@ public class OfflineCache {
      */
     public long getLastSyncTime() {
         return prefs.getLong(KEY_LAST_SYNC, 0);
+    }
+
+    /**
+     * Mark sync completion timestamp.
+     */
+    public void markSyncCompleted() {
+        synchronized (syncLock) {
+            prefs.edit().putLong(KEY_LAST_SYNC, System.currentTimeMillis()).apply();
+        }
     }
     
     /**
@@ -139,8 +159,13 @@ public class OfflineCache {
         
         public ServiceEntry toServiceEntry() {
             ServiceEntry entry = new ServiceEntry(providerId, customerId, 
-                new Timestamp(timestamp / 1000, 0), quantity, delivered);
+                new Timestamp(new Date(timestamp)), quantity, delivered);
             return entry;
         }
+    }
+
+    private void setPendingEntries(List<PendingServiceEntry> entries) {
+        String json = gson.toJson(entries == null ? new ArrayList<>() : entries);
+        prefs.edit().putString(KEY_PENDING_ENTRIES, json).apply();
     }
 }

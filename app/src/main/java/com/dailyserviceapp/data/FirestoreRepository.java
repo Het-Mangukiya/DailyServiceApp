@@ -319,13 +319,12 @@ public class FirestoreRepository {
     public void getCustomersByProvider(String providerId, OnCustomersLoadedListener listener) {
         customers()
                 .whereEqualTo("providerId", providerId)
-                .whereEqualTo("status", "ACTIVE")
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
                     List<Customer> customerList = new ArrayList<>();
                     for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
                         Customer customer = doc.toObject(Customer.class);
-                        if (customer != null) {
+                        if (customer != null && isActiveCustomer(doc)) {
                             customer.setId(doc.getId());
                             customerList.add(customer);
                         }
@@ -346,7 +345,6 @@ public class FirestoreRepository {
     public ListenerRegistration listenToCustomers(String providerId, OnCustomersLoadedListener listener) {
         return customers()
                 .whereEqualTo("providerId", providerId)
-                .whereEqualTo("status", "ACTIVE")
                 .addSnapshotListener((querySnapshot, error) -> {
                     if (error != null) {
                         listener.onError(error.getMessage());
@@ -357,7 +355,7 @@ public class FirestoreRepository {
                         List<Customer> customerList = new ArrayList<>();
                         for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
                             Customer customer = doc.toObject(Customer.class);
-                            if (customer != null) {
+                            if (customer != null && isActiveCustomer(doc)) {
                                 customer.setId(doc.getId());
                                 customerList.add(customer);
                             }
@@ -365,6 +363,12 @@ public class FirestoreRepository {
                         listener.onCustomersLoaded(customerList);
                     }
                 });
+    }
+
+    private boolean isActiveCustomer(DocumentSnapshot documentSnapshot) {
+        if (documentSnapshot == null) return false;
+        String status = documentSnapshot.getString("status");
+        return status == null || status.trim().isEmpty() || "ACTIVE".equalsIgnoreCase(status);
     }
     
     /**
@@ -378,6 +382,9 @@ public class FirestoreRepository {
      */
     public void getServiceEntriesByProviderAndDate(String providerId, Timestamp startDate, 
                                                     Timestamp endDate, OnServiceEntriesLoadedListener listener) {
+        final long startMillis = startDate != null ? startDate.toDate().getTime() : Long.MIN_VALUE;
+        final long endMillis = endDate != null ? endDate.toDate().getTime() : Long.MAX_VALUE;
+
         db.collection("serviceEntries")
                 .whereEqualTo("providerId", providerId)
                 .get()
@@ -390,9 +397,11 @@ public class FirestoreRepository {
                             
                             // Filter by date range in memory
                             Timestamp entryDate = entry.getDate();
-                            if (entryDate != null && 
-                                !entryDate.toDate().before(startDate.toDate()) && 
-                                !entryDate.toDate().after(endDate.toDate())) {
+                            if (entryDate != null) {
+                                long entryMillis = entryDate.toDate().getTime();
+                                if (entryMillis < startMillis || entryMillis > endMillis) {
+                                    continue;
+                                }
                                 entries.add(entry);
                             }
                         }
@@ -400,6 +409,75 @@ public class FirestoreRepository {
                     listener.onServiceEntriesLoaded(entries);
                 })
                 .addOnFailureListener(e -> listener.onError(e.getMessage()));
+    }
+
+    /**
+     * Gets all delivered service entries for a provider.
+     * Falls back to in-memory filtering when a composite index is unavailable.
+     */
+    public void getDeliveredServiceEntriesByProvider(String providerId, OnServiceEntriesLoadedListener listener) {
+        db.collection("serviceEntries")
+                .whereEqualTo("providerId", providerId)
+                .whereEqualTo("delivered", true)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    List<ServiceEntry> entries = new ArrayList<>();
+                    for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
+                        ServiceEntry entry = doc.toObject(ServiceEntry.class);
+                        if (entry != null) {
+                            entry.setId(doc.getId());
+                            entries.add(entry);
+                        }
+                    }
+                    listener.onServiceEntriesLoaded(entries);
+                })
+                .addOnFailureListener(e -> {
+                    // Fallback for environments without composite index support.
+                    db.collection("serviceEntries")
+                            .whereEqualTo("providerId", providerId)
+                            .get()
+                            .addOnSuccessListener(querySnapshot -> {
+                                List<ServiceEntry> entries = new ArrayList<>();
+                                for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
+                                    ServiceEntry entry = doc.toObject(ServiceEntry.class);
+                                    if (entry != null && entry.isDelivered()) {
+                                        entry.setId(doc.getId());
+                                        entries.add(entry);
+                                    }
+                                }
+                                listener.onServiceEntriesLoaded(entries);
+                            })
+                            .addOnFailureListener(inner -> listener.onError(inner.getMessage()));
+                });
+    }
+
+    /**
+     * Gets delivered service entries for a provider within a date range.
+     * Falls back to in-memory filtering if index is missing.
+     */
+    public void getDeliveredServiceEntriesByProviderInRange(String providerId, Timestamp startDate,
+                                                            Timestamp endDate, OnServiceEntriesLoadedListener listener) {
+        db.collection("serviceEntries")
+                .whereEqualTo("providerId", providerId)
+                .whereEqualTo("delivered", true)
+                .whereGreaterThanOrEqualTo("date", startDate)
+                .whereLessThan("date", endDate)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    List<ServiceEntry> entries = new ArrayList<>();
+                    for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
+                        ServiceEntry entry = doc.toObject(ServiceEntry.class);
+                        if (entry != null) {
+                            entry.setId(doc.getId());
+                            entries.add(entry);
+                        }
+                    }
+                    listener.onServiceEntriesLoaded(entries);
+                })
+                .addOnFailureListener(e -> {
+                    // Fallback: use broader query and filter in memory
+                    getServiceEntriesByProviderAndDate(providerId, startDate, endDate, listener);
+                });
     }
 
     /**
@@ -702,6 +780,104 @@ public class FirestoreRepository {
                         }
                     }
                     listener.onPaymentsLoaded(payments);
+                })
+                .addOnFailureListener(e -> listener.onError(e.getMessage()));
+    }
+
+    /**
+     * Gets all payments for a specific customer.
+     */
+    public void getPaymentsByCustomer(String customerId, OnPaymentsLoadedListener listener) {
+        db.collection("payments")
+                .whereEqualTo("customerId", customerId)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    List<Payment> payments = new ArrayList<>();
+                    for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
+                        Payment payment = doc.toObject(Payment.class);
+                        if (payment != null) {
+                            payment.setId(doc.getId());
+                            payments.add(payment);
+                        }
+                    }
+                    listener.onPaymentsLoaded(payments);
+                })
+                .addOnFailureListener(e -> listener.onError(e.getMessage()));
+    }
+
+    /**
+     * Gets payments for a provider within a date range.
+     */
+    public void getPaymentsByProviderAndDate(String providerId, Timestamp startDate, Timestamp endDate,
+                                             OnPaymentsLoadedListener listener) {
+        final long startMillis = startDate != null ? startDate.toDate().getTime() : Long.MIN_VALUE;
+        final long endMillis = endDate != null ? endDate.toDate().getTime() : Long.MAX_VALUE;
+
+        // Note: Using single where clause to avoid composite index requirement
+        // Filter by date in code instead
+        db.collection("payments")
+                .whereEqualTo("providerId", providerId)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    List<Payment> payments = new ArrayList<>();
+                    for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
+                        Payment payment = doc.toObject(Payment.class);
+                        if (payment != null) {
+                            payment.setId(doc.getId());
+                            // Filter by date in code
+                            Timestamp paymentDate = payment.getPaymentDate();
+                            if (paymentDate != null) {
+                                long paymentMillis = paymentDate.toDate().getTime();
+                                if (paymentMillis < startMillis || paymentMillis >= endMillis) {
+                                    continue;
+                                }
+                                payments.add(payment);
+                            }
+                        }
+                    }
+                    listener.onPaymentsLoaded(payments);
+                })
+                .addOnFailureListener(e -> listener.onError(e.getMessage()));
+    }
+
+    /**
+     * Gets all payments for a provider.
+     */
+    public void getPaymentsByProvider(String providerId, OnPaymentsLoadedListener listener) {
+        db.collection("payments")
+                .whereEqualTo("providerId", providerId)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    List<Payment> payments = new ArrayList<>();
+                    for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
+                        Payment payment = doc.toObject(Payment.class);
+                        if (payment != null) {
+                            payment.setId(doc.getId());
+                            payments.add(payment);
+                        }
+                    }
+                    listener.onPaymentsLoaded(payments);
+                })
+                .addOnFailureListener(e -> listener.onError(e.getMessage()));
+    }
+
+    /**
+     * Gets all bills for a provider.
+     */
+    public void getBillsByProvider(String providerId, OnBillsLoadedListener listener) {
+        db.collection("bills")
+                .whereEqualTo("providerId", providerId)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    List<Bill> bills = new ArrayList<>();
+                    for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
+                        Bill bill = doc.toObject(Bill.class);
+                        if (bill != null) {
+                            bill.setId(doc.getId());
+                            bills.add(bill);
+                        }
+                    }
+                    listener.onBillsLoaded(bills);
                 })
                 .addOnFailureListener(e -> listener.onError(e.getMessage()));
     }

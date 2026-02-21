@@ -11,15 +11,17 @@ import com.dailyserviceapp.R;
 import com.dailyserviceapp.core.base.BaseActivity;
 import com.dailyserviceapp.data.FirestoreRepository;
 import com.dailyserviceapp.data.models.Customer;
+import com.dailyserviceapp.databinding.ActivityCustomerEditBinding;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.Timestamp;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.List;
 
 public class CustomerEditActivity extends BaseActivity {
+
+    private ActivityCustomerEditBinding binding;
 
     private FirestoreRepository repo;
     private String customerId; // null for ADD, non-null for EDIT
@@ -28,7 +30,8 @@ public class CustomerEditActivity extends BaseActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_customer_edit);
+        binding = ActivityCustomerEditBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
         
         // CRITICAL: Check login session first
         if (!isLoggedIn()) {
@@ -40,18 +43,18 @@ public class CustomerEditActivity extends BaseActivity {
         repo = new FirestoreRepository();
         customerId = getIntent().getStringExtra("customerId");
 
-        TextInputEditText nameInput = findViewById(R.id.nameInput);
-        TextInputEditText phoneInput = findViewById(R.id.phoneInput);
-        TextInputEditText addressInput = findViewById(R.id.addressInput);
-        TextInputEditText serviceInput = findViewById(R.id.serviceInput);
-        TextInputEditText rateInput = findViewById(R.id.rateInput);
-        MaterialButton deleteButton = findViewById(R.id.deleteButton);
+        TextInputEditText nameInput = binding.nameInput;
+        TextInputEditText phoneInput = binding.phoneInput;
+        TextInputEditText addressInput = binding.addressInput;
+        TextInputEditText serviceInput = binding.serviceInput;
+        TextInputEditText rateInput = binding.rateInput;
+        MaterialButton deleteButton = binding.deleteButton;
 
         // If editing, load customer data
         if (customerId != null) {
             setTitle("Edit Customer");
             deleteButton.setVisibility(View.VISIBLE);
-            loadCustomerData(nameInput, phoneInput, addressInput, serviceInput, rateInput);
+            loadCustomerData();
         } else {
             setTitle("Add Customer");
             deleteButton.setVisibility(View.GONE);
@@ -60,7 +63,7 @@ public class CustomerEditActivity extends BaseActivity {
         // Delete button click
         deleteButton.setOnClickListener(v -> showDeleteConfirmation());
 
-        MaterialButton save = findViewById(R.id.saveButton);
+        MaterialButton save = binding.saveButton;
         save.setOnClickListener(v -> {
             String name = value(nameInput);
             String phone = value(phoneInput);
@@ -139,9 +142,7 @@ public class CustomerEditActivity extends BaseActivity {
         });
     }
 
-    private void loadCustomerData(TextInputEditText nameInput, TextInputEditText phoneInput, 
-                                   TextInputEditText addressInput, TextInputEditText serviceInput, 
-                                   TextInputEditText rateInput) {
+    private void loadCustomerData() {
         // Use repository instead of direct Firestore call (maintains consistency)
         repo.getCustomer(customerId, 
             doc -> {
@@ -149,11 +150,11 @@ public class CustomerEditActivity extends BaseActivity {
                     existingCustomer = doc.toObject(Customer.class);
                     if (existingCustomer != null) {
                         existingCustomer.setId(doc.getId());
-                        nameInput.setText(existingCustomer.getName());
-                        phoneInput.setText(existingCustomer.getPhone());
-                        addressInput.setText(existingCustomer.getAddress());
-                        serviceInput.setText(existingCustomer.getServiceType());
-                        rateInput.setText(String.valueOf(existingCustomer.getRatePerUnit()));
+                        binding.nameInput.setText(existingCustomer.getName());
+                        binding.phoneInput.setText(existingCustomer.getPhone());
+                        binding.addressInput.setText(existingCustomer.getAddress());
+                        binding.serviceInput.setText(existingCustomer.getServiceType());
+                        binding.rateInput.setText(String.valueOf(existingCustomer.getRatePerUnit()));
                     }
                 } else {
                     Toast.makeText(this, "Customer not found", Toast.LENGTH_SHORT).show();
@@ -206,5 +207,11 @@ public class CustomerEditActivity extends BaseActivity {
     private static String value(TextInputEditText editText) {
         if (editText == null || editText.getText() == null) return "";
         return editText.getText().toString().trim();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        binding = null;
     }
 }

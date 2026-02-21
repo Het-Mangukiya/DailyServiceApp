@@ -26,6 +26,9 @@ import com.google.zxing.qrcode.QRCodeWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
 public class QRCodeActivity extends BaseActivity {
 
@@ -101,6 +104,7 @@ public class QRCodeActivity extends BaseActivity {
                         
                         providerName.setText(displayName);
                         providerId.setText("ID: " + currentProviderId.substring(0, 8).toUpperCase());
+                        ensureProviderRecord(displayName);
                         
                         // Generate QR Code
                         generateQRCode(currentProviderId);
@@ -111,6 +115,7 @@ public class QRCodeActivity extends BaseActivity {
                                 : "Service Provider";
                         providerName.setText(displayName);
                         providerId.setText("ID: " + currentProviderId.substring(0, 8).toUpperCase());
+                        ensureProviderRecord(displayName);
                         
                         // Generate QR Code
                         generateQRCode(currentProviderId);
@@ -124,8 +129,36 @@ public class QRCodeActivity extends BaseActivity {
                             : "Service Provider";
                     providerName.setText(displayName);
                     providerId.setText("ID: " + currentProviderId.substring(0, 8).toUpperCase());
+                    ensureProviderRecord(displayName);
                     generateQRCode(currentProviderId);
                 });
+    }
+
+    private void ensureProviderRecord(String displayName) {
+        if (currentProviderId == null || currentProviderId.trim().isEmpty()) {
+            return;
+        }
+
+        Map<String, Object> providerData = new HashMap<>();
+        providerData.put("id", currentProviderId);
+        providerData.put("userId", currentProviderId);
+        providerData.put("providerCode", shortProviderCode(currentProviderId));
+        providerData.put("updatedAt", System.currentTimeMillis());
+
+        if (displayName != null && !displayName.trim().isEmpty()) {
+            providerData.put("name", displayName.trim());
+        }
+
+        firestore.collection("providers")
+            .document(currentProviderId)
+            .set(providerData, com.google.firebase.firestore.SetOptions.merge());
+    }
+
+    private String shortProviderCode(String id) {
+        if (id == null || id.trim().isEmpty()) return "";
+        String trimmed = id.trim();
+        if (trimmed.length() <= 8) return trimmed.toUpperCase(Locale.US);
+        return trimmed.substring(0, 8).toUpperCase(Locale.US);
     }
 
     private void generateQRCode(String data) {

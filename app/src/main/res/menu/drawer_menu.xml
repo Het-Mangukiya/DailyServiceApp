@@ -14,6 +14,11 @@
             android:title="My Customers" />
 
         <item
+            android:id="@+id/nav_join_requests"
+            android:icon="@android:drawable/ic_dialog_email"
+            android:title="Join Requests" />
+
+        <item
             android:id="@+id/nav_service_entry"
             android:icon="@android:drawable/ic_menu_edit"
             android:title="Service Entry" />

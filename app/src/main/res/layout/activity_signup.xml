@@ -134,11 +134,12 @@
                     android:textAppearance="@style/TextAppearance.App.Label"
                     android:layout_marginBottom="@dimen/spacing_sm" />
 
-                <Spinner
+                <androidx.appcompat.widget.AppCompatSpinner
                     android:id="@+id/roleSpinner"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/button_height"
-                    android:background="@android:drawable/btn_dropdown"
+                    android:entries="@array/role_options"
+                    android:popupBackground="?attr/colorSurface"
                     android:padding="@dimen/spacing_md"
                     android:layout_marginBottom="@dimen/spacing_lg" />
 
@@ -234,4 +235,3 @@
     </LinearLayout>
 
 </ScrollView>
-

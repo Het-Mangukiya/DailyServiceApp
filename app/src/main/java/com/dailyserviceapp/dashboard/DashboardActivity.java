@@ -15,6 +15,11 @@ import android.widget.TextView;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.lifecycle.LiveData;
+import androidx.paging.Pager;
+import androidx.paging.PagingConfig;
+import androidx.paging.PagingData;
+import androidx.paging.PagingLiveData;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -27,12 +32,18 @@ import com.dailyserviceapp.core.offline.OfflineCache;
 import com.dailyserviceapp.core.utils.Constants;
 import com.dailyserviceapp.core.utils.CurrencyUtils;
 import com.dailyserviceapp.data.models.Customer;
+import com.dailyserviceapp.databinding.ActivityHomeBinding;
+import com.dailyserviceapp.databinding.NavHeaderBinding;
 import com.dailyserviceapp.payment.PaymentActivity;
 import com.dailyserviceapp.profile.ProfileActivity;
+import com.dailyserviceapp.provider.JoinRequestsActivity;
 import com.dailyserviceapp.reports.ReportsActivity;
 import com.dailyserviceapp.service.ServiceEntryActivity;
 import com.dailyserviceapp.ui.CustomerAdapter;
+import com.dailyserviceapp.ui.CustomerPagingSource;
 import com.dailyserviceapp.ui.CustomerEditActivity;
+import com.dailyserviceapp.ui.PagedCustomerAdapter;
+import com.dailyserviceapp.ui.CustomerDetailActivity;
 import com.dailyserviceapp.utils.TestDataGenerator;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -43,6 +54,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -62,6 +74,8 @@ import java.util.List;
  * - Add customer via FAB (manual or QR code)
  */
 public class DashboardActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
+
+    private ActivityHomeBinding binding;
     
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
@@ -73,6 +87,7 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
     private com.google.android.material.chip.Chip syncStatusChip;
     private RecyclerView customerRecyclerView;
     private CustomerAdapter customerAdapter;
+    private PagedCustomerAdapter pagedCustomerAdapter;
     private LinearLayout emptyState;
     private EditText searchEditText;
     private ExtendedFloatingActionButton addCustomerFab;
@@ -85,11 +100,14 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
     private List<Customer> allCustomers = new ArrayList<>();
     private List<Customer> filteredCustomers = new ArrayList<>();
     private ListenerRegistration customersListener;
+    private LiveData<PagingData<Customer>> pagedCustomersLiveData;
+    private boolean pagingMode = true;
     
     // Search debouncing
     private final Handler searchHandler = new Handler(Looper.getMainLooper());
     private Runnable searchRunnable;
     private static final long SEARCH_DELAY_MS = 300;
+    private static final int PAGING_THRESHOLD = 500;
     
     // Sorting
     private enum SortOrder { NAME, SERVICE_TYPE, ADDRESS }
@@ -98,7 +116,8 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);
+        binding = ActivityHomeBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
         
         if (!isLoggedIn()) {
             navigateToLogin();
@@ -125,20 +144,20 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
     }
     
     private void initializeViews() {
-        drawerLayout = findViewById(R.id.drawerLayout);
-        navigationView = findViewById(R.id.navigationView);
-        toolbar = findViewById(R.id.topAppBar);
-        swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
+        drawerLayout = binding.drawerLayout;
+        navigationView = binding.navigationView;
+        toolbar = binding.topAppBar;
+        swipeRefreshLayout = null;
         
-        totalCustomersCount = findViewById(R.id.txtCustomerCount);
-        totalRevenueAmount = findViewById(R.id.txtTotalValue);
-        txtTodayDelivered = findViewById(R.id.txtTodayDelivered);
-        txtTodayAmount = findViewById(R.id.txtTodayAmount);
-        syncStatusChip = findViewById(R.id.syncStatusChip);
-        customerRecyclerView = findViewById(R.id.customerRecyclerView);
-        emptyState = findViewById(R.id.emptyStateLayout);
-        searchEditText = findViewById(R.id.edtSearch);
-        addCustomerFab = findViewById(R.id.fabAddCustomer);
+        totalCustomersCount = binding.txtCustomerCount;
+        totalRevenueAmount = binding.txtTotalValue;
+        txtTodayDelivered = binding.txtTodayDelivered;
+        txtTodayAmount = binding.txtTodayAmount;
+        syncStatusChip = binding.syncStatusChip;
+        customerRecyclerView = binding.customerRecyclerView;
+        emptyState = binding.emptyStateLayout;
+        searchEditText = binding.edtSearch;
+        addCustomerFab = binding.fabAddCustomer;
         // sortButton will be set from menu in onCreateOptionsMenu
         
         setSupportActionBar(toolbar);
@@ -168,9 +187,10 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         
         // Set user info in navigation header
         View headerView = navigationView.getHeaderView(0);
-        TextView userName = headerView.findViewById(R.id.userName);
-        TextView userEmail = headerView.findViewById(R.id.userEmail);
-        TextView userInitial = headerView.findViewById(R.id.userInitial);
+        NavHeaderBinding headerBinding = NavHeaderBinding.bind(headerView);
+        TextView userName = headerBinding.userName;
+        TextView userEmail = headerBinding.userEmail;
+        TextView userInitial = headerBinding.userInitial;
         
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser != null) {
@@ -187,13 +207,42 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
     }
     
     private void setupRecyclerView() {
-        customerAdapter = new CustomerAdapter(customer -> {
-            // Show options dialog: View Details or Toggle Vacation
-            showCustomerOptions(customer);
+        customerAdapter = new CustomerAdapter(new CustomerAdapter.OnCustomerActionListener() {
+            @Override
+            public void onViewProfile(Customer customer) {
+                openCustomerProfile(customer);
+            }
+
+            @Override
+            public void onEditCustomer(Customer customer) {
+                openCustomerEditor(customer);
+            }
+
+            @Override
+            public void onToggleVacation(Customer customer) {
+                toggleVacationMode(customer);
+            }
         });
-        customerAdapter.submit(filteredCustomers);
+
+        pagedCustomerAdapter = new PagedCustomerAdapter(new PagedCustomerAdapter.OnCustomerActionListener() {
+            @Override
+            public void onViewProfile(Customer customer) {
+                openCustomerProfile(customer);
+            }
+
+            @Override
+            public void onEditCustomer(Customer customer) {
+                openCustomerEditor(customer);
+            }
+
+            @Override
+            public void onToggleVacation(Customer customer) {
+                toggleVacationMode(customer);
+            }
+        });
+
         customerRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        customerRecyclerView.setAdapter(customerAdapter);
+        customerRecyclerView.setAdapter(pagedCustomerAdapter);
     }
     
     private void setupListeners() {
@@ -242,7 +291,6 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         // Listen to real-time customer updates
         customersListener = firestore.collection("customers")
             .whereEqualTo("providerId", providerId)
-            .whereEqualTo("status", "ACTIVE")
             .addSnapshotListener((queryDocumentSnapshots, error) -> {
                 if (error != null) {
                     showToast("Failed to load customers: " + error.getMessage());
@@ -254,20 +302,29 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
                 
                 if (queryDocumentSnapshots != null) {
                     allCustomers.clear();
-                    filteredCustomers.clear();
                     
                     for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                        String status = document.getString("status");
+                        if (status != null && !status.trim().isEmpty()
+                            && !"ACTIVE".equalsIgnoreCase(status)) {
+                            continue;
+                        }
                         Customer customer = document.toObject(Customer.class);
                         customer.setId(document.getId());
                         allCustomers.add(customer);
-                        filteredCustomers.add(customer);
                     }
                     
                     // Cache for offline access
                     offlineCache.cacheCustomers(allCustomers);
-                    
-                    // Update adapter using submit method
-                    customerAdapter.submit(filteredCustomers);
+
+                    String query = searchEditText != null && searchEditText.getText() != null
+                        ? searchEditText.getText().toString() : "";
+
+                    if (shouldUsePaging(query)) {
+                        showPagedCustomers();
+                    } else {
+                        filterCustomers(query);
+                    }
                     updateEmptyState();
                     
                     // Load analytics after customers are loaded to avoid race condition
@@ -360,11 +417,13 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
 
     private void loadTodaysSummaryOptimized(Timestamp startOfDay, Timestamp endExclusive,
                                             int totalCustomers, java.util.Map<String, Double> rateMap) {
+        // Optimized: Use single query with all filters and limit to 1000 docs
         firestore.collection("serviceEntries")
             .whereEqualTo("providerId", providerId)
             .whereEqualTo("delivered", true)
             .whereGreaterThanOrEqualTo("date", startOfDay)
             .whereLessThan("date", endExclusive)
+            .limit(1000) // Prevent excessive data transfer
             .get()
             .addOnSuccessListener(querySnapshot -> {
                 int deliveredCount = 0;
@@ -458,11 +517,13 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
 
     private void loadMonthlyRevenueOptimized(Timestamp startOfMonth, Timestamp endExclusive,
                                              java.util.Map<String, Double> rateMap) {
+        // Optimized: Add limit to prevent fetching too much data
         firestore.collection("serviceEntries")
             .whereEqualTo("providerId", providerId)
             .whereEqualTo("delivered", true)
             .whereGreaterThanOrEqualTo("date", startOfMonth)
             .whereLessThan("date", endExclusive)
+            .limit(10000) // Safety limit for monthly data
             .get()
             .addOnSuccessListener(querySnapshots -> {
                 double totalRevenue = 0;
@@ -530,12 +591,19 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
     }
     
     private void filterCustomers(String query) {
+        String normalizedQuery = query == null ? "" : query.trim();
+        if (shouldUsePaging(normalizedQuery)) {
+            showPagedCustomers();
+            updateEmptyState();
+            return;
+        }
+
         filteredCustomers.clear();
         
-        if (query == null || query.isEmpty()) {
+        if (normalizedQuery.isEmpty()) {
             filteredCustomers.addAll(allCustomers);
         } else {
-            String lowerCaseQuery = query.toLowerCase();
+            String lowerCaseQuery = normalizedQuery.toLowerCase();
             for (Customer customer : allCustomers) {
                 String name = customer.getName();
                 String serviceType = customer.getServiceType();
@@ -543,7 +611,7 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
                 
                 if ((name != null && name.toLowerCase().contains(lowerCaseQuery)) ||
                     (serviceType != null && serviceType.toLowerCase().contains(lowerCaseQuery)) ||
-                    (phone != null && phone.contains(query))) {
+                    (phone != null && phone.contains(normalizedQuery))) {
                     filteredCustomers.add(customer);
                 }
             }
@@ -552,13 +620,13 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         // Apply current sort order
         sortCustomers();
         
-        // Update adapter using submit method
-        customerAdapter.submit(filteredCustomers);
+        showLocalCustomers(filteredCustomers);
         updateEmptyState();
     }
     
     private void updateEmptyState() {
-        if (filteredCustomers.isEmpty()) {
+        boolean isEmpty = pagingMode ? allCustomers.isEmpty() : filteredCustomers.isEmpty();
+        if (isEmpty) {
             emptyState.setVisibility(View.VISIBLE);
             customerRecyclerView.setVisibility(View.GONE);
         } else {
@@ -590,6 +658,8 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
             startActivity(new Intent(this, ProviderDashboardActivity.class));
         } else if (id == R.id.nav_customers) {
             // Already on customers page, just close drawer
+        } else if (id == R.id.nav_join_requests) {
+            startActivity(new Intent(this, JoinRequestsActivity.class));
         } else if (id == R.id.nav_service_entry) {
             startActivity(new Intent(this, ServiceEntryActivity.class));
         } else if (id == R.id.nav_bills) {
@@ -764,27 +834,30 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
             .show();
     }
     
-    private void showCustomerOptions(Customer customer) {
-        String vacationText = customer.isOnVacation() ? "Remove from Vacation" : "Mark as On Vacation";
-        String[] options = {"View/Edit Details", vacationText};
-        
-        new MaterialAlertDialogBuilder(this)
-            .setTitle(customer.getName())
-            .setItems(options, (dialog, which) -> {
-                if (which == 0) {
-                    // View/Edit Details
-                    Intent intent = new Intent(this, CustomerEditActivity.class);
-                    intent.putExtra("customerId", customer.getId());
-                    startActivity(intent);
-                } else {
-                    // Toggle vacation mode
-                    toggleVacationMode(customer);
-                }
-            })
-            .show();
+    private void openCustomerProfile(Customer customer) {
+        if (customer == null || customer.getId() == null) {
+            return;
+        }
+        Intent intent = new Intent(this, CustomerDetailActivity.class);
+        intent.putExtra(CustomerDetailActivity.EXTRA_CUSTOMER_ID, customer.getId());
+        startActivity(intent);
+    }
+
+    private void openCustomerEditor(Customer customer) {
+        if (customer == null || customer.getId() == null) {
+            return;
+        }
+        Intent intent = new Intent(this, CustomerEditActivity.class);
+        intent.putExtra("customerId", customer.getId());
+        startActivity(intent);
     }
     
     private void toggleVacationMode(Customer customer) {
+        if (customer == null || customer.getId() == null) {
+            showToast("Customer details are incomplete");
+            return;
+        }
+
         boolean newVacationStatus = !customer.isOnVacation();
         
         firestore.collection("customers")
@@ -837,6 +910,52 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
                 break;
         }
     }
+
+    private boolean shouldUsePaging(String query) {
+        return (query == null || query.trim().isEmpty())
+            && currentSortOrder == SortOrder.NAME
+            && allCustomers.size() >= PAGING_THRESHOLD;
+    }
+
+    private void showPagedCustomers() {
+        pagingMode = true;
+        if (customerRecyclerView.getAdapter() != pagedCustomerAdapter) {
+            customerRecyclerView.setAdapter(pagedCustomerAdapter);
+        }
+        loadPagedCustomers();
+    }
+
+    private void showLocalCustomers(List<Customer> customers) {
+        pagingMode = false;
+        if (customerRecyclerView.getAdapter() != customerAdapter) {
+            customerRecyclerView.setAdapter(customerAdapter);
+        }
+        customerAdapter.submit(customers);
+    }
+
+    private void loadPagedCustomers() {
+        if (providerId == null || providerId.isEmpty()) {
+            return;
+        }
+
+        PagingConfig config = new PagingConfig(Constants.PAGE_SIZE, Constants.PAGE_SIZE, false);
+        Pager<DocumentSnapshot, Customer> pager = new Pager<>(
+            config,
+            () -> new CustomerPagingSource(firestore, providerId, Constants.PAGE_SIZE, "name")
+        );
+
+        LiveData<PagingData<Customer>> newLiveData = PagingLiveData.cachedIn(
+            PagingLiveData.getLiveData(pager),
+            getLifecycle()
+        );
+
+        if (pagedCustomersLiveData != null) {
+            pagedCustomersLiveData.removeObservers(this);
+        }
+        pagedCustomersLiveData = newLiveData;
+        pagedCustomersLiveData.observe(this,
+            pagingData -> pagedCustomerAdapter.submitData(getLifecycle(), pagingData));
+    }
     
     @Override
     protected void onDestroy() {
@@ -850,5 +969,6 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
             customersListener.remove();
             customersListener = null;
         }
+        binding = null;
     }
 }

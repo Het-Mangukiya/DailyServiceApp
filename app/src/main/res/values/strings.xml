@@ -47,8 +47,38 @@
     <string name="today_prefix">Today - %s</string>
     <string name="delivered_format">%1$d/%2$d delivered</string>
     <string name="rupee_zero">₹0</string>
-    
+    <string name="customer_home_welcome">Welcome, %1$s</string>
+    <string name="customer_home_provider_id">ID: %1$s</string>
+    <string name="btn_reject_request">Reject</string>
+    <string name="btn_approve_request">Approve</string>
+    <string name="action_edit_profile">Edit</string>
+    <string name="action_logout">Logout</string>
+    <string name="customer_default">Customer</string>
+    <string name="no_email">No email</string>
+    <string name="no_phone">No phone</string>
+    <string name="requested_at_format">Requested: %1$s</string>
+    <string name="requested_just_now">Requested: just now</string>
+    <string name="status_active">ACTIVE</string>
+    <string name="customer_home_join_title">Join Your Service Provider</string>
+    <string name="customer_home_join_subtitle">Scan provider QR or enter provider code manually.</string>
+    <string name="customer_home_provider_code_hint">Provider code</string>
+    <string name="customer_home_scan_qr">Scan QR</string>
+    <string name="customer_home_connect">Connect</string>
+    <string name="customer_home_linked_provider">Linked Provider</string>
+    <string name="customer_home_provider_name_placeholder">Provider name</string>
+    <string name="customer_home_provider_id_placeholder">ID: -</string>
+    <string name="customer_home_link_status_pending">Status: Pending</string>
+    <string name="customer_home_remove_link">Remove Link</string>
+    <string name="customer_home_open_dashboard">Open My Service Dashboard</string>
+    <string name="customer_home_personal_tracking_title">Personal Tracking</string>
+    <string name="customer_home_personal_tracking_description">If your provider is not using the app, manual personal tracking can be enabled next.</string>
+
     <!-- Test data -->
     <string name="test_generating">Generating test data…</string>
     <string name="test_generated">✅ Generated %1$d customers and %2$d service entries</string>
+
+    <string-array name="role_options">
+        <item>Service Provider</item>
+        <item>Customer</item>
+    </string-array>
 </resources>

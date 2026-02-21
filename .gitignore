@@ -28,3 +28,4 @@ test_*.py
 
 test_screenshots/
 
+.secrets/

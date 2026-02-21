@@ -377,11 +377,25 @@
                         android:text="👥 My Customers"
                         android:textSize="16sp"
                         android:padding="16dp"
+                        android:layout_marginBottom="12dp"
                         app:cornerRadius="12dp"
                         app:icon="@drawable/ic_person_24"
                         app:iconSize="24dp"
                         app:iconGravity="start"
                         style="@style/Widget.Material3.Button.TonalButton"/>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnJoinRequests"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="📨 Join Requests"
+                        android:textSize="16sp"
+                        android:padding="16dp"
+                        app:cornerRadius="12dp"
+                        app:icon="@android:drawable/ic_dialog_email"
+                        app:iconSize="22dp"
+                        app:iconGravity="start"
+                        style="@style/Widget.Material3.Button.TonalButton" />
 
                 </LinearLayout>
 

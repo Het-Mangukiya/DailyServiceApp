@@ -10,7 +10,7 @@
 
     <style name="Theme.DailyServiceApp" parent="Base.Theme.DailyServiceApp" />
     
-    <style name="Theme.DailyServiceApp.NoActionBar">
+    <style name="Theme.DailyServiceApp.NoActionBar" parent="Theme.DailyServiceApp">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
