@@ -118,6 +118,19 @@
     <string name="month_ring_format">Month:\n%1$s</string>
     <string name="phone_label">Phone: %1$s</string>
     <string name="address_label">Address: %1$s</string>
+    <string name="menu_dashboard">Dashboard</string>
+    <string name="menu_my_customers">My Customers</string>
+    <string name="menu_join_requests">Join Requests</string>
+    <string name="menu_service_entry">Service Entry</string>
+    <string name="menu_bills">Bills</string>
+    <string name="menu_reports">Reports</string>
+    <string name="menu_group_account">Account</string>
+    <string name="menu_group_settings">Settings</string>
+    <string name="menu_my_profile">My Profile</string>
+    <string name="menu_my_qr_code">My QR Code</string>
+    <string name="menu_generate_test_data">Generate Test Data</string>
+    <string name="menu_share_app">Share App</string>
+    <string name="menu_more">More</string>
 
     <!-- Test data -->
     <string name="test_generating">Generating test data…</string>

@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
         android:id="@+id/action_logout"
-        android:icon="@android:drawable/ic_lock_power_off"
+        android:icon="@drawable/ic_nav_logout"
         android:title="@string/action_logout"
+        app:iconTint="@android:color/white"
         android:showAsAction="ifRoom" />
 
 </menu>

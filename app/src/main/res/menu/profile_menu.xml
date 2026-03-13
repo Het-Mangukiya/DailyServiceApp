@@ -4,8 +4,9 @@
 
     <item
         android:id="@+id/action_edit_profile"
-        android:icon="@android:drawable/ic_menu_edit"
+        android:icon="@drawable/ic_edit_24"
         android:title="@string/action_edit_profile"
+        app:iconTint="@android:color/white"
         app:showAsAction="ifRoom" />
 
 </menu>

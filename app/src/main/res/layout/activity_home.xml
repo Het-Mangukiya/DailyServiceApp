@@ -10,7 +10,8 @@
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@drawable/bg_app_backdrop">
 
         <!-- TOP APP BAR -->
         <com.google.android.material.appbar.AppBarLayout
@@ -276,6 +277,10 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
+        app:itemBackground="@drawable/nav_item_background"
+        app:itemHorizontalPadding="16dp"
+        app:itemIconTint="@color/nav_item_icon_tint"
+        app:itemTextColor="@color/nav_item_text_tint"
         app:headerLayout="@layout/nav_header"
         app:menu="@menu/drawer_menu"/>
 
