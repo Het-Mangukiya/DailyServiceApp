@@ -2,9 +2,12 @@ package com.dailyserviceapp.customer;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 
 import com.dailyserviceapp.R;
 import com.dailyserviceapp.core.base.BaseActivity;
@@ -19,6 +22,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.SetOptions;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
@@ -42,6 +46,8 @@ public class CustomerHomeActivity extends BaseActivity {
     private FirebaseFirestore firestore;
     private String customerId;
     private GoogleSignInClient googleSignInClient;
+    private ListenerRegistration linkListener;
+    private boolean loading;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,12 +109,40 @@ public class CustomerHomeActivity extends BaseActivity {
         }
         binding.txtWelcome.setText(getString(R.string.customer_home_welcome, name));
 
+        binding.providerCodeInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                binding.providerCodeLayout.setError(null);
+                updateJoinActionEnabled();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
+        binding.providerCodeInput.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_GO) {
+                joinProviderFromInput();
+                return true;
+            }
+            return false;
+        });
+
         binding.btnScanProviderQr.setOnClickListener(v -> startQrScan());
         binding.btnJoinProvider.setOnClickListener(v -> joinProviderFromInput());
         binding.btnUnlinkProvider.setOnClickListener(v -> confirmUnlinkProvider());
         binding.btnOpenDashboard.setOnClickListener(v ->
             startActivity(new Intent(this, CustomerServiceDashboardActivity.class))
         );
+        updateJoinActionEnabled();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadLinkedProvider();
     }
 
     private void startQrScan() {
@@ -349,12 +383,20 @@ public class CustomerHomeActivity extends BaseActivity {
 
     private void loadLinkedProvider() {
         setLoading(true);
-        firestore.collection(Constants.COLLECTION_CUSTOMER_LINKS)
+        if (linkListener != null) {
+            linkListener.remove();
+        }
+        linkListener = firestore.collection(Constants.COLLECTION_CUSTOMER_LINKS)
             .document(customerId)
-            .get()
-            .addOnSuccessListener(documentSnapshot -> {
+            .addSnapshotListener((documentSnapshot, error) -> {
                 if (!isUiActive()) return;
                 setLoading(false);
+                if (error != null) {
+                    Log.e("CustomerHomeActivity", "Failed to watch provider link", error);
+                    showUnlinkedState();
+                    showToast("Could not load provider link");
+                    return;
+                }
                 if (documentSnapshot == null || !documentSnapshot.exists()) {
                     showUnlinkedState();
                     return;
@@ -376,12 +418,6 @@ public class CustomerHomeActivity extends BaseActivity {
                     status = "PENDING";
                 }
                 renderLinkedProvider(providerName, providerId, status);
-            })
-            .addOnFailureListener(e -> {
-                if (!isUiActive()) return;
-                setLoading(false);
-                showUnlinkedState();
-                showToast("Could not load provider link");
             });
     }
 
@@ -440,6 +476,7 @@ public class CustomerHomeActivity extends BaseActivity {
     private void showUnlinkedState() {
         binding.linkedProviderCard.setVisibility(View.GONE);
         binding.btnOpenDashboard.setVisibility(View.GONE);
+        updateJoinActionEnabled();
     }
 
     private String shortProviderId(String providerId) {
@@ -455,10 +492,19 @@ public class CustomerHomeActivity extends BaseActivity {
 
     private void setLoading(boolean loading) {
         if (!isUiActive()) return;
+        this.loading = loading;
         binding.progressBar.setVisibility(loading ? View.VISIBLE : View.GONE);
-        binding.btnJoinProvider.setEnabled(!loading);
         binding.btnScanProviderQr.setEnabled(!loading);
         binding.btnUnlinkProvider.setEnabled(!loading);
+        updateJoinActionEnabled();
+    }
+
+    private void updateJoinActionEnabled() {
+        if (binding == null) return;
+        String code = binding.providerCodeInput.getText() != null
+            ? binding.providerCodeInput.getText().toString().trim()
+            : "";
+        binding.btnJoinProvider.setEnabled(!loading && !code.isEmpty());
     }
 
     private boolean isUiActive() {
@@ -467,6 +513,10 @@ public class CustomerHomeActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
+        if (linkListener != null) {
+            linkListener.remove();
+            linkListener = null;
+        }
         super.onDestroy();
         binding = null;
     }

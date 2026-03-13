@@ -1,5 +1,6 @@
 package com.dailyserviceapp.customer;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -49,6 +50,7 @@ public class CustomerServiceDashboardActivity extends BaseActivity {
     private final List<Payment> payments = new ArrayList<>();
 
     private final AtomicInteger pendingLoads = new AtomicInteger(0);
+    private boolean skipNextResumeRefresh = true;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -82,6 +84,16 @@ public class CustomerServiceDashboardActivity extends BaseActivity {
         loadActiveLinkAndDashboard();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (skipNextResumeRefresh) {
+            skipNextResumeRefresh = false;
+            return;
+        }
+        loadActiveLinkAndDashboard();
+    }
+
     private void loadActiveLinkAndDashboard() {
         setLoading(true);
         firestore.collection(Constants.COLLECTION_CUSTOMER_LINKS)
@@ -92,7 +104,7 @@ public class CustomerServiceDashboardActivity extends BaseActivity {
                 if (linkDoc == null || !linkDoc.exists()) {
                     setLoading(false);
                     showToast("No provider link found. Please connect first.");
-                    finish();
+                    openCustomerHome();
                     return;
                 }
 
@@ -100,7 +112,7 @@ public class CustomerServiceDashboardActivity extends BaseActivity {
                 if (!"ACTIVE".equals(status)) {
                     setLoading(false);
                     showToast("Provider link is " + (status.isEmpty() ? "PENDING" : status) + ".");
-                    finish();
+                    openCustomerHome();
                     return;
                 }
 
@@ -109,7 +121,7 @@ public class CustomerServiceDashboardActivity extends BaseActivity {
                 if (providerId.isEmpty()) {
                     setLoading(false);
                     showToast("Invalid provider link. Please reconnect.");
-                    finish();
+                    openCustomerHome();
                     return;
                 }
 
@@ -451,6 +463,14 @@ public class CustomerServiceDashboardActivity extends BaseActivity {
         if (!isUiActive()) return;
         binding.progressBar.setVisibility(loading ? View.VISIBLE : View.GONE);
         binding.btnRefreshData.setEnabled(!loading);
+    }
+
+    private void openCustomerHome() {
+        if (!isUiActive()) return;
+        Intent intent = new Intent(this, CustomerHomeActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(intent);
+        finish();
     }
 
     private boolean isUiActive() {
