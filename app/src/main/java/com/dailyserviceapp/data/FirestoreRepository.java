@@ -10,6 +10,7 @@ import com.dailyserviceapp.data.models.Payment;
 import com.dailyserviceapp.data.models.ServiceEntry;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
@@ -540,8 +541,7 @@ public class FirestoreRepository {
                                                    Timestamp endDate, OnServiceEntriesLoadedListener listener) {
         final long startMillis = startDate != null ? startDate.toDate().getTime() : Long.MIN_VALUE;
         final long endMillis = endDate != null ? endDate.toDate().getTime() : Long.MAX_VALUE;
-        db.collection("serviceEntries")
-                .whereEqualTo("customerId", customerId)
+        scopedCustomerQuery("serviceEntries", customerId)
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
                     List<ServiceEntry> entries = new ArrayList<>();
@@ -606,8 +606,16 @@ public class FirestoreRepository {
                                                  double deliveryCost, OnSaveCompleteListener listener) {
         // First check for duplicate entry (same customer + same day)
         // We'll query all entries for this customer and check dates in memory
-        db.collection("serviceEntries")
-                .whereEqualTo("customerId", customerId)
+        Query duplicateCheckQuery = db.collection("serviceEntries")
+                .whereEqualTo("customerId", customerId);
+        String providerScope = safeTrim(entry != null ? entry.getProviderId() : "");
+        if (providerScope.isEmpty()) {
+            providerScope = safeTrim(getCurrentAuthUid());
+        }
+        if (!providerScope.isEmpty() && !providerScope.equals(customerId)) {
+            duplicateCheckQuery = duplicateCheckQuery.whereEqualTo("providerId", providerScope);
+        }
+        duplicateCheckQuery
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
                     // Check if any entry matches the same day
@@ -718,8 +726,7 @@ public class FirestoreRepository {
      * @param listener Callback for results
      */
     public void getBillsByCustomer(String customerId, OnBillsLoadedListener listener) {
-        db.collection("bills")
-                .whereEqualTo("customerId", customerId)
+        scopedCustomerQuery("bills", customerId)
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
                     List<Bill> bills = new ArrayList<>();
@@ -842,8 +849,7 @@ public class FirestoreRepository {
      * Gets all payments for a specific customer.
      */
     public void getPaymentsByCustomer(String customerId, OnPaymentsLoadedListener listener) {
-        db.collection("payments")
-                .whereEqualTo("customerId", customerId)
+        scopedCustomerQuery("payments", customerId)
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
                     List<Payment> payments = new ArrayList<>();
@@ -949,6 +955,30 @@ public class FirestoreRepository {
         }
         String message = firestoreException.getMessage();
         return message != null && message.toLowerCase().contains("index");
+    }
+
+    /**
+     * For provider sessions, adds providerId==authUid so queries satisfy Firestore rules.
+     * For customer sessions (authUid == customerId), only customerId filter is required.
+     */
+    private Query scopedCustomerQuery(String collection, String customerId) {
+        Query query = db.collection(collection).whereEqualTo("customerId", customerId);
+        String authUid = safeTrim(getCurrentAuthUid());
+        if (!authUid.isEmpty() && !authUid.equals(customerId)) {
+            query = query.whereEqualTo("providerId", authUid);
+        }
+        return query;
+    }
+
+    private String getCurrentAuthUid() {
+        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+            return "";
+        }
+        return FirebaseAuth.getInstance().getCurrentUser().getUid();
+    }
+
+    private String safeTrim(String value) {
+        return value == null ? "" : value.trim();
     }
     
     /**
