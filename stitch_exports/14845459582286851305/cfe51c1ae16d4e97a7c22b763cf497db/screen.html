@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Bills &amp; Ledger Insights V2</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              colors: {
+                "primary": "#13ecd6",
+                "background-light": "#f6f8f8",
+                "background-dark": "#102220",
+                "teal-custom": "#4DB6AC",
+                "green-custom": "#66BB6A",
+                "amber-custom": "#FFA726",
+                "text-main": "#1C1B1F",
+              },
+              fontFamily: {
+                "display": ["Work Sans", "sans-serif"]
+              },
+              borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+            },
+          },
+        }
+    </script>
+<style>
+        body { font-family: 'Work Sans', sans-serif; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-text-main font-display">
+<div class="relative flex h-screen w-full flex-col overflow-hidden max-w-[430px] mx-auto bg-white shadow-2xl">
+<!-- Header -->
+<header class="flex items-center justify-between px-4 py-4 bg-white border-b border-slate-100">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-text-main cursor-pointer">arrow_back_ios</span>
+<h1 class="text-xl font-bold tracking-tight">Bills &amp; Ledger Insights</h1>
+</div>
+<div class="flex gap-3">
+<span class="material-symbols-outlined text-text-main cursor-pointer">search</span>
+<span class="material-symbols-outlined text-text-main cursor-pointer">more_vert</span>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="flex-1 overflow-y-auto hide-scrollbar pb-24">
+<!-- Chart Toggle Section -->
+<div class="px-4 py-4">
+<div class="flex h-12 w-full items-center justify-center rounded-xl bg-slate-100 p-1">
+<label class="flex cursor-pointer h-full grow items-center justify-center rounded-lg px-2 has-[:checked]:bg-white has-[:checked]:shadow-sm text-slate-500 has-[:checked]:text-text-main transition-all duration-200">
+<span class="text-sm font-semibold">Pie Chart</span>
+<input checked="" class="hidden" name="chart-view" type="radio"/>
+</label>
+<label class="flex cursor-pointer h-full grow items-center justify-center rounded-lg px-2 has-[:checked]:bg-white has-[:checked]:shadow-sm text-slate-500 has-[:checked]:text-text-main transition-all duration-200">
+<span class="text-sm font-semibold">Bar Chart</span>
+<input class="hidden" name="chart-view" type="radio"/>
+</label>
+</div>
+</div>
+<!-- Collection Breakdown Visualization -->
+<div class="px-4 mb-6">
+<div class="bg-white rounded-xl p-6 border border-slate-100 shadow-sm flex flex-col items-center">
+<div class="relative flex items-center justify-center w-48 h-48 mb-4">
+<!-- Custom CSS Conic Gradient for Pie Chart Visualization -->
+<div class="w-full h-full rounded-full" style="background: conic-gradient(#66BB6A 0% 65%, #4DB6AC 65% 85%, #FFA726 85% 100%);">
+</div>
+<div class="absolute inset-8 bg-white rounded-full flex flex-col items-center justify-center">
+<span class="text-xs text-slate-400 font-medium">Total Collection</span>
+<span class="text-2xl font-bold">$4,250</span>
+</div>
+</div>
+<div class="flex justify-between w-full mt-2">
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-green-custom"></div>
+<span class="text-xs font-medium text-slate-600">Paid (65%)</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-teal-custom"></div>
+<span class="text-xs font-medium text-slate-600">Pending (20%)</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-amber-custom"></div>
+<span class="text-xs font-medium text-slate-600">Overdue (15%)</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Summary Cards -->
+<div class="px-4 grid grid-cols-3 gap-3 mb-8">
+<div class="bg-white p-3 rounded-xl border border-slate-100 shadow-sm">
+<p class="text-[10px] font-medium text-slate-400 uppercase tracking-wider mb-1">Outstanding</p>
+<p class="text-base font-bold text-text-main">$1,240</p>
+</div>
+<div class="bg-primary/10 p-3 rounded-xl border border-primary/20 shadow-sm">
+<p class="text-[10px] font-medium text-slate-500 uppercase tracking-wider mb-1">This Month</p>
+<p class="text-base font-bold text-text-main">$3,100</p>
+</div>
+<div class="bg-white p-3 rounded-xl border border-slate-100 shadow-sm">
+<p class="text-[10px] font-medium text-slate-400 uppercase tracking-wider mb-1">Projected</p>
+<p class="text-base font-bold text-text-main">$5,800</p>
+</div>
+</div>
+<!-- Quick Filters -->
+<div class="px-4 mb-4">
+<h3 class="text-base font-bold mb-3 px-1">Customer Ledger</h3>
+<div class="flex gap-2 overflow-x-auto hide-scrollbar">
+<button class="px-5 py-2 rounded-full bg-primary text-text-main text-sm font-semibold shadow-sm">All</button>
+<button class="px-5 py-2 rounded-full bg-white border border-slate-200 text-slate-600 text-sm font-semibold">Overdue</button>
+<button class="px-5 py-2 rounded-full bg-white border border-slate-200 text-slate-600 text-sm font-semibold">Paid</button>
+<button class="px-5 py-2 rounded-full bg-white border border-slate-200 text-slate-600 text-sm font-semibold">Pending</button>
+</div>
+</div>
+<!-- Ledger List -->
+<div class="px-4 space-y-3">
+<!-- Ledger Item 1 -->
+<div class="bg-white p-4 rounded-xl border border-slate-100 shadow-sm flex flex-col">
+<div class="flex justify-between items-start mb-3">
+<div>
+<p class="text-base font-bold text-text-main">Alex Harrison</p>
+<p class="text-xs text-slate-400">Premium Whole Milk (2L)</p>
+</div>
+<div class="text-right">
+<p class="text-lg font-bold text-amber-custom">$84.50</p>
+<span class="inline-block px-2 py-0.5 bg-amber-custom/10 text-amber-custom text-[10px] font-bold rounded-full uppercase">Overdue</span>
+</div>
+</div>
+<div class="flex justify-between border-t border-slate-50 pt-3 text-[11px]">
+<div class="flex flex-col">
+<span class="text-slate-400 uppercase font-medium">Paid Till</span>
+<span class="text-text-main font-semibold">Oct 12, 2023</span>
+</div>
+<div class="flex flex-col text-right">
+<span class="text-slate-400 uppercase font-medium">Due From</span>
+<span class="text-text-main font-semibold">Oct 13, 2023</span>
+</div>
+</div>
+</div>
+<!-- Ledger Item 2 -->
+<div class="bg-white p-4 rounded-xl border border-slate-100 shadow-sm flex flex-col">
+<div class="flex justify-between items-start mb-3">
+<div>
+<p class="text-base font-bold text-text-main">Sarah Jenkins</p>
+<p class="text-xs text-slate-400">Regular Skimmed (1L)</p>
+</div>
+<div class="text-right">
+<p class="text-lg font-bold text-text-main">$42.00</p>
+<span class="inline-block px-2 py-0.5 bg-green-custom/10 text-green-custom text-[10px] font-bold rounded-full uppercase">Settled</span>
+</div>
+</div>
+<div class="flex justify-between border-t border-slate-50 pt-3 text-[11px]">
+<div class="flex flex-col">
+<span class="text-slate-400 uppercase font-medium">Paid Till</span>
+<span class="text-text-main font-semibold">Nov 01, 2023</span>
+</div>
+<div class="flex flex-col text-right">
+<span class="text-slate-400 uppercase font-medium">Due From</span>
+<span class="text-text-main font-semibold">Nov 02, 2023</span>
+</div>
+</div>
+</div>
+<!-- Ledger Item 3 -->
+<div class="bg-white p-4 rounded-xl border border-slate-100 shadow-sm flex flex-col">
+<div class="flex justify-between items-start mb-3">
+<div>
+<p class="text-base font-bold text-text-main">Marcus Thorne</p>
+<p class="text-xs text-slate-400">Bulk Order (Daily)</p>
+</div>
+<div class="text-right">
+<p class="text-lg font-bold text-amber-custom">$156.00</p>
+<span class="inline-block px-2 py-0.5 bg-amber-custom/10 text-amber-custom text-[10px] font-bold rounded-full uppercase">Overdue</span>
+</div>
+</div>
+<div class="flex justify-between border-t border-slate-50 pt-3 text-[11px]">
+<div class="flex flex-col">
+<span class="text-slate-400 uppercase font-medium">Paid Till</span>
+<span class="text-text-main font-semibold">Sep 28, 2023</span>
+</div>
+<div class="flex flex-col text-right">
+<span class="text-slate-400 uppercase font-medium">Due From</span>
+<span class="text-text-main font-semibold">Sep 29, 2023</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Floating Action Button -->
+<button class="absolute bottom-24 right-6 w-14 h-14 bg-primary text-text-main rounded-full flex items-center justify-center shadow-lg hover:scale-105 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-2xl">file_download</span>
+</button>
+<!-- Bottom Navigation Bar -->
+<nav class="absolute bottom-0 left-0 right-0 bg-white border-t border-slate-100 px-6 py-3 flex justify-between items-center">
+<a class="flex flex-col items-center gap-1 text-slate-400" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="text-[10px] font-semibold">Home</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-primary" href="#">
+<span class="material-symbols-outlined fill-current" style="font-variation-settings: 'FILL' 1;">description</span>
+<span class="text-[10px] font-semibold">Ledger</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="text-[10px] font-semibold">Customers</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-[10px] font-semibold">Settings</span>
+</a>
+</nav>
+</div>
+</body></html>

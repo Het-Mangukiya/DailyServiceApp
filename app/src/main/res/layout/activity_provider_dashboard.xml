@@ -16,14 +16,14 @@
         <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/md_theme_primary"
+            android:background="@drawable/bg_toolbar_gradient"
             app:elevation="4dp">
 
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:background="@color/md_theme_primary"
+                android:background="@drawable/bg_toolbar_gradient"
                 app:title="@string/provider_dashboard_title"
                 app:titleTextColor="@android:color/white"/>
 
@@ -346,7 +346,7 @@
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btnServiceEntry"
-                            style="@style/Widget.Material3.Button.TonalButton"
+                            style="@style/Widget.App.Button.Tonal"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="12dp"
@@ -355,12 +355,11 @@
                             android:textSize="15sp"
                             app:cornerRadius="12dp"
                             app:icon="@drawable/ic_nav_service"
-                            app:iconGravity="textStart"
-                            app:iconTint="@color/md_theme_primary" />
+                            app:iconGravity="textStart" />
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btnBills"
-                            style="@style/Widget.Material3.Button.TonalButton"
+                            style="@style/Widget.App.Button.Tonal"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="10dp"
@@ -369,12 +368,11 @@
                             android:textSize="15sp"
                             app:cornerRadius="12dp"
                             app:icon="@drawable/ic_nav_bills"
-                            app:iconGravity="textStart"
-                            app:iconTint="@color/md_theme_primary" />
+                            app:iconGravity="textStart" />
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btnCustomers"
-                            style="@style/Widget.Material3.Button.TonalButton"
+                            style="@style/Widget.App.Button.Tonal"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="10dp"
@@ -383,12 +381,11 @@
                             android:textSize="15sp"
                             app:cornerRadius="12dp"
                             app:icon="@drawable/ic_nav_customers"
-                            app:iconGravity="textStart"
-                            app:iconTint="@color/md_theme_primary" />
+                            app:iconGravity="textStart" />
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btnJoinRequests"
-                            style="@style/Widget.Material3.Button.TonalButton"
+                            style="@style/Widget.App.Button.Tonal"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="10dp"
@@ -397,8 +394,7 @@
                             android:textSize="15sp"
                             app:cornerRadius="12dp"
                             app:icon="@drawable/ic_nav_requests"
-                            app:iconGravity="textStart"
-                            app:iconTint="@color/md_theme_primary" />
+                            app:iconGravity="textStart" />
 
                     </LinearLayout>
 
