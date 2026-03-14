@@ -26,7 +26,7 @@
             android:id="@+id/customerInitial"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:text="A"
+            android:text="@string/initial_placeholder"
             android:textSize="20sp"
             android:textStyle="bold"
             android:textColor="@android:color/white"
@@ -47,7 +47,7 @@
                 android:id="@+id/customerName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Customer Name"
+                android:text="@string/customer_default"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:textColor="@color/md_theme_on_surface"
@@ -64,7 +64,7 @@
                     android:id="@+id/customerService"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Milk"
+                    android:text="@string/service_option_milk"
                     android:textSize="14sp"
                     android:textColor="@color/text_muted"
                     android:drawablePadding="4dp"/>
@@ -72,7 +72,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text=" • "
+                    android:text="@string/dot_separator"
                     android:textColor="@color/text_muted"
                     android:layout_marginStart="4dp"
                     android:layout_marginEnd="4dp"/>
@@ -81,7 +81,7 @@
                     android:id="@+id/customerRate"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="₹60/day"
+                    android:text="@string/rate_day_placeholder"
                     android:textSize="14sp"
                     android:textColor="@color/text_muted"/>
 
@@ -92,7 +92,7 @@
                 android:id="@+id/customerPending"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Pending: ₹500"
+                android:text="@string/pending_placeholder"
                 android:textSize="13sp"
                 android:textColor="@color/md_theme_error"
                 android:textStyle="bold"
@@ -115,15 +115,17 @@
                 android:id="@+id/vacationBadge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="🏖️"
-                android:textSize="24sp"
+                android:text="@string/on_vacation"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:textColor="@color/md_theme_error"
                 android:visibility="gone"/>
 
             <TextView
                 android:id="@+id/statusBadge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="✓"
+                android:text="@string/check_mark"
                 android:textSize="20sp"
                 android:textColor="@color/md_theme_primary"
                 android:textStyle="bold"
@@ -133,7 +135,7 @@
                 android:id="@+id/statusText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Delivered"
+                android:text="@string/delivered_label"
                 android:textSize="11sp"
                 android:textColor="@color/md_theme_primary"
                 android:textStyle="bold"

@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -26,6 +27,9 @@ import com.google.zxing.qrcode.QRCodeWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
 public class QRCodeActivity extends BaseActivity {
 
@@ -100,20 +104,16 @@ public class QRCodeActivity extends BaseActivity {
                                 : (name != null ? name : "Service Provider");
                         
                         providerName.setText(displayName);
-                        providerId.setText("ID: " + currentProviderId.substring(0, 8).toUpperCase());
-                        
-                        // Generate QR Code
-                        generateQRCode(currentProviderId);
+                        providerId.setText("ID: " + shortProviderCode(currentProviderId));
+                        ensureProviderRecord(displayName, () -> generateQRCode(currentProviderId));
                     } else {
                         // Use basic user info if provider document doesn't exist
                         String displayName = user.getDisplayName() != null 
                                 ? user.getDisplayName() 
                                 : "Service Provider";
                         providerName.setText(displayName);
-                        providerId.setText("ID: " + currentProviderId.substring(0, 8).toUpperCase());
-                        
-                        // Generate QR Code
-                        generateQRCode(currentProviderId);
+                        providerId.setText("ID: " + shortProviderCode(currentProviderId));
+                        ensureProviderRecord(displayName, () -> generateQRCode(currentProviderId));
                     }
                 })
                 .addOnFailureListener(e -> {
@@ -123,9 +123,66 @@ public class QRCodeActivity extends BaseActivity {
                             ? user.getDisplayName() 
                             : "Service Provider";
                     providerName.setText(displayName);
-                    providerId.setText("ID: " + currentProviderId.substring(0, 8).toUpperCase());
-                    generateQRCode(currentProviderId);
+                    providerId.setText("ID: " + shortProviderCode(currentProviderId));
+                    ensureProviderRecord(displayName, () -> generateQRCode(currentProviderId));
                 });
+    }
+
+    private void ensureProviderRecord(String displayName, Runnable onReady) {
+        if (currentProviderId == null || currentProviderId.trim().isEmpty()) {
+            if (onReady != null) {
+                onReady.run();
+            }
+            return;
+        }
+        firestore.collection("providers")
+            .document(currentProviderId)
+            .get()
+            .addOnSuccessListener(existingDoc -> {
+                Map<String, Object> providerData = new HashMap<>();
+                providerData.put("id", currentProviderId);
+                providerData.put("userId", currentProviderId);
+                providerData.put("providerCode", shortProviderCode(currentProviderId));
+                providerData.put("updatedAt", System.currentTimeMillis());
+
+                boolean hasExistingName = existingDoc != null
+                    && existingDoc.exists()
+                    && existingDoc.getString("name") != null
+                    && !existingDoc.getString("name").trim().isEmpty();
+                if (!hasExistingName && displayName != null && !displayName.trim().isEmpty()) {
+                    providerData.put("name", displayName.trim());
+                }
+
+                firestore.collection("providers")
+                    .document(currentProviderId)
+                    .set(providerData, com.google.firebase.firestore.SetOptions.merge())
+                    .addOnSuccessListener(unused -> {
+                        if (onReady != null) {
+                            onReady.run();
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.e("QRCodeActivity", "Failed to ensure provider record for " + currentProviderId, e);
+                        showToast("Failed to sync provider code");
+                        if (onReady != null) {
+                            onReady.run();
+                        }
+                    });
+            })
+            .addOnFailureListener(e -> {
+                Log.e("QRCodeActivity", "Failed to read provider record for " + currentProviderId, e);
+                showToast("Failed to verify provider profile");
+                if (onReady != null) {
+                    onReady.run();
+                }
+            });
+    }
+
+    private String shortProviderCode(String id) {
+        if (id == null || id.trim().isEmpty()) return "";
+        String trimmed = id.trim();
+        if (trimmed.length() <= 8) return trimmed.toUpperCase(Locale.US);
+        return trimmed.substring(0, 8).toUpperCase(Locale.US);
     }
 
     private void generateQRCode(String data) {

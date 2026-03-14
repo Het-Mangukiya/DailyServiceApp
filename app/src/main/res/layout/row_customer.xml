@@ -2,117 +2,183 @@
 <com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/Widget.App.Card.Elevated"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="@dimen/spacing_sm"
-    android:clickable="true"
-    android:focusable="true"
-    android:foreground="?android:attr/selectableItemBackground"
-    app:cardCornerRadius="@dimen/corner_radius_md"
-    app:cardElevation="@dimen/elevation_base"
-    app:cardBackgroundColor="@color/md_theme_surface">
+    android:layout_marginBottom="@dimen/spacing_sm">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:animateLayoutChanges="true"
+        android:orientation="vertical"
         android:padding="@dimen/spacing_base">
 
-        <!-- Customer Avatar -->
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/customerAvatar"
-            android:layout_width="@dimen/card_size_lg"
-            android:layout_height="@dimen/card_size_lg"
-            app:cardCornerRadius="@dimen/corner_radius_pill"
-            app:cardBackgroundColor="@color/color_customers"
-            app:cardElevation="0dp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/customerInitial"
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/customerAvatar"
+                android:layout_width="@dimen/card_size_lg"
+                android:layout_height="@dimen/card_size_lg"
+                app:cardBackgroundColor="@color/color_customers"
+                app:cardCornerRadius="@dimen/corner_radius_pill"
+                app:cardElevation="0dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/customerInitial"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/text_size_lg"
+                    android:textStyle="bold" />
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <LinearLayout
+                android:id="@+id/customerInfo"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/spacing_base"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="@id/customerAvatar"
+                app:layout_constraintEnd_toStartOf="@id/customerMenuButton"
+                app:layout_constraintStart_toEndOf="@id/customerAvatar"
+                app:layout_constraintTop_toTopOf="@id/customerAvatar">
+
+                <TextView
+                    android:id="@+id/customerName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:textColor="@color/md_theme_on_surface"
+                    android:textSize="@dimen/text_size_base"
+                    android:textStyle="bold"
+                    tools:text="Customer Name" />
+
+                <TextView
+                    android:id="@+id/customerService"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_xs"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:textColor="@color/md_theme_on_surface_variant"
+                    android:textSize="@dimen/text_size_sm"
+                    tools:text="Service Type · ₹0.00" />
+
+                <TextView
+                    android:id="@+id/customerPhone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_xs"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:textColor="@color/md_theme_on_surface_variant"
+                    android:textSize="@dimen/text_size_sm"
+                    tools:text="9876543210" />
+
+                <TextView
+                    android:id="@+id/vacationBadge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_xs"
+                    android:text="@string/on_vacation"
+                    android:textColor="@color/md_theme_error"
+                    android:textSize="@dimen/text_size_xs"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+
+            </LinearLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/customerMenuButton"
+                style="@style/Widget.Material3.Button.IconButton"
+                android:layout_width="@dimen/card_size_md"
+                android:layout_height="@dimen/card_size_md"
+                android:contentDescription="@string/customer_actions_expand"
+                android:padding="0dp"
+                app:icon="@drawable/ic_expand_more"
+                app:iconSize="20dp"
+                app:iconTint="@color/md_theme_on_surface"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/customerStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_xs"
+                android:text="@string/status_active"
+                android:textColor="@color/color_on_customers"
+                android:textSize="@dimen/text_size_sm"
+                app:chipBackgroundColor="@color/color_customers"
+                app:chipStrokeWidth="0dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/customerMenuButton"
+                tools:text="ACTIVE" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/expandableActions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_sm"
+            android:visibility="gone"
+            app:cardBackgroundColor="@color/md_theme_surface_variant"
+            app:cardCornerRadius="@dimen/corner_radius_base"
+            app:cardElevation="0dp">
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:textSize="@dimen/text_size_lg"
-                android:textStyle="bold"
-                android:textColor="@android:color/white"
-                android:gravity="center" />
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/spacing_xs">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/viewProfileButton"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="start|center_vertical"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:text="@string/view_profile"
+                    android:textAllCaps="false" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/editCustomerButton"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="start|center_vertical"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:text="@string/edit_customer"
+                    android:textAllCaps="false" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/vacationActionButton"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="start|center_vertical"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:text="@string/mark_on_vacation"
+                    android:textAllCaps="false" />
+
+            </LinearLayout>
 
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Customer Info -->
-        <LinearLayout
-            android:id="@+id/customerInfo"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginStart="@dimen/spacing_base"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@id/customerAvatar"
-            app:layout_constraintEnd_toStartOf="@id/customerStatus">
-
-            <TextView
-                android:id="@+id/customerName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Customer Name"
-                android:textSize="@dimen/text_size_base"
-                android:textStyle="bold"
-                android:textColor="@color/md_theme_on_surface"
-                android:maxLines="1"
-                android:ellipsize="end" />
-
-            <TextView
-                android:id="@+id/customerService"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Service Type · ₹0.00/unit"
-                android:textSize="@dimen/text_size_sm"
-                android:textColor="@color/md_theme_on_surface_variant"
-                android:maxLines="1"
-                android:ellipsize="end"
-                android:layout_marginTop="@dimen/spacing_xs" />
-
-            <TextView
-                android:id="@+id/customerPhone"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Phone: 9876543210"
-                android:textSize="@dimen/text_size_sm"
-                android:textColor="@color/md_theme_on_surface_variant"
-                android:maxLines="1"
-                android:ellipsize="end"
-                android:layout_marginTop="@dimen/spacing_xs" />
-
-        </LinearLayout>
-
-        <!-- Vacation Badge -->
-        <TextView
-            android:id="@+id/vacationBadge"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="🏖️"
-            android:textSize="32sp"
-            android:visibility="gone"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/customerStatus"
-            android:layout_marginEnd="@dimen/spacing_sm" />
-
-        <!-- Status Badge -->
-        <com.google.android.material.chip.Chip
-            android:id="@+id/customerStatus"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Active"
-            android:textSize="@dimen/text_size_sm"
-            app:chipBackgroundColor="@color/color_customers"
-            app:chipStrokeWidth="0dp"
-            android:textColor="@android:color/white"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
 
 </com.google.android.material.card.MaterialCardView>

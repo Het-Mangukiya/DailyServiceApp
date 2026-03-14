@@ -4,10 +4,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/md_theme_background"
+    android:background="@drawable/bg_app_backdrop"
     android:fitsSystemWindows="true">
 
-    <!-- AppBar -->
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -18,13 +17,13 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:navigationIcon="@android:drawable/ic_menu_revert"
-            app:title="Bill Details"
+            app:navigationIcon="@drawable/ic_back"
+            app:navigationIconTint="@android:color/white"
+            app:title="@string/bill_detail_title"
             app:titleTextColor="@android:color/white" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <!-- Main Content -->
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -37,14 +36,13 @@
             android:orientation="vertical"
             android:padding="@dimen/spacing_base">
 
-            <!-- Customer Card -->
             <com.google.android.material.card.MaterialCardView
+                style="@style/Widget.App.Card.Elevated"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/spacing_base"
-                app:cardCornerRadius="@dimen/corner_radius_md"
-                app:cardElevation="@dimen/elevation_base"
-                app:cardBackgroundColor="@color/md_theme_surface">
+                app:strokeColor="#1A4DB6AC"
+                app:strokeWidth="1dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -55,7 +53,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Customer"
+                        android:text="@string/bill_customer_label"
                         android:textSize="@dimen/text_size_sm"
                         android:textColor="@color/md_theme_on_surface_variant"
                         android:layout_marginBottom="@dimen/spacing_xs" />
@@ -64,7 +62,7 @@
                         android:id="@+id/customerName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Loading..."
+                        android:text="@string/loading"
                         android:textSize="@dimen/text_size_lg"
                         android:textStyle="bold"
                         android:textColor="@color/md_theme_on_surface" />
@@ -73,7 +71,7 @@
                         android:id="@+id/billPeriod"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="January 2026"
+                        android:text="@string/bill_paid_due_label"
                         android:textSize="@dimen/text_size_base"
                         android:textColor="@color/md_theme_on_surface_variant"
                         android:layout_marginTop="@dimen/spacing_xs" />
@@ -82,14 +80,13 @@
 
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Bill Summary Card -->
             <com.google.android.material.card.MaterialCardView
+                style="@style/Widget.App.Card.Elevated"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/spacing_base"
-                app:cardCornerRadius="@dimen/corner_radius_md"
-                app:cardElevation="@dimen/elevation_base"
-                app:cardBackgroundColor="@color/md_theme_surface">
+                app:strokeColor="#1A4DB6AC"
+                app:strokeWidth="1dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -100,7 +97,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Bill Summary"
+                        android:text="@string/bill_ledger_summary"
                         android:textSize="@dimen/text_size_base"
                         android:textStyle="bold"
                         android:textColor="@color/md_theme_on_surface"
@@ -116,7 +113,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Days Served"
+                            android:text="@string/bill_delivered_entries"
                             android:textSize="@dimen/text_size_base"
                             android:textColor="@color/md_theme_on_surface_variant" />
 
@@ -124,7 +121,7 @@
                             android:id="@+id/daysServed"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="0"
+                            android:text="@string/reports_default_count_value"
                             android:textSize="@dimen/text_size_base"
                             android:textStyle="bold"
                             android:textColor="@color/md_theme_on_surface" />
@@ -146,7 +143,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Total Amount"
+                            android:text="@string/bill_outstanding_amount"
                             android:textSize="@dimen/text_size_lg"
                             android:textStyle="bold"
                             android:textColor="@color/md_theme_on_surface" />
@@ -155,7 +152,7 @@
                             android:id="@+id/totalAmount"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="₹0.00"
+                            android:text="@string/reports_default_currency_value"
                             android:textSize="@dimen/text_size_xl"
                             android:textStyle="bold"
                             android:textColor="@color/md_theme_primary" />
@@ -166,7 +163,7 @@
                         android:id="@+id/paymentStatusChip"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Pending"
+                        android:text="@string/bill_status_pending"
                         android:layout_marginTop="@dimen/spacing_base"
                         app:chipBackgroundColor="@color/color_payments" />
 
@@ -174,20 +171,92 @@
 
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Action Buttons -->
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/markAsPaidButton"
+            <com.google.android.material.card.MaterialCardView
+                style="@style/Widget.App.Card.Elevated"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Record Payment"
+                android:layout_marginBottom="@dimen/spacing_base"
+                app:strokeColor="#1A4DB6AC"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/spacing_base">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/bill_payment_history"
+                        android:textSize="@dimen/text_size_base"
+                        android:textStyle="bold"
+                        android:textColor="@color/md_theme_on_surface"
+                        android:layout_marginBottom="@dimen/spacing_sm" />
+
+                    <TextView
+                        android:id="@+id/paymentHistoryText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/bill_no_payments_yet"
+                        android:textSize="@dimen/text_size_sm"
+                        android:textColor="@color/md_theme_on_surface_variant"
+                        android:lineSpacingExtra="2dp" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                style="@style/Widget.App.Card.Elevated"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/spacing_base"
+                app:strokeColor="#1A4DB6AC"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/spacing_base">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/bill_service_entry_history"
+                        android:textSize="@dimen/text_size_base"
+                        android:textStyle="bold"
+                        android:textColor="@color/md_theme_on_surface"
+                        android:layout_marginBottom="@dimen/spacing_sm" />
+
+                    <TextView
+                        android:id="@+id/serviceHistoryText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/bill_no_service_entries"
+                        android:textSize="@dimen/text_size_sm"
+                        android:textColor="@color/md_theme_on_surface_variant"
+                        android:lineSpacingExtra="2dp" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/markAsPaidButton"
+                style="@style/Widget.App.Button.Primary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/bill_record_payment"
                 android:layout_marginBottom="@dimen/spacing_sm" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/shareBillButton"
-                style="@style/Widget.Material3.Button.TonalButton"
+                style="@style/Widget.App.Button.Outlined"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Share Bill (PDF)" />
+                android:text="@string/bill_share_ledger" />
 
         </LinearLayout>
 

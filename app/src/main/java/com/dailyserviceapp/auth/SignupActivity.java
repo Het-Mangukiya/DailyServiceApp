@@ -13,22 +13,28 @@ import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.core.content.ContextCompat;
 
 import com.dailyserviceapp.R;
+import com.dailyserviceapp.customer.CustomerHomeActivity;
 import com.dailyserviceapp.core.base.BaseActivity;
 import com.dailyserviceapp.core.utils.Constants;
 import com.dailyserviceapp.core.utils.ValidationUtils;
 import com.dailyserviceapp.data.models.User;
+import com.dailyserviceapp.databinding.ActivitySignupBinding;
+import com.dailyserviceapp.profile.ProfileActivity;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInStatusCodes;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
@@ -53,6 +59,8 @@ import java.util.Map;
  * @since 2026-01-08
  */
 public class SignupActivity extends BaseActivity {
+
+    private ActivitySignupBinding binding;
     
     /** Input fields for user registration */
     private EditText nameInput, emailInput, phoneInput, passwordInput, confirmPasswordInput;
@@ -84,11 +92,12 @@ public class SignupActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_signup);
+        binding = ActivitySignupBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
         
         initializeFirebase();
-        initializeGoogleSignIn();
         initializeViews();
+        initializeGoogleSignIn();
         setupRoleSpinner();
         setupClickListeners();
     }
@@ -99,6 +108,15 @@ public class SignupActivity extends BaseActivity {
     }
     
     private void initializeGoogleSignIn() {
+        if (!isGoogleSignInConfigured()) {
+            if (googleSignInButton != null) {
+                googleSignInButton.setEnabled(false);
+                googleSignInButton.setAlpha(0.5f);
+            }
+            android.util.Log.e("SignupActivity", "Google Sign-In is not configured: invalid default_web_client_id");
+            return;
+        }
+
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
@@ -109,38 +127,60 @@ public class SignupActivity extends BaseActivity {
         googleSignInLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
-                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
-                    Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(result.getData());
-                    handleGoogleSignInResult(task);
-                } else {
+                if (result.getData() == null) {
                     hideLoading();
+                    showToast("Google Sign-In canceled (no data)");
+                    android.util.Log.w("SignupActivity", "Google Sign-In result data is null. resultCode=" + result.getResultCode());
+                    return;
                 }
+
+                Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(result.getData());
+                handleGoogleSignInResult(task);
             }
         );
     }
     
     private void initializeViews() {
-        nameInput = findViewById(R.id.nameInput);
-        emailInput = findViewById(R.id.emailInput);
-        phoneInput = findViewById(R.id.phoneInput);
-        passwordInput = findViewById(R.id.passwordInput);
-        confirmPasswordInput = findViewById(R.id.confirmPasswordInput);
-        roleSpinner = findViewById(R.id.roleSpinner);
-        signupButton = findViewById(R.id.signupButton);
-        googleSignInButton = findViewById(R.id.googleSignInButton);
-        loginLink = findViewById(R.id.loginLink);
-        progressBar = findViewById(R.id.progressBar);
+        nameInput = binding.nameInput;
+        emailInput = binding.emailInput;
+        phoneInput = binding.phoneInput;
+        passwordInput = binding.passwordInput;
+        confirmPasswordInput = binding.confirmPasswordInput;
+        roleSpinner = binding.roleSpinner;
+        signupButton = binding.signupButton;
+        googleSignInButton = binding.googleSignInButton;
+        loginLink = binding.loginLink;
+        progressBar = binding.progressBar;
     }
     
     private void setupRoleSpinner() {
-        String[] roles = {"Service Provider", "Customer"};
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(
-            this, 
-            android.R.layout.simple_spinner_item, 
+        String[] roles = getResources().getStringArray(R.array.role_options);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+            this,
+            android.R.layout.simple_spinner_item,
             roles
-        );
+        ) {
+            @Override
+            public View getView(int position, View convertView, android.view.ViewGroup parent) {
+                View view = super.getView(position, convertView, parent);
+                if (view instanceof TextView) {
+                    ((TextView) view).setTextColor(ContextCompat.getColor(SignupActivity.this, R.color.text_primary));
+                }
+                return view;
+            }
+
+            @Override
+            public View getDropDownView(int position, View convertView, android.view.ViewGroup parent) {
+                View view = super.getDropDownView(position, convertView, parent);
+                if (view instanceof TextView) {
+                    ((TextView) view).setTextColor(ContextCompat.getColor(SignupActivity.this, R.color.text_primary));
+                }
+                return view;
+            }
+        };
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         roleSpinner.setAdapter(adapter);
+        roleSpinner.setSelection(0, false);
     }
     
     private void setupClickListeners() {
@@ -249,28 +289,28 @@ public class SignupActivity extends BaseActivity {
                 
                 if (task.isSuccessful()) {
                     showToast("Account created successfully!");
-                    
-                    // Navigate to Dashboard (FIXED: was going to Login)
-                    Intent intent = new Intent(this, com.dailyserviceapp.dashboard.DashboardActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    startActivity(intent);
-                    finish();
+                    navigateAfterSignup(userId, role, true);
                 } else {
                     Exception exception = task.getException();
                     android.util.Log.e("SignupActivity", "Firestore user creation failed", exception);
                     showToast("Account created, but profile sync failed. You can continue.");
-                    navigateToDashboard();
+                    navigateAfterSignup(userId, role, true);
                 }
             })
             .addOnFailureListener(e -> {
                 hideLoading();
                 android.util.Log.e("SignupActivity", "Failed to create Firestore document", e);
                 showToast("Account created, but profile sync failed. You can continue.");
-                navigateToDashboard();
+                navigateAfterSignup(userId, role, true);
             });
     }
     
     private void signInWithGoogle() {
+        if (!isGoogleSignInConfigured() || googleSignInClient == null) {
+            showToast("Google Sign-In is not configured yet. Please update Firebase config.");
+            return;
+        }
+
         if (!isNetworkAvailable()) {
             showNetworkError();
             return;
@@ -289,8 +329,17 @@ public class SignupActivity extends BaseActivity {
             }
         } catch (ApiException e) {
             hideLoading();
-            android.util.Log.e("SignupActivity", "Google sign in failed", e);
-            showToast("Google sign-in failed");
+            int code = e.getStatusCode();
+            android.util.Log.e("SignupActivity", "Google sign in failed. code=" + code, e);
+            if (code == GoogleSignInStatusCodes.SIGN_IN_CANCELLED) {
+                showToast("Google Sign-In canceled");
+            } else if (code == GoogleSignInStatusCodes.SIGN_IN_FAILED) {
+                showToast("Google Sign-In failed. Check internet and try again.");
+            } else if (code == 10) {
+                showToast("Google config mismatch (SHA/package).");
+            } else {
+                showToast("Google Sign-In error code: " + code);
+            }
         }
     }
     
@@ -332,7 +381,7 @@ public class SignupActivity extends BaseActivity {
                         String existingRole = task.getResult().getString("role");
                         
                         preferenceManager.saveUserData(userId, existingEmail, existingName, existingRole);
-                        navigateToDashboard();
+                        navigateAfterSignup(userId, existingRole, false);
                     } else {
                         // New Google user, create profile with selected role
                         String selectedRole = roleSpinner.getSelectedItemPosition() == 0 ? 
@@ -349,7 +398,7 @@ public class SignupActivity extends BaseActivity {
                         Constants.ROLE_CUSTOMER
                     );
                     showToast("Signed in, but profile sync failed. You can continue.");
-                    navigateToDashboard();
+                    navigateToCustomerHome();
                 }
             });
     }
@@ -381,7 +430,7 @@ public class SignupActivity extends BaseActivity {
                     );
                     
                     showToast("Account created successfully!");
-                    navigateToDashboard();
+                    navigateAfterSignup(firebaseUser.getUid(), role, true);
                 } else {
                     preferenceManager.saveUserData(
                         firebaseUser.getUid(),
@@ -390,16 +439,104 @@ public class SignupActivity extends BaseActivity {
                         role
                     );
                     showToast("Account created, but profile sync failed. You can continue.");
-                    navigateToDashboard();
+                    navigateAfterSignup(firebaseUser.getUid(), role, true);
                 }
             });
+    }
+
+    private void navigateAfterSignup(String userId, String role, boolean isNewAccount) {
+        if (!Constants.ROLE_PROVIDER.equals(role)) {
+            navigateToCustomerHome();
+            return;
+        }
+
+        if (isNewAccount) {
+            navigateToProfileSetup();
+            return;
+        }
+
+        checkProviderProfileAndRoute(userId);
+    }
+
+    private void checkProviderProfileAndRoute(String userId) {
+        if (userId == null || userId.trim().isEmpty()) {
+            navigateToProfileSetup();
+            return;
+        }
+
+        showLoading();
+        firestore.collection(Constants.COLLECTION_PROVIDERS)
+            .document(userId)
+            .get()
+            .addOnSuccessListener(documentSnapshot -> {
+                hideLoading();
+                if (isProviderProfileComplete(documentSnapshot)) {
+                    navigateToProviderHome();
+                } else {
+                    navigateToProfileSetup();
+                }
+            })
+            .addOnFailureListener(e -> {
+                hideLoading();
+                navigateToProfileSetup();
+            });
+    }
+
+    private boolean isProviderProfileComplete(DocumentSnapshot documentSnapshot) {
+        if (documentSnapshot == null || !documentSnapshot.exists()) return false;
+
+        String businessName = safeTrim(documentSnapshot.getString("businessName"));
+        String ownerName = safeTrim(documentSnapshot.getString("name"));
+        String phone = safeTrim(documentSnapshot.getString("phone"));
+        String address = safeTrim(documentSnapshot.getString("address"));
+
+        java.util.List<String> services = new java.util.ArrayList<>();
+        Object rawServices = documentSnapshot.get("services");
+        if (rawServices instanceof java.util.List) {
+            java.util.List<?> casted = (java.util.List<?>) rawServices;
+            for (Object item : casted) {
+                if (item instanceof String) {
+                    String value = safeTrim((String) item);
+                    if (!value.isEmpty()) {
+                        services.add(value);
+                    }
+                }
+            }
+        }
+        String serviceType = safeTrim(documentSnapshot.getString("serviceType"));
+        boolean hasService = (services != null && !services.isEmpty()) || !serviceType.isEmpty();
+
+        return !businessName.isEmpty()
+            && !ownerName.isEmpty()
+            && !phone.isEmpty()
+            && !address.isEmpty()
+            && hasService;
+    }
+
+    private String safeTrim(String value) {
+        return value == null ? "" : value.trim();
+    }
+
+    private void navigateToProfileSetup() {
+        Intent intent = new Intent(this, ProfileActivity.class);
+        intent.putExtra(Constants.EXTRA_FORCE_PROFILE_SETUP, true);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
     }
     
     /**
      * Navigate to Dashboard with proper flags
      */
-    private void navigateToDashboard() {
+    private void navigateToProviderHome() {
         Intent intent = new Intent(this, com.dailyserviceapp.dashboard.DashboardActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
+    }
+
+    private void navigateToCustomerHome() {
+        Intent intent = new Intent(this, CustomerHomeActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();
@@ -414,7 +551,14 @@ public class SignupActivity extends BaseActivity {
     private void hideLoading() {
         progressBar.setVisibility(View.GONE);
         signupButton.setEnabled(true);
-        googleSignInButton.setEnabled(true);
+        googleSignInButton.setEnabled(isGoogleSignInConfigured());
+    }
+
+    private boolean isGoogleSignInConfigured() {
+        String webClientId = getString(R.string.default_web_client_id);
+        return webClientId != null
+            && webClientId.endsWith(".apps.googleusercontent.com")
+            && !webClientId.contains("PLACEHOLDER");
     }
 
     private String getAuthErrorMessage(Exception exception) {
@@ -439,5 +583,11 @@ public class SignupActivity extends BaseActivity {
             }
         }
         return message;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        binding = null;
     }
 }

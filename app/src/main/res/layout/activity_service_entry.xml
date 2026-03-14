@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/md_theme_background"
+    android:background="@drawable/bg_app_backdrop"
     android:fitsSystemWindows="true">
 
     <!-- AppBar -->
@@ -18,8 +18,9 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:navigationIcon="@android:drawable/ic_menu_revert"
-            app:title="Service Entry"
+            app:navigationIcon="@drawable/ic_back"
+            app:navigationIconTint="@android:color/white"
+            app:title="@string/service_entry_title"
             app:titleTextColor="@android:color/white">
             
             <TextView
@@ -28,13 +29,16 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
                 android:layout_marginEnd="16dp"
-                android:text="📴 Offline"
+                android:text="@string/service_entry_offline"
                 android:textColor="@android:color/white"
                 android:textSize="12sp"
                 android:textStyle="bold"
                 android:visibility="gone"
-                android:padding="4dp"
-                android:background="@android:color/holo_red_dark"
+                android:paddingStart="10dp"
+                android:paddingTop="4dp"
+                android:paddingEnd="10dp"
+                android:paddingBottom="4dp"
+                android:background="@drawable/bg_error_pill"
                 android:layout_marginTop="4dp"
                 android:layout_marginBottom="4dp" />
                 
@@ -64,17 +68,19 @@
                 android:visibility="gone"
                 app:cardCornerRadius="@dimen/corner_radius_md"
                 app:cardElevation="@dimen/elevation_base"
-                app:cardBackgroundColor="@android:color/holo_orange_light">
+                app:cardBackgroundColor="@color/md_theme_primary_container"
+                app:strokeColor="#334DB6AC"
+                app:strokeWidth="1dp">
 
                 <TextView
                     android:id="@+id/pendingSyncText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="@dimen/spacing_base"
-                    android:text="📤 3 deliveries pending sync"
+                    android:text="@string/service_entry_pending_sync_default"
                     android:textSize="@dimen/text_size_base"
                     android:textStyle="bold"
-                    android:textColor="@android:color/black"
+                    android:textColor="@color/md_theme_on_primary_container"
                     android:gravity="center" />
 
             </com.google.android.material.card.MaterialCardView>
@@ -87,7 +93,9 @@
                 android:layout_marginBottom="@dimen/spacing_base"
                 app:cardCornerRadius="@dimen/corner_radius_md"
                 app:cardElevation="@dimen/elevation_base"
-                app:cardBackgroundColor="@color/md_theme_surface">
+                app:cardBackgroundColor="@color/md_theme_surface"
+                app:strokeColor="#1A4DB6AC"
+                app:strokeWidth="1dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -99,7 +107,7 @@
                     <ImageView
                         android:layout_width="@dimen/card_size_md"
                         android:layout_height="@dimen/card_size_md"
-                        android:src="@android:drawable/ic_menu_my_calendar"
+                        android:src="@drawable/ic_calendar_24"
                         app:tint="@color/md_theme_primary"
                         android:layout_marginEnd="@dimen/spacing_base" />
 
@@ -112,7 +120,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Selected Date"
+                            android:text="@string/service_entry_selected_date"
                             android:textSize="@dimen/text_size_sm"
                             android:textColor="@color/md_theme_on_surface_variant" />
 
@@ -120,7 +128,7 @@
                             android:id="@+id/selectedDateText"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Today"
+                            android:text="@string/service_entry_today"
                             android:textSize="@dimen/text_size_lg"
                             android:textStyle="bold"
                             android:textColor="@color/md_theme_on_surface"
@@ -133,7 +141,7 @@
                         style="@style/Widget.Material3.Button.TonalButton"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Change"
+                        android:text="@string/action_change"
                         android:textSize="@dimen/text_size_base"
                         app:cornerRadius="@dimen/corner_radius_base" />
 
@@ -154,14 +162,14 @@
                     style="@style/Widget.Material3.Button.TextButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Select All" />
+                    android:text="@string/action_select_all" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnClearAll"
                     style="@style/Widget.Material3.Button.TextButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Clear"
+                    android:text="@string/action_clear"
                     android:layout_marginStart="@dimen/spacing_sm" />
 
             </LinearLayout>
@@ -188,17 +196,19 @@
                     android:padding="@dimen/spacing_xl"
                     android:visibility="gone">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="📦"
-                        android:textSize="@dimen/card_size_xxl"
-                        android:layout_marginBottom="@dimen/spacing_base" />
+                    <ImageView
+                        android:layout_width="72dp"
+                        android:layout_height="72dp"
+                        android:layout_marginBottom="@dimen/spacing_base"
+                        android:contentDescription="@null"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_nav_customers"
+                        app:tint="@color/md_theme_primary" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="No customers found"
+                        android:text="@string/service_entry_no_customers"
                         android:textSize="@dimen/text_size_lg"
                         android:textStyle="bold"
                         android:textColor="@color/md_theme_on_surface"
@@ -208,7 +218,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Add customers first to record deliveries"
+                        android:text="@string/service_entry_add_customers_prompt"
                         android:textSize="@dimen/text_size_base"
                         android:textColor="@color/md_theme_on_surface_variant"
                         android:gravity="center" />
@@ -221,6 +231,14 @@
 
     </androidx.core.widget.NestedScrollView>
 
+    <!-- Loading Progress -->
+    <ProgressBar
+        android:id="@+id/loadingProgress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone" />
+
     <!-- Mark Delivery Button -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnMarkDelivery"
@@ -228,7 +246,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:layout_margin="@dimen/spacing_base"
-        android:text="Mark Delivery"
+        android:text="@string/button_mark_delivery"
         android:textSize="@dimen/text_size_base"
         android:textStyle="bold"
         android:paddingVertical="@dimen/spacing_base"

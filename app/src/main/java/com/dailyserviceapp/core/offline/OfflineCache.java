@@ -11,7 +11,10 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Offline cache manager for storing data locally when network is unavailable.
@@ -30,6 +33,7 @@ public class OfflineCache {
     
     private final SharedPreferences prefs;
     private final Gson gson;
+    private final Object syncLock = new Object();
     
     public OfflineCache(Context context) {
         this.prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
@@ -40,66 +44,138 @@ public class OfflineCache {
      * Cache customer list for offline access
      */
     public void cacheCustomers(List<Customer> customers) {
-        String json = gson.toJson(customers);
-        prefs.edit()
-            .putString(KEY_CUSTOMERS, json)
-            .putLong(KEY_LAST_SYNC, System.currentTimeMillis())
-            .apply();
+        synchronized (syncLock) {
+            String json = gson.toJson(customers);
+            prefs.edit()
+                .putString(KEY_CUSTOMERS, json)
+                .putLong(KEY_LAST_SYNC, System.currentTimeMillis())
+                .apply();
+        }
     }
     
     /**
      * Retrieve cached customers
      */
     public List<Customer> getCachedCustomers() {
-        String json = prefs.getString(KEY_CUSTOMERS, null);
-        if (json == null) {
-            return new ArrayList<>();
+        synchronized (syncLock) {
+            String json = prefs.getString(KEY_CUSTOMERS, null);
+            if (json == null) {
+                return new ArrayList<>();
+            }
+            Type type = new TypeToken<List<Customer>>(){}.getType();
+            return gson.fromJson(json, type);
         }
-        Type type = new TypeToken<List<Customer>>(){}.getType();
-        return gson.fromJson(json, type);
     }
     
     /**
      * Queue a service entry for later sync when offline
      */
     public void queuePendingEntry(PendingServiceEntry entry) {
-        List<PendingServiceEntry> pending = getPendingEntries();
-        pending.add(entry);
-        String json = gson.toJson(pending);
-        prefs.edit().putString(KEY_PENDING_ENTRIES, json).apply();
+        synchronized (syncLock) {
+            List<PendingServiceEntry> pending = getPendingEntries();
+            pending.add(entry);
+            setPendingEntries(pending);
+        }
     }
     
     /**
      * Get all pending service entries waiting to be synced
      */
     public List<PendingServiceEntry> getPendingEntries() {
-        String json = prefs.getString(KEY_PENDING_ENTRIES, null);
-        if (json == null) {
-            return new ArrayList<>();
+        synchronized (syncLock) {
+            String json = prefs.getString(KEY_PENDING_ENTRIES, null);
+            if (json == null) {
+                return new ArrayList<>();
+            }
+            Type type = new TypeToken<List<PendingServiceEntry>>(){}.getType();
+            List<PendingServiceEntry> entries = gson.fromJson(json, type);
+            return entries != null ? entries : new ArrayList<>();
         }
-        Type type = new TypeToken<List<PendingServiceEntry>>(){}.getType();
-        return gson.fromJson(json, type);
+    }
+
+    /**
+     * Replace all pending entries after a sync pass.
+     */
+    public void replacePendingEntries(List<PendingServiceEntry> entries) {
+        synchronized (syncLock) {
+            setPendingEntries(entries);
+        }
+    }
+
+    /**
+     * Reconciles a sync pass without clobbering entries queued concurrently.
+     * Keeps entries added after snapshot retrieval and appends retry entries.
+     */
+    public void reconcilePendingEntriesAfterSync(List<PendingServiceEntry> processedSnapshot,
+                                                 List<PendingServiceEntry> retryEntries) {
+        synchronized (syncLock) {
+            List<PendingServiceEntry> current = getPendingEntries();
+            Set<String> processedKeys = new HashSet<>();
+            if (processedSnapshot != null) {
+                for (PendingServiceEntry entry : processedSnapshot) {
+                    processedKeys.add(pendingKey(entry));
+                }
+            }
+
+            List<PendingServiceEntry> merged = new ArrayList<>();
+            Set<String> mergedKeys = new HashSet<>();
+            for (PendingServiceEntry entry : current) {
+                String key = pendingKey(entry);
+                if (processedKeys.contains(key)) {
+                    continue;
+                }
+                if (mergedKeys.add(key)) {
+                    merged.add(entry);
+                }
+            }
+
+            if (retryEntries != null) {
+                for (PendingServiceEntry entry : retryEntries) {
+                    String key = pendingKey(entry);
+                    if (mergedKeys.add(key)) {
+                        merged.add(entry);
+                    }
+                }
+            }
+
+            setPendingEntries(merged);
+        }
     }
     
     /**
      * Clear pending entries after successful sync
      */
     public void clearPendingEntries() {
-        prefs.edit().remove(KEY_PENDING_ENTRIES).apply();
+        synchronized (syncLock) {
+            prefs.edit().remove(KEY_PENDING_ENTRIES).apply();
+        }
     }
     
     /**
      * Get timestamp of last successful sync
      */
     public long getLastSyncTime() {
-        return prefs.getLong(KEY_LAST_SYNC, 0);
+        synchronized (syncLock) {
+            return prefs.getLong(KEY_LAST_SYNC, 0);
+        }
+    }
+
+    /**
+     * Mark sync completion timestamp.
+     */
+    public void markSyncCompleted() {
+        synchronized (syncLock) {
+            prefs.edit().putLong(KEY_LAST_SYNC, System.currentTimeMillis()).apply();
+        }
     }
     
     /**
      * Check if cached data exists
      */
     public boolean hasCachedData() {
-        return prefs.contains(KEY_CUSTOMERS);
+        synchronized (syncLock) {
+            return prefs.contains(KEY_CUSTOMERS);
+        }
     }
     
     /**
@@ -113,7 +189,9 @@ public class OfflineCache {
      * Clear all cached data
      */
     public void clearAll() {
-        prefs.edit().clear().apply();
+        synchronized (syncLock) {
+            prefs.edit().clear().apply();
+        }
     }
     
     /**
@@ -139,8 +217,27 @@ public class OfflineCache {
         
         public ServiceEntry toServiceEntry() {
             ServiceEntry entry = new ServiceEntry(providerId, customerId, 
-                new Timestamp(timestamp / 1000, 0), quantity, delivered);
+                new Timestamp(new Date(timestamp)), quantity, delivered);
             return entry;
         }
+    }
+
+    private void setPendingEntries(List<PendingServiceEntry> entries) {
+        String json = gson.toJson(entries == null ? new ArrayList<>() : entries);
+        prefs.edit().putString(KEY_PENDING_ENTRIES, json).apply();
+    }
+
+    private String pendingKey(PendingServiceEntry entry) {
+        if (entry == null) return "";
+        return safe(entry.providerId) + "|"
+            + safe(entry.customerId) + "|"
+            + entry.timestamp + "|"
+            + entry.quantity + "|"
+            + entry.amount + "|"
+            + entry.delivered;
+    }
+
+    private String safe(String value) {
+        return value == null ? "" : value;
     }
 }

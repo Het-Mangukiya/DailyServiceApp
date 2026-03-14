@@ -46,6 +46,7 @@
     
     <!-- Feature Colors -->
     <color name="color_customers">#66BB6A</color>
+    <color name="color_on_customers">#FFFFFF</color>
     <color name="color_service_entry">#42A5F5</color>
     <color name="color_bills">#FFA726</color>
     <color name="color_payments">#AB47BC</color>

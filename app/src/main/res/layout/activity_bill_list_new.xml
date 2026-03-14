@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/md_theme_background"
+    android:background="@drawable/bg_app_backdrop"
     android:fitsSystemWindows="true">
 
     <!-- AppBar -->
@@ -18,8 +18,9 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:navigationIcon="@android:drawable/ic_menu_revert"
-            app:title="Bills"
+            app:navigationIcon="@drawable/ic_back"
+            app:navigationIconTint="@android:color/white"
+            app:title="@string/bills_title"
             app:titleTextColor="@android:color/white" />
 
     </com.google.android.material.appbar.AppBarLayout>
@@ -40,12 +41,12 @@
             <!-- Month Selector Card -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/monthSelectorCard"
+                style="@style/Widget.App.Card.Elevated"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/spacing_base"
-                app:cardCornerRadius="@dimen/corner_radius_md"
-                app:cardElevation="@dimen/elevation_base"
-                app:cardBackgroundColor="@color/md_theme_surface">
+                app:strokeColor="#1A4DB6AC"
+                app:strokeWidth="1dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -57,7 +58,7 @@
                     <ImageView
                         android:layout_width="@dimen/card_size_md"
                         android:layout_height="@dimen/card_size_md"
-                        android:src="@android:drawable/ic_menu_my_calendar"
+                        android:src="@drawable/ic_calendar_24"
                         app:tint="@color/md_theme_primary"
                         android:layout_marginEnd="@dimen/spacing_base" />
 
@@ -70,7 +71,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Billing Period"
+                            android:text="@string/ledger_snapshot"
                             android:textSize="@dimen/text_size_sm"
                             android:textColor="@color/md_theme_on_surface_variant" />
 
@@ -78,7 +79,7 @@
                             android:id="@+id/selectedMonthText"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="January 2026"
+                            android:text="@string/ledger_live_customer"
                             android:textSize="@dimen/text_size_lg"
                             android:textStyle="bold"
                             android:textColor="@color/md_theme_on_surface"
@@ -91,18 +92,18 @@
                         style="@style/Widget.Material3.Button.IconButton"
                         android:layout_width="@dimen/card_size_lg"
                         android:layout_height="@dimen/card_size_lg"
-                        android:text="◄"
-                        android:textSize="@dimen/text_size_lg"
-                        app:iconSize="0dp" />
+                        app:icon="@drawable/ic_chevron_left_24"
+                        app:iconTint="@color/md_theme_on_surface"
+                        app:iconSize="20dp" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/nextMonthButton"
                         style="@style/Widget.Material3.Button.IconButton"
                         android:layout_width="@dimen/card_size_lg"
                         android:layout_height="@dimen/card_size_lg"
-                        android:text="►"
-                        android:textSize="@dimen/text_size_lg"
-                        app:iconSize="0dp" />
+                        app:icon="@drawable/ic_chevron_right_24"
+                        app:iconTint="@color/md_theme_on_surface"
+                        app:iconSize="20dp" />
 
                 </LinearLayout>
 
@@ -135,17 +136,19 @@
                 android:padding="@dimen/spacing_xl"
                 android:visibility="gone">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="📄"
-                    android:textSize="64sp"
-                    android:layout_marginBottom="@dimen/spacing_base" />
+                <ImageView
+                    android:layout_width="72dp"
+                    android:layout_height="72dp"
+                    android:layout_marginBottom="@dimen/spacing_base"
+                    android:contentDescription="@null"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_nav_bills"
+                    app:tint="@color/md_theme_primary" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="No Bills for This Month"
+                    android:text="@string/ledger_empty_title"
                     android:textSize="@dimen/text_size_lg"
                     android:textStyle="bold"
                     android:textColor="@color/md_theme_on_surface"
@@ -154,7 +157,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Generate bills from service entries"
+                    android:text="@string/ledger_empty_subtitle"
                     android:textSize="@dimen/text_size_base"
                     android:textColor="@color/md_theme_on_surface_variant"
                     android:gravity="center" />
@@ -172,9 +175,9 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/spacing_base"
-        android:text="Generate Bills"
+        android:text="@string/action_refresh"
         android:textColor="@android:color/white"
-        app:icon="@android:drawable/ic_input_add"
+        app:icon="@drawable/ic_refresh_24"
         app:iconTint="@android:color/white"
         app:backgroundTint="@color/md_theme_primary" />
 

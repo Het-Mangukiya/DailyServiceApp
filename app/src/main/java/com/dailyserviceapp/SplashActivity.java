@@ -4,12 +4,22 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.dailyserviceapp.auth.LoginActivity;
-import com.dailyserviceapp.dashboard.ProviderDashboardActivity;
+import com.dailyserviceapp.customer.CustomerHomeActivity;
+import com.dailyserviceapp.core.sync.SyncWorkScheduler;
+import com.dailyserviceapp.core.utils.Constants;
 import com.dailyserviceapp.core.utils.PreferenceManager;
+import com.dailyserviceapp.dashboard.DashboardActivity;
+import com.dailyserviceapp.profile.ProfileActivity;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Splash screen activity displayed on app launch.
@@ -27,6 +37,7 @@ public class SplashActivity extends AppCompatActivity {
      * Duration in milliseconds to display the splash screen.
      */
     private static final int SPLASH_DELAY = 2000; // 2 seconds
+    private FirebaseFirestore firestore;
 
     /**
      * Called when the activity is first created.
@@ -46,8 +57,13 @@ public class SplashActivity extends AppCompatActivity {
             getSupportActionBar().hide();
         }
 
+        // Ensure background sync worker is always registered.
+        SyncWorkScheduler.ensurePeriodicSync(this);
+        firestore = FirebaseFirestore.getInstance();
+
         // Delay and navigate
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            if (isActivityInactive()) return;
             navigateToNextScreen();
         }, SPLASH_DELAY);
     }
@@ -59,18 +75,144 @@ public class SplashActivity extends AppCompatActivity {
      * Finishes this activity to prevent returning to splash screen on back press.
      */
     private void navigateToNextScreen() {
+        if (isActivityInactive()) return;
         PreferenceManager preferenceManager = new PreferenceManager(this);
-        Intent intent;
-
-        if (preferenceManager.isLoggedIn()) {
-            // User is logged in, go to provider dashboard
-            intent = new Intent(SplashActivity.this, ProviderDashboardActivity.class);
-        } else {
-            // User not logged in, go to login
-            intent = new Intent(SplashActivity.this, LoginActivity.class);
+        if (!preferenceManager.isLoggedIn()) {
+            openLogin();
+            return;
         }
 
+        String userId = preferenceManager.getUserId();
+        String role = preferenceManager.getUserRole();
+        if (userId == null || userId.trim().isEmpty()) {
+            preferenceManager.clearAllData();
+            openLogin();
+            return;
+        }
+
+        if (Constants.ROLE_PROVIDER.equals(role)) {
+            enforceProviderProfileSetup(userId);
+            return;
+        }
+
+        if (Constants.ROLE_CUSTOMER.equals(role)) {
+            openCustomerHome();
+            return;
+        }
+
+        resolveRoleAndRoute(userId, preferenceManager);
+    }
+
+    private void resolveRoleAndRoute(String userId, PreferenceManager preferenceManager) {
+        firestore.collection(Constants.COLLECTION_USERS)
+            .document(userId)
+            .get()
+            .addOnSuccessListener(documentSnapshot -> {
+                if (isActivityInactive()) return;
+                String role = documentSnapshot != null && documentSnapshot.exists()
+                    ? documentSnapshot.getString("role")
+                    : null;
+
+                if (Constants.ROLE_PROVIDER.equals(role)) {
+                    preferenceManager.setUserRole(Constants.ROLE_PROVIDER);
+                    enforceProviderProfileSetup(userId);
+                    return;
+                }
+
+                if (Constants.ROLE_CUSTOMER.equals(role)) {
+                    preferenceManager.setUserRole(Constants.ROLE_CUSTOMER);
+                    openCustomerHome();
+                    return;
+                }
+
+                preferenceManager.clearAllData();
+                openLogin();
+            })
+            .addOnFailureListener(e -> {
+                if (isActivityInactive()) return;
+                Log.w("SplashActivity", "Failed to resolve role", e);
+                preferenceManager.clearAllData();
+                openLogin();
+            });
+    }
+
+    private void enforceProviderProfileSetup(String userId) {
+        firestore.collection(Constants.COLLECTION_PROVIDERS)
+            .document(userId)
+            .get()
+            .addOnSuccessListener(documentSnapshot -> {
+                if (isActivityInactive()) return;
+                if (isProviderProfileComplete(documentSnapshot)) {
+                    openDashboard();
+                } else {
+                    openProfileSetup();
+                }
+            })
+            .addOnFailureListener(e -> {
+                if (isActivityInactive()) return;
+                Log.w("SplashActivity", "Failed to fetch provider profile", e);
+                openProfileSetup();
+            });
+    }
+
+    private boolean isProviderProfileComplete(DocumentSnapshot documentSnapshot) {
+        if (documentSnapshot == null || !documentSnapshot.exists()) return false;
+
+        String businessName = safeTrim(documentSnapshot.getString("businessName"));
+        String ownerName = safeTrim(documentSnapshot.getString("name"));
+        String phone = safeTrim(documentSnapshot.getString("phone"));
+        String address = safeTrim(documentSnapshot.getString("address"));
+
+        List<String> services = new ArrayList<>();
+        Object rawServices = documentSnapshot.get("services");
+        if (rawServices instanceof List) {
+            List<?> casted = (List<?>) rawServices;
+            for (Object item : casted) {
+                if (item instanceof String) {
+                    String value = safeTrim((String) item);
+                    if (!value.isEmpty()) {
+                        services.add(value);
+                    }
+                }
+            }
+        }
+        String serviceType = safeTrim(documentSnapshot.getString("serviceType"));
+        boolean hasService = (services != null && !services.isEmpty()) || !serviceType.isEmpty();
+
+        return !businessName.isEmpty()
+            && !ownerName.isEmpty()
+            && !phone.isEmpty()
+            && !address.isEmpty()
+            && hasService;
+    }
+
+    private String safeTrim(String value) {
+        return value == null ? "" : value.trim();
+    }
+
+    private void openLogin() {
+        startActivity(new Intent(SplashActivity.this, LoginActivity.class));
+        finish();
+    }
+
+    private void openDashboard() {
+        startActivity(new Intent(SplashActivity.this, DashboardActivity.class));
+        finish();
+    }
+
+    private void openCustomerHome() {
+        startActivity(new Intent(SplashActivity.this, CustomerHomeActivity.class));
+        finish();
+    }
+
+    private void openProfileSetup() {
+        Intent intent = new Intent(SplashActivity.this, ProfileActivity.class);
+        intent.putExtra(Constants.EXTRA_FORCE_PROFILE_SETUP, true);
         startActivity(intent);
         finish();
+    }
+
+    private boolean isActivityInactive() {
+        return isFinishing() || isDestroyed();
     }
 }

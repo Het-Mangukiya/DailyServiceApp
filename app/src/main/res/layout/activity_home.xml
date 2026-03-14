@@ -10,7 +10,8 @@
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@drawable/bg_app_backdrop">
 
         <!-- TOP APP BAR -->
         <com.google.android.material.appbar.AppBarLayout
@@ -24,7 +25,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:background="@color/md_theme_primary"
-                app:title="Services"
+                app:title="@string/menu_my_customers"
                 app:titleTextColor="@android:color/white"
                 app:navigationIcon="@drawable/ic_menu_24"
                 app:menu="@menu/home_menu"/>
@@ -57,7 +58,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Today's Deliveries"
+                        android:text="@string/dashboard_today_deliveries"
                         android:textSize="16sp"
                         android:textStyle="bold"
                         android:textColor="@color/md_theme_on_primary_container"
@@ -73,7 +74,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="0/0 delivered"
+                            android:text="@string/dashboard_delivered_default"
                             android:textSize="20sp"
                             android:textStyle="bold"
                             android:textColor="@color/md_theme_on_primary_container"/>
@@ -82,7 +83,7 @@
                             android:id="@+id/txtTodayAmount"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="₹0"
+                            android:text="@string/reports_default_currency_value"
                             android:textSize="20sp"
                             android:textStyle="bold"
                             android:textColor="@color/success"/>
@@ -94,7 +95,7 @@
                         android:id="@+id/syncStatusChip"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="📤 2 pending sync"
+                        android:text="@string/dashboard_pending_sync_default"
                         android:textColor="@android:color/white"
                         android:textSize="12sp"
                         android:visibility="gone"
@@ -134,7 +135,7 @@
                             android:id="@+id/txtCustomerCount"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="0"
+                            android:text="@string/reports_default_count_value"
                             android:textSize="28sp"
                             android:textStyle="bold"
                             android:textColor="@color/md_theme_primary"/>
@@ -142,7 +143,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Customers"
+                            android:text="@string/customers"
                             android:textSize="14sp"
                             android:textColor="@color/text_muted"
                             android:layout_marginTop="4dp"/>
@@ -170,7 +171,7 @@
                             android:id="@+id/txtTotalValue"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="₹0"
+                            android:text="@string/reports_default_currency_value"
                             android:textSize="28sp"
                             android:textStyle="bold"
                             android:textColor="@color/md_theme_primary"/>
@@ -178,7 +179,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="This Month"
+                            android:text="@string/dashboard_this_month"
                             android:textSize="14sp"
                             android:textColor="@color/text_muted"
                             android:layout_marginTop="4dp"/>
@@ -194,9 +195,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                android:hint="Search customers"
+                android:hint="@string/search_customers_hint"
                 app:boxBackgroundMode="outline"
-                app:startIconDrawable="@android:drawable/ic_menu_search">
+                app:startIconDrawable="@drawable/ic_search_24">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/edtSearch"
@@ -226,7 +227,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="No customers yet"
+                    android:text="@string/no_customers_yet"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     android:textColor="@color/md_theme_on_surface"
@@ -235,7 +236,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Tap 'Add Customer' to get started"
+                    android:text="@string/dashboard_add_customer_prompt"
                     android:textSize="14sp"
                     android:textColor="@color/text_muted"
                     android:layout_marginTop="8dp"/>
@@ -260,9 +261,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
             android:layout_margin="16dp"
-            android:text="Add Customer"
+            android:text="@string/add_customer"
             android:textColor="@android:color/white"
-            app:icon="@android:drawable/ic_input_add"
+            app:icon="@drawable/ic_add_24"
             app:iconTint="@android:color/white"
             app:backgroundTint="@color/md_theme_primary"/>
 
@@ -276,6 +277,10 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
+        app:itemBackground="@drawable/nav_item_background"
+        app:itemHorizontalPadding="16dp"
+        app:itemIconTint="@color/nav_item_icon_tint"
+        app:itemTextColor="@color/nav_item_text_tint"
         app:headerLayout="@layout/nav_header"
         app:menu="@menu/drawer_menu"/>
 

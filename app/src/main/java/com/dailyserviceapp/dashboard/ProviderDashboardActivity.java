@@ -17,6 +17,9 @@ import com.dailyserviceapp.billing.BillListActivity;
 import com.dailyserviceapp.core.base.BaseActivity;
 import com.dailyserviceapp.core.utils.Constants;
 import com.dailyserviceapp.core.utils.CurrencyUtils;
+import com.dailyserviceapp.databinding.ActivityProviderDashboardBinding;
+import com.dailyserviceapp.profile.ProfileActivity;
+import com.dailyserviceapp.provider.JoinRequestsActivity;
 import com.dailyserviceapp.service.ServiceEntryActivity;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.button.MaterialButton;
@@ -47,6 +50,8 @@ import java.util.Date;
  * @since 2026-02-02
  */
 public class ProviderDashboardActivity extends BaseActivity {
+
+    private ActivityProviderDashboardBinding binding;
     
     // Constants for better maintainability
     private static final String TAG = "ProviderDashboard";
@@ -81,6 +86,7 @@ public class ProviderDashboardActivity extends BaseActivity {
     private MaterialButton btnServiceEntry;
     private MaterialButton btnBills;
     private MaterialButton btnCustomers;
+    private MaterialButton btnJoinRequests;
     
     private FirebaseFirestore firestore;
     private String providerId;
@@ -88,7 +94,8 @@ public class ProviderDashboardActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_provider_dashboard);
+        binding = ActivityProviderDashboardBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
         
         if (!isLoggedIn()) {
             navigateToLogin();
@@ -111,28 +118,29 @@ public class ProviderDashboardActivity extends BaseActivity {
     }
     
     private void initializeViews() {
-        toolbar = findViewById(R.id.toolbar);
-        progressBar = findViewById(R.id.progressBar);
-        drawerLayout = findViewById(R.id.drawerLayout);
-        navigationView = findViewById(R.id.navigationView);
+        toolbar = binding.toolbar;
+        progressBar = binding.progressBar;
+        drawerLayout = binding.drawerLayout;
+        navigationView = binding.navigationView;
         
         // Today's Summary
-        txtTodayDelivered = findViewById(R.id.txtTodayDelivered);
-        txtTodayEarnings = findViewById(R.id.txtTodayEarnings);
+        txtTodayDelivered = binding.txtTodayDelivered;
+        txtTodayEarnings = binding.txtTodayEarnings;
         
         // Payment Overview
-        txtTotalLent = findViewById(R.id.txtTotalLent);
-        txtTotalReceived = findViewById(R.id.txtTotalReceived);
-        txtPendingAmount = findViewById(R.id.txtPendingAmount);
+        txtTotalLent = binding.txtTotalLent;
+        txtTotalReceived = binding.txtTotalReceived;
+        txtPendingAmount = binding.txtPendingAmount;
         
         // Monthly Overview
-        txtMonthlyEarnings = findViewById(R.id.txtMonthlyEarnings);
-        txtMonthlyDeliveries = findViewById(R.id.txtMonthlyDeliveries);
+        txtMonthlyEarnings = binding.txtMonthlyEarnings;
+        txtMonthlyDeliveries = binding.txtMonthlyDeliveries;
         
         // Quick Actions
-        btnServiceEntry = findViewById(R.id.btnServiceEntry);
-        btnBills = findViewById(R.id.btnBills);
-        btnCustomers = findViewById(R.id.btnCustomers);
+        btnServiceEntry = binding.btnServiceEntry;
+        btnBills = binding.btnBills;
+        btnCustomers = binding.btnCustomers;
+        btnJoinRequests = binding.btnJoinRequests;
         
         // Setup toolbar with drawer
         setSupportActionBar(toolbar);
@@ -165,6 +173,10 @@ public class ProviderDashboardActivity extends BaseActivity {
         btnCustomers.setOnClickListener(v -> {
             startActivity(new Intent(this, DashboardActivity.class));
         });
+
+        btnJoinRequests.setOnClickListener(v -> {
+            startActivity(new Intent(this, JoinRequestsActivity.class));
+        });
     }
     
     private void setupNavigationMenu() {
@@ -178,8 +190,16 @@ public class ProviderDashboardActivity extends BaseActivity {
                 startActivity(new Intent(this, ServiceEntryActivity.class));
             } else if (itemId == R.id.nav_customers) {
                 startActivity(new Intent(this, DashboardActivity.class));
+            } else if (itemId == R.id.nav_join_requests) {
+                startActivity(new Intent(this, JoinRequestsActivity.class));
             } else if (itemId == R.id.nav_bills) {
                 startActivity(new Intent(this, BillListActivity.class));
+            } else if (itemId == R.id.nav_reports) {
+                startActivity(new Intent(this, com.dailyserviceapp.reports.ReportsActivity.class));
+            } else if (itemId == R.id.nav_profile) {
+                startActivity(new Intent(this, ProfileActivity.class));
+            } else if (itemId == R.id.nav_qr_code) {
+                startActivity(new Intent(this, com.dailyserviceapp.qr.QRCodeActivity.class));
             } else if (itemId == R.id.nav_logout) {
                 logout();
             }
@@ -194,8 +214,7 @@ public class ProviderDashboardActivity extends BaseActivity {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
         } else {
-            // This is the main landing page, exit app
-            finishAffinity();
+            super.onBackPressed();
         }
     }
     
@@ -261,7 +280,7 @@ public class ProviderDashboardActivity extends BaseActivity {
             })
             .addOnFailureListener(e -> {
                 android.util.Log.e(TAG, "Error loading customers", e);
-                runOnUiThread(() -> {
+                runOnSafeUi(() -> {
                     txtTodayDelivered.setText("0 / 0");
                     txtTodayEarnings.setText(CurrencyUtils.formatIndianCurrency(DEFAULT_AMOUNT));
                     checkLoadingComplete();
@@ -314,7 +333,7 @@ public class ProviderDashboardActivity extends BaseActivity {
                         double pendingAmount = finalTotalLent - finalTotalReceived;
                         
                         // Update UI
-                        runOnUiThread(() -> {
+                        runOnSafeUi(() -> {
                             String lentText = CurrencyUtils.formatIndianCurrency(finalTotalLent);
                             String receivedText = CurrencyUtils.formatIndianCurrency(finalTotalReceived);
                             String pendingText = CurrencyUtils.formatIndianCurrency(pendingAmount);
@@ -329,7 +348,7 @@ public class ProviderDashboardActivity extends BaseActivity {
                     })
                     .addOnFailureListener(e -> {
                         android.util.Log.e(TAG, "Error loading payments", e);
-                        runOnUiThread(() -> {
+                        runOnSafeUi(() -> {
                             txtTotalLent.setText(CurrencyUtils.formatIndianCurrency(finalTotalLent));
                             txtTotalReceived.setText(CurrencyUtils.formatIndianCurrency(DEFAULT_AMOUNT));
                             txtPendingAmount.setText(CurrencyUtils.formatIndianCurrency(finalTotalLent));
@@ -339,7 +358,7 @@ public class ProviderDashboardActivity extends BaseActivity {
             })
             .addOnFailureListener(e -> {
                 android.util.Log.e(TAG, "Error loading customers for payment", e);
-                runOnUiThread(() -> {
+                runOnSafeUi(() -> {
                     txtTotalLent.setText(CurrencyUtils.formatIndianCurrency(DEFAULT_AMOUNT));
                     txtTotalReceived.setText(CurrencyUtils.formatIndianCurrency(DEFAULT_AMOUNT));
                     txtPendingAmount.setText(CurrencyUtils.formatIndianCurrency(DEFAULT_AMOUNT));
@@ -390,7 +409,7 @@ public class ProviderDashboardActivity extends BaseActivity {
         })
         .addOnFailureListener(e -> {
             android.util.Log.e(TAG, "Error loading customers for monthly", e);
-            runOnUiThread(() -> {
+            runOnSafeUi(() -> {
                 txtMonthlyDeliveries.setText("0");
                 txtMonthlyEarnings.setText(CurrencyUtils.formatIndianCurrency(DEFAULT_AMOUNT));
                 checkLoadingComplete();
@@ -426,7 +445,7 @@ public class ProviderDashboardActivity extends BaseActivity {
 
                 int finalDeliveredCount = deliveredCount;
                 double finalTodayEarnings = todayEarnings;
-                runOnUiThread(() -> {
+                runOnSafeUi(() -> {
                     String deliveredText = finalDeliveredCount + " / " + totalCustomers;
                     String earningsText = CurrencyUtils.formatIndianCurrency(finalTodayEarnings);
                     txtTodayDelivered.setText(deliveredText);
@@ -476,7 +495,7 @@ public class ProviderDashboardActivity extends BaseActivity {
 
                 int finalDeliveredCount = deliveredCount;
                 double finalTodayEarnings = todayEarnings;
-                runOnUiThread(() -> {
+                runOnSafeUi(() -> {
                     String deliveredText = finalDeliveredCount + " / " + totalCustomers;
                     String earningsText = CurrencyUtils.formatIndianCurrency(finalTodayEarnings);
                     txtTodayDelivered.setText(deliveredText);
@@ -488,7 +507,7 @@ public class ProviderDashboardActivity extends BaseActivity {
             })
             .addOnFailureListener(e -> {
                 android.util.Log.e(TAG, "Error loading today's summary", e);
-                runOnUiThread(() -> {
+                runOnSafeUi(() -> {
                     txtTodayDelivered.setText("0 / " + totalCustomers);
                     txtTodayEarnings.setText(CurrencyUtils.formatIndianCurrency(DEFAULT_AMOUNT));
                     checkLoadingComplete();
@@ -524,7 +543,7 @@ public class ProviderDashboardActivity extends BaseActivity {
 
                 int finalMonthlyDeliveries = monthlyDeliveries;
                 double finalMonthlyEarnings = monthlyEarnings;
-                runOnUiThread(() -> {
+                runOnSafeUi(() -> {
                     String deliveriesText = String.valueOf(finalMonthlyDeliveries);
                     String earningsText = CurrencyUtils.formatIndianCurrency(finalMonthlyEarnings);
                     txtMonthlyDeliveries.setText(deliveriesText);
@@ -574,7 +593,7 @@ public class ProviderDashboardActivity extends BaseActivity {
 
                 int finalMonthlyDeliveries = monthlyDeliveries;
                 double finalMonthlyEarnings = monthlyEarnings;
-                runOnUiThread(() -> {
+                runOnSafeUi(() -> {
                     String deliveriesText = String.valueOf(finalMonthlyDeliveries);
                     String earningsText = CurrencyUtils.formatIndianCurrency(finalMonthlyEarnings);
                     txtMonthlyDeliveries.setText(deliveriesText);
@@ -586,7 +605,7 @@ public class ProviderDashboardActivity extends BaseActivity {
             })
             .addOnFailureListener(e -> {
                 android.util.Log.e(TAG, "Error loading service entries for monthly", e);
-                runOnUiThread(() -> {
+                runOnSafeUi(() -> {
                     txtMonthlyDeliveries.setText("0");
                     txtMonthlyEarnings.setText(CurrencyUtils.formatIndianCurrency(DEFAULT_AMOUNT));
                     checkLoadingComplete();
@@ -663,9 +682,20 @@ public class ProviderDashboardActivity extends BaseActivity {
     }
     
     private void showLoading(boolean show) {
+        if (isFinishing() || isDestroyed()) {
+            return;
+        }
         if (progressBar != null) {
             progressBar.setVisibility(show ? View.VISIBLE : View.GONE);
         }
+    }
+
+    private void runOnSafeUi(Runnable action) {
+        if (action == null) return;
+        runOnUiThread(() -> {
+            if (isFinishing() || isDestroyed()) return;
+            action.run();
+        });
     }
     
     @Override
@@ -674,5 +704,11 @@ public class ProviderDashboardActivity extends BaseActivity {
         // Refresh data when returning to this screen
         loadingTasks = 0;
         loadDashboardData();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        binding = null;
     }
 }

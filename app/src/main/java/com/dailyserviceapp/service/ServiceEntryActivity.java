@@ -13,10 +13,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.dailyserviceapp.R;
 import com.dailyserviceapp.core.base.BaseActivity;
 import com.dailyserviceapp.core.offline.OfflineCache;
+import com.dailyserviceapp.core.sync.SyncWorkScheduler;
 import com.dailyserviceapp.core.utils.DateUtils;
 import com.dailyserviceapp.data.FirestoreRepository;
 import com.dailyserviceapp.data.models.Customer;
 import com.dailyserviceapp.data.models.ServiceEntry;
+import com.dailyserviceapp.databinding.ActivityServiceEntryBinding;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.Timestamp;
@@ -36,6 +38,8 @@ import java.util.List;
  * @since 2026-01-10
  */
 public class ServiceEntryActivity extends BaseActivity {
+
+    private ActivityServiceEntryBinding binding;
     
     private TextView selectedDateText;
     private TextView offlineIndicator;
@@ -55,12 +59,13 @@ public class ServiceEntryActivity extends BaseActivity {
     private Date selectedDate;
     private String providerId;
     private ListenerRegistration customersListener;
-    private List<Customer> cachedCustomers;
+    private boolean isMarkingDelivery;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_service_entry);
+        binding = ActivityServiceEntryBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
         
         // CRITICAL: Check session first
         if (!isLoggedIn()) {
@@ -69,7 +74,7 @@ public class ServiceEntryActivity extends BaseActivity {
             return;
         }
         
-        MaterialToolbar toolbar = findViewById(R.id.toolbar);
+        MaterialToolbar toolbar = binding.toolbar;
         setupToolbar(toolbar, "Service Entry", true);
         
         initializeViews();
@@ -79,17 +84,17 @@ public class ServiceEntryActivity extends BaseActivity {
     }
     
     private void initializeViews() {
-        selectedDateText = findViewById(R.id.selectedDateText);
-        offlineIndicator = findViewById(R.id.offlineIndicator);
-        pendingSyncCard = findViewById(R.id.pendingSyncCard);
-        pendingSyncText = findViewById(R.id.pendingSyncText);
-        changeDateButton = findViewById(R.id.changeDateButton);
-        btnSelectAll = findViewById(R.id.btnSelectAll);
-        btnClearAll = findViewById(R.id.btnClearAll);
-        serviceEntriesRecycler = findViewById(R.id.recyclerView);
-        emptyStateLayout = findViewById(R.id.emptyState);
-        btnMarkDelivery = findViewById(R.id.btnMarkDelivery);
-        loadingProgress = findViewById(R.id.loadingProgress);
+        selectedDateText = binding.selectedDateText;
+        offlineIndicator = binding.offlineIndicator;
+        pendingSyncCard = binding.pendingSyncCard;
+        pendingSyncText = binding.pendingSyncText;
+        changeDateButton = binding.changeDateButton;
+        btnSelectAll = binding.btnSelectAll;
+        btnClearAll = binding.btnClearAll;
+        serviceEntriesRecycler = binding.recyclerView;
+        emptyStateLayout = binding.emptyState;
+        btnMarkDelivery = binding.btnMarkDelivery;
+        loadingProgress = binding.loadingProgress;
         
         serviceEntriesRecycler.setLayoutManager(new LinearLayoutManager(this));
     }
@@ -97,6 +102,7 @@ public class ServiceEntryActivity extends BaseActivity {
     private void initializeData() {
         repository = new FirestoreRepository();
         offlineCache = new OfflineCache(this);
+        SyncWorkScheduler.ensurePeriodicSync(this);
         selectedDate = new Date();
         providerId = getCurrentUserId();
         
@@ -176,7 +182,9 @@ public class ServiceEntryActivity extends BaseActivity {
             navigateToLogin();
             return;
         }
-        
+
+        updatePendingSyncIndicator(offlineCache.getPendingEntries().size());
+
         if (!isNetworkAvailable()) {
             // Offline mode - load from cache
             loadOfflineData();
@@ -195,8 +203,6 @@ public class ServiceEntryActivity extends BaseActivity {
         customersListener = repository.listenToCustomers(providerId, new FirestoreRepository.OnCustomersLoadedListener() {
             @Override
             public void onCustomersLoaded(List<Customer> customers) {
-                cachedCustomers = customers;
-                
                 // Cache customers for offline access
                 offlineCache.cacheCustomers(customers);
                 
@@ -310,46 +316,67 @@ public class ServiceEntryActivity extends BaseActivity {
             showToast(getString(R.string.error_no_deliveries));
             return;
         }
-        
+
+        if (isMarkingDelivery) {
+            showToast("Please wait, delivery save is in progress");
+            return;
+        }
+
+        List<FirestoreRepository.DeliveryWriteRequest> writeRequests = new java.util.ArrayList<>();
+        for (ServiceEntryAdapter.DeliveryItem item : deliveries) {
+            if (item == null) continue;
+            writeRequests.add(new FirestoreRepository.DeliveryWriteRequest(
+                item.customerId,
+                item.quantity,
+                item.rate,
+                item.amount
+            ));
+        }
+
+        if (writeRequests.isEmpty()) {
+            showToast(getString(R.string.error_no_deliveries));
+            return;
+        }
+
+        isMarkingDelivery = true;
         btnMarkDelivery.setEnabled(false);
         btnMarkDelivery.setText(R.string.button_saving);
-        
+
         Timestamp timestamp = new Timestamp(selectedDate);
-        int[] successCount = {0};
-        int totalCount = deliveries.size();
-        
-        for (ServiceEntryAdapter.DeliveryItem item : deliveries) {
-            ServiceEntry entry = new ServiceEntry(
-                providerId,
-                item.customerId,
-                timestamp,
-                item.quantity,
-                true  // All selected items are marked as delivered
-            );
-            entry.setRate(item.rate);  // Set the rate for earnings calculation
-            
-            // Use atomic transaction to save entry and update lent amount
-            repository.saveServiceEntryWithTransaction(entry, item.customerId, item.amount,
-                new FirestoreRepository.OnSaveCompleteListener() {
+        repository.saveServiceEntriesBatchWithTransaction(
+            providerId,
+            timestamp,
+            writeRequests,
+            new FirestoreRepository.OnBatchSaveResultListener() {
                 @Override
-                public void onSuccess() {
-                    successCount[0]++;
-                    if (successCount[0] == totalCount) {
-                        btnMarkDelivery.setEnabled(true);
-                        btnMarkDelivery.setText(R.string.button_mark_delivery);
-                        showToast(getString(R.string.success_deliveries_marked));
-                        loadData(); // Refresh to show saved state
+                public void onSuccess(int savedCount, int skippedCount) {
+                    isMarkingDelivery = false;
+                    btnMarkDelivery.setEnabled(true);
+                    btnMarkDelivery.setText(R.string.button_mark_delivery);
+
+                    if (savedCount == 0 && skippedCount > 0) {
+                        showToast("Selected customers are already marked for this date");
+                        loadData();
+                        return;
                     }
+
+                    if (skippedCount > 0) {
+                        showToast("Saved " + savedCount + " deliveries, skipped " + skippedCount + " duplicates");
+                    } else {
+                        showToast(getString(R.string.success_deliveries_marked));
+                    }
+                    loadData();
                 }
 
                 @Override
                 public void onError(String error) {
-                    showToast(getString(R.string.error_general, error));
+                    isMarkingDelivery = false;
                     btnMarkDelivery.setEnabled(true);
                     btnMarkDelivery.setText(R.string.button_mark_delivery);
+                    showToast(getString(R.string.error_general, error));
                 }
-            });
-        }
+            }
+        );
     }
     
     private void showEmptyState(boolean show) {
@@ -392,11 +419,8 @@ public class ServiceEntryActivity extends BaseActivity {
         if (customersListener == null) {
             loadData();
         }
-        
-        // Sync pending offline entries if connected
-        if (isNetworkAvailable() && offlineCache.hasPendingEntries()) {
-            syncPendingEntries();
-        }
+
+        schedulePendingSyncIfNeeded();
     }
     
     private void loadOfflineData() {
@@ -457,54 +481,21 @@ public class ServiceEntryActivity extends BaseActivity {
         btnMarkDelivery.postDelayed(() -> btnMarkDelivery.setText("Mark Delivery"), 2000);
         
         showToast("✓ " + deliveries.size() + " deliveries queued for sync");
-        
+
+        // Schedule reliable background sync for when network is available.
+        SyncWorkScheduler.enqueueImmediateSync(this);
+
         // Reload to show updated state
         loadOfflineData();
     }
-    
-    private void syncPendingEntries() {
-        List<OfflineCache.PendingServiceEntry> pending = offlineCache.getPendingEntries();
-        if (pending.isEmpty()) {
+
+    private void schedulePendingSyncIfNeeded() {
+        int pendingCount = offlineCache.getPendingEntries().size();
+        updatePendingSyncIndicator(pendingCount);
+        if (pendingCount == 0) {
             return;
         }
-        
-        // Show persistent snackbar during sync
-        com.google.android.material.snackbar.Snackbar syncSnackbar = 
-            com.google.android.material.snackbar.Snackbar.make(
-                findViewById(android.R.id.content),
-                "🔄 Syncing " + pending.size() + " offline entries...",
-                com.google.android.material.snackbar.Snackbar.LENGTH_INDEFINITE
-            );
-        syncSnackbar.show();
-        
-        int[] syncedCount = {0};
-        int totalCount = pending.size();
-        
-        for (OfflineCache.PendingServiceEntry pendingEntry : pending) {
-            ServiceEntry entry = pendingEntry.toServiceEntry();
-            
-            repository.saveServiceEntryWithTransaction(entry, pendingEntry.customerId, pendingEntry.amount,
-                new FirestoreRepository.OnSaveCompleteListener() {
-                    @Override
-                    public void onSuccess() {
-                        syncedCount[0]++;
-                        if (syncedCount[0] == totalCount) {
-                            offlineCache.clearPendingEntries();
-                            syncSnackbar.dismiss();
-                            updatePendingSyncIndicator(0);
-                            showToast("✓ All " + totalCount + " entries synced successfully");
-                            loadData(); // Reload fresh data
-                        }
-                    }
-
-                    @Override
-                    public void onError(String error) {
-                        syncSnackbar.dismiss();
-                        showToast("⚠️ Sync failed: " + error);
-                    }
-                }
-            );
-        }
+        SyncWorkScheduler.enqueueImmediateSync(this);
     }
     
     private void updatePendingSyncIndicator(int count) {
@@ -531,5 +522,6 @@ public class ServiceEntryActivity extends BaseActivity {
             customersListener.remove();
             customersListener = null;
         }
+        binding = null;
     }
 }

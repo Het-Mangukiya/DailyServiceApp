@@ -8,13 +8,11 @@
     android:layout_height="match_parent"
     tools:openDrawer="start">
 
-    <!-- MAIN CONTENT -->
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/md_theme_background">
+        android:background="@drawable/bg_app_backdrop">
 
-        <!-- TOP APP BAR -->
         <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -26,382 +24,404 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:background="@color/md_theme_primary"
-                app:title="Dashboard"
+                app:title="@string/provider_dashboard_title"
                 app:titleTextColor="@android:color/white"/>
 
         </com.google.android.material.appbar.AppBarLayout>
 
-    <!-- SCROLLABLE CONTENT -->
-    <androidx.core.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fillViewport="true"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-        <LinearLayout
+        <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:fillViewport="true"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    app:cardBackgroundColor="@color/md_theme_primary_container"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="3dp"
+                    app:strokeColor="#334DB6AC"
+                    app:strokeWidth="1dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:drawableStart="@drawable/ic_nav_dashboard"
+                            android:drawablePadding="8dp"
+                            android:drawableTint="@color/md_theme_on_primary_container"
+                            android:text="@string/provider_dashboard_today_summary"
+                            android:textColor="@color/md_theme_on_primary_container"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="14dp"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="@string/provider_dashboard_delivered"
+                                android:textColor="@color/md_theme_on_primary_container"
+                                android:textSize="15sp" />
+
+                            <TextView
+                                android:id="@+id/txtTodayDelivered"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/dashboard_delivered_default"
+                                android:textColor="@color/md_theme_on_primary_container"
+                                android:textSize="20sp"
+                                android:textStyle="bold" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="@string/provider_dashboard_today_earnings"
+                                android:textColor="@color/md_theme_on_primary_container"
+                                android:textSize="15sp" />
+
+                            <TextView
+                                android:id="@+id/txtTodayEarnings"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/reports_default_currency_value"
+                                android:textColor="@color/success"
+                                android:textSize="20sp"
+                                android:textStyle="bold" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    app:cardBackgroundColor="@color/md_theme_surface"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="2dp"
+                    app:strokeColor="#1A4DB6AC"
+                    app:strokeWidth="1dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:drawableStart="@drawable/ic_nav_bills"
+                            android:drawablePadding="8dp"
+                            android:drawableTint="@color/md_theme_primary"
+                            android:text="@string/provider_dashboard_payment_overview"
+                            android:textColor="@color/md_theme_on_surface"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="@string/provider_dashboard_total_lent"
+                                android:textColor="@color/text_muted"
+                                android:textSize="14sp" />
+
+                            <TextView
+                                android:id="@+id/txtTotalLent"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/reports_default_currency_value"
+                                android:textColor="@color/md_theme_primary"
+                                android:textSize="17sp"
+                                android:textStyle="bold" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="@string/provider_dashboard_total_received"
+                                android:textColor="@color/text_muted"
+                                android:textSize="14sp" />
+
+                            <TextView
+                                android:id="@+id/txtTotalReceived"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/reports_default_currency_value"
+                                android:textColor="@color/success"
+                                android:textSize="17sp"
+                                android:textStyle="bold" />
+
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginBottom="10dp"
+                            android:background="#1F4DB6AC" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="@string/provider_dashboard_pending_amount"
+                                android:textColor="@color/md_theme_on_surface"
+                                android:textSize="15sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/txtPendingAmount"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/reports_default_currency_value"
+                                android:textColor="@color/md_theme_error"
+                                android:textSize="19sp"
+                                android:textStyle="bold" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    app:cardBackgroundColor="@color/md_theme_surface"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="2dp"
+                    app:strokeColor="#1A4DB6AC"
+                    app:strokeWidth="1dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:drawableStart="@drawable/ic_nav_reports"
+                            android:drawablePadding="8dp"
+                            android:drawableTint="@color/md_theme_primary"
+                            android:text="@string/provider_dashboard_this_month"
+                            android:textColor="@color/md_theme_on_surface"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="@string/provider_dashboard_total_earnings"
+                                android:textColor="@color/text_muted"
+                                android:textSize="14sp" />
+
+                            <TextView
+                                android:id="@+id/txtMonthlyEarnings"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/reports_default_currency_value"
+                                android:textColor="@color/success"
+                                android:textSize="17sp"
+                                android:textStyle="bold" />
+
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="@string/provider_dashboard_total_deliveries"
+                                android:textColor="@color/text_muted"
+                                android:textSize="14sp" />
+
+                            <TextView
+                                android:id="@+id/txtMonthlyDeliveries"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/reports_default_count_value"
+                                android:textColor="@color/md_theme_primary"
+                                android:textSize="17sp"
+                                android:textStyle="bold" />
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    app:cardBackgroundColor="@color/md_theme_surface"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="2dp"
+                    app:strokeColor="#1A4DB6AC"
+                    app:strokeWidth="1dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:drawableStart="@drawable/ic_nav_service"
+                            android:drawablePadding="8dp"
+                            android:drawableTint="@color/md_theme_primary"
+                            android:text="@string/provider_dashboard_quick_actions"
+                            android:textColor="@color/md_theme_on_surface"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnServiceEntry"
+                            style="@style/Widget.Material3.Button.TonalButton"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:text="@string/provider_dashboard_service_entry"
+                            android:textAllCaps="false"
+                            android:textSize="15sp"
+                            app:cornerRadius="12dp"
+                            app:icon="@drawable/ic_nav_service"
+                            app:iconGravity="textStart"
+                            app:iconTint="@color/md_theme_primary" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnBills"
+                            style="@style/Widget.Material3.Button.TonalButton"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:text="@string/provider_dashboard_bills_payments"
+                            android:textAllCaps="false"
+                            android:textSize="15sp"
+                            app:cornerRadius="12dp"
+                            app:icon="@drawable/ic_nav_bills"
+                            app:iconGravity="textStart"
+                            app:iconTint="@color/md_theme_primary" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnCustomers"
+                            style="@style/Widget.Material3.Button.TonalButton"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:text="@string/provider_dashboard_my_customers"
+                            android:textAllCaps="false"
+                            android:textSize="15sp"
+                            app:cornerRadius="12dp"
+                            app:icon="@drawable/ic_nav_customers"
+                            app:iconGravity="textStart"
+                            app:iconTint="@color/md_theme_primary" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnJoinRequests"
+                            style="@style/Widget.Material3.Button.TonalButton"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:text="@string/provider_dashboard_join_requests"
+                            android:textAllCaps="false"
+                            android:textSize="15sp"
+                            app:cornerRadius="12dp"
+                            app:icon="@drawable/ic_nav_requests"
+                            app:iconGravity="textStart"
+                            app:iconTint="@color/md_theme_primary" />
+
+                    </LinearLayout>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp" />
+
+            </LinearLayout>
+
+        </androidx.core.widget.NestedScrollView>
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
-
-            <!-- ============ TODAY'S SUMMARY CARD ============ -->
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardCornerRadius="20dp"
-                app:cardElevation="8dp"
-                app:cardBackgroundColor="@color/md_theme_primary_container">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="20dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="📅 Today's Summary"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/md_theme_on_primary_container"
-                        android:layout_marginBottom="16dp"/>
-
-                    <!-- Deliveries Row -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginBottom="12dp">
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Delivered:"
-                            android:textSize="16sp"
-                            android:textColor="@color/md_theme_on_primary_container"/>
-
-                        <TextView
-                            android:id="@+id/txtTodayDelivered"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="0 / 0"
-                            android:textSize="20sp"
-                            android:textStyle="bold"
-                            android:textColor="@color/md_theme_on_primary_container"/>
-
-                    </LinearLayout>
-
-                    <!-- Earnings Row -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Today's Earnings:"
-                            android:textSize="16sp"
-                            android:textColor="@color/md_theme_on_primary_container"/>
-
-                        <TextView
-                            android:id="@+id/txtTodayEarnings"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="₹0.00"
-                            android:textSize="22sp"
-                            android:textStyle="bold"
-                            android:textColor="@color/success"/>
-
-                    </LinearLayout>
-
-                </LinearLayout>
-
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- ============ PAYMENT OVERVIEW CARD ============ -->
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardCornerRadius="20dp"
-                app:cardElevation="8dp"
-                app:cardBackgroundColor="@android:color/white">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="20dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="💰 Payment Overview"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/md_theme_on_surface"
-                        android:layout_marginBottom="16dp"/>
-
-                    <!-- Total Lent -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginBottom="12dp">
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Total Lent:"
-                            android:textSize="15sp"
-                            android:textColor="@color/text_secondary"/>
-
-                        <TextView
-                            android:id="@+id/txtTotalLent"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="₹0.00"
-                            android:textSize="18sp"
-                            android:textStyle="bold"
-                            android:textColor="@android:color/holo_blue_dark"/>
-
-                    </LinearLayout>
-
-                    <!-- Total Received -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginBottom="12dp">
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Total Received:"
-                            android:textSize="15sp"
-                            android:textColor="@color/text_secondary"/>
-
-                        <TextView
-                            android:id="@+id/txtTotalReceived"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="₹0.00"
-                            android:textSize="18sp"
-                            android:textStyle="bold"
-                            android:textColor="@color/success"/>
-
-                    </LinearLayout>
-
-                    <!-- Divider -->
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="@color/text_muted"
-                        android:layout_marginVertical="12dp"/>
-
-                    <!-- Pending Amount -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Pending Amount:"
-                            android:textSize="16sp"
-                            android:textStyle="bold"
-                            android:textColor="@color/md_theme_on_surface"/>
-
-                        <TextView
-                            android:id="@+id/txtPendingAmount"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="₹0.00"
-                            android:textSize="20sp"
-                            android:textStyle="bold"
-                            android:textColor="@android:color/holo_red_dark"/>
-
-                    </LinearLayout>
-
-                </LinearLayout>
-
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- ============ MONTHLY OVERVIEW CARD ============ -->
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardCornerRadius="20dp"
-                app:cardElevation="8dp"
-                app:cardBackgroundColor="@android:color/white">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="20dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="📊 This Month"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/md_theme_on_surface"
-                        android:layout_marginBottom="16dp"/>
-
-                    <!-- Monthly Earnings -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginBottom="12dp">
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Total Earnings:"
-                            android:textSize="15sp"
-                            android:textColor="@color/text_secondary"/>
-
-                        <TextView
-                            android:id="@+id/txtMonthlyEarnings"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="₹0.00"
-                            android:textSize="18sp"
-                            android:textStyle="bold"
-                            android:textColor="@color/success"/>
-
-                    </LinearLayout>
-
-                    <!-- Monthly Deliveries -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Total Deliveries:"
-                            android:textSize="15sp"
-                            android:textColor="@color/text_secondary"/>
-
-                        <TextView
-                            android:id="@+id/txtMonthlyDeliveries"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="0"
-                            android:textSize="18sp"
-                            android:textStyle="bold"
-                            android:textColor="@color/md_theme_primary"/>
-
-                    </LinearLayout>
-
-                </LinearLayout>
-
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- ============ QUICK ACTIONS CARD ============ -->
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardCornerRadius="20dp"
-                app:cardElevation="8dp"
-                app:cardBackgroundColor="@android:color/white">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="20dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="⚡ Quick Actions"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/md_theme_on_surface"
-                        android:layout_marginBottom="16dp"/>
-
-                    <!-- Service Entry Button -->
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnServiceEntry"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="📋 Service Entry"
-                        android:textSize="16sp"
-                        android:padding="16dp"
-                        android:layout_marginBottom="12dp"
-                        app:cornerRadius="12dp"
-                        app:icon="@drawable/ic_service_24"
-                        app:iconSize="24dp"
-                        app:iconGravity="start"
-                        style="@style/Widget.Material3.Button.TonalButton"/>
-
-                    <!-- Bills Button -->
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnBills"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="💵 Bills &amp; Payments"
-                        android:textSize="16sp"
-                        android:padding="16dp"
-                        android:layout_marginBottom="12dp"
-                        app:cornerRadius="12dp"
-                        app:icon="@drawable/ic_bill_24"
-                        app:iconSize="24dp"
-                        app:iconGravity="start"
-                        style="@style/Widget.Material3.Button.TonalButton"/>
-
-                    <!-- My Customers Button -->
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnCustomers"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="👥 My Customers"
-                        android:textSize="16sp"
-                        android:padding="16dp"
-                        app:cornerRadius="12dp"
-                        app:icon="@drawable/ic_person_24"
-                        app:iconSize="24dp"
-                        app:iconGravity="start"
-                        style="@style/Widget.Material3.Button.TonalButton"/>
-
-                </LinearLayout>
-
-            </com.google.android.material.card.MaterialCardView>
-
-        </LinearLayout>
-
-    </androidx.core.widget.NestedScrollView>
-
-    <!-- Loading Indicator -->
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:visibility="gone"/>
+            android:layout_gravity="center"
+            android:contentDescription="@string/loading"
+            android:visibility="gone"/>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
-    <!-- NAVIGATION DRAWER -->
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/navigationView"
         android:layout_width="wrap_content"
@@ -409,6 +429,10 @@
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/nav_header"
+        app:itemBackground="@drawable/nav_item_background"
+        app:itemHorizontalPadding="16dp"
+        app:itemIconTint="@color/nav_item_icon_tint"
+        app:itemTextColor="@color/nav_item_text_tint"
         app:menu="@menu/drawer_menu"/>
 
 </androidx.drawerlayout.widget.DrawerLayout>

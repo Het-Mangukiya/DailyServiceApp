@@ -5,61 +5,66 @@
         
         <item
             android:id="@+id/nav_dashboard"
-            android:icon="@drawable/ic_dashboard_24"
-            android:title="Dashboard" />
+            android:icon="@drawable/ic_nav_dashboard"
+            android:title="@string/menu_dashboard" />
         
         <item
             android:id="@+id/nav_customers"
-            android:icon="@android:drawable/ic_menu_myplaces"
-            android:title="My Customers" />
+            android:icon="@drawable/ic_nav_customers"
+            android:title="@string/menu_my_customers" />
+
+        <item
+            android:id="@+id/nav_join_requests"
+            android:icon="@drawable/ic_nav_requests"
+            android:title="@string/menu_join_requests" />
 
         <item
             android:id="@+id/nav_service_entry"
-            android:icon="@android:drawable/ic_menu_edit"
-            android:title="Service Entry" />
+            android:icon="@drawable/ic_nav_service"
+            android:title="@string/menu_service_entry" />
 
         <item
             android:id="@+id/nav_bills"
-            android:icon="@android:drawable/ic_menu_recent_history"
-            android:title="Bills" />
+            android:icon="@drawable/ic_nav_bills"
+            android:title="@string/menu_bills" />
 
         <item
             android:id="@+id/nav_reports"
-            android:icon="@android:drawable/ic_menu_sort_by_size"
-            android:title="Reports" />
+            android:icon="@drawable/ic_nav_reports"
+            android:title="@string/menu_reports" />
 
     </group>
 
-    <item android:title="Account">
+    <item android:title="@string/menu_group_account">
         <menu>
             <item
                 android:id="@+id/nav_profile"
-                android:icon="@android:drawable/ic_menu_manage"
-                android:title="My Profile" />
+                android:icon="@drawable/ic_nav_profile"
+                android:title="@string/menu_my_profile" />
 
             <item
                 android:id="@+id/nav_qr_code"
-                android:icon="@android:drawable/ic_menu_camera"
-                android:title="My QR Code" />
+                android:icon="@drawable/ic_nav_qr"
+                android:title="@string/menu_my_qr_code" />
             
             <item
                 android:id="@+id/nav_test_data"
-                android:icon="@android:drawable/ic_menu_add"
-                android:title="Generate Test Data" />
+                android:icon="@drawable/ic_nav_test_data"
+                android:title="@string/menu_generate_test_data" />
         </menu>
     </item>
 
-    <item android:title="Settings">
+    <item android:title="@string/menu_group_settings">
         <menu>
             <item
                 android:id="@+id/nav_share"
-                android:icon="@android:drawable/ic_menu_share"
-                android:title="Share App" />
+                android:icon="@drawable/ic_nav_share"
+                android:title="@string/menu_share_app" />
 
             <item
                 android:id="@+id/nav_logout"
-                android:icon="@android:drawable/ic_lock_power_off"
-                android:title="Logout" />
+                android:icon="@drawable/ic_nav_logout"
+                android:title="@string/action_logout" />
         </menu>
     </item>
 

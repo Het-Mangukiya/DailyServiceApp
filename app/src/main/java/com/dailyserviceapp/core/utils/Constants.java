@@ -117,6 +117,9 @@ public class Constants {
     
     /** Customers collection in Firestore */
     public static final String COLLECTION_CUSTOMERS = "customers";
+
+    /** Customer-to-provider link collection in Firestore */
+    public static final String COLLECTION_CUSTOMER_LINKS = "customerLinks";
     
     /** Service entries collection in Firestore */
     public static final String COLLECTION_SERVICE_ENTRIES = "serviceEntries";
@@ -161,6 +164,7 @@ public class Constants {
     public static final String EXTRA_SERVICE_ENTRY_ID = "serviceEntryId";
     public static final String EXTRA_MONTH = "month";
     public static final String EXTRA_YEAR = "year";
+    public static final String EXTRA_FORCE_PROFILE_SETUP = "forceProfileSetup";
     
     // Pagination
     public static final int PAGE_SIZE = 50;

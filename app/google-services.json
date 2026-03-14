@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "717495606296",
+    "firebase_url": "https://sgp-1-53142-default-rtdb.asia-southeast1.firebasedatabase.app",
     "project_id": "sgp-1-53142",
     "storage_bucket": "sgp-1-53142.firebasestorage.app"
   },
@@ -12,7 +13,20 @@
           "package_name": "com.dailyserviceapp"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "717495606296-c178e9odinl3ri41lhag965gtg985nb7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.dailyserviceapp",
+            "certificate_hash": "01676d10b9185679b6fa29621728484b19875fc3"
+          }
+        },
+        {
+          "client_id": "717495606296-n0s5ghs6imojfkdbn9r6dvjr2jmqbe5e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAoklRbDNcplP_VNqGU0MNfcpVj3WrZadQ"
@@ -20,7 +34,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "717495606296-n0s5ghs6imojfkdbn9r6dvjr2jmqbe5e.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
