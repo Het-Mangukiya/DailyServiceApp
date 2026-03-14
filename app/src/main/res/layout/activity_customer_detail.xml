@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#EFEFF1">
+    android:background="@drawable/bg_app_backdrop">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
@@ -17,7 +17,7 @@
         app:navigationIcon="@drawable/ic_back"
         app:navigationContentDescription="@string/navigate_back"
         app:navigationIconTint="@android:color/white"
-        app:title="Customer Profile"
+        app:title="@string/customer_profile_title"
         app:titleCentered="true"
         app:titleTextColor="@android:color/white" />
 
@@ -65,7 +65,7 @@
                             android:layout_height="match_parent"
                             android:contentDescription="@string/profile_initial_description"
                             android:gravity="center"
-                            android:text="H"
+                            android:text="@string/customer_initial_placeholder"
                             android:textColor="@android:color/white"
                             android:textSize="30sp"
                             android:textStyle="bold" />
@@ -85,7 +85,7 @@
                             android:layout_height="wrap_content"
                             android:ellipsize="end"
                             android:maxLines="1"
-                            android:text="Customer Name"
+                            android:text="@string/customer_default"
                             android:textColor="#111111"
                             android:textSize="20sp"
                             android:textStyle="bold" />
@@ -97,7 +97,7 @@
                             android:layout_marginTop="2dp"
                             android:ellipsize="end"
                             android:maxLines="1"
-                            android:text="Milk • ₹120.00/unit"
+                            android:text="@string/customer_detail_service_placeholder"
                             android:textColor="#202124"
                             android:textSize="14sp" />
 
@@ -106,7 +106,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
-                            android:text="ON VACATION"
+                            android:text="@string/on_vacation"
                             android:textColor="@android:color/white"
                             android:visibility="gone"
                             app:chipBackgroundColor="#5AA7AF"
@@ -118,7 +118,7 @@
                         android:id="@+id/customerStatusChip"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="ACTIVE"
+                        android:text="@string/status_active"
                         android:textColor="@android:color/white"
                         app:chipBackgroundColor="#64BD78"
                         app:chipStrokeWidth="0dp" />
@@ -144,7 +144,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Contact"
+                        android:text="@string/contact_title"
                         android:textColor="#16161B"
                         android:textSize="18sp"
                         android:textStyle="bold" />
@@ -154,7 +154,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:text="Phone: -"
+                        android:text="@string/phone_placeholder"
                         android:textColor="#1D1E22"
                         android:textSize="14sp" />
 
@@ -163,7 +163,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
-                        android:text="Address: -"
+                        android:text="@string/address_placeholder"
                         android:textColor="#1D1E22"
                         android:textSize="14sp" />
 
@@ -188,7 +188,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Monthly Summary"
+                        android:text="@string/monthly_summary"
                         android:textColor="#16161B"
                         android:textSize="18sp"
                         android:textStyle="bold" />
@@ -247,7 +247,7 @@
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
-                                    android:text="Month:"
+                                    android:text="@string/customer_detail_month_label"
                                     android:textColor="#171717"
                                     android:textSize="14sp" />
 
@@ -255,7 +255,7 @@
                                     android:id="@+id/monthValue"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="Feb 2026"
+                                    android:text="@string/customer_month_placeholder"
                                     android:textColor="#171717"
                                     android:textSize="14sp"
                                     android:textStyle="bold" />
@@ -272,7 +272,7 @@
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
-                                    android:text="Delivered Entries:"
+                                    android:text="@string/customer_detail_delivered_entries_label"
                                     android:textColor="#171717"
                                     android:textSize="14sp" />
 
@@ -280,7 +280,7 @@
                                     android:id="@+id/deliveredEntriesValue"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="0"
+                                    android:text="@string/reports_default_count_value"
                                     android:textColor="#171717"
                                     android:textSize="14sp"
                                     android:textStyle="bold" />
@@ -297,7 +297,7 @@
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
-                                    android:text="Total Quantity:"
+                                    android:text="@string/customer_detail_total_quantity_label"
                                     android:textColor="#171717"
                                     android:textSize="14sp" />
 
@@ -305,7 +305,7 @@
                                     android:id="@+id/totalQuantityValue"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="0.0"
+                                    android:text="@string/customer_quantity_placeholder"
                                     android:textColor="#171717"
                                     android:textSize="14sp"
                                     android:textStyle="bold" />
@@ -322,7 +322,7 @@
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
-                                    android:text="Service Value:"
+                                    android:text="@string/customer_detail_service_value_label"
                                     android:textColor="#171717"
                                     android:textSize="14sp" />
 
@@ -330,7 +330,7 @@
                                     android:id="@+id/serviceValueValue"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="₹0.00"
+                                    android:text="@string/reports_default_currency_value"
                                     android:textColor="#171717"
                                     android:textSize="14sp"
                                     android:textStyle="bold" />
@@ -362,7 +362,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Payment Status"
+                        android:text="@string/payment_status"
                         android:textColor="#16161B"
                         android:textSize="18sp"
                         android:textStyle="bold" />
@@ -377,7 +377,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Total Service Value:"
+                            android:text="@string/customer_detail_total_service_value_label"
                             android:textColor="#171717"
                             android:textSize="14sp" />
 
@@ -385,7 +385,7 @@
                             android:id="@+id/paymentTotalServiceValue"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="₹0.00"
+                            android:text="@string/reports_default_currency_value"
                             android:textColor="#171717"
                             android:textSize="14sp"
                             android:textStyle="bold" />
@@ -402,7 +402,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Total Paid:"
+                            android:text="@string/customer_detail_total_paid_label"
                             android:textColor="#171717"
                             android:textSize="14sp" />
 
@@ -410,7 +410,7 @@
                             android:id="@+id/paymentTotalPaidValue"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="₹0.00"
+                            android:text="@string/reports_default_currency_value"
                             android:textColor="#171717"
                             android:textSize="14sp"
                             android:textStyle="bold" />
@@ -427,7 +427,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Outstanding:"
+                            android:text="@string/customer_detail_outstanding_label"
                             android:textColor="#171717"
                             android:textSize="14sp" />
 
@@ -435,7 +435,7 @@
                             android:id="@+id/paymentOutstandingValue"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="₹0.00"
+                            android:text="@string/reports_default_currency_value"
                             android:textColor="#171717"
                             android:textSize="14sp"
                             android:textStyle="bold" />
@@ -452,7 +452,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Paid Till:"
+                            android:text="@string/customer_detail_paid_till_label"
                             android:textColor="#171717"
                             android:textSize="14sp" />
 
@@ -460,7 +460,7 @@
                             android:id="@+id/paymentPaidTillValue"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="-"
+                            android:text="@string/dash_placeholder"
                             android:textColor="#171717"
                             android:textSize="14sp"
                             android:textStyle="bold" />
@@ -477,7 +477,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Due From:"
+                            android:text="@string/customer_detail_due_from_label"
                             android:textColor="#171717"
                             android:textSize="14sp" />
 
@@ -485,7 +485,7 @@
                             android:id="@+id/paymentDueFromValue"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="-"
+                            android:text="@string/dash_placeholder"
                             android:textColor="#171717"
                             android:textSize="14sp"
                             android:textStyle="bold" />
@@ -502,7 +502,7 @@
                 android:layout_height="56dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="8dp"
-                android:text="Mark Delivered Today"
+                android:text="@string/mark_delivered_today"
                 android:textAllCaps="false"
                 android:textColor="@android:color/white"
                 android:textSize="18sp"

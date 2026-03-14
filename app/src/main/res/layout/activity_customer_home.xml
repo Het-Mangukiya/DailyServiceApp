@@ -25,6 +25,7 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:clipToPadding="false"
         android:fillViewport="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
@@ -38,7 +39,7 @@
                 android:id="@+id/txtWelcome"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
+                android:layout_marginBottom="14dp"
                 android:text="@string/customer_home_welcome_label"
                 android:textColor="@color/md_theme_on_surface"
                 android:textSize="20sp"
@@ -50,7 +51,9 @@
                 android:layout_marginBottom="14dp"
                 app:cardBackgroundColor="@color/md_theme_surface"
                 app:cardCornerRadius="16dp"
-                app:cardElevation="4dp">
+                app:cardElevation="4dp"
+                app:strokeColor="#1A4DB6AC"
+                app:strokeWidth="1dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -61,6 +64,9 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:drawableStart="@drawable/ic_nav_qr"
+                        android:drawablePadding="8dp"
+                        android:drawableTint="@color/md_theme_primary"
                         android:text="@string/customer_home_join_title"
                         android:textColor="@color/md_theme_on_surface"
                         android:textSize="17sp"
@@ -108,7 +114,9 @@
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="8dp"
                             android:layout_weight="1"
-                            android:text="@string/customer_home_scan_qr" />
+                            android:text="@string/customer_home_scan_qr"
+                            app:strokeColor="@color/md_theme_primary"
+                            app:strokeWidth="1dp" />
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btnJoinProvider"
@@ -117,6 +125,7 @@
                             android:layout_marginStart="8dp"
                             android:layout_weight="1"
                             android:text="@string/customer_home_connect"
+                            android:textStyle="bold"
                             app:backgroundTint="@color/md_theme_primary" />
 
                     </LinearLayout>
@@ -133,7 +142,9 @@
                 android:visibility="gone"
                 app:cardBackgroundColor="@color/md_theme_primary_container"
                 app:cardCornerRadius="16dp"
-                app:cardElevation="2dp">
+                app:cardElevation="2dp"
+                app:strokeColor="#334DB6AC"
+                app:strokeWidth="1dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -144,6 +155,9 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:drawableStart="@drawable/ic_nav_profile"
+                        android:drawablePadding="8dp"
+                        android:drawableTint="@color/md_theme_on_primary_container"
                         android:text="@string/customer_home_linked_provider"
                         android:textColor="@color/md_theme_on_primary_container"
                         android:textSize="15sp"
@@ -194,6 +208,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
                         android:text="@string/customer_home_open_dashboard"
+                        android:textStyle="bold"
                         android:visibility="gone"
                         app:backgroundTint="@color/md_theme_primary" />
 
@@ -206,7 +221,9 @@
                 android:layout_height="wrap_content"
                 app:cardBackgroundColor="@color/md_theme_surface"
                 app:cardCornerRadius="16dp"
-                app:cardElevation="2dp">
+                app:cardElevation="2dp"
+                app:strokeColor="#1A4DB6AC"
+                app:strokeWidth="1dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -217,6 +234,9 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:drawableStart="@drawable/ic_nav_reports"
+                        android:drawablePadding="8dp"
+                        android:drawableTint="@color/md_theme_primary"
                         android:text="@string/customer_home_personal_tracking_title"
                         android:textColor="@color/md_theme_on_surface"
                         android:textSize="17sp"

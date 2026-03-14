@@ -16,13 +16,14 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.checkbox.MaterialCheckBox;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * Simplified adapter for service entry marking.
@@ -45,6 +46,7 @@ public class ServiceEntryAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private final Map<String, Boolean> selectionState = new HashMap<>(); // true = selected for marking
 
     public ServiceEntryAdapter() {
+        setHasStableIds(true);
     }
 
     /**
@@ -63,28 +65,39 @@ public class ServiceEntryAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         deliveryStatus.clear();
         selectionState.clear();
         items.clear();
+
+        Set<String> deliveredCustomerIds = new HashSet<>();
+        if (serviceEntries != null) {
+            for (ServiceEntry entry : serviceEntries) {
+                if (entry == null || !entry.isDelivered()) continue;
+                String customerId = entry.getCustomerId();
+                if (customerId != null && !customerId.trim().isEmpty()) {
+                    deliveredCustomerIds.add(customerId);
+                }
+            }
+        }
         
         if (customerList != null) {
-            customers.addAll(customerList);
-            
-            // Mark which customers already have deliveries
+            Set<String> activeCustomerIds = new HashSet<>();
             for (Customer customer : customerList) {
-                boolean hasEntry = false;
-                if (serviceEntries != null) {
-                    for (ServiceEntry entry : serviceEntries) {
-                        if (entry.getCustomerId().equals(customer.getId()) && entry.isDelivered()) {
-                            hasEntry = true;
-                            break;
-                        }
-                    }
+                if (customer == null) continue;
+                String customerId = customer.getId();
+                if (customerId == null || customerId.trim().isEmpty()) {
+                    continue;
                 }
-                deliveryStatus.put(customer.getId(), hasEntry);
-                selectionState.put(customer.getId(), false);
+                customers.add(customer);
+                activeCustomerIds.add(customerId);
+
+                boolean hasEntry = deliveredCustomerIds.contains(customerId);
+                deliveryStatus.put(customerId, hasEntry);
+                selectionState.put(customerId, false);
             }
+
+            quantityOverrides.keySet().retainAll(activeCustomerIds);
             
             // Group customers by area for route planning
             Map<String, List<Customer>> groupedByArea = new LinkedHashMap<>();
-            for (Customer customer : customerList) {
+            for (Customer customer : customers) {
                 String area = customer.getArea();
                 if (area == null || area.trim().isEmpty()) {
                     area = "Other Areas";
@@ -185,17 +198,21 @@ public class ServiceEntryAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
     
     private void bindCustomer(@NonNull CustomerViewHolder holder, Customer customer, int position) {
-        boolean alreadyDelivered = deliveryStatus.getOrDefault(customer.getId(), false);
+        String customerId = customer.getId();
+        boolean hasValidId = customerId != null && !customerId.trim().isEmpty();
+        boolean alreadyDelivered = hasValidId && deliveryStatus.getOrDefault(customerId, false);
         
         // Set customer name
         holder.customerName.setText(customer.getName());
         
         // Get current quantity (custom override or default)
-        double currentQuantity = quantityOverrides.getOrDefault(customer.getId(), customer.getDefaultQuantity());
+        double currentQuantity = hasValidId
+            ? quantityOverrides.getOrDefault(customerId, customer.getDefaultQuantity())
+            : customer.getDefaultQuantity();
         
         // Set service details
         String details = String.format(Locale.getDefault(), "%s • ₹%.0f × %.1f", 
-            customer.getServiceType(),
+            customer.getServiceType() == null ? "" : customer.getServiceType(),
             customer.getRatePerUnit(),
             currentQuantity
         );
@@ -214,16 +231,20 @@ public class ServiceEntryAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         
         // Checkbox: checked = already delivered (read-only), unchecked = ready to mark
         holder.deliveredCheckbox.setOnCheckedChangeListener(null);
-        if (alreadyDelivered) {
+        if (!hasValidId) {
+            holder.deliveredCheckbox.setChecked(false);
+            holder.deliveredCheckbox.setEnabled(false);
+            holder.itemView.setOnClickListener(null);
+        } else if (alreadyDelivered) {
             holder.deliveredCheckbox.setChecked(true);
             holder.deliveredCheckbox.setEnabled(false);
             holder.itemView.setOnClickListener(null);
         } else {
-            boolean isSelected = selectionState.getOrDefault(customer.getId(), false);
+            boolean isSelected = selectionState.getOrDefault(customerId, false);
             holder.deliveredCheckbox.setChecked(isSelected);
             holder.deliveredCheckbox.setEnabled(true);
             holder.deliveredCheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                selectionState.put(customer.getId(), isChecked);
+                selectionState.put(customerId, isChecked);
             });
             holder.itemView.setOnClickListener(v ->
                 holder.deliveredCheckbox.setChecked(!holder.deliveredCheckbox.isChecked())
@@ -231,21 +252,25 @@ public class ServiceEntryAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
         
         // Quantity controls - only enabled if not already delivered
-        boolean enableControls = !alreadyDelivered;
+        boolean enableControls = hasValidId && !alreadyDelivered;
         holder.btnDecreaseQty.setEnabled(enableControls && currentQuantity > 0.5);
         holder.btnIncreaseQty.setEnabled(enableControls && currentQuantity < 10.0);
         
         // Decrease quantity
         holder.btnDecreaseQty.setOnClickListener(v -> {
             double newQty = Math.max(0.5, currentQuantity - 0.5);
-            quantityOverrides.put(customer.getId(), newQty);
+            if (hasValidId) {
+                quantityOverrides.put(customerId, newQty);
+            }
             notifyItemChanged(position);
         });
         
         // Increase quantity
         holder.btnIncreaseQty.setOnClickListener(v -> {
             double newQty = Math.min(10.0, currentQuantity + 0.5);
-            quantityOverrides.put(customer.getId(), newQty);
+            if (hasValidId) {
+                quantityOverrides.put(customerId, newQty);
+            }
             notifyItemChanged(position);
         });
     }
@@ -255,12 +280,33 @@ public class ServiceEntryAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         return items.size();
     }
 
+    @Override
+    public long getItemId(int position) {
+        if (position < 0 || position >= items.size()) {
+            return RecyclerView.NO_ID;
+        }
+        Object item = items.get(position);
+        if (item instanceof String) {
+            return ("header_" + item).hashCode();
+        }
+        if (item instanceof Customer) {
+            String customerId = ((Customer) item).getId();
+            if (customerId != null && !customerId.trim().isEmpty()) {
+                return customerId.hashCode();
+            }
+        }
+        return RecyclerView.NO_ID;
+    }
+
     /**
      * Get customers who DON'T have deliveries yet (ready for marking)
      */
     public List<DeliveryItem> getSelectedDeliveries() {
         List<DeliveryItem> deliveries = new ArrayList<>();
         for (Customer customer : customers) {
+            if (customer == null || customer.getId() == null || customer.getId().trim().isEmpty()) {
+                continue;
+            }
             // Only include customers who DON'T have deliveries yet
             boolean alreadyDelivered = deliveryStatus.getOrDefault(customer.getId(), false);
             boolean isSelected = selectionState.getOrDefault(customer.getId(), false);

@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/md_theme_background">
+    android:background="@drawable/bg_app_backdrop">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
@@ -39,7 +39,9 @@
                 style="@style/Widget.App.Card.Elevated"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/spacing_lg">
+                android:layout_marginBottom="@dimen/spacing_lg"
+                app:strokeColor="#1A4DB6AC"
+                app:strokeWidth="1dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -50,7 +52,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Basic Information"
+                        android:text="@string/profile_basic_information"
                         android:textStyle="bold"
                         android:textSize="@dimen/text_size_base"
                         android:layout_marginBottom="@dimen/spacing_md" />
@@ -59,7 +61,7 @@
                         style="@style/Widget.App.TextInputLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Business Name"
+                        android:hint="@string/profile_business_name"
                         android:layout_marginBottom="@dimen/spacing_md">
 
                         <com.google.android.material.textfield.TextInputEditText
@@ -75,7 +77,7 @@
                         style="@style/Widget.App.TextInputLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Owner Name"
+                        android:hint="@string/profile_owner_name"
                         android:layout_marginBottom="@dimen/spacing_md">
 
                         <com.google.android.material.textfield.TextInputEditText
@@ -91,7 +93,7 @@
                         style="@style/Widget.App.TextInputLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Phone Number"
+                        android:hint="@string/profile_phone_number_hint"
                         android:layout_marginBottom="@dimen/spacing_md">
 
                         <com.google.android.material.textfield.TextInputEditText
@@ -107,7 +109,7 @@
                         style="@style/Widget.App.TextInputLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Email"
+                        android:hint="@string/profile_email_hint"
                         android:layout_marginBottom="@dimen/spacing_md">
 
                         <com.google.android.material.textfield.TextInputEditText
@@ -124,7 +126,7 @@
                         style="@style/Widget.App.TextInputLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Address"
+                        android:hint="@string/profile_address_hint"
                         android:layout_marginBottom="@dimen/spacing_md">
 
                         <com.google.android.material.textfield.TextInputEditText
@@ -140,7 +142,7 @@
                         style="@style/Widget.App.TextInputLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Area / Locality"
+                        android:hint="@string/profile_area_hint"
                         android:layout_marginBottom="@dimen/spacing_md">
 
                         <com.google.android.material.textfield.TextInputEditText
@@ -156,7 +158,7 @@
                         style="@style/Widget.App.TextInputLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="City"
+                        android:hint="@string/profile_city_hint"
                         android:layout_marginBottom="@dimen/spacing_md">
 
                         <com.google.android.material.textfield.TextInputEditText
@@ -177,7 +179,9 @@
                 style="@style/Widget.App.Card.Elevated"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/spacing_lg">
+                android:layout_marginBottom="@dimen/spacing_lg"
+                app:strokeColor="#1A4DB6AC"
+                app:strokeWidth="1dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -188,7 +192,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Services Offered"
+                        android:text="@string/profile_services_offered"
                         android:textStyle="bold"
                         android:textSize="@dimen/text_size_base"
                         android:layout_marginBottom="@dimen/spacing_md" />
@@ -206,49 +210,49 @@
                             style="@style/Widget.Material3.Chip.Filter"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Milk" />
+                            android:text="@string/service_option_milk" />
 
                         <com.google.android.material.chip.Chip
                             android:id="@+id/chipNewspaper"
                             style="@style/Widget.Material3.Chip.Filter"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Newspaper" />
+                            android:text="@string/service_option_newspaper" />
 
                         <com.google.android.material.chip.Chip
                             android:id="@+id/chipWater"
                             style="@style/Widget.Material3.Chip.Filter"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Water" />
+                            android:text="@string/service_option_water" />
 
                         <com.google.android.material.chip.Chip
                             android:id="@+id/chipTiffin"
                             style="@style/Widget.Material3.Chip.Filter"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Tiffin" />
+                            android:text="@string/service_option_tiffin" />
 
                         <com.google.android.material.chip.Chip
                             android:id="@+id/chipLaundry"
                             style="@style/Widget.Material3.Chip.Filter"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Laundry" />
+                            android:text="@string/service_option_laundry" />
 
                         <com.google.android.material.chip.Chip
                             android:id="@+id/chipMaid"
                             style="@style/Widget.Material3.Chip.Filter"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Maid" />
+                            android:text="@string/service_option_maid" />
 
                         <com.google.android.material.chip.Chip
                             android:id="@+id/chipOther"
                             style="@style/Widget.Material3.Chip.Filter"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Other" />
+                            android:text="@string/service_option_other" />
 
                     </com.google.android.material.chip.ChipGroup>
 
@@ -257,7 +261,7 @@
                         style="@style/Widget.App.TextInputLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Other service (optional)"
+                        android:hint="@string/profile_other_service_optional"
                         android:layout_marginTop="@dimen/spacing_md"
                         android:visibility="gone">
 
@@ -279,7 +283,9 @@
                 style="@style/Widget.App.Card.Elevated"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/spacing_lg">
+                android:layout_marginBottom="@dimen/spacing_lg"
+                app:strokeColor="#1A4DB6AC"
+                app:strokeWidth="1dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -290,7 +296,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Business Details"
+                        android:text="@string/profile_business_details"
                         android:textStyle="bold"
                         android:textSize="@dimen/text_size_base"
                         android:layout_marginBottom="@dimen/spacing_md" />
@@ -299,7 +305,7 @@
                         style="@style/Widget.App.TextInputLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="GST Number (optional)"
+                        android:hint="@string/profile_gst_optional"
                         android:layout_marginBottom="@dimen/spacing_md">
 
                         <com.google.android.material.textfield.TextInputEditText
@@ -315,7 +321,7 @@
                         style="@style/Widget.App.TextInputLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="UPI ID (optional)"
+                        android:hint="@string/profile_upi_optional"
                         android:layout_marginBottom="@dimen/spacing_md">
 
                         <com.google.android.material.textfield.TextInputEditText
@@ -331,7 +337,7 @@
                         style="@style/Widget.App.TextInputLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Notes (optional)"
+                        android:hint="@string/profile_notes_optional"
                         android:layout_marginBottom="@dimen/spacing_md">
 
                         <com.google.android.material.textfield.TextInputEditText
@@ -353,7 +359,7 @@
                 style="@style/Widget.App.Button.Primary"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Save Profile" />
+                android:text="@string/profile_save" />
 
             <ProgressBar
                 android:id="@+id/progressBar"

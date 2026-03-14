@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/md_theme_background"
+    android:background="@drawable/bg_app_backdrop"
     android:fitsSystemWindows="true">
 
     <!-- AppBar -->
@@ -18,8 +18,9 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:navigationIcon="@android:drawable/ic_menu_revert"
-            app:title="Record Payment"
+            app:navigationIcon="@drawable/ic_back"
+            app:navigationIconTint="@android:color/white"
+            app:title="@string/payment_title"
             app:titleTextColor="@android:color/white" />
 
     </com.google.android.material.appbar.AppBarLayout>
@@ -42,7 +43,9 @@
                 style="@style/Widget.App.Card.Elevated"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/spacing_base">
+                android:layout_marginBottom="@dimen/spacing_base"
+                app:strokeColor="#1A4DB6AC"
+                app:strokeWidth="1dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -53,7 +56,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Payment Context"
+                        android:text="@string/payment_context"
                         android:textSize="@dimen/text_size_sm"
                         android:textColor="@color/md_theme_on_surface_variant"
                         android:layout_marginBottom="@dimen/spacing_xs" />
@@ -62,7 +65,7 @@
                         android:id="@+id/customerNameText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Loading..."
+                        android:text="@string/loading"
                         android:textSize="@dimen/text_size_lg"
                         android:textStyle="bold"
                         android:textColor="@color/md_theme_on_surface" />
@@ -71,7 +74,7 @@
                         android:id="@+id/billPeriodText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Outstanding from service entries"
+                        android:text="@string/payment_outstanding_subtitle"
                         android:textSize="@dimen/text_size_base"
                         android:textColor="@color/md_theme_on_surface_variant"
                         android:layout_marginTop="@dimen/spacing_xs" />
@@ -91,7 +94,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Current Due"
+                            android:text="@string/payment_current_due"
                             android:textSize="@dimen/text_size_base"
                             android:textColor="@color/md_theme_on_surface_variant" />
 
@@ -99,7 +102,7 @@
                             android:id="@+id/billAmountText"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="₹0.00"
+                            android:text="@string/reports_default_currency_value"
                             android:textSize="@dimen/text_size_lg"
                             android:textStyle="bold"
                             android:textColor="@color/md_theme_primary" />
@@ -115,7 +118,9 @@
                 style="@style/Widget.App.Card.Elevated"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/spacing_base">
+                android:layout_marginBottom="@dimen/spacing_base"
+                app:strokeColor="#1A4DB6AC"
+                app:strokeWidth="1dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -126,7 +131,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Payment Information"
+                        android:text="@string/payment_information"
                         android:textSize="@dimen/text_size_base"
                         android:textStyle="bold"
                         android:textColor="@color/md_theme_on_surface"
@@ -139,9 +144,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="@dimen/spacing_base"
-                        android:hint="Payment Amount"
+                        android:hint="@string/payment_amount_hint"
                         app:prefixText="₹ "
-                        app:startIconDrawable="@android:drawable/ic_dialog_info">
+                        app:startIconDrawable="@drawable/ic_reports_payments">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/amountInput"
@@ -159,7 +164,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="@dimen/spacing_base"
-                        android:hint="Payment Method">
+                        android:hint="@string/payment_method_hint">
 
                         <AutoCompleteTextView
                             android:id="@+id/paymentMethodDropdown"
@@ -176,8 +181,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="@dimen/spacing_base"
-                        android:hint="Payment Date"
-                        app:startIconDrawable="@android:drawable/ic_menu_my_calendar">
+                        android:hint="@string/payment_date_hint"
+                        app:startIconDrawable="@drawable/ic_calendar_24">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/paymentDateInput"
@@ -196,7 +201,7 @@
                         style="@style/Widget.App.TextInputLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Notes (Optional)">
+                        android:hint="@string/notes_optional">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/notesInput"
@@ -220,7 +225,7 @@
                 style="@style/Widget.App.Button.Primary"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Record Payment"
+                android:text="@string/payment_title"
                 android:textSize="@dimen/text_size_base"
                 android:paddingVertical="@dimen/spacing_base" />
 

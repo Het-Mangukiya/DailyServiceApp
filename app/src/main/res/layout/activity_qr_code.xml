@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/bg_app_backdrop"
     android:fitsSystemWindows="true"
     tools:context=".qr.QRCodeActivity">
 
@@ -11,14 +12,15 @@
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/md_theme_primary"
         android:fitsSystemWindows="true">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            app:title="My QR Code"
+            android:background="@color/md_theme_primary"
+            app:title="@string/menu_my_qr_code"
             app:titleTextColor="@android:color/white"
             app:navigationIcon="@drawable/ic_back"
             app:navigationIconTint="@android:color/white" />
@@ -44,7 +46,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/spacing_lg"
                 app:cardCornerRadius="@dimen/corner_radius_lg"
-                app:cardElevation="@dimen/elevation_md">
+                app:cardElevation="@dimen/elevation_md"
+                app:strokeColor="#1A4DB6AC"
+                app:strokeWidth="1dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -56,7 +60,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Share this QR Code"
+                        android:text="@string/qr_share_title"
                         android:textSize="@dimen/text_size_lg"
                         android:textStyle="bold"
                         android:textColor="@color/md_theme_on_surface"
@@ -65,7 +69,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Customers can scan this code to join your service"
+                        android:text="@string/qr_share_subtitle"
                         android:textSize="@dimen/text_size_base"
                         android:textColor="@color/md_theme_on_surface_variant"
                         android:gravity="center"
@@ -78,7 +82,7 @@
                         android:layout_height="280dp"
                         android:layout_marginTop="@dimen/spacing_base"
                         android:layout_marginBottom="@dimen/spacing_base"
-                        android:contentDescription="QR Code"
+                        android:contentDescription="@string/qr_code_content_desc"
                         android:scaleType="fitCenter" />
 
                     <!-- Provider Name -->
@@ -111,7 +115,7 @@
                 android:id="@+id/shareButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Share QR Code"
+                android:text="@string/qr_share_button"
                 android:textColor="@android:color/white"
                 app:icon="@drawable/ic_share"
                 app:iconTint="@android:color/white"
@@ -124,7 +128,7 @@
                 style="@style/Widget.Material3.Button.OutlinedButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Save QR Code"
+                android:text="@string/qr_save_button"
                 android:textColor="@color/md_theme_primary"
                 app:icon="@drawable/ic_download"
                 app:iconTint="@color/md_theme_primary"
@@ -151,7 +155,7 @@
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:src="@drawable/ic_info"
-                        android:contentDescription="Info"
+                        android:contentDescription="@string/qr_info_content_desc"
                         app:tint="@color/md_theme_primary"
                         android:layout_marginEnd="@dimen/spacing_base" />
 
@@ -159,7 +163,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Share this QR code with your customers or display it at your location for easy registration"
+                        android:text="@string/qr_info_text"
                         android:textSize="@dimen/text_size_sm"
                         android:textColor="@color/md_theme_on_primary"
                         android:lineSpacingExtra="4dp" />

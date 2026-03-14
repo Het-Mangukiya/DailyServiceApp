@@ -32,6 +32,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Payment Activity for recording customer payments.
@@ -206,56 +207,69 @@ public class PaymentActivity extends BaseActivity {
         endCal.add(Calendar.DAY_OF_YEAR, 1);
         Timestamp end = new Timestamp(endCal.getTime());
 
+        final AtomicInteger pending = new AtomicInteger(2);
+        final List<ServiceEntry>[] entriesHolder = new List[]{new ArrayList<>()};
+        final List<Payment>[] paymentsHolder = new List[]{new ArrayList<>()};
+
+        Runnable calculateWhenReady = () -> {
+            if (pending.decrementAndGet() != 0) {
+                return;
+            }
+            List<Payment> providerPayments = filterProviderPayments(paymentsHolder[0]);
+            Customer customer = currentCustomer != null ? currentCustomer : new Customer();
+            customer.setId(customerId);
+            String displayedName = customerNameText.getText() != null
+                ? customerNameText.getText().toString().trim() : "";
+            if (!TextUtils.isEmpty(displayedName) && !"Loading...".equalsIgnoreCase(displayedName)) {
+                customer.setName(displayedName);
+            } else if (!TextUtils.isEmpty(customerNameFromIntent)) {
+                customer.setName(customerNameFromIntent);
+            }
+
+            CustomerLedgerSummary summary = CustomerLedgerCalculator.calculate(
+                customer,
+                entriesHolder[0],
+                providerPayments
+            );
+
+            currentOutstandingAmount = summary.getOutstandingAmount();
+            billAmountText.setText(CurrencyUtils.formatCurrency(currentOutstandingAmount));
+
+            if (summary.getDueFromDate() != null) {
+                billPeriodText.setText("Due from " + DateUtils.formatShortDate(summary.getDueFromDate().toDate()));
+            }
+
+            if (!hasUserEditedAmount && currentOutstandingAmount > EPSILON) {
+                setAmountInputValue(String.format(Locale.getDefault(), "%.2f", currentOutstandingAmount));
+            }
+        };
+
         repository.getServiceEntriesByCustomerAndDate(customerId, start, end,
             new FirestoreRepository.OnServiceEntriesLoadedListener() {
                 @Override
                 public void onServiceEntriesLoaded(List<ServiceEntry> entries) {
-                    loadPaymentsForCustomer(entries != null ? entries : new ArrayList<>());
+                    entriesHolder[0] = entries != null ? entries : new ArrayList<>();
+                    calculateWhenReady.run();
                 }
 
                 @Override
                 public void onError(String error) {
-                    loadPaymentsForCustomer(new ArrayList<>());
+                    entriesHolder[0] = new ArrayList<>();
+                    calculateWhenReady.run();
                 }
             });
-    }
 
-    private void loadPaymentsForCustomer(List<ServiceEntry> entries) {
         repository.getPaymentsByCustomer(customerId, new FirestoreRepository.OnPaymentsLoadedListener() {
             @Override
             public void onPaymentsLoaded(List<Payment> payments) {
-                List<Payment> providerPayments = filterProviderPayments(payments);
-                Customer customer = currentCustomer != null ? currentCustomer : new Customer();
-                customer.setId(customerId);
-                String displayedName = customerNameText.getText() != null
-                    ? customerNameText.getText().toString().trim() : "";
-                if (!TextUtils.isEmpty(displayedName) && !"Loading...".equalsIgnoreCase(displayedName)) {
-                    customer.setName(displayedName);
-                } else if (!TextUtils.isEmpty(customerNameFromIntent)) {
-                    customer.setName(customerNameFromIntent);
-                }
-
-                CustomerLedgerSummary summary = CustomerLedgerCalculator.calculate(
-                    customer,
-                    entries,
-                    providerPayments
-                );
-
-                currentOutstandingAmount = summary.getOutstandingAmount();
-                billAmountText.setText(CurrencyUtils.formatCurrency(currentOutstandingAmount));
-
-                if (summary.getDueFromDate() != null) {
-                    billPeriodText.setText("Due from " + DateUtils.formatShortDate(summary.getDueFromDate().toDate()));
-                }
-
-                if (!hasUserEditedAmount && currentOutstandingAmount > EPSILON) {
-                    setAmountInputValue(String.format(Locale.getDefault(), "%.2f", currentOutstandingAmount));
-                }
+                paymentsHolder[0] = payments != null ? payments : new ArrayList<>();
+                calculateWhenReady.run();
             }
 
             @Override
             public void onError(String error) {
-                // Keep fallback amount from intent.
+                paymentsHolder[0] = new ArrayList<>();
+                calculateWhenReady.run();
             }
         });
     }

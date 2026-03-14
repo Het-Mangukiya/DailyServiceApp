@@ -24,6 +24,7 @@ import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Customer ledger detail screen.
@@ -169,40 +170,51 @@ public class BillDetailActivity extends BaseActivity {
         endCal.add(Calendar.DAY_OF_YEAR, 1);
         Timestamp end = new Timestamp(endCal.getTime());
 
+        final AtomicInteger pending = new AtomicInteger(2);
+        final List<ServiceEntry>[] entriesHolder = new List[]{new ArrayList<>()};
+        final List<Payment>[] paymentsHolder = new List[]{new ArrayList<>()};
+
+        Runnable renderWhenReady = () -> {
+            if (!isUiActive()) return;
+            if (pending.decrementAndGet() == 0) {
+                currentEntries = entriesHolder[0];
+                currentPayments = paymentsHolder[0];
+                renderLedger();
+            }
+        };
+
         repository.getServiceEntriesByCustomerAndDate(customerId, start, end,
             new FirestoreRepository.OnServiceEntriesLoadedListener() {
                 @Override
                 public void onServiceEntriesLoaded(List<ServiceEntry> entries) {
                     if (!isUiActive()) return;
-                    currentEntries = entries != null ? entries : new ArrayList<>();
-                    loadPaymentsAndRender();
+                    entriesHolder[0] = entries != null ? entries : new ArrayList<>();
+                    renderWhenReady.run();
                 }
 
                 @Override
                 public void onError(String error) {
                     if (!isUiActive()) return;
-                    currentEntries = new ArrayList<>();
+                    entriesHolder[0] = new ArrayList<>();
                     showToast("Warning: service history unavailable (" + error + ")");
-                    loadPaymentsAndRender();
+                    renderWhenReady.run();
                 }
             });
-    }
 
-    private void loadPaymentsAndRender() {
         repository.getPaymentsByCustomer(customerId, new FirestoreRepository.OnPaymentsLoadedListener() {
             @Override
             public void onPaymentsLoaded(List<Payment> payments) {
                 if (!isUiActive()) return;
-                currentPayments = filterProviderPayments(payments);
-                renderLedger();
+                paymentsHolder[0] = filterProviderPayments(payments);
+                renderWhenReady.run();
             }
 
             @Override
             public void onError(String error) {
                 if (!isUiActive()) return;
-                currentPayments = new ArrayList<>();
+                paymentsHolder[0] = new ArrayList<>();
                 showToast("Warning: payment history unavailable (" + error + ")");
-                renderLedger();
+                renderWhenReady.run();
             }
         });
     }

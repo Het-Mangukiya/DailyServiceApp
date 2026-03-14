@@ -14,11 +14,11 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="Area Name"
+        android:text="@string/area_name_placeholder"
         android:textSize="@dimen/text_size_base"
         android:textStyle="bold"
         android:textColor="@color/md_theme_primary"
-        android:drawableStart="@android:drawable/ic_dialog_map"
+        android:drawableStart="@drawable/ic_location_24"
         android:drawablePadding="@dimen/spacing_xs"
         android:drawableTint="@color/md_theme_primary" />
 

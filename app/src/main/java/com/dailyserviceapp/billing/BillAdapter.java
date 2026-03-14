@@ -18,6 +18,7 @@ import com.google.firebase.Timestamp;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 /**
@@ -112,7 +113,7 @@ public class BillAdapter extends RecyclerView.Adapter<BillAdapter.ViewHolder> {
         
         // Set customer info
         if (!customerName.isEmpty()) {
-            String initial = customerName.substring(0, 1).toUpperCase();
+            String initial = customerName.substring(0, 1).toUpperCase(Locale.getDefault());
             holder.customerInitial.setText(initial);
         }
         holder.customerName.setText(customerName);

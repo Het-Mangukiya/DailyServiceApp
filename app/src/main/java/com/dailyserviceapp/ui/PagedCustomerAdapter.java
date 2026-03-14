@@ -15,6 +15,7 @@ import com.dailyserviceapp.R;
 import com.dailyserviceapp.core.utils.CurrencyUtils;
 import com.dailyserviceapp.data.models.Customer;
 
+import java.util.Locale;
 import java.util.Objects;
 
 /**
@@ -67,7 +68,7 @@ public class PagedCustomerAdapter extends PagingDataAdapter<Customer, PagedCusto
         }
 
         if (customer.getName() != null && !customer.getName().isEmpty()) {
-            holder.customerInitial.setText(customer.getName().substring(0, 1).toUpperCase());
+            holder.customerInitial.setText(customer.getName().substring(0, 1).toUpperCase(Locale.getDefault()));
         } else {
             holder.customerInitial.setText("");
         }

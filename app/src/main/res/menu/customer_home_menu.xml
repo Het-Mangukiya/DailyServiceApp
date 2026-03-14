@@ -7,6 +7,6 @@
         android:icon="@drawable/ic_nav_logout"
         android:title="@string/action_logout"
         app:iconTint="@android:color/white"
-        android:showAsAction="ifRoom" />
+        app:showAsAction="ifRoom" />
 
 </menu>

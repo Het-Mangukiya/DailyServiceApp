@@ -114,7 +114,7 @@ public class PendingEntriesSyncWorker extends Worker {
 
         Calendar targetDay = Calendar.getInstance();
         targetDay.setTimeInMillis(pending.timestamp);
-        String entryId = buildEntryId(pending.customerId, targetDay);
+        String entryId = buildEntryId(pending.providerId, pending.customerId, targetDay);
         DocumentReference entryRef = firestore.collection(Constants.COLLECTION_SERVICE_ENTRIES)
             .document(entryId);
 
@@ -141,11 +141,16 @@ public class PendingEntriesSyncWorker extends Worker {
         }), 30, TimeUnit.SECONDS);
     }
 
-    private String buildEntryId(String customerId, Calendar day) {
+    private String buildEntryId(String providerId, String customerId, Calendar day) {
         int year = day.get(Calendar.YEAR);
         int month = day.get(Calendar.MONTH) + 1;
         int dayOfMonth = day.get(Calendar.DAY_OF_MONTH);
-        return customerId + "_" + String.format(java.util.Locale.US, "%04d%02d%02d", year, month, dayOfMonth);
+        String dayKey = String.format(java.util.Locale.US, "%04d%02d%02d", year, month, dayOfMonth);
+        return safe(providerId) + "_" + safe(customerId) + "_" + dayKey;
+    }
+
+    private String safe(String value) {
+        return value == null ? "" : value.trim();
     }
 
     private boolean isPermanentFailure(Throwable throwable) {

@@ -25,7 +25,13 @@ import com.google.firebase.firestore.WriteBatch;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Repository class for Firestore database operations.
@@ -313,6 +319,31 @@ public class FirestoreRepository {
         void onSuccess();
         void onError(String error);
     }
+
+    /**
+     * Listener for batched delivery save operations.
+     */
+    public interface OnBatchSaveResultListener {
+        void onSuccess(int savedCount, int skippedCount);
+        void onError(String error);
+    }
+
+    /**
+     * Lightweight value object describing a delivery write request.
+     */
+    public static class DeliveryWriteRequest {
+        public final String customerId;
+        public final double quantity;
+        public final double rate;
+        public final double amount;
+
+        public DeliveryWriteRequest(String customerId, double quantity, double rate, double amount) {
+            this.customerId = customerId;
+            this.quantity = quantity;
+            this.rate = rate;
+            this.amount = amount;
+        }
+    }
     
     /**
      * Gets all customers for a specific provider.
@@ -389,34 +420,54 @@ public class FirestoreRepository {
         final long startMillis = startDate != null ? startDate.toDate().getTime() : Long.MIN_VALUE;
         final long endMillis = endDate != null ? endDate.toDate().getTime() : Long.MAX_VALUE;
 
-        db.collection("serviceEntries")
-                .whereEqualTo("providerId", providerId)
-                .get()
+        Query optimizedQuery = db.collection("serviceEntries").whereEqualTo("providerId", providerId);
+        if (startDate != null) {
+            optimizedQuery = optimizedQuery.whereGreaterThanOrEqualTo("date", startDate);
+        }
+        if (endDate != null) {
+            optimizedQuery = optimizedQuery.whereLessThan("date", endDate);
+        }
+
+        optimizedQuery.get()
                 .addOnSuccessListener(querySnapshot -> {
                     List<ServiceEntry> entries = new ArrayList<>();
                     for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
                         ServiceEntry entry = doc.toObject(ServiceEntry.class);
                         if (entry != null) {
                             entry.setId(doc.getId());
-                            
-                            // Filter by date range in memory
-                            Timestamp entryDate = entry.getDate();
-                            if (entryDate != null) {
-                                long entryMillis = entryDate.toDate().getTime();
-                                // Keep [start, end) semantics consistent with Firestore whereLessThan(end).
-                                if (entryMillis < startMillis || entryMillis >= endMillis) {
-                                    continue;
-                                }
-                                entries.add(entry);
-                            } else {
-                                Log.w("FirestoreRepository",
-                                    "Skipping service entry with null date: " + doc.getId());
-                            }
+                            entries.add(entry);
                         }
                     }
                     listener.onServiceEntriesLoaded(entries);
                 })
-                .addOnFailureListener(e -> listener.onError(e.getMessage()));
+                .addOnFailureListener(e -> {
+                    if (!isMissingIndexError(e)) {
+                        listener.onError(e.getMessage());
+                        return;
+                    }
+
+                    // Fallback for environments without required composite index.
+                    db.collection("serviceEntries")
+                            .whereEqualTo("providerId", providerId)
+                            .get()
+                            .addOnSuccessListener(querySnapshot -> {
+                                List<ServiceEntry> entries = new ArrayList<>();
+                                for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
+                                    ServiceEntry entry = doc.toObject(ServiceEntry.class);
+                                    if (entry == null || entry.getDate() == null) {
+                                        continue;
+                                    }
+                                    long entryMillis = entry.getDate().toDate().getTime();
+                                    if (entryMillis < startMillis || entryMillis >= endMillis) {
+                                        continue;
+                                    }
+                                    entry.setId(doc.getId());
+                                    entries.add(entry);
+                                }
+                                listener.onServiceEntriesLoaded(entries);
+                            })
+                            .addOnFailureListener(inner -> listener.onError(inner.getMessage()));
+                });
     }
 
     /**
@@ -541,32 +592,53 @@ public class FirestoreRepository {
                                                    Timestamp endDate, OnServiceEntriesLoadedListener listener) {
         final long startMillis = startDate != null ? startDate.toDate().getTime() : Long.MIN_VALUE;
         final long endMillis = endDate != null ? endDate.toDate().getTime() : Long.MAX_VALUE;
-        scopedCustomerQuery("serviceEntries", customerId)
-                .get()
+        Query optimizedQuery = scopedCustomerQuery("serviceEntries", customerId);
+        if (startDate != null) {
+            optimizedQuery = optimizedQuery.whereGreaterThanOrEqualTo("date", startDate);
+        }
+        if (endDate != null) {
+            optimizedQuery = optimizedQuery.whereLessThan("date", endDate);
+        }
+
+        optimizedQuery.get()
                 .addOnSuccessListener(querySnapshot -> {
                     List<ServiceEntry> entries = new ArrayList<>();
                     for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
                         ServiceEntry entry = doc.toObject(ServiceEntry.class);
                         if (entry != null) {
                             entry.setId(doc.getId());
-                            
-                            // Filter by date range in memory
-                            Timestamp entryDate = entry.getDate();
-                            if (entryDate != null) {
-                                long entryMillis = entryDate.toDate().getTime();
-                                if (entryMillis < startMillis || entryMillis >= endMillis) {
-                                    continue;
-                                }
-                                entries.add(entry);
-                            } else {
-                                Log.w("FirestoreRepository",
-                                    "Skipping service entry with null date: " + doc.getId());
-                            }
+                            entries.add(entry);
                         }
                     }
                     listener.onServiceEntriesLoaded(entries);
                 })
-                .addOnFailureListener(e -> listener.onError(e.getMessage()));
+                .addOnFailureListener(e -> {
+                    if (!isMissingIndexError(e)) {
+                        listener.onError(e.getMessage());
+                        return;
+                    }
+
+                    // Fallback for projects where index hasn't been created yet.
+                    scopedCustomerQuery("serviceEntries", customerId)
+                            .get()
+                            .addOnSuccessListener(querySnapshot -> {
+                                List<ServiceEntry> entries = new ArrayList<>();
+                                for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
+                                    ServiceEntry entry = doc.toObject(ServiceEntry.class);
+                                    if (entry == null || entry.getDate() == null) {
+                                        continue;
+                                    }
+                                    long entryMillis = entry.getDate().toDate().getTime();
+                                    if (entryMillis < startMillis || entryMillis >= endMillis) {
+                                        continue;
+                                    }
+                                    entry.setId(doc.getId());
+                                    entries.add(entry);
+                                }
+                                listener.onServiceEntriesLoaded(entries);
+                            })
+                            .addOnFailureListener(inner -> listener.onError(inner.getMessage()));
+                });
     }
     
     /**
@@ -604,79 +676,195 @@ public class FirestoreRepository {
      */
     public void saveServiceEntryWithTransaction(ServiceEntry entry, String customerId, 
                                                  double deliveryCost, OnSaveCompleteListener listener) {
-        // First check for duplicate entry (same customer + same day)
-        // We'll query all entries for this customer and check dates in memory
-        Query duplicateCheckQuery = db.collection("serviceEntries")
-                .whereEqualTo("customerId", customerId);
-        String providerScope = safeTrim(entry != null ? entry.getProviderId() : "");
-        if (providerScope.isEmpty()) {
-            providerScope = safeTrim(getCurrentAuthUid());
+        if (entry == null) {
+            listener.onError("Service entry is required");
+            return;
         }
-        if (!providerScope.isEmpty() && !providerScope.equals(customerId)) {
-            duplicateCheckQuery = duplicateCheckQuery.whereEqualTo("providerId", providerScope);
+
+        String normalizedProviderId = safeTrim(entry.getProviderId());
+        if (normalizedProviderId.isEmpty()) {
+            normalizedProviderId = safeTrim(getCurrentAuthUid());
+            entry.setProviderId(normalizedProviderId);
         }
-        duplicateCheckQuery
-                .get()
-                .addOnSuccessListener(querySnapshot -> {
-                    // Check if any entry matches the same day
-                    Timestamp entryDate = entry.getDate();
-                    java.util.Calendar entryCal = java.util.Calendar.getInstance();
-                    entryCal.setTime(entryDate.toDate());
-                    int entryYear = entryCal.get(java.util.Calendar.YEAR);
-                    int entryMonth = entryCal.get(java.util.Calendar.MONTH);
-                    int entryDay = entryCal.get(java.util.Calendar.DAY_OF_MONTH);
-                    
-                    for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
-                        Timestamp existingDate = doc.getTimestamp("date");
-                        if (existingDate != null) {
-                            java.util.Calendar existingCal = java.util.Calendar.getInstance();
-                            existingCal.setTime(existingDate.toDate());
-                            
-                            if (existingCal.get(java.util.Calendar.YEAR) == entryYear &&
-                                existingCal.get(java.util.Calendar.MONTH) == entryMonth &&
-                                existingCal.get(java.util.Calendar.DAY_OF_MONTH) == entryDay) {
-                                // Duplicate found - entry already exists for this customer on this day
-                                listener.onError("Delivery already marked for this customer today");
-                                return;
+
+        List<DeliveryWriteRequest> requests = new ArrayList<>();
+        requests.add(new DeliveryWriteRequest(
+            customerId,
+            entry.getQuantity(),
+            entry.getRate(),
+            deliveryCost
+        ));
+
+        saveServiceEntriesBatchWithTransaction(
+            normalizedProviderId,
+            entry.getDate(),
+            requests,
+            new OnBatchSaveResultListener() {
+                @Override
+                public void onSuccess(int savedCount, int skippedCount) {
+                    if (savedCount > 0) {
+                        listener.onSuccess();
+                        return;
+                    }
+                    listener.onError("Delivery already marked for this customer today");
+                }
+
+                @Override
+                public void onError(String error) {
+                    listener.onError(error);
+                }
+            }
+        );
+    }
+
+    /**
+     * Saves multiple service entries in a single transaction.
+     * Performs a single duplicate pre-check for the target day, then applies:
+     * - customer lent amount updates
+     * - delivery entries for non-duplicate customers
+     */
+    public void saveServiceEntriesBatchWithTransaction(String providerId, Timestamp targetDate,
+                                                       List<DeliveryWriteRequest> requests,
+                                                       OnBatchSaveResultListener listener) {
+        if (listener == null) return;
+
+        final String normalizedProviderId = safeTrim(providerId);
+        if (normalizedProviderId.isEmpty()) {
+            listener.onError("Provider ID is required");
+            return;
+        }
+        if (targetDate == null) {
+            listener.onError("Delivery date is required");
+            return;
+        }
+        if (requests == null || requests.isEmpty()) {
+            listener.onError("No deliveries selected");
+            return;
+        }
+
+        final List<DeliveryWriteRequest> validRequests = new ArrayList<>();
+        for (DeliveryWriteRequest request : requests) {
+            if (request == null) continue;
+            String customerId = safeTrim(request.customerId);
+            if (customerId.isEmpty()) continue;
+            if (request.quantity <= 0 || request.amount < 0) continue;
+            validRequests.add(new DeliveryWriteRequest(
+                customerId,
+                request.quantity,
+                request.rate,
+                request.amount
+            ));
+        }
+
+        if (validRequests.isEmpty()) {
+            listener.onError("No valid deliveries to save");
+            return;
+        }
+
+        loadExistingDeliveredCustomerIdsForDate(normalizedProviderId, targetDate,
+            new OnExistingCustomerIdsLoadedListener() {
+                @Override
+                public void onLoaded(Set<String> deliveredCustomerIds) {
+                    List<DeliveryWriteRequest> toPersist = new ArrayList<>();
+                    Map<String, Double> amountByCustomer = new HashMap<>();
+                    Set<String> seenCustomerIds = new HashSet<>();
+                    int skippedCount = 0;
+
+                    for (DeliveryWriteRequest request : validRequests) {
+                        if (deliveredCustomerIds.contains(request.customerId)) {
+                            skippedCount++;
+                            continue;
+                        }
+                        if (!seenCustomerIds.add(request.customerId)) {
+                            // Keep one write per customer/day in this batch.
+                            skippedCount++;
+                            continue;
+                        }
+                        toPersist.add(request);
+                        double running = amountByCustomer.containsKey(request.customerId)
+                            ? amountByCustomer.get(request.customerId)
+                            : 0.0;
+                        amountByCustomer.put(request.customerId, running + request.amount);
+                    }
+
+                    if (toPersist.isEmpty()) {
+                        listener.onSuccess(0, skippedCount);
+                        return;
+                    }
+
+                    if (toPersist.size() > 200) {
+                        listener.onError("Too many deliveries selected. Please save up to 200 at once.");
+                        return;
+                    }
+
+                    final int finalSkippedCount = skippedCount;
+                    db.runTransaction(transaction -> {
+                        Map<String, Double> updatedLentByCustomer = new HashMap<>();
+                        Map<String, DocumentReference> entryRefsByCustomer = new HashMap<>();
+
+                        // Read customers first.
+                        for (Map.Entry<String, Double> amountEntry : amountByCustomer.entrySet()) {
+                            DocumentReference customerRef = customers().document(amountEntry.getKey());
+                            DocumentSnapshot customerSnapshot = transaction.get(customerRef);
+                            if (!customerSnapshot.exists()) {
+                                throw new RuntimeException("Customer not found");
+                            }
+
+                            Double currentLent = customerSnapshot.getDouble("lentAmount");
+                            if (currentLent == null) {
+                                currentLent = 0.0;
+                            }
+                            updatedLentByCustomer.put(amountEntry.getKey(), currentLent + amountEntry.getValue());
+                        }
+
+                        // Read entries second to enforce one-per-day uniqueness.
+                        for (DeliveryWriteRequest request : toPersist) {
+                            String entryDocId = buildServiceEntryDocumentId(
+                                normalizedProviderId,
+                                request.customerId,
+                                targetDate
+                            );
+                            DocumentReference entryRef = db.collection("serviceEntries").document(entryDocId);
+                            entryRefsByCustomer.put(request.customerId, entryRef);
+                            DocumentSnapshot existingSnapshot = transaction.get(entryRef);
+                            if (existingSnapshot != null && existingSnapshot.exists()) {
+                                throw new IllegalStateException("Delivery already marked for one or more customers today");
                             }
                         }
-                    }
-                    
-                    // No duplicate - proceed with transaction
-                    DocumentReference customerRef = customers().document(customerId);
-                    
-                    db.runTransaction(transaction -> {
-                        // Read customer document
-                        DocumentSnapshot customerSnapshot = transaction.get(customerRef);
-                        
-                        if (!customerSnapshot.exists()) {
-                            throw new RuntimeException("Customer not found");
+
+                        // All reads done. Apply writes.
+                        for (Map.Entry<String, Double> lentEntry : updatedLentByCustomer.entrySet()) {
+                            transaction.update(customers().document(lentEntry.getKey()), "lentAmount", lentEntry.getValue());
                         }
-                        
-                        // Get current lent amount (default to 0 if not set)
-                        Double currentLent = customerSnapshot.getDouble("lentAmount");
-                        if (currentLent == null) {
-                            currentLent = 0.0;
+
+                        Timestamp now = Timestamp.now();
+                        for (DeliveryWriteRequest request : toPersist) {
+                            ServiceEntry entry = new ServiceEntry(
+                                normalizedProviderId,
+                                request.customerId,
+                                targetDate,
+                                request.quantity,
+                                true
+                            );
+                            entry.setRate(request.rate);
+                            entry.setCreatedAt(now);
+                            entry.setUpdatedAt(now);
+                            DocumentReference entryRef = entryRefsByCustomer.get(request.customerId);
+                            if (entryRef == null) {
+                                throw new IllegalStateException("Failed to create entry reference");
+                            }
+                            transaction.set(entryRef, entry);
                         }
-                        
-                        // Calculate new lent amount
-                        double newLent = currentLent + deliveryCost;
-                        
-                        // Update customer's lent amount
-                        transaction.update(customerRef, "lentAmount", newLent);
-                        
-                        // Add service entry
-                        DocumentReference entryRef = db.collection("serviceEntries").document();
-                        transaction.set(entryRef, entry);
-                        
                         return null;
-                    }).addOnSuccessListener(aVoid -> {
-                        listener.onSuccess();
-                    }).addOnFailureListener(e -> {
-                        listener.onError(e.getMessage());
-                    });
-                })
-                .addOnFailureListener(e -> listener.onError(e.getMessage()));
+                    }).addOnSuccessListener(aVoid -> listener.onSuccess(toPersist.size(), finalSkippedCount))
+                      .addOnFailureListener(e -> listener.onError(e.getMessage()));
+                }
+
+                @Override
+                public void onError(String error) {
+                    listener.onError(error);
+                }
+            });
     }
     
     // ========== Bill Methods ==========
@@ -873,34 +1061,54 @@ public class FirestoreRepository {
         final long startMillis = startDate != null ? startDate.toDate().getTime() : Long.MIN_VALUE;
         final long endMillis = endDate != null ? endDate.toDate().getTime() : Long.MAX_VALUE;
 
-        // Note: Using single where clause to avoid composite index requirement
-        // Filter by date in code instead
-        db.collection("payments")
-                .whereEqualTo("providerId", providerId)
-                .get()
+        Query optimizedQuery = db.collection("payments").whereEqualTo("providerId", providerId);
+        if (startDate != null) {
+            optimizedQuery = optimizedQuery.whereGreaterThanOrEqualTo("paymentDate", startDate);
+        }
+        if (endDate != null) {
+            optimizedQuery = optimizedQuery.whereLessThan("paymentDate", endDate);
+        }
+
+        optimizedQuery.get()
                 .addOnSuccessListener(querySnapshot -> {
                     List<Payment> payments = new ArrayList<>();
                     for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
                         Payment payment = doc.toObject(Payment.class);
                         if (payment != null) {
                             payment.setId(doc.getId());
-                            // Filter by date in code
-                            Timestamp paymentDate = payment.getPaymentDate();
-                            if (paymentDate != null) {
-                                long paymentMillis = paymentDate.toDate().getTime();
-                                if (paymentMillis < startMillis || paymentMillis >= endMillis) {
-                                    continue;
-                                }
-                                payments.add(payment);
-                            } else {
-                                Log.w("FirestoreRepository",
-                                    "Skipping payment with null date: " + doc.getId());
-                            }
+                            payments.add(payment);
                         }
                     }
                     listener.onPaymentsLoaded(payments);
                 })
-                .addOnFailureListener(e -> listener.onError(e.getMessage()));
+                .addOnFailureListener(e -> {
+                    if (!isMissingIndexError(e)) {
+                        listener.onError(e.getMessage());
+                        return;
+                    }
+
+                    // Fallback for index-less environments.
+                    db.collection("payments")
+                            .whereEqualTo("providerId", providerId)
+                            .get()
+                            .addOnSuccessListener(querySnapshot -> {
+                                List<Payment> payments = new ArrayList<>();
+                                for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
+                                    Payment payment = doc.toObject(Payment.class);
+                                    if (payment == null || payment.getPaymentDate() == null) {
+                                        continue;
+                                    }
+                                    long paymentMillis = payment.getPaymentDate().toDate().getTime();
+                                    if (paymentMillis < startMillis || paymentMillis >= endMillis) {
+                                        continue;
+                                    }
+                                    payment.setId(doc.getId());
+                                    payments.add(payment);
+                                }
+                                listener.onPaymentsLoaded(payments);
+                            })
+                            .addOnFailureListener(inner -> listener.onError(inner.getMessage()));
+                });
     }
 
     /**
@@ -945,6 +1153,117 @@ public class FirestoreRepository {
                 .addOnFailureListener(e -> listener.onError(e.getMessage()));
     }
 
+    private interface OnExistingCustomerIdsLoadedListener {
+        void onLoaded(Set<String> customerIds);
+        void onError(String error);
+    }
+
+    private void loadExistingDeliveredCustomerIdsForDate(String providerId, Timestamp targetDate,
+                                                         OnExistingCustomerIdsLoadedListener listener) {
+        final Calendar startCal = Calendar.getInstance();
+        startCal.setTime(targetDate.toDate());
+        startCal.set(Calendar.HOUR_OF_DAY, 0);
+        startCal.set(Calendar.MINUTE, 0);
+        startCal.set(Calendar.SECOND, 0);
+        startCal.set(Calendar.MILLISECOND, 0);
+
+        final Calendar endCal = (Calendar) startCal.clone();
+        endCal.add(Calendar.DAY_OF_YEAR, 1);
+
+        final Timestamp startOfDay = new Timestamp(startCal.getTime());
+        final Timestamp endExclusive = new Timestamp(endCal.getTime());
+        final long startMillis = startOfDay.toDate().getTime();
+        final long endMillis = endExclusive.toDate().getTime();
+
+        db.collection("serviceEntries")
+                .whereEqualTo("providerId", providerId)
+                .whereEqualTo("delivered", true)
+                .whereGreaterThanOrEqualTo("date", startOfDay)
+                .whereLessThan("date", endExclusive)
+                .get()
+                .addOnSuccessListener(snapshot ->
+                    listener.onLoaded(collectDeliveredCustomerIds(snapshot, startMillis, endMillis, false))
+                )
+                .addOnFailureListener(e -> {
+                    if (!isMissingIndexError(e)) {
+                        listener.onError(e.getMessage());
+                        return;
+                    }
+
+                    // Fallback 1: keep date range on server, filter delivered in memory.
+                    db.collection("serviceEntries")
+                            .whereEqualTo("providerId", providerId)
+                            .whereGreaterThanOrEqualTo("date", startOfDay)
+                            .whereLessThan("date", endExclusive)
+                            .get()
+                            .addOnSuccessListener(snapshot ->
+                                listener.onLoaded(collectDeliveredCustomerIds(snapshot, startMillis, endMillis, false))
+                            )
+                            .addOnFailureListener(inner -> {
+                                if (!isMissingIndexError(inner)) {
+                                    listener.onError(inner.getMessage());
+                                    return;
+                                }
+
+                                // Fallback 2: provider-only query, date filtering in memory.
+                                db.collection("serviceEntries")
+                                        .whereEqualTo("providerId", providerId)
+                                        .get()
+                                        .addOnSuccessListener(snapshot ->
+                                            listener.onLoaded(collectDeliveredCustomerIds(snapshot, startMillis, endMillis, true))
+                                        )
+                                        .addOnFailureListener(last -> listener.onError(last.getMessage()));
+                            });
+                });
+    }
+
+    private Set<String> collectDeliveredCustomerIds(QuerySnapshot snapshot, long startMillis, long endMillis,
+                                                    boolean enforceDateFilterInMemory) {
+        Set<String> deliveredCustomerIds = new HashSet<>();
+        if (snapshot == null) {
+            return deliveredCustomerIds;
+        }
+
+        for (DocumentSnapshot doc : snapshot.getDocuments()) {
+            Boolean delivered = doc.getBoolean("delivered");
+            if (delivered != null && !delivered) {
+                continue;
+            }
+
+            if (enforceDateFilterInMemory) {
+                Timestamp date = doc.getTimestamp("date");
+                if (date == null) continue;
+                long entryMillis = date.toDate().getTime();
+                if (entryMillis < startMillis || entryMillis >= endMillis) {
+                    continue;
+                }
+            }
+
+            String customerId = safeTrim(doc.getString("customerId"));
+            if (!customerId.isEmpty()) {
+                deliveredCustomerIds.add(customerId);
+            }
+        }
+
+        return deliveredCustomerIds;
+    }
+
+    private String buildServiceEntryDocumentId(String providerId, String customerId, Timestamp targetDate) {
+        String dayKey = buildDayKey(targetDate);
+        String normalizedProvider = safeTrim(providerId);
+        String normalizedCustomer = safeTrim(customerId);
+        return normalizedProvider + "_" + normalizedCustomer + "_" + dayKey;
+    }
+
+    private String buildDayKey(Timestamp timestamp) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(timestamp.toDate());
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH) + 1;
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        return String.format(Locale.US, "%04d%02d%02d", year, month, day);
+    }
+
     private boolean isMissingIndexError(Exception e) {
         if (!(e instanceof FirebaseFirestoreException)) {
             return false;
@@ -954,7 +1273,7 @@ public class FirestoreRepository {
             return false;
         }
         String message = firestoreException.getMessage();
-        return message != null && message.toLowerCase().contains("index");
+        return message != null && message.toLowerCase(Locale.ROOT).contains("index");
     }
 
     /**

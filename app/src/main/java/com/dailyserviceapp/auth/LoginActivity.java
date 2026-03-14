@@ -35,6 +35,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -261,11 +262,11 @@ public class LoginActivity extends BaseActivity {
                     android.util.Log.e("LoginActivity", "Failed to load user data: " + errorMsg, exception);
                     
                     // Check if it's a permissions error
-                    if (errorMsg != null && errorMsg.toLowerCase().contains("permission")) {
+                    if (errorMsg != null && errorMsg.toLowerCase(Locale.ROOT).contains("permission")) {
                         // Permissions error - try to create document anyway
                         android.util.Log.w("LoginActivity", "Permissions error detected. Attempting to create user document...");
                         createUserDocument(userId);
-                    } else if (errorMsg != null && errorMsg.toLowerCase().contains("network")) {
+                    } else if (errorMsg != null && errorMsg.toLowerCase(Locale.ROOT).contains("network")) {
                         showToast("Network error. Please check your connection and try again.");
                     } else {
                         // Unknown error - try to create document as fallback

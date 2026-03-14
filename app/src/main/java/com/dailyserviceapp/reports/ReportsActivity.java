@@ -8,6 +8,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.animation.Animator;
+import androidx.appcompat.content.res.AppCompatResources;
 
 import com.dailyserviceapp.R;
 import com.dailyserviceapp.core.base.BaseActivity;
@@ -28,7 +29,6 @@ import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.formatter.ValueFormatter;
-import com.github.mikephil.charting.utils.ColorTemplate;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.Timestamp;
@@ -72,6 +72,7 @@ public class ReportsActivity extends BaseActivity {
     private String providerId;
     private Map<String, Customer> customerMap = new HashMap<>();
     private final List<ValueAnimator> activeAnimators = new ArrayList<>();
+    private int pendingLoadOperations;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -211,11 +212,12 @@ public class ReportsActivity extends BaseActivity {
             return;
         }
 
+        cancelActiveAnimators();
         showLoading(true);
         serviceBreakdownContainer.removeAllViews();
         topCustomersContainer.removeAllViews();
 
-        loadCustomers(() -> loadEntriesAndPayments());
+        loadCustomers(this::loadReportDataInParallel);
     }
 
     private void loadCustomers(Runnable onComplete) {
@@ -245,12 +247,14 @@ public class ReportsActivity extends BaseActivity {
         });
     }
 
-    private void loadEntriesAndPayments() {
+    private void loadReportDataInParallel() {
         Timestamp start = new Timestamp(startDate);
         Calendar nextDay = Calendar.getInstance();
         nextDay.setTime(endDate);
         nextDay.add(Calendar.MILLISECOND, 1);
         Timestamp endExclusive = new Timestamp(nextDay.getTime());
+
+        beginLoadOperations(3);
 
         repository.getDeliveredServiceEntriesByProviderInRange(
             providerId,
@@ -263,20 +267,24 @@ public class ReportsActivity extends BaseActivity {
                     runOnUiThread(() -> {
                         if (!isUiActive()) return;
                         handleEntries(entries);
+                        finishLoadOperation();
                     });
-                    loadPayments(start, endExclusive);
                 }
 
                 @Override
                 public void onError(String error) {
                     runOnUiThread(() -> {
                         if (!isUiActive()) return;
-                        showLoading(false);
                         showToast("Failed to load entries: " + error);
+                        handleEntries(new ArrayList<>());
+                        finishLoadOperation();
                     });
                 }
             }
         );
+
+        loadPayments(start, endExclusive);
+        loadOverdueBills();
     }
 
     private void loadPayments(Timestamp start, Timestamp endExclusive) {
@@ -295,7 +303,7 @@ public class ReportsActivity extends BaseActivity {
                     runOnUiThread(() -> {
                         if (!isUiActive()) return;
                         animateCounter(txtTotalPayments, 0, finalPayments, true);
-                        loadOverdueBills();
+                        finishLoadOperation();
                     });
                 }
 
@@ -304,7 +312,8 @@ public class ReportsActivity extends BaseActivity {
                     runOnUiThread(() -> {
                         if (!isUiActive()) return;
                         showToast("Failed to load payments: " + error);
-                        loadOverdueBills();
+                        animateCounter(txtTotalPayments, 0, 0, true);
+                        finishLoadOperation();
                     });
                 }
             }
@@ -331,7 +340,7 @@ public class ReportsActivity extends BaseActivity {
                 runOnUiThread(() -> {
                     if (!isUiActive()) return;
                     animateCounter(txtOverdueBills, 0, finalOverdue, false);
-                    showLoading(false);
+                    finishLoadOperation();
                 });
             }
 
@@ -340,10 +349,28 @@ public class ReportsActivity extends BaseActivity {
                 runOnUiThread(() -> {
                     if (!isUiActive()) return;
                     txtOverdueBills.setText(getString(R.string.overdue_bills_zero));
-                    showLoading(false);
+                    finishLoadOperation();
                 });
             }
         });
+    }
+
+    private void beginLoadOperations(int count) {
+        pendingLoadOperations = Math.max(0, count);
+        if (pendingLoadOperations == 0) {
+            showLoading(false);
+        }
+    }
+
+    private void finishLoadOperation() {
+        if (pendingLoadOperations <= 0) {
+            showLoading(false);
+            return;
+        }
+        pendingLoadOperations--;
+        if (pendingLoadOperations == 0) {
+            showLoading(false);
+        }
     }
 
     private void handleEntries(List<ServiceEntry> entries) {
@@ -427,7 +454,7 @@ public class ReportsActivity extends BaseActivity {
         LinearLayout card = new LinearLayout(this);
         card.setOrientation(LinearLayout.HORIZONTAL);
         card.setPadding(16, 16, 16, 16);
-        card.setBackground(getDrawable(android.R.drawable.dialog_holo_light_frame));
+        card.setBackground(AppCompatResources.getDrawable(this, android.R.drawable.dialog_holo_light_frame));
         
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT,
@@ -481,7 +508,7 @@ public class ReportsActivity extends BaseActivity {
     }
     
     private String getServiceEmoji(String serviceName) {
-        String lower = serviceName.toLowerCase();
+        String lower = serviceName.toLowerCase(Locale.ROOT);
         if (lower.contains("milk")) return "🥛";
         if (lower.contains("newspaper")) return "📰";
         if (lower.contains("water")) return "💧";
@@ -519,7 +546,7 @@ public class ReportsActivity extends BaseActivity {
         LinearLayout card = new LinearLayout(this);
         card.setOrientation(LinearLayout.HORIZONTAL);
         card.setPadding(16, 16, 16, 16);
-        card.setBackground(getDrawable(android.R.drawable.dialog_holo_light_frame));
+        card.setBackground(AppCompatResources.getDrawable(this, android.R.drawable.dialog_holo_light_frame));
         
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT,
@@ -683,13 +710,17 @@ public class ReportsActivity extends BaseActivity {
         return binding != null && !isFinishing() && !isDestroyed();
     }
 
-    @Override
-    protected void onDestroy() {
-        List<ValueAnimator> animators = new ArrayList<>(activeAnimators);
+    private void cancelActiveAnimators() {
+        List<ValueAnimator> snapshot = new ArrayList<>(activeAnimators);
         activeAnimators.clear();
-        for (ValueAnimator animator : animators) {
+        for (ValueAnimator animator : snapshot) {
             animator.cancel();
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        cancelActiveAnimators();
         super.onDestroy();
         binding = null;
     }

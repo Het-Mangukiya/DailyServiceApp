@@ -18,7 +18,7 @@
             android:id="@+id/txtRequestCustomerName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Customer Name"
+            android:text="@string/customer_default"
             android:textColor="@color/md_theme_on_surface"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -28,7 +28,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
-            android:text="email@example.com"
+            android:text="@string/no_email"
             android:textColor="@color/text_muted"
             android:textSize="14sp" />
 
@@ -37,7 +37,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
-            android:text="1234567890"
+            android:text="@string/no_phone"
             android:textColor="@color/text_muted"
             android:textSize="14sp" />
 
@@ -46,7 +46,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="Requested: 21 Feb 2026, 10:00 AM"
+            android:text="@string/requested_just_now"
             android:textColor="@color/md_theme_on_surface_variant"
             android:textSize="12sp" />
 

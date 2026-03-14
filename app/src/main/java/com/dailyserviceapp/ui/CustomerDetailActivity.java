@@ -145,7 +145,7 @@ public class CustomerDetailActivity extends BaseActivity {
 
         String name = safeText(customer.getName(), "Customer");
         customerName.setText(name);
-        profileInitial.setText(name.substring(0, 1).toUpperCase());
+        profileInitial.setText(name.substring(0, 1).toUpperCase(Locale.getDefault()));
         profileInitial.setContentDescription(getString(R.string.profile_initial_for, name));
 
         String service = safeText(customer.getServiceType(), "Service not set");
@@ -167,7 +167,7 @@ public class CustomerDetailActivity extends BaseActivity {
             address.length() > 0 ? address.toString() : "-"
         ));
 
-        String status = safeText(customer.getStatus(), "ACTIVE").toUpperCase();
+        String status = safeText(customer.getStatus(), "ACTIVE").toUpperCase(Locale.getDefault());
         customerStatusChip.setText(status);
 
         if (customer.isOnVacation()) {

@@ -4,12 +4,12 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="@dimen/spacing_base"
-    android:background="@color/surface">
+    android:background="@color/md_theme_surface">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Add Product"
+        android:text="@string/add_product"
         android:textColor="@color/text_primary"
         android:textSize="@dimen/text_size_xl"
         android:textStyle="bold"
@@ -19,7 +19,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/spacing_base"
-        android:hint="Product Name">
+        android:hint="@string/product_name_hint">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/nameEditText"
@@ -33,7 +33,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/spacing_base"
-        android:hint="Category">
+        android:hint="@string/category_hint">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/categoryEditText"
@@ -53,7 +53,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="₹"
+            android:text="@string/rupee_symbol"
             android:textSize="@dimen/text_size_lg"
             android:textColor="@color/text_primary"
             android:layout_marginEnd="@dimen/spacing_xs" />
@@ -62,7 +62,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:hint="Price">
+            android:hint="@string/price_hint">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/priceEditText"
@@ -78,7 +78,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/spacing_base"
-        android:hint="Quantity">
+        android:hint="@string/quantity_hint">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/quantityEditText"
@@ -92,7 +92,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/spacing_base"
-        android:hint="Description (Optional)">
+        android:hint="@string/description_optional">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/descriptionEditText"
@@ -114,7 +114,7 @@
             android:id="@+id/cancelButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Cancel"
+            android:text="@string/action_cancel"
             android:textColor="@color/text_secondary"
             android:background="?attr/selectableItemBackground"
             android:layout_marginEnd="@dimen/spacing_base" />
@@ -123,11 +123,10 @@
             android:id="@+id/addButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Add"
+            android:text="@string/action_add"
             android:textColor="@android:color/white"
             android:backgroundTint="@color/secondary" />
 
     </LinearLayout>
 
 </LinearLayout>
-

@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="24dp"
-    android:background="@android:color/white">
+    android:background="@color/md_theme_surface">
 
     <!-- Header -->
     <LinearLayout
@@ -20,7 +20,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Add Customer"
+            android:text="@string/add_customer"
             android:textSize="20sp"
             android:textStyle="bold"
             android:textColor="@color/md_theme_on_surface"/>
@@ -29,7 +29,7 @@
             android:id="@+id/btnClose"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:src="@android:drawable/ic_menu_close_clear_cancel"
+            android:src="@drawable/ic_close_24"
             android:clickable="true"
             android:focusable="true"
             android:background="?attr/selectableItemBackgroundBorderless"
@@ -59,7 +59,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Tap to add photo"
+            android:text="@string/tap_add_photo"
             android:textSize="12sp"
             android:textColor="@color/text_muted"
             android:layout_marginStart="12dp"/>
@@ -71,7 +71,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:hint="Customer Name *"
+        android:hint="@string/customer_name_required"
         app:boxBackgroundMode="outline">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -88,7 +88,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:hint="Phone Number"
+        android:hint="@string/phone_number"
         app:boxBackgroundMode="outline"
         app:prefixText="+91 ">
 
@@ -107,7 +107,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:hint="Delivery Address"
+        android:hint="@string/delivery_address"
         app:boxBackgroundMode="outline">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -125,7 +125,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:hint="Service Type *"
+        android:hint="@string/service_type_required"
         app:boxBackgroundMode="outline"
         style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
 
@@ -151,7 +151,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_marginEnd="8dp"
-            android:hint="Rate/Day *"
+            android:hint="@string/rate_per_day_required"
             app:boxBackgroundMode="outline"
             app:prefixText="₹ ">
 
@@ -170,7 +170,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_marginStart="8dp"
-            android:hint="Quantity"
+            android:hint="@string/quantity_hint"
             app:boxBackgroundMode="outline">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -178,7 +178,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="numberDecimal"
-                android:text="1"
+                android:text="@string/reports_default_count_value"
                 android:maxLines="1"/>
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -190,7 +190,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="24dp"
-        android:hint="Notes (Optional)"
+        android:hint="@string/notes_optional"
         app:boxBackgroundMode="outline">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -215,7 +215,7 @@
             android:id="@+id/btnCancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Cancel"
+            android:text="@string/action_cancel"
             android:textColor="@color/md_theme_primary"
             style="@style/Widget.Material3.Button.TextButton"
             android:layout_marginEnd="8dp"/>
@@ -224,7 +224,7 @@
             android:id="@+id/btnSave"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Save Customer"
+            android:text="@string/save_customer"
             android:textColor="@android:color/white"
             app:backgroundTint="@color/md_theme_primary"/>
 

@@ -142,7 +142,9 @@ public class CustomerHomeActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        loadLinkedProvider();
+        if (linkListener == null) {
+            loadLinkedProvider();
+        }
     }
 
     private void startQrScan() {

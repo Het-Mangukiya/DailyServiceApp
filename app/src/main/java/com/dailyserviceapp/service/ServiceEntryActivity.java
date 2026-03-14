@@ -59,7 +59,7 @@ public class ServiceEntryActivity extends BaseActivity {
     private Date selectedDate;
     private String providerId;
     private ListenerRegistration customersListener;
-    private List<Customer> cachedCustomers;
+    private boolean isMarkingDelivery;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -203,8 +203,6 @@ public class ServiceEntryActivity extends BaseActivity {
         customersListener = repository.listenToCustomers(providerId, new FirestoreRepository.OnCustomersLoadedListener() {
             @Override
             public void onCustomersLoaded(List<Customer> customers) {
-                cachedCustomers = customers;
-                
                 // Cache customers for offline access
                 offlineCache.cacheCustomers(customers);
                 
@@ -318,46 +316,67 @@ public class ServiceEntryActivity extends BaseActivity {
             showToast(getString(R.string.error_no_deliveries));
             return;
         }
-        
+
+        if (isMarkingDelivery) {
+            showToast("Please wait, delivery save is in progress");
+            return;
+        }
+
+        List<FirestoreRepository.DeliveryWriteRequest> writeRequests = new java.util.ArrayList<>();
+        for (ServiceEntryAdapter.DeliveryItem item : deliveries) {
+            if (item == null) continue;
+            writeRequests.add(new FirestoreRepository.DeliveryWriteRequest(
+                item.customerId,
+                item.quantity,
+                item.rate,
+                item.amount
+            ));
+        }
+
+        if (writeRequests.isEmpty()) {
+            showToast(getString(R.string.error_no_deliveries));
+            return;
+        }
+
+        isMarkingDelivery = true;
         btnMarkDelivery.setEnabled(false);
         btnMarkDelivery.setText(R.string.button_saving);
-        
+
         Timestamp timestamp = new Timestamp(selectedDate);
-        int[] successCount = {0};
-        int totalCount = deliveries.size();
-        
-        for (ServiceEntryAdapter.DeliveryItem item : deliveries) {
-            ServiceEntry entry = new ServiceEntry(
-                providerId,
-                item.customerId,
-                timestamp,
-                item.quantity,
-                true  // All selected items are marked as delivered
-            );
-            entry.setRate(item.rate);  // Set the rate for earnings calculation
-            
-            // Use atomic transaction to save entry and update lent amount
-            repository.saveServiceEntryWithTransaction(entry, item.customerId, item.amount,
-                new FirestoreRepository.OnSaveCompleteListener() {
+        repository.saveServiceEntriesBatchWithTransaction(
+            providerId,
+            timestamp,
+            writeRequests,
+            new FirestoreRepository.OnBatchSaveResultListener() {
                 @Override
-                public void onSuccess() {
-                    successCount[0]++;
-                    if (successCount[0] == totalCount) {
-                        btnMarkDelivery.setEnabled(true);
-                        btnMarkDelivery.setText(R.string.button_mark_delivery);
-                        showToast(getString(R.string.success_deliveries_marked));
-                        loadData(); // Refresh to show saved state
+                public void onSuccess(int savedCount, int skippedCount) {
+                    isMarkingDelivery = false;
+                    btnMarkDelivery.setEnabled(true);
+                    btnMarkDelivery.setText(R.string.button_mark_delivery);
+
+                    if (savedCount == 0 && skippedCount > 0) {
+                        showToast("Selected customers are already marked for this date");
+                        loadData();
+                        return;
                     }
+
+                    if (skippedCount > 0) {
+                        showToast("Saved " + savedCount + " deliveries, skipped " + skippedCount + " duplicates");
+                    } else {
+                        showToast(getString(R.string.success_deliveries_marked));
+                    }
+                    loadData();
                 }
 
                 @Override
                 public void onError(String error) {
-                    showToast(getString(R.string.error_general, error));
+                    isMarkingDelivery = false;
                     btnMarkDelivery.setEnabled(true);
                     btnMarkDelivery.setText(R.string.button_mark_delivery);
+                    showToast(getString(R.string.error_general, error));
                 }
-            });
-        }
+            }
+        );
     }
     
     private void showEmptyState(boolean show) {

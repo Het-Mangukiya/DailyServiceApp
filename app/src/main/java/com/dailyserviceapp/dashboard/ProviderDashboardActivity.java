@@ -214,8 +214,7 @@ public class ProviderDashboardActivity extends BaseActivity {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
         } else {
-            // This is the main landing page, exit app
-            finishAffinity();
+            super.onBackPressed();
         }
     }
     

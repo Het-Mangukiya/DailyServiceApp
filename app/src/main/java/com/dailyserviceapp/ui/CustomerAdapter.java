@@ -15,6 +15,7 @@ import com.dailyserviceapp.data.models.Customer;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.ViewHolder> {
@@ -108,7 +109,7 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.ViewHo
         
         // Set customer initial
         if (customer.getName() != null && !customer.getName().isEmpty()) {
-            String initial = customer.getName().substring(0, 1).toUpperCase();
+            String initial = customer.getName().substring(0, 1).toUpperCase(Locale.getDefault());
             holder.customerInitial.setText(initial);
         }
         

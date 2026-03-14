@@ -104,7 +104,7 @@ public class QRCodeActivity extends BaseActivity {
                                 : (name != null ? name : "Service Provider");
                         
                         providerName.setText(displayName);
-                        providerId.setText("ID: " + currentProviderId.substring(0, 8).toUpperCase());
+                        providerId.setText("ID: " + shortProviderCode(currentProviderId));
                         ensureProviderRecord(displayName, () -> generateQRCode(currentProviderId));
                     } else {
                         // Use basic user info if provider document doesn't exist
@@ -112,7 +112,7 @@ public class QRCodeActivity extends BaseActivity {
                                 ? user.getDisplayName() 
                                 : "Service Provider";
                         providerName.setText(displayName);
-                        providerId.setText("ID: " + currentProviderId.substring(0, 8).toUpperCase());
+                        providerId.setText("ID: " + shortProviderCode(currentProviderId));
                         ensureProviderRecord(displayName, () -> generateQRCode(currentProviderId));
                     }
                 })
@@ -123,7 +123,7 @@ public class QRCodeActivity extends BaseActivity {
                             ? user.getDisplayName() 
                             : "Service Provider";
                     providerName.setText(displayName);
-                    providerId.setText("ID: " + currentProviderId.substring(0, 8).toUpperCase());
+                    providerId.setText("ID: " + shortProviderCode(currentProviderId));
                     ensureProviderRecord(displayName, () -> generateQRCode(currentProviderId));
                 });
     }

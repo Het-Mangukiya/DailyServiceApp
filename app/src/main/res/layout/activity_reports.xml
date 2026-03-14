@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/md_theme_background">
+    android:background="@drawable/bg_app_backdrop">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
@@ -41,7 +41,9 @@
                 android:layout_marginBottom="16dp"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="4dp"
-                app:cardBackgroundColor="?attr/colorSurface">
+                app:cardBackgroundColor="?attr/colorSurface"
+                app:strokeColor="#1A4DB6AC"
+                app:strokeWidth="1dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -392,7 +394,9 @@
                 android:layout_marginBottom="16dp"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="4dp"
-                app:cardBackgroundColor="?attr/colorSurface">
+                app:cardBackgroundColor="?attr/colorSurface"
+                app:strokeColor="#1A4DB6AC"
+                app:strokeWidth="1dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -425,7 +429,9 @@
                 android:layout_marginBottom="16dp"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="4dp"
-                app:cardBackgroundColor="?attr/colorSurface">
+                app:cardBackgroundColor="?attr/colorSurface"
+                app:strokeColor="#1A4DB6AC"
+                app:strokeWidth="1dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -459,7 +465,9 @@
                 android:layout_marginBottom="16dp"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="4dp"
-                app:cardBackgroundColor="?attr/colorSurface">
+                app:cardBackgroundColor="?attr/colorSurface"
+                app:strokeColor="#1A4DB6AC"
+                app:strokeWidth="1dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
