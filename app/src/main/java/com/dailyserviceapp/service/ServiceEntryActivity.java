@@ -22,6 +22,7 @@ import com.dailyserviceapp.databinding.ActivityServiceEntryBinding;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.Timestamp;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.ListenerRegistration;
 
 import java.util.Calendar;
@@ -104,7 +105,7 @@ public class ServiceEntryActivity extends BaseActivity {
         offlineCache = new OfflineCache(this);
         SyncWorkScheduler.ensurePeriodicSync(this);
         selectedDate = new Date();
-        providerId = getCurrentUserId();
+        providerId = resolveProviderId();
         
         adapter = new ServiceEntryAdapter();
         serviceEntriesRecycler.setAdapter(adapter);
@@ -210,6 +211,12 @@ public class ServiceEntryActivity extends BaseActivity {
                 if (offlineIndicator != null) {
                     offlineIndicator.setVisibility(View.GONE);
                 }
+
+                if (!enforceOwnership(customers)) {
+                    showLoading(false);
+                    showEmptyState(true);
+                    return;
+                }
                 
                 if (customers == null || customers.isEmpty()) {
                     showEmptyState(true);
@@ -273,6 +280,20 @@ public class ServiceEntryActivity extends BaseActivity {
         
         if (deliveries.isEmpty()) {
             showToast(getString(R.string.validation_no_customers_selected));
+            return;
+        }
+
+        // Ensure providerId matches the currently authenticated user to satisfy Firestore rules
+        String authUid = getAuthUid();
+        if (authUid == null || authUid.isEmpty()) {
+            showToast("Session expired. Please login again.");
+            navigateToLogin();
+            return;
+        }
+        if (!authUid.equals(providerId)) {
+            providerId = authUid;
+            preferenceManager.setUserId(authUid);
+            showToast("Session refreshed. Please tap Mark again.");
             return;
         }
         
@@ -512,6 +533,50 @@ public class ServiceEntryActivity extends BaseActivity {
         } else {
             pendingSyncCard.setVisibility(View.GONE);
         }
+    }
+
+    private String resolveProviderId() {
+        String authUid = getAuthUid();
+        if (authUid != null && !authUid.isEmpty()) {
+            return authUid;
+        }
+        return getCurrentUserId();
+    }
+
+    private String getAuthUid() {
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        return auth.getCurrentUser() != null ? auth.getCurrentUser().getUid() : null;
+    }
+
+    /**
+     * Validate that loaded customers belong to the authenticated provider to avoid Firestore rule failures.
+     * Disables marking when mismatch is detected and hints user to repair data.
+     */
+    private boolean enforceOwnership(List<Customer> customers) {
+        String authUid = getAuthUid();
+        if (authUid == null || authUid.isEmpty()) {
+            showToast("Session expired. Please login again.");
+            navigateToLogin();
+            return false;
+        }
+
+        for (Customer customer : customers) {
+            if (customer == null) continue;
+            String owner = customer.getProviderId();
+            if (owner == null || owner.isEmpty()) {
+                showToast("Customer data missing owner. Please fix provider ownership.");
+                return false;
+            }
+            if (!authUid.equals(owner)) {
+                showToast("Customer records belong to another account. Update provider ownership.");
+                return false;
+            }
+        }
+        // Align providerId with authUid to ensure subsequent writes match rules
+        providerId = authUid;
+        preferenceManager.setUserId(authUid);
+        btnMarkDelivery.setEnabled(true);
+        return true;
     }
     
     @Override

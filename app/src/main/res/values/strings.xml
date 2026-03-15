@@ -133,6 +133,7 @@
     <string name="menu_dashboard">Dashboard</string>
     <string name="menu_my_customers">My Customers</string>
     <string name="menu_join_requests">Join Requests</string>
+    <string name="menu_complaints">Complaints</string>
     <string name="menu_my_requests">My Requests</string>
     <string name="menu_future_orders_calendar">Future Orders Calendar</string>
     <string name="menu_deleted_history">Deleted History</string>
@@ -170,6 +171,11 @@
     <string name="customer_dashboard_no_service_entries_yet">No service entries yet</string>
     <string name="customer_dashboard_recent_payment_history">Recent Payment History</string>
     <string name="customer_dashboard_no_payments_yet">No payments yet</string>
+    <string name="customer_dashboard_quick_actions">Quick Actions</string>
+    <string name="customer_dashboard_download_monthly_bill_pdf">Download Monthly Bill PDF</string>
+    <string name="customer_dashboard_download_share_pdf">Download &amp; Share PDF</string>
+    <string name="customer_dashboard_complaint_support">Complaint &amp; Support</string>
+    <string name="customer_dashboard_share_summary">Share Summary</string>
 
     <string name="provider_dashboard_title">Dashboard</string>
     <string name="provider_dashboard_today_summary">Today\'s Summary</string>
@@ -187,6 +193,15 @@
     <string name="provider_dashboard_bills_payments">Bills &amp; Payments</string>
     <string name="provider_dashboard_my_customers">My Customers</string>
     <string name="provider_dashboard_join_requests">Join Requests</string>
+    <string name="provider_complaints_title">Customer Complaints</string>
+    <string name="provider_complaints_summary">Complaint Summary</string>
+    <string name="provider_complaints_open">Open</string>
+    <string name="provider_complaints_in_progress">In Progress</string>
+    <string name="provider_complaints_resolved">Resolved</string>
+    <string name="provider_complaints_recent">Recent Complaints</string>
+    <string name="provider_complaints_empty">No complaints yet. Customer tickets will appear here.</string>
+    <string name="provider_complaints_mark_resolved">Mark Resolved</string>
+    <string name="provider_complaints_mark_in_progress">Mark In Progress</string>
     <string name="auth_welcome_back">Welcome Back</string>
     <string name="auth_sign_in_continue">Sign in to continue</string>
     <string name="auth_login">Login</string>

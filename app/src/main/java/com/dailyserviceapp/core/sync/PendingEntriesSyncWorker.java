@@ -160,8 +160,7 @@ public class PendingEntriesSyncWorker extends Worker {
 
         if (throwable instanceof FirebaseFirestoreException) {
             FirebaseFirestoreException.Code code = ((FirebaseFirestoreException) throwable).getCode();
-            return code == FirebaseFirestoreException.Code.PERMISSION_DENIED
-                || code == FirebaseFirestoreException.Code.UNAUTHENTICATED
+            return code == FirebaseFirestoreException.Code.UNAUTHENTICATED
                 || code == FirebaseFirestoreException.Code.INVALID_ARGUMENT
                 || code == FirebaseFirestoreException.Code.NOT_FOUND;
         }

@@ -129,6 +129,9 @@ public class Constants {
     
     /** Payments collection in Firestore */
     public static final String COLLECTION_PAYMENTS = "payments";
+
+    /** Support tickets collection in Firestore */
+    public static final String COLLECTION_SUPPORT_TICKETS = "supportTickets";
     
     /** Notifications collection in Firestore */
     public static final String COLLECTION_NOTIFICATIONS = "notifications";

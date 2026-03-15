@@ -1,14 +1,18 @@
 package com.dailyserviceapp.reports;
 
-import android.os.Bundle;
+import android.animation.Animator;
+import android.animation.ValueAnimator;
 import android.app.DatePickerDialog;
+import android.graphics.Color;
+import android.os.Bundle;
 import android.os.Looper;
 import android.view.View;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.animation.Animator;
-import androidx.appcompat.content.res.AppCompatResources;
+
+import androidx.core.content.ContextCompat;
 
 import com.dailyserviceapp.R;
 import com.dailyserviceapp.core.base.BaseActivity;
@@ -19,32 +23,34 @@ import com.dailyserviceapp.data.models.Customer;
 import com.dailyserviceapp.data.models.Payment;
 import com.dailyserviceapp.data.models.ServiceEntry;
 import com.dailyserviceapp.databinding.ActivityReportsBinding;
-import android.animation.ValueAnimator;
-import android.view.animation.DecelerateInterpolator;
-import android.graphics.Color;
 import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
+import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.Timestamp;
-import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Locale;
-import java.util.Set;
 import java.util.HashSet;
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 public class ReportsActivity extends BaseActivity {
 
@@ -53,6 +59,8 @@ public class ReportsActivity extends BaseActivity {
     private MaterialButton btnStartDate;
     private MaterialButton btnEndDate;
     private MaterialButton btnApply;
+    private MaterialButton btnChartBar;
+    private MaterialButton btnChartPie;
     private ProgressBar progressBar;
 
     private TextView txtTotalRevenue;
@@ -64,23 +72,25 @@ public class ReportsActivity extends BaseActivity {
     private LinearLayout serviceBreakdownContainer;
     private LinearLayout topCustomersContainer;
     private BarChart barChart;
+    private PieChart pieChart;
 
     private Date startDate;
     private Date endDate;
 
     private FirestoreRepository repository;
     private String providerId;
-    private Map<String, Customer> customerMap = new HashMap<>();
+    private final Map<String, Customer> customerMap = new HashMap<>();
     private final List<ValueAnimator> activeAnimators = new ArrayList<>();
     private int pendingLoadOperations;
-    
+    private boolean showPieChart = false;
+    private Map<String, Double> latestRevenueByCustomer = new HashMap<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityReportsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        
-        // CRITICAL: Check session first
+
         if (!isLoggedIn()) {
             showToast("Please login first");
             navigateToLogin();
@@ -110,6 +120,8 @@ public class ReportsActivity extends BaseActivity {
         btnStartDate = binding.btnStartDate;
         btnEndDate = binding.btnEndDate;
         btnApply = binding.btnApply;
+        btnChartBar = binding.btnChartBar;
+        btnChartPie = binding.btnChartPie;
         progressBar = binding.progressBar;
 
         txtTotalRevenue = binding.txtTotalRevenue;
@@ -121,6 +133,7 @@ public class ReportsActivity extends BaseActivity {
         serviceBreakdownContainer = binding.serviceBreakdownContainer;
         topCustomersContainer = binding.topCustomersContainer;
         barChart = binding.barChart;
+        pieChart = binding.pieChart;
     }
 
     private void initDefaultDates() {
@@ -146,10 +159,87 @@ public class ReportsActivity extends BaseActivity {
         btnStartDate.setOnClickListener(v -> showDatePicker(true));
         btnEndDate.setOnClickListener(v -> showDatePicker(false));
         btnApply.setOnClickListener(v -> loadReport());
+
+        binding.chartToggleGroup.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
+            if (!isChecked || !isUiActive()) {
+                return;
+            }
+            showPieChart = checkedId == R.id.btnChartPie;
+            applyChartMode(showPieChart, true);
+        });
     }
 
     private void initChartDefaults() {
-        // Initialize bar chart only
+        configureBarChart();
+        configurePieChart();
+        applyChartMode(false, false);
+    }
+
+    private void configureBarChart() {
+        barChart.getDescription().setEnabled(false);
+        barChart.getLegend().setEnabled(false);
+        barChart.getAxisRight().setEnabled(false);
+        barChart.setDrawGridBackground(false);
+        barChart.setFitBars(true);
+        barChart.setNoDataText("No revenue data for selected range");
+        barChart.setNoDataTextColor(ContextCompat.getColor(this, R.color.md_theme_on_surface_variant));
+
+        XAxis xAxis = barChart.getXAxis();
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setGranularity(1f);
+        xAxis.setDrawGridLines(false);
+        xAxis.setTextColor(ContextCompat.getColor(this, R.color.md_theme_on_surface_variant));
+        xAxis.setTextSize(11f);
+
+        barChart.getAxisLeft().setTextColor(ContextCompat.getColor(this, R.color.md_theme_on_surface_variant));
+        barChart.getAxisLeft().setTextSize(10f);
+        barChart.getAxisLeft().setGridColor(ContextCompat.getColor(this, R.color.md_theme_outline));
+        barChart.getAxisLeft().setValueFormatter(new ValueFormatter() {
+            @Override
+            public String getFormattedValue(float value) {
+                return CurrencyUtils.formatCompactCurrency(value);
+            }
+        });
+    }
+
+    private void configurePieChart() {
+        pieChart.getDescription().setEnabled(false);
+        pieChart.setUsePercentValues(true);
+        pieChart.setNoDataText("No revenue data for selected range");
+        pieChart.setNoDataTextColor(ContextCompat.getColor(this, R.color.md_theme_on_surface_variant));
+        pieChart.setCenterText("Customer\nShare");
+        pieChart.setCenterTextSize(14f);
+        pieChart.setCenterTextColor(ContextCompat.getColor(this, R.color.md_theme_on_surface));
+        pieChart.setHoleRadius(62f);
+        pieChart.setTransparentCircleRadius(66f);
+        pieChart.setEntryLabelColor(ContextCompat.getColor(this, R.color.md_theme_on_surface));
+        pieChart.setEntryLabelTextSize(11f);
+
+        Legend legend = pieChart.getLegend();
+        legend.setEnabled(true);
+        legend.setTextSize(11f);
+        legend.setTextColor(ContextCompat.getColor(this, R.color.md_theme_on_surface_variant));
+        legend.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
+        legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.CENTER);
+        legend.setOrientation(Legend.LegendOrientation.HORIZONTAL);
+        legend.setDrawInside(false);
+    }
+
+    private void applyChartMode(boolean pie, boolean animate) {
+        if (!isUiActive()) return;
+        barChart.setVisibility(pie ? View.GONE : View.VISIBLE);
+        pieChart.setVisibility(pie ? View.VISIBLE : View.GONE);
+
+        btnChartBar.setEnabled(pie);
+        btnChartPie.setEnabled(!pie);
+
+        if (animate) {
+            if (pie) {
+                pieChart.animateY(700);
+            } else {
+                barChart.animateY(700);
+            }
+        }
     }
 
     private void showDatePicker(boolean isStart) {
@@ -202,7 +292,7 @@ public class ReportsActivity extends BaseActivity {
     }
 
     private String formatDate(Date date) {
-        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd MMM yyyy", Locale.getDefault());
+        SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault());
         return sdf.format(date);
     }
 
@@ -216,6 +306,9 @@ public class ReportsActivity extends BaseActivity {
         showLoading(true);
         serviceBreakdownContainer.removeAllViews();
         topCustomersContainer.removeAllViews();
+        latestRevenueByCustomer = new HashMap<>();
+        barChart.clear();
+        pieChart.clear();
 
         loadCustomers(this::loadReportDataInParallel);
     }
@@ -402,8 +495,10 @@ public class ReportsActivity extends BaseActivity {
                 }
 
                 if (entry.getCustomerId() != null) {
-                    revenueByCustomer.put(entry.getCustomerId(),
-                        revenueByCustomer.getOrDefault(entry.getCustomerId(), 0.0) + amount);
+                    revenueByCustomer.put(
+                        entry.getCustomerId(),
+                        revenueByCustomer.getOrDefault(entry.getCustomerId(), 0.0) + amount
+                    );
                 }
             }
         }
@@ -411,6 +506,8 @@ public class ReportsActivity extends BaseActivity {
         final double finalTotalRevenue = totalRevenue;
         final int finalTotalDeliveries = totalDeliveries;
         final int finalUniqueCustomers = uniqueCustomers.size();
+
+        latestRevenueByCustomer = new HashMap<>(revenueByCustomer);
 
         Runnable updateUi = () -> {
             animateCounter(txtTotalRevenue, 0, finalTotalRevenue, true);
@@ -420,6 +517,8 @@ public class ReportsActivity extends BaseActivity {
             renderServiceBreakdown(revenueByService);
             renderTopCustomers(revenueByCustomer);
             updateBarChart(revenueByCustomer);
+            updatePieChart(revenueByCustomer);
+            applyChartMode(showPieChart, false);
         };
 
         if (Looper.myLooper() == Looper.getMainLooper()) {
@@ -432,101 +531,31 @@ public class ReportsActivity extends BaseActivity {
     private void renderServiceBreakdown(Map<String, Double> revenueByService) {
         serviceBreakdownContainer.removeAllViews();
         if (revenueByService.isEmpty()) {
-            TextView emptyView = new TextView(this);
-            emptyView.setText("No service data available");
-            emptyView.setTextSize(14);
-            emptyView.setTextColor(Color.GRAY);
-            emptyView.setPadding(0, 20, 0, 20);
-            serviceBreakdownContainer.addView(emptyView);
+            addEmptyListRow(serviceBreakdownContainer, "No service data available");
             return;
         }
 
         List<Map.Entry<String, Double>> items = new ArrayList<>(revenueByService.entrySet());
         Collections.sort(items, (a, b) -> Double.compare(b.getValue(), a.getValue()));
 
-        for (int i = 0; i < items.size(); i++) {
-            Map.Entry<String, Double> entry = items.get(i);
-            serviceBreakdownContainer.addView(createServiceCard(entry.getKey(), entry.getValue(), i));
+        double total = 0.0;
+        for (Map.Entry<String, Double> item : items) {
+            total += item.getValue();
         }
-    }
 
-    private View createServiceCard(String serviceName, double revenue, int index) {
-        LinearLayout card = new LinearLayout(this);
-        card.setOrientation(LinearLayout.HORIZONTAL);
-        card.setPadding(16, 16, 16, 16);
-        card.setBackground(AppCompatResources.getDrawable(this, android.R.drawable.dialog_holo_light_frame));
-        
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-            LinearLayout.LayoutParams.MATCH_PARENT,
-            LinearLayout.LayoutParams.WRAP_CONTENT
-        );
-        params.setMargins(0, 0, 0, 12);
-        card.setLayoutParams(params);
-        
-        // Service emoji based on type
-        TextView emojiView = new TextView(this);
-        emojiView.setTextSize(24);
-        emojiView.setPadding(0, 0, 16, 0);
-        String emoji = getServiceEmoji(serviceName);
-        emojiView.setText(emoji);
-        
-        // Service details
-        LinearLayout detailsLayout = new LinearLayout(this);
-        detailsLayout.setOrientation(LinearLayout.VERTICAL);
-        detailsLayout.setLayoutParams(new LinearLayout.LayoutParams(
-            0,
-            LinearLayout.LayoutParams.WRAP_CONTENT,
-            1f
-        ));
-        
-        TextView nameView = new TextView(this);
-        nameView.setText(serviceName);
-        nameView.setTextSize(16);
-        nameView.setTextColor(Color.parseColor("#1A1A1A"));
-        nameView.setTypeface(null, android.graphics.Typeface.BOLD);
-        
-        TextView revenueView = new TextView(this);
-        revenueView.setText(CurrencyUtils.formatIndianCurrency(revenue));
-        revenueView.setTextSize(14);
-        revenueView.setTextColor(Color.parseColor("#4CAF50"));
-        
-        detailsLayout.addView(nameView);
-        detailsLayout.addView(revenueView);
-        
-        // Rank badge
-        TextView rankView = new TextView(this);
-        rankView.setText("#" + (index + 1));
-        rankView.setTextSize(18);
-        rankView.setTextColor(Color.parseColor("#2196F3"));
-        rankView.setTypeface(null, android.graphics.Typeface.BOLD);
-        
-        card.addView(emojiView);
-        card.addView(detailsLayout);
-        card.addView(rankView);
-        
-        return card;
-    }
-    
-    private String getServiceEmoji(String serviceName) {
-        String lower = serviceName.toLowerCase(Locale.ROOT);
-        if (lower.contains("milk")) return "🥛";
-        if (lower.contains("newspaper")) return "📰";
-        if (lower.contains("water")) return "💧";
-        if (lower.contains("tiffin")) return "🍱";
-        if (lower.contains("laundry")) return "👕";
-        if (lower.contains("maid")) return "🧹";
-        return "📦";
+        for (Map.Entry<String, Double> entry : items) {
+            double percent = total > 0 ? (entry.getValue() * 100.0 / total) : 0.0;
+            String title = entry.getKey();
+            String subtitle = String.format(Locale.getDefault(), "Contribution: %.1f%%", percent);
+            String value = CurrencyUtils.formatIndianCurrency(entry.getValue());
+            serviceBreakdownContainer.addView(createInsightRow(serviceBreakdownContainer, title, subtitle, value));
+        }
     }
 
     private void renderTopCustomers(Map<String, Double> revenueByCustomer) {
         topCustomersContainer.removeAllViews();
         if (revenueByCustomer.isEmpty()) {
-            TextView emptyView = new TextView(this);
-            emptyView.setText("No customer data available");
-            emptyView.setTextSize(14);
-            emptyView.setTextColor(Color.GRAY);
-            emptyView.setPadding(0, 20, 0, 20);
-            topCustomersContainer.addView(emptyView);
+            addEmptyListRow(topCustomersContainer, "No customer data available");
             return;
         }
 
@@ -538,64 +567,42 @@ public class ReportsActivity extends BaseActivity {
             Map.Entry<String, Double> entry = items.get(i);
             Customer customer = customerMap.get(entry.getKey());
             String name = customer != null ? customer.getName() : "Customer";
-            topCustomersContainer.addView(createCustomerCard(i + 1, name, entry.getValue()));
+            String title = (i + 1) + ". " + name;
+            String subtitle = "Top customer revenue";
+            String value = CurrencyUtils.formatIndianCurrency(entry.getValue());
+            topCustomersContainer.addView(createInsightRow(topCustomersContainer, title, subtitle, value));
         }
     }
-    
-    private View createCustomerCard(int rank, String customerName, double revenue) {
-        LinearLayout card = new LinearLayout(this);
-        card.setOrientation(LinearLayout.HORIZONTAL);
-        card.setPadding(16, 16, 16, 16);
-        card.setBackground(AppCompatResources.getDrawable(this, android.R.drawable.dialog_holo_light_frame));
-        
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-            LinearLayout.LayoutParams.MATCH_PARENT,
-            LinearLayout.LayoutParams.WRAP_CONTENT
-        );
-        params.setMargins(0, 0, 0, 12);
-        card.setLayoutParams(params);
-        
-        // Rank with medal emoji
-        TextView rankView = new TextView(this);
-        String medalEmoji = rank == 1 ? "🥇" : rank == 2 ? "🥈" : rank == 3 ? "🥉" : "🏅";
-        rankView.setText(medalEmoji + " #" + rank);
-        rankView.setTextSize(20);
-        rankView.setPadding(0, 0, 16, 0);
-        
-        // Customer details
-        LinearLayout detailsLayout = new LinearLayout(this);
-        detailsLayout.setOrientation(LinearLayout.VERTICAL);
-        detailsLayout.setLayoutParams(new LinearLayout.LayoutParams(
-            0,
-            LinearLayout.LayoutParams.WRAP_CONTENT,
-            1f
-        ));
-        
-        TextView nameView = new TextView(this);
-        nameView.setText(customerName);
-        nameView.setTextSize(16);
-        nameView.setTextColor(Color.parseColor("#1A1A1A"));
-        nameView.setTypeface(null, android.graphics.Typeface.BOLD);
-        
-        TextView revenueView = new TextView(this);
-        revenueView.setText(CurrencyUtils.formatIndianCurrency(revenue));
-        revenueView.setTextSize(14);
-        revenueView.setTextColor(Color.parseColor("#4CAF50"));
-        
-        detailsLayout.addView(nameView);
-        detailsLayout.addView(revenueView);
-        
-        card.addView(rankView);
-        card.addView(detailsLayout);
-        
-        return card;
+
+    private View createInsightRow(LinearLayout parent, String title, String subtitle, String value) {
+        View row = getLayoutInflater().inflate(R.layout.row_customer_history, parent, false);
+
+        TextView txtTitle = row.findViewById(R.id.txtHistoryTitle);
+        TextView txtSubtitle = row.findViewById(R.id.txtHistorySubtitle);
+        TextView txtValue = row.findViewById(R.id.txtHistoryValue);
+
+        txtTitle.setText(title);
+        txtSubtitle.setText(subtitle);
+        txtValue.setText(value);
+        txtValue.setTextColor(ContextCompat.getColor(this, R.color.md_theme_primary_dark));
+
+        return row;
+    }
+
+    private void addEmptyListRow(LinearLayout container, String message) {
+        TextView emptyView = new TextView(this);
+        emptyView.setText(message);
+        emptyView.setTextSize(14);
+        emptyView.setTextColor(ContextCompat.getColor(this, R.color.md_theme_on_surface_variant));
+        emptyView.setPadding(0, 14, 0, 14);
+        container.addView(emptyView);
     }
 
     private void updateBarChart(Map<String, Double> revenueByCustomer) {
         if (barChart == null) return;
         if (revenueByCustomer == null || revenueByCustomer.isEmpty()) {
             barChart.clear();
-            barChart.setNoDataText("No customer data available");
+            barChart.invalidate();
             return;
         }
 
@@ -605,14 +612,13 @@ public class ReportsActivity extends BaseActivity {
         int limit = Math.min(5, items.size());
         List<BarEntry> entries = new ArrayList<>();
         List<String> labels = new ArrayList<>();
-        
-        // Modern gradient colors
-        int[] colors = new int[]{
-            Color.parseColor("#4CAF50"),
-            Color.parseColor("#2196F3"),
-            Color.parseColor("#FF9800"),
-            Color.parseColor("#9C27B0"),
-            Color.parseColor("#F44336")
+
+        int[] colors = new int[] {
+            ContextCompat.getColor(this, R.color.chart_pending),
+            ContextCompat.getColor(this, R.color.chart_paid),
+            ContextCompat.getColor(this, R.color.brand_sky_500),
+            ContextCompat.getColor(this, R.color.chart_overdue),
+            ContextCompat.getColor(this, R.color.color_reports)
         };
 
         for (int i = 0; i < limit; i++) {
@@ -620,13 +626,13 @@ public class ReportsActivity extends BaseActivity {
             Customer customer = customerMap.get(entry.getKey());
             String name = customer != null ? customer.getName() : "Customer";
             entries.add(new BarEntry(i, entry.getValue().floatValue()));
-            labels.add(name);
+            labels.add(ellipsizeLabel(name));
         }
 
         BarDataSet dataSet = new BarDataSet(entries, "");
         dataSet.setColors(colors);
-        dataSet.setValueTextSize(13f);
-        dataSet.setValueTextColor(Color.parseColor("#1A1A1A"));
+        dataSet.setValueTextSize(11f);
+        dataSet.setValueTextColor(ContextCompat.getColor(this, R.color.md_theme_on_surface));
         dataSet.setValueFormatter(new ValueFormatter() {
             @Override
             public String getFormattedValue(float value) {
@@ -635,42 +641,81 @@ public class ReportsActivity extends BaseActivity {
         });
 
         BarData data = new BarData(dataSet);
-        data.setBarWidth(0.8f);
+        data.setBarWidth(0.75f);
         barChart.setData(data);
-        barChart.getDescription().setEnabled(false);
-        barChart.setFitBars(true);
-        barChart.getAxisRight().setEnabled(false);
-        barChart.getLegend().setEnabled(false);
-        barChart.setDrawValueAboveBar(true);
-        barChart.setExtraBottomOffset(10f);
 
         XAxis xAxis = barChart.getXAxis();
-        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-        xAxis.setGranularity(1f);
-        xAxis.setDrawGridLines(false);
-        xAxis.setTextSize(12f);
         xAxis.setValueFormatter(new IndexAxisValueFormatter(labels));
 
-        barChart.getAxisLeft().setValueFormatter(new ValueFormatter() {
-            @Override
-            public String getFormattedValue(float value) {
-                return CurrencyUtils.formatCompactCurrency(value);
-            }
-        });
-        barChart.getAxisLeft().setTextSize(11f);
-        barChart.getAxisLeft().setDrawGridLines(true);
-        barChart.getAxisLeft().setGridColor(Color.parseColor("#E0E0E0"));
-
-        barChart.animateY(1000);
+        barChart.animateY(700);
         barChart.invalidate();
     }
-    
+
+    private void updatePieChart(Map<String, Double> revenueByCustomer) {
+        if (pieChart == null) return;
+        if (revenueByCustomer == null || revenueByCustomer.isEmpty()) {
+            pieChart.clear();
+            pieChart.invalidate();
+            return;
+        }
+
+        List<Map.Entry<String, Double>> items = new ArrayList<>(revenueByCustomer.entrySet());
+        Collections.sort(items, (a, b) -> Double.compare(b.getValue(), a.getValue()));
+
+        int limit = Math.min(4, items.size());
+        List<PieEntry> entries = new ArrayList<>();
+        float others = 0f;
+        for (int i = 0; i < items.size(); i++) {
+            Map.Entry<String, Double> item = items.get(i);
+            Customer customer = customerMap.get(item.getKey());
+            String label = customer != null ? customer.getName() : "Customer";
+            float value = item.getValue().floatValue();
+            if (i < limit) {
+                entries.add(new PieEntry(value, ellipsizeLabel(label)));
+            } else {
+                others += value;
+            }
+        }
+        if (others > 0f) {
+            entries.add(new PieEntry(others, "Others"));
+        }
+
+        PieDataSet dataSet = new PieDataSet(entries, "");
+        dataSet.setSliceSpace(2f);
+        dataSet.setSelectionShift(4f);
+        dataSet.setColors(new int[] {
+            ContextCompat.getColor(this, R.color.chart_pending),
+            ContextCompat.getColor(this, R.color.chart_paid),
+            ContextCompat.getColor(this, R.color.brand_sky_500),
+            ContextCompat.getColor(this, R.color.chart_overdue),
+            ContextCompat.getColor(this, R.color.color_reports)
+        });
+
+        PieData data = new PieData(dataSet);
+        data.setValueTextColor(Color.WHITE);
+        data.setValueTextSize(11f);
+        data.setValueFormatter(new PercentFormatter(pieChart));
+
+        pieChart.setData(data);
+        pieChart.animateY(700);
+        pieChart.invalidate();
+    }
+
+    private String ellipsizeLabel(String value) {
+        if (value == null) return "-";
+        String trimmed = value.trim();
+        if (trimmed.length() <= 10) {
+            return trimmed;
+        }
+        return trimmed.substring(0, 10) + "…";
+    }
+
     private void animateCounter(TextView textView, double from, double to, boolean isCurrency) {
         ValueAnimator animator = ValueAnimator.ofFloat((float) from, (float) to);
-        animator.setDuration(1200);
+        animator.setDuration(900);
         animator.setInterpolator(new DecelerateInterpolator());
         activeAnimators.add(animator);
-        
+
         animator.addUpdateListener(animation -> {
             if (!isUiActive() || textView == null || !textView.isAttachedToWindow()) {
                 return;
@@ -693,7 +738,7 @@ public class ReportsActivity extends BaseActivity {
                 activeAnimators.remove(animator);
             }
         });
-        
+
         animator.start();
     }
 

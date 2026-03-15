@@ -9,21 +9,27 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.dailyserviceapp.R;
 import com.dailyserviceapp.billing.BillListActivity;
 import com.dailyserviceapp.core.base.BaseActivity;
+import com.dailyserviceapp.core.utils.AvatarUtils;
 import com.dailyserviceapp.core.utils.Constants;
 import com.dailyserviceapp.core.utils.CurrencyUtils;
 import com.dailyserviceapp.databinding.ActivityProviderDashboardBinding;
+import com.dailyserviceapp.databinding.NavHeaderBinding;
 import com.dailyserviceapp.profile.ProfileActivity;
 import com.dailyserviceapp.provider.JoinRequestsActivity;
+import com.dailyserviceapp.provider.ProviderComplaintsActivity;
 import com.dailyserviceapp.service.ServiceEntryActivity;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -159,6 +165,73 @@ public class ProviderDashboardActivity extends BaseActivity {
         
         // Setup navigation menu
         setupNavigationMenu();
+        setupNavigationHeader();
+    }
+
+    private void setupNavigationHeader() {
+        View headerView = navigationView.getHeaderView(0);
+        if (headerView == null) {
+            return;
+        }
+
+        NavHeaderBinding headerBinding = NavHeaderBinding.bind(headerView);
+        bindProviderHeader(headerBinding, null, null);
+
+        firestore.collection(Constants.COLLECTION_PROVIDERS)
+            .document(providerId)
+            .get()
+            .addOnSuccessListener(snapshot -> {
+                if (snapshot == null || !snapshot.exists()) {
+                    return;
+                }
+
+                String profileName = snapshot.getString("businessName");
+                if (profileName == null || profileName.trim().isEmpty()) {
+                    profileName = snapshot.getString("name");
+                }
+
+                String profileEmail = snapshot.getString("email");
+                bindProviderHeader(headerBinding, profileName, profileEmail);
+            });
+    }
+
+    private void bindProviderHeader(NavHeaderBinding headerBinding, String profileName, String profileEmail) {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        String authName = currentUser != null ? currentUser.getDisplayName() : null;
+        String authEmail = currentUser != null ? currentUser.getEmail() : null;
+
+        String prefName = preferenceManager != null ? preferenceManager.getUserName() : null;
+        String prefEmail = preferenceManager != null ? preferenceManager.getUserEmail() : null;
+
+        String displayName = AvatarUtils.resolveDisplayName(
+            firstNonEmpty(profileName, authName, prefName),
+            firstNonEmpty(profileEmail, authEmail, prefEmail),
+            getString(R.string.default_user_name)
+        );
+        String displayEmail = firstNonEmpty(profileEmail, authEmail, prefEmail, getString(R.string.default_user_email));
+        String initials = AvatarUtils.getInitials(displayName);
+
+        headerBinding.userName.setText(displayName);
+        headerBinding.userEmail.setText(displayEmail);
+        headerBinding.userInitial.setText(initials);
+        headerBinding.userInitial.setTextColor(ContextCompat.getColor(this, android.R.color.white));
+        headerBinding.userInitial.setContentDescription(getString(R.string.profile_initial_for, displayName));
+        headerBinding.avatarCard.setCardBackgroundColor(AvatarUtils.getAvatarColor(displayName));
+
+        View.OnClickListener openProfileListener = v -> startActivity(new Intent(this, ProfileActivity.class));
+        headerBinding.avatarCard.setOnClickListener(openProfileListener);
+        headerBinding.userInitial.setOnClickListener(openProfileListener);
+    }
+
+    private String firstNonEmpty(String... values) {
+        if (values == null) return "";
+        for (String value : values) {
+            if (value != null && !value.trim().isEmpty()) {
+                return value.trim();
+            }
+        }
+        return "";
     }
     
     private void setupListeners() {
@@ -192,6 +265,8 @@ public class ProviderDashboardActivity extends BaseActivity {
                 startActivity(new Intent(this, DashboardActivity.class));
             } else if (itemId == R.id.nav_join_requests) {
                 startActivity(new Intent(this, JoinRequestsActivity.class));
+            } else if (itemId == R.id.nav_complaints) {
+                startActivity(new Intent(this, ProviderComplaintsActivity.class));
             } else if (itemId == R.id.nav_bills) {
                 startActivity(new Intent(this, BillListActivity.class));
             } else if (itemId == R.id.nav_reports) {

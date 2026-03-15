@@ -1,6 +1,10 @@
 package com.dailyserviceapp.customer;
 
+import android.content.ActivityNotFoundException;
+import android.content.ClipData;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -8,8 +12,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.core.content.FileProvider;
 
 import com.dailyserviceapp.R;
+import com.dailyserviceapp.billing.MonthlyBillPdfGenerator;
 import com.dailyserviceapp.billing.CustomerLedgerCalculator;
 import com.dailyserviceapp.billing.CustomerLedgerSummary;
 import com.dailyserviceapp.core.base.BaseActivity;
@@ -24,12 +30,16 @@ import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -80,6 +90,9 @@ public class CustomerServiceDashboardActivity extends BaseActivity {
 
         setupToolbar(binding.toolbar, "My Service Dashboard", true);
         binding.btnRefreshData.setOnClickListener(v -> loadActiveLinkAndDashboard());
+        binding.btnComplaintSupport.setOnClickListener(v -> openComplaintSupport());
+        binding.btnShareCustomerSummary.setOnClickListener(v -> shareCustomerSummary());
+        binding.btnDownloadAndSharePdf.setOnClickListener(v -> showMonthPickerAndGenerate(true));
 
         loadActiveLinkAndDashboard();
     }
@@ -475,6 +488,189 @@ public class CustomerServiceDashboardActivity extends BaseActivity {
 
     private boolean isUiActive() {
         return binding != null && !isFinishing() && !isDestroyed();
+    }
+
+    private void openComplaintSupport() {
+        Intent intent = new Intent(this, ComplaintSupportActivity.class);
+        startActivity(intent);
+    }
+
+    private void shareCustomerSummary() {
+        if (customer == null) {
+            showToast("Dashboard is still loading. Please try again.");
+            return;
+        }
+
+        CustomerLedgerSummary summary = CustomerLedgerCalculator.calculate(customer, serviceEntries, payments);
+        String text = "Customer: " + safeTrim(customer.getName()) + "\n"
+            + "Provider: " + (safeTrim(providerName).isEmpty() ? "Service Provider" : providerName) + "\n"
+            + "Total Service Value: " + CurrencyUtils.formatCurrency(summary.getTotalServiceAmount()) + "\n"
+            + "Total Paid: " + CurrencyUtils.formatCurrency(summary.getTotalPaidAmount()) + "\n"
+            + "Outstanding: " + CurrencyUtils.formatCurrency(summary.getOutstandingAmount()) + "\n"
+            + "Delivered Entries: " + summary.getDeliveredEntries();
+
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(Intent.EXTRA_SUBJECT, "My Service Summary");
+        shareIntent.putExtra(Intent.EXTRA_TEXT, text);
+        startActivity(Intent.createChooser(shareIntent, "Share summary"));
+    }
+
+    private void showMonthPickerAndGenerate(boolean shareAfterDownload) {
+        List<MonthYearItem> monthOptions = collectAvailableMonths();
+        if (monthOptions.isEmpty()) {
+            Calendar now = Calendar.getInstance();
+            monthOptions.add(new MonthYearItem(now.get(Calendar.MONTH), now.get(Calendar.YEAR)));
+        }
+
+        String[] labels = new String[monthOptions.size()];
+        for (int i = 0; i < monthOptions.size(); i++) {
+            labels[i] = monthOptions.get(i).label();
+        }
+
+        androidx.appcompat.app.AlertDialog.Builder builder =
+            new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("Select bill month")
+                .setItems(labels, (DialogInterface dialog, int which) -> {
+                    if (which < 0 || which >= monthOptions.size()) return;
+                    MonthYearItem selected = monthOptions.get(which);
+                    generateMonthlyBillPdf(selected.month, selected.year, shareAfterDownload);
+                });
+        builder.show();
+    }
+
+    private List<MonthYearItem> collectAvailableMonths() {
+        Set<String> unique = new LinkedHashSet<>();
+        List<MonthYearItem> items = new ArrayList<>();
+
+        Calendar cal = Calendar.getInstance();
+        for (ServiceEntry entry : serviceEntries) {
+            if (entry == null || entry.getDate() == null) continue;
+            cal.setTime(entry.getDate().toDate());
+            int month = cal.get(Calendar.MONTH);
+            int year = cal.get(Calendar.YEAR);
+            String key = year + "_" + month;
+            if (unique.add(key)) {
+                items.add(new MonthYearItem(month, year));
+            }
+        }
+
+        for (Payment payment : payments) {
+            if (payment == null || payment.getPaymentDate() == null) continue;
+            cal.setTime(payment.getPaymentDate().toDate());
+            int month = cal.get(Calendar.MONTH);
+            int year = cal.get(Calendar.YEAR);
+            String key = year + "_" + month;
+            if (unique.add(key)) {
+                items.add(new MonthYearItem(month, year));
+            }
+        }
+
+        items.sort((i1, i2) -> {
+            if (i1.year != i2.year) return Integer.compare(i2.year, i1.year);
+            return Integer.compare(i2.month, i1.month);
+        });
+        return items;
+    }
+
+    private void generateMonthlyBillPdf(int month, int year, boolean shareAfterDownload) {
+        if (providerId == null || providerId.trim().isEmpty()) {
+            showToast("Provider details unavailable. Please refresh.");
+            return;
+        }
+
+        Customer safeCustomer = customer != null ? customer : new Customer();
+        if (safeCustomer.getName() == null || safeCustomer.getName().trim().isEmpty()) {
+            safeCustomer.setName(safeTrim(preferenceManager.getUserName()).isEmpty()
+                ? "Customer" : preferenceManager.getUserName());
+        }
+        if (safeCustomer.getId() == null || safeCustomer.getId().trim().isEmpty()) {
+            safeCustomer.setId(customerId);
+        }
+
+        setLoading(true);
+        new Thread(() -> {
+            try {
+                MonthlyBillPdfGenerator.Result result = MonthlyBillPdfGenerator.generate(
+                    CustomerServiceDashboardActivity.this,
+                    safeCustomer,
+                    providerName,
+                    providerServiceType,
+                    month,
+                    year,
+                    serviceEntries,
+                    payments
+                );
+
+                runOnUiThread(() -> {
+                    if (!isUiActive()) return;
+                    setLoading(false);
+                    showToast("Bill PDF saved: " + result.pdfFile.getName());
+
+                    if (shareAfterDownload) {
+                        sharePdfFile(result.pdfFile, month, year);
+                    }
+                });
+            } catch (IOException e) {
+                runOnUiThread(() -> {
+                    if (!isUiActive()) return;
+                    setLoading(false);
+                    showToast("Failed to generate PDF: " + e.getMessage());
+                });
+            }
+        }).start();
+    }
+
+    private void sharePdfFile(File pdfFile, int month, int year) {
+        if (pdfFile == null || !pdfFile.exists()) {
+            showToast("PDF file not found");
+            return;
+        }
+
+        try {
+            Uri contentUri = FileProvider.getUriForFile(
+                this,
+                getPackageName() + ".fileprovider",
+                pdfFile
+            );
+
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.setType("application/pdf");
+            shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Monthly Bill - " + monthYearLabel(month, year));
+            shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri);
+            shareIntent.setClipData(ClipData.newUri(getContentResolver(), "Monthly Bill PDF", contentUri));
+            shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+            startActivity(Intent.createChooser(shareIntent, "Share bill PDF"));
+        } catch (ActivityNotFoundException ex) {
+            showToast("No app available to share PDF");
+        } catch (Exception ex) {
+            showToast("Unable to share PDF: " + ex.getMessage());
+        }
+    }
+
+    private String monthYearLabel(int month, int year) {
+        java.text.DateFormatSymbols symbols = new java.text.DateFormatSymbols(Locale.getDefault());
+        String[] months = symbols.getMonths();
+        String monthName = (month >= 0 && month < months.length) ? months[month] : "Month";
+        return monthName + " " + year;
+    }
+
+    private static final class MonthYearItem {
+        final int month;
+        final int year;
+
+        MonthYearItem(int month, int year) {
+            this.month = month;
+            this.year = year;
+        }
+
+        String label() {
+            java.text.DateFormatSymbols symbols = new java.text.DateFormatSymbols(Locale.getDefault());
+            String[] months = symbols.getMonths();
+            String monthName = (month >= 0 && month < months.length) ? months[month] : "Month";
+            return monthName + " " + year;
+        }
     }
 
     @Override
