@@ -7,8 +7,12 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -95,6 +99,41 @@ public class CustomerServiceDashboardActivity extends BaseActivity {
         binding.btnDownloadAndSharePdf.setOnClickListener(v -> showMonthPickerAndGenerate(true));
 
         loadActiveLinkAndDashboard();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.customer_home_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_more) {
+            showMoreMenu();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void showMoreMenu() {
+        PopupMenu popupMenu = new PopupMenu(this, binding.toolbar, Gravity.END);
+        popupMenu.getMenuInflater().inflate(R.menu.customer_home_more_menu, popupMenu.getMenu());
+        popupMenu.setOnMenuItemClickListener(this::handleToolbarMenuClick);
+        popupMenu.show();
+    }
+
+    private boolean handleToolbarMenuClick(MenuItem item) {
+        int itemId = item.getItemId();
+        if (itemId == R.id.action_support) {
+            openComplaintSupport();
+            return true;
+        }
+        if (itemId == R.id.action_logout) {
+            performLogout();
+            return true;
+        }
+        return false;
     }
 
     @Override

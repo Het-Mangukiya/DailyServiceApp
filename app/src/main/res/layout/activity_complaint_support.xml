@@ -3,11 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_app_backdrop">
+    android:background="@drawable/bg_app_backdrop"
+    android:fitsSystemWindows="true">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:fitsSystemWindows="true"
         android:background="@drawable/bg_toolbar_gradient"
         app:elevation="4dp">
 
@@ -26,6 +28,7 @@
         android:layout_height="match_parent"
         android:clipToPadding="false"
         android:fillViewport="true"
+        android:fitsSystemWindows="false"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
@@ -57,6 +60,15 @@
                         android:textColor="@color/md_theme_on_primary_container"
                         android:textSize="14sp"
                         android:textStyle="bold" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnEmailProvider"
+                        style="@style/Widget.App.Button.Outlined"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="@string/customer_support_email_provider"
+                        app:icon="@drawable/ic_email_24" />
 
                 </LinearLayout>
 

@@ -6,8 +6,12 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.PopupMenu;
 
 import com.dailyserviceapp.R;
 import com.dailyserviceapp.core.base.BaseActivity;
@@ -92,14 +96,43 @@ public class CustomerHomeActivity extends BaseActivity {
 
     private void setupToolbar() {
         setSupportActionBar(binding.toolbar);
-        binding.toolbar.setTitle("Customer Home");
-        binding.toolbar.setOnMenuItemClickListener(item -> {
-            if (item.getItemId() == R.id.action_logout) {
-                logout();
-                return true;
-            }
-            return false;
-        });
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(R.string.customer_home_title);
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.customer_home_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_more) {
+            showMoreMenu();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void showMoreMenu() {
+        PopupMenu popupMenu = new PopupMenu(this, binding.toolbar, Gravity.END);
+        popupMenu.getMenuInflater().inflate(R.menu.customer_home_more_menu, popupMenu.getMenu());
+        popupMenu.setOnMenuItemClickListener(this::handleToolbarMenuClick);
+        popupMenu.show();
+    }
+
+    private boolean handleToolbarMenuClick(MenuItem item) {
+        if (item.getItemId() == R.id.action_support) {
+            startActivity(new Intent(this, ComplaintSupportActivity.class));
+            return true;
+        }
+        if (item.getItemId() == R.id.action_logout) {
+            logout();
+            return true;
+        }
+        return false;
     }
 
     private void setupContent() {

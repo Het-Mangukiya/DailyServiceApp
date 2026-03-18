@@ -1,5 +1,8 @@
 package com.dailyserviceapp.provider;
 
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
@@ -185,9 +188,11 @@ public class ProviderComplaintsActivity extends BaseActivity {
 
         String message = safe(doc.getString("message"));
         if (message.isEmpty()) message = "No details provided";
+        String customerEmail = safe(doc.getString("customerEmail"));
 
         String status = safe(doc.getString("status")).toUpperCase(Locale.US);
         if (status.isEmpty()) status = "OPEN";
+        final String currentStatus = status;
 
         Timestamp createdAt = doc.getTimestamp("createdAt");
         Timestamp updatedAt = doc.getTimestamp("updatedAt");
@@ -208,21 +213,50 @@ public class ProviderComplaintsActivity extends BaseActivity {
             .setMessage(detail)
             .setNegativeButton("Close", null);
 
-        String ticketId = doc.getId();
-        if (!"IN_PROGRESS".equals(status) && !"RESOLVED".equals(status)) {
-            builder.setNeutralButton(getString(R.string.provider_complaints_mark_in_progress),
-                (dialog, which) -> updateTicketStatus(ticketId, "IN_PROGRESS"));
+        if (!"RESOLVED".equals(status)) {
+            builder.setNeutralButton(getString(R.string.provider_support_update_status),
+                (dialog, which) -> showStatusActions(doc));
         }
 
-        if (!"RESOLVED".equals(status)) {
-            builder.setPositiveButton(getString(R.string.provider_complaints_mark_resolved),
-                (dialog, which) -> updateTicketStatus(ticketId, "RESOLVED"));
+        if (!customerEmail.isEmpty()) {
+            builder.setPositiveButton(getString(R.string.provider_support_email_customer),
+                (dialog, which) -> emailCustomer(doc, currentStatus));
         }
 
         builder.show();
     }
 
-    private void updateTicketStatus(String ticketId, String newStatus) {
+    private void showStatusActions(DocumentSnapshot doc) {
+        if (doc == null || !doc.exists()) return;
+
+        List<String> actions = new ArrayList<>();
+        List<String> targetStatuses = new ArrayList<>();
+        String currentStatus = safe(doc.getString("status")).toUpperCase(Locale.US);
+
+        if (!"IN_PROGRESS".equals(currentStatus)) {
+            actions.add(getString(R.string.provider_complaints_mark_in_progress));
+            targetStatuses.add("IN_PROGRESS");
+        }
+        if (!"RESOLVED".equals(currentStatus)) {
+            actions.add(getString(R.string.provider_complaints_mark_resolved));
+            targetStatuses.add("RESOLVED");
+        }
+
+        if (actions.isEmpty()) {
+            showToast("No status changes available");
+            return;
+        }
+
+        new MaterialAlertDialogBuilder(this)
+            .setTitle(getString(R.string.provider_support_update_status))
+            .setItems(actions.toArray(new String[0]), (dialog, which) ->
+                updateTicketStatus(doc, targetStatuses.get(which)))
+            .setNegativeButton("Cancel", null)
+            .show();
+    }
+
+    private void updateTicketStatus(DocumentSnapshot doc, String newStatus) {
+        String ticketId = doc != null ? doc.getId() : "";
         if (ticketId == null || ticketId.trim().isEmpty()) return;
 
         setLoading(true);
@@ -240,6 +274,7 @@ public class ProviderComplaintsActivity extends BaseActivity {
             .addOnSuccessListener(unused -> {
                 if (!isUiActive()) return;
                 showToast("Complaint updated: " + newStatus.replace("_", " "));
+                emailCustomer(doc, newStatus);
                 loadComplaints();
             })
             .addOnFailureListener(e -> {
@@ -247,6 +282,77 @@ public class ProviderComplaintsActivity extends BaseActivity {
                 setLoading(false);
                 showToast("Failed to update complaint: " + e.getMessage());
             });
+    }
+
+    private void emailCustomer(DocumentSnapshot doc, String statusForMail) {
+        if (doc == null || !doc.exists()) return;
+
+        String customerEmail = safe(doc.getString("customerEmail"));
+        if (customerEmail.isEmpty()) {
+            String customerId = safe(doc.getString("customerId"));
+            if (customerId.isEmpty()) {
+                showToast(getString(R.string.provider_support_customer_unavailable));
+                return;
+            }
+
+            firestore.collection(Constants.COLLECTION_USERS)
+                .document(customerId)
+                .get()
+                .addOnSuccessListener(snapshot -> {
+                    if (!isUiActive()) return;
+                    String fallbackEmail = snapshot != null ? safe(snapshot.getString("email")) : "";
+                    if (fallbackEmail.isEmpty()) {
+                        showToast(getString(R.string.provider_support_customer_unavailable));
+                        return;
+                    }
+                    openEmailComposer(doc, fallbackEmail, statusForMail);
+                })
+                .addOnFailureListener(e -> {
+                    if (!isUiActive()) return;
+                    showToast(getString(R.string.provider_support_customer_unavailable));
+                });
+            return;
+        }
+
+        openEmailComposer(doc, customerEmail, statusForMail);
+    }
+
+    private void openEmailComposer(DocumentSnapshot doc, String customerEmail, String statusForMail) {
+        String customerName = safe(doc.getString("customerName"));
+        if (customerName.isEmpty()) {
+            customerName = "Customer";
+        }
+        String subject = safe(doc.getString("subject"));
+        if (subject.isEmpty()) {
+            subject = "Support Ticket";
+        }
+        String displayStatus = safe(statusForMail).isEmpty()
+            ? safe(doc.getString("status")).replace("_", " ")
+            : statusForMail.replace("_", " ");
+        String providerName = safe(preferenceManager.getUserName());
+        if (providerName.isEmpty()) {
+            providerName = "Service Provider";
+        }
+
+        Intent intent = new Intent(Intent.ACTION_SENDTO);
+        intent.setData(Uri.parse("mailto:" + Uri.encode(customerEmail)));
+        intent.putExtra(Intent.EXTRA_SUBJECT,
+            getString(R.string.provider_support_reply_subject, subject));
+        intent.putExtra(Intent.EXTRA_TEXT,
+            getString(
+                R.string.provider_support_reply_body,
+                customerName,
+                subject,
+                displayStatus,
+                providerName
+            )
+        );
+
+        try {
+            startActivity(Intent.createChooser(intent, getString(R.string.provider_support_email_customer)));
+        } catch (ActivityNotFoundException e) {
+            showToast(getString(R.string.customer_support_no_email_client));
+        }
     }
 
     private int resolveStatusColor(String status) {

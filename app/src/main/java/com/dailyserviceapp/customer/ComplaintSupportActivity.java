@@ -1,9 +1,15 @@
 package com.dailyserviceapp.customer;
 
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -36,6 +42,8 @@ public class ComplaintSupportActivity extends BaseActivity {
     private String customerId;
     private String providerId;
     private String providerName;
+    private String providerEmail;
+    private String customerEmail;
 
     private Spinner spinnerCategory;
 
@@ -70,14 +78,50 @@ public class ComplaintSupportActivity extends BaseActivity {
         setupCategorySpinner();
 
         binding.btnSubmitTicket.setOnClickListener(v -> submitTicket());
+        binding.btnEmailProvider.setOnClickListener(v -> emailProvider(null, null, null));
+        updateSupportAvailability(false);
 
         loadActiveLinkAndTickets();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.customer_home_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_more) {
+            showMoreMenu();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void showMoreMenu() {
+        PopupMenu popupMenu = new PopupMenu(this, binding.toolbar, Gravity.END);
+        popupMenu.getMenuInflater().inflate(R.menu.customer_home_more_menu, popupMenu.getMenu());
+        popupMenu.setOnMenuItemClickListener(this::handleToolbarMenuClick);
+        popupMenu.show();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         loadActiveLinkAndTickets();
+    }
+
+    private boolean handleToolbarMenuClick(MenuItem item) {
+        int itemId = item.getItemId();
+        if (itemId == R.id.action_support) {
+            return true;
+        }
+        if (itemId == R.id.action_logout) {
+            performLogout();
+            return true;
+        }
+        return false;
     }
 
     private void setupCategorySpinner() {
@@ -99,6 +143,7 @@ public class ComplaintSupportActivity extends BaseActivity {
 
     private void loadActiveLinkAndTickets() {
         setLoading(true);
+        customerEmail = safe(preferenceManager.getUserEmail());
         firestore.collection(Constants.COLLECTION_CUSTOMER_LINKS)
             .document(customerId)
             .get()
@@ -109,7 +154,9 @@ public class ComplaintSupportActivity extends BaseActivity {
                     setLoading(false);
                     providerId = "";
                     providerName = "";
+                    providerEmail = "";
                     binding.txtProviderInfo.setText("No active provider link found.");
+                    updateSupportAvailability(false);
                     showEmptyState(true, "Connect a provider first to raise support tickets.");
                     return;
                 }
@@ -119,7 +166,9 @@ public class ComplaintSupportActivity extends BaseActivity {
                     setLoading(false);
                     providerId = "";
                     providerName = "";
+                    providerEmail = "";
                     binding.txtProviderInfo.setText("Link status: " + (status.isEmpty() ? "PENDING" : status));
+                    updateSupportAvailability(false);
                     showEmptyState(true, "Your provider link must be ACTIVE to submit tickets.");
                     return;
                 }
@@ -130,15 +179,67 @@ public class ComplaintSupportActivity extends BaseActivity {
                     providerName = "Service Provider";
                 }
 
-                binding.txtProviderInfo.setText("Linked to: " + providerName);
-                loadTickets();
+                loadProviderContactAndTickets();
             })
             .addOnFailureListener(e -> {
                 if (!isUiActive()) return;
                 setLoading(false);
+                updateSupportAvailability(false);
                 showToast("Failed to load link: " + e.getMessage());
                 showEmptyState(true, "Unable to load support tickets.");
             });
+    }
+
+    private void loadProviderContactAndTickets() {
+        if (providerId == null || providerId.isEmpty()) {
+            providerEmail = "";
+            binding.txtProviderInfo.setText("Linked to: " + providerName);
+            updateProviderEmailButton();
+            updateSupportAvailability(false);
+            loadTickets();
+            return;
+        }
+
+        firestore.collection(Constants.COLLECTION_PROVIDERS)
+            .document(providerId)
+            .get()
+            .addOnSuccessListener(documentSnapshot -> {
+                if (!isUiActive()) return;
+                providerEmail = documentSnapshot != null ? safe(documentSnapshot.getString("email")) : "";
+                if (!providerEmail.isEmpty()) {
+                    renderProviderInfoAndLoadTickets();
+                    return;
+                }
+
+                firestore.collection(Constants.COLLECTION_USERS)
+                    .document(providerId)
+                    .get()
+                    .addOnSuccessListener(userSnapshot -> {
+                        if (!isUiActive()) return;
+                        providerEmail = userSnapshot != null ? safe(userSnapshot.getString("email")) : "";
+                        renderProviderInfoAndLoadTickets();
+                    })
+                    .addOnFailureListener(e -> {
+                        if (!isUiActive()) return;
+                        renderProviderInfoAndLoadTickets();
+                    });
+            })
+            .addOnFailureListener(e -> {
+                if (!isUiActive()) return;
+                providerEmail = "";
+                renderProviderInfoAndLoadTickets();
+            });
+    }
+
+    private void renderProviderInfoAndLoadTickets() {
+        String info = "Linked to: " + providerName;
+        if (!providerEmail.isEmpty()) {
+            info += "\nEmail: " + providerEmail;
+        }
+        binding.txtProviderInfo.setText(info);
+        updateProviderEmailButton();
+        updateSupportAvailability(true);
+        loadTickets();
     }
 
     private void loadTickets() {
@@ -230,7 +331,9 @@ public class ComplaintSupportActivity extends BaseActivity {
         ticket.put("customerId", customerId);
         ticket.put("providerId", providerId);
         ticket.put("customerName", safe(preferenceManager.getUserName()));
+        ticket.put("customerEmail", customerEmail);
         ticket.put("providerName", providerName);
+        ticket.put("providerEmail", providerEmail);
         ticket.put("category", category);
         ticket.put("subject", subject);
         ticket.put("message", message);
@@ -246,6 +349,7 @@ public class ComplaintSupportActivity extends BaseActivity {
                 showToast("Support ticket submitted");
                 binding.etSubject.setText("");
                 binding.etMessage.setText("");
+                emailProvider(subject, category, message);
                 loadTickets();
             })
             .addOnFailureListener(e -> {
@@ -269,6 +373,58 @@ public class ComplaintSupportActivity extends BaseActivity {
     private void setSubmitBusy(boolean busy) {
         binding.btnSubmitTicket.setEnabled(!busy);
         binding.btnSubmitTicket.setText(busy ? "Submitting..." : "Submit Ticket");
+        binding.btnEmailProvider.setEnabled(!busy && providerEmail != null && !providerEmail.isEmpty());
+    }
+
+    private void updateSupportAvailability(boolean canSubmit) {
+        if (binding == null) return;
+        binding.btnSubmitTicket.setEnabled(canSubmit);
+        binding.spinnerCategory.setEnabled(canSubmit);
+        binding.etSubject.setEnabled(canSubmit);
+        binding.etMessage.setEnabled(canSubmit);
+        updateProviderEmailButton();
+    }
+
+    private void updateProviderEmailButton() {
+        if (binding == null) return;
+        binding.btnEmailProvider.setEnabled(providerEmail != null && !providerEmail.isEmpty());
+    }
+
+    private void emailProvider(String subject, String category, String message) {
+        if (providerEmail == null || providerEmail.isEmpty()) {
+            showToast(getString(R.string.customer_support_provider_unavailable));
+            return;
+        }
+
+        String safeSubject = subject == null || subject.trim().isEmpty() ? "Support Request" : subject.trim();
+        String safeCategory = category == null || category.trim().isEmpty() ? "General" : category.trim();
+        String safeMessage = message == null || message.trim().isEmpty() ? "Please review my issue." : message.trim();
+        String customerName = safe(preferenceManager.getUserName());
+        if (customerName.isEmpty()) {
+            customerName = "Customer";
+        }
+
+        Intent intent = new Intent(Intent.ACTION_SENDTO);
+        intent.setData(Uri.parse("mailto:" + Uri.encode(providerEmail)));
+        intent.putExtra(Intent.EXTRA_SUBJECT,
+            getString(R.string.customer_support_ticket_mail_subject, safeSubject));
+        intent.putExtra(Intent.EXTRA_TEXT,
+            getString(
+                R.string.customer_support_ticket_mail_body,
+                providerName.isEmpty() ? "Service Provider" : providerName,
+                safeCategory,
+                safeSubject,
+                safeMessage,
+                customerName,
+                customerEmail == null ? "" : customerEmail
+            )
+        );
+
+        try {
+            startActivity(Intent.createChooser(intent, getString(R.string.customer_support_email_provider)));
+        } catch (ActivityNotFoundException e) {
+            showToast(getString(R.string.customer_support_no_email_client));
+        }
     }
 
     private boolean isUiActive() {

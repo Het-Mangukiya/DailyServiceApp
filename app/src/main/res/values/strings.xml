@@ -84,6 +84,7 @@
     <string name="btn_reject_request">Reject</string>
     <string name="btn_approve_request">Approve</string>
     <string name="action_edit_profile">Edit</string>
+    <string name="action_support">Support</string>
     <string name="action_logout">Logout</string>
     <string name="customer_default">Customer</string>
     <string name="no_email">No email</string>
@@ -176,6 +177,16 @@
     <string name="customer_dashboard_download_share_pdf">Download &amp; Share PDF</string>
     <string name="customer_dashboard_complaint_support">Complaint &amp; Support</string>
     <string name="customer_dashboard_share_summary">Share Summary</string>
+    <string name="customer_support_email_provider">Email Provider</string>
+    <string name="customer_support_provider_unavailable">Provider email not available yet. Ask provider to update profile email.</string>
+    <string name="customer_support_no_email_client">No email app found on this device.</string>
+    <string name="customer_support_ticket_mail_subject">Complaint: %1$s</string>
+    <string name="customer_support_ticket_mail_body">Hello %1$s,\n\nI have raised a complaint from DailyDrop.\n\nCategory: %2$s\nSubject: %3$s\nIssue Details: %4$s\n\nPlease review and respond.\n\nCustomer: %5$s\nCustomer Email: %6$s</string>
+    <string name="provider_support_reply_subject">Complaint Update: %1$s</string>
+    <string name="provider_support_reply_body">Hello %1$s,\n\nYour complaint has been updated in DailyDrop.\n\nSubject: %2$s\nNew Status: %3$s\nProvider: %4$s\n\nIf needed, you can reply to this email for further discussion.</string>
+    <string name="provider_support_email_customer">Email Customer</string>
+    <string name="provider_support_update_status">Update Status</string>
+    <string name="provider_support_customer_unavailable">Customer email is not available for this ticket.</string>
 
     <string name="provider_dashboard_title">Dashboard</string>
     <string name="provider_dashboard_today_summary">Today\'s Summary</string>
