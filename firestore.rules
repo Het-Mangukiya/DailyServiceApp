@@ -35,17 +35,20 @@ service cloud.firestore {
     match /customerLinks/{customerId} {
       // Customer-owned link document used for provider QR linking.
       allow read: if isOwner(customerId)
+        || (isSignedIn() && resource.data.providerId == request.auth.uid);
+      allow delete: if isOwner(customerId)
+        || (isSignedIn() && resource.data.providerId == request.auth.uid);
+      allow create: if (isOwner(customerId)
+          && request.resource.data.customerId == request.auth.uid)
         || (isSignedIn()
-          && (resource == null || resource.data.providerId == request.auth.uid));
-      allow delete: if isOwner(customerId);
-      allow create: if isOwner(customerId)
-        && request.resource.data.customerId == request.auth.uid;
+          && request.resource.data.providerId == request.auth.uid
+          && request.resource.data.customerId == customerId);
       allow update: if (isOwner(customerId)
           && request.resource.data.customerId == request.auth.uid)
         || (isSignedIn()
-          && resource.data.providerId == request.auth.uid
-          && request.resource.data.providerId == resource.data.providerId
-          && request.resource.data.customerId == resource.data.customerId);
+          && request.resource.data.providerId == request.auth.uid
+          && request.resource.data.customerId == customerId
+          && (resource == null || resource.data.providerId == request.auth.uid));
     }
 
     match /customers/{customerId} {
@@ -71,7 +74,13 @@ service cloud.firestore {
     }
 
     match /serviceEntries/{entryId} {
-      allow read: if isSignedIn()
+      // Providers run transaction pre-reads on deterministic IDs before create.
+      // Allow get on non-existent docs while keeping strict access for existing docs.
+      allow get: if isSignedIn()
+        && (resource == null
+          || resource.data.providerId == request.auth.uid
+          || resource.data.customerId == request.auth.uid);
+      allow list: if isSignedIn()
         && (resource.data.providerId == request.auth.uid
           || resource.data.customerId == request.auth.uid);
       allow delete: if isSignedIn()
@@ -85,8 +94,29 @@ service cloud.firestore {
         && request.resource.data.providerId == resource.data.providerId;
     }
 
+    match /supportTickets/{ticketId} {
+      allow get, list: if isSignedIn()
+        && (resource.data.customerId == request.auth.uid
+          || resource.data.providerId == request.auth.uid);
+      allow create: if isSignedIn()
+        && request.resource.data.customerId == request.auth.uid
+        && request.resource.data.providerId is string;
+      allow update: if isSignedIn()
+        && (resource.data.customerId == request.auth.uid
+          || resource.data.providerId == request.auth.uid)
+        && request.resource.data.customerId == resource.data.customerId
+        && request.resource.data.providerId == resource.data.providerId;
+      allow delete: if false;
+    }
+
     match /payments/{paymentId} {
-      allow read: if isSignedIn()
+      // Keep existing-doc reads strict, but allow get on missing docs for
+      // client-side pre-check flows before create/update.
+      allow get: if isSignedIn()
+        && (resource == null
+          || resource.data.providerId == request.auth.uid
+          || resource.data.customerId == request.auth.uid);
+      allow list: if isSignedIn()
         && (resource.data.providerId == request.auth.uid
           || resource.data.customerId == request.auth.uid);
       allow delete: if isSignedIn()
@@ -101,7 +131,13 @@ service cloud.firestore {
     }
 
     match /bills/{billId} {
-      allow read: if isSignedIn()
+      // Keep existing-doc reads strict, but allow get on missing docs for
+      // client-side pre-check flows before create/update.
+      allow get: if isSignedIn()
+        && (resource == null
+          || resource.data.providerId == request.auth.uid
+          || resource.data.customerId == request.auth.uid);
+      allow list: if isSignedIn()
         && (resource.data.providerId == request.auth.uid
           || resource.data.customerId == request.auth.uid);
       allow delete: if isSignedIn()

@@ -16,6 +16,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.firestore.WriteBatch;
@@ -229,37 +230,75 @@ public class JoinRequestsActivity extends BaseActivity {
                     existingCustomerDoc == null || !existingCustomerDoc.exists()
                 );
 
-                Map<String, Object> linkData = new HashMap<>();
-                linkData.put("status", "ACTIVE");
-                linkData.put("updatedAt", FieldValue.serverTimestamp());
-                linkData.put("respondedAt", FieldValue.serverTimestamp());
+                commitApproval(customerRef, linkRef, customerData);
+            })
+            .addOnFailureListener(e -> {
+                if (!isUiActive()) return;
 
-                WriteBatch batch = firestore.batch();
-                batch.set(customerRef, customerData, SetOptions.merge());
-                batch.set(linkRef, linkData, SetOptions.merge());
+                // If customer doc does not exist yet, rules can reject get(). Proceed as a new customer.
+                if (isPermissionDenied(e)) {
+                    Map<String, Object> customerData = buildCustomerData(item, defaultService, true);
+                    commitApproval(customerRef, linkRef, customerData);
+                    return;
+                }
 
-                batch.commit()
-                    .addOnSuccessListener(unused -> {
-                        if (!isUiActive()) return;
-                        showLoading(false);
-                        showToast("Request approved. Customer added to your list.");
-                    })
-                    .addOnFailureListener(e -> {
-                        if (!isUiActive()) return;
-                        showLoading(false);
-                        String msg = e.getMessage() != null ? e.getMessage() : "";
-                        if (msg.contains("PERMISSION_DENIED") || msg.contains("Missing or insufficient permissions")) {
-                            showToast("Approval failed: customer is linked to another provider.");
-                        } else {
-                            showToast("Failed to approve request: " + msg);
-                        }
-                    });
+                showLoading(false);
+                showToast("Failed to read customer record: " + errorMessage(e));
+            });
+    }
+
+    private void commitApproval(DocumentReference customerRef,
+                                DocumentReference linkRef,
+                                Map<String, Object> customerData) {
+        Map<String, Object> linkData = new HashMap<>();
+        linkData.put("customerId", safeTrim(customerRef.getId()));
+        linkData.put("providerId", providerId);
+        linkData.put("status", "ACTIVE");
+        linkData.put("updatedAt", FieldValue.serverTimestamp());
+        linkData.put("respondedAt", FieldValue.serverTimestamp());
+
+        WriteBatch batch = firestore.batch();
+        batch.set(customerRef, customerData, SetOptions.merge());
+        batch.set(linkRef, linkData, SetOptions.merge());
+
+        batch.commit()
+            .addOnSuccessListener(unused -> {
+                if (!isUiActive()) return;
+                showLoading(false);
+                showToast("Request approved. Customer added to your list.");
             })
             .addOnFailureListener(e -> {
                 if (!isUiActive()) return;
                 showLoading(false);
-                showToast("Failed to read customer record: " + e.getMessage());
+
+                if (isPermissionDenied(e)) {
+                    showToast("Approval failed: customer is linked to another provider.");
+                } else if (isUnavailable(e)) {
+                    showToast("Approval failed: network unavailable. Please check internet and try again.");
+                } else {
+                    showToast("Failed to approve request: " + errorMessage(e));
+                }
             });
+    }
+
+    private boolean isPermissionDenied(Exception e) {
+        if (e instanceof FirebaseFirestoreException) {
+            FirebaseFirestoreException firestoreException = (FirebaseFirestoreException) e;
+            return firestoreException.getCode() == FirebaseFirestoreException.Code.PERMISSION_DENIED;
+        }
+        return false;
+    }
+
+    private boolean isUnavailable(Exception e) {
+        if (e instanceof FirebaseFirestoreException) {
+            FirebaseFirestoreException firestoreException = (FirebaseFirestoreException) e;
+            return firestoreException.getCode() == FirebaseFirestoreException.Code.UNAVAILABLE;
+        }
+        return false;
+    }
+
+    private String errorMessage(Exception e) {
+        return e != null && e.getMessage() != null ? e.getMessage() : "Unknown error";
     }
 
     private Map<String, Object> buildCustomerData(JoinRequestItem item, String defaultService, boolean isNewCustomer) {

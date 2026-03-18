@@ -84,6 +84,7 @@
     <string name="btn_reject_request">Reject</string>
     <string name="btn_approve_request">Approve</string>
     <string name="action_edit_profile">Edit</string>
+    <string name="action_support">Support</string>
     <string name="action_logout">Logout</string>
     <string name="customer_default">Customer</string>
     <string name="no_email">No email</string>
@@ -133,6 +134,7 @@
     <string name="menu_dashboard">Dashboard</string>
     <string name="menu_my_customers">My Customers</string>
     <string name="menu_join_requests">Join Requests</string>
+    <string name="menu_complaints">Complaints</string>
     <string name="menu_my_requests">My Requests</string>
     <string name="menu_future_orders_calendar">Future Orders Calendar</string>
     <string name="menu_deleted_history">Deleted History</string>
@@ -170,6 +172,21 @@
     <string name="customer_dashboard_no_service_entries_yet">No service entries yet</string>
     <string name="customer_dashboard_recent_payment_history">Recent Payment History</string>
     <string name="customer_dashboard_no_payments_yet">No payments yet</string>
+    <string name="customer_dashboard_quick_actions">Quick Actions</string>
+    <string name="customer_dashboard_download_monthly_bill_pdf">Download Monthly Bill PDF</string>
+    <string name="customer_dashboard_download_share_pdf">Download &amp; Share PDF</string>
+    <string name="customer_dashboard_complaint_support">Complaint &amp; Support</string>
+    <string name="customer_dashboard_share_summary">Share Summary</string>
+    <string name="customer_support_email_provider">Email Provider</string>
+    <string name="customer_support_provider_unavailable">Provider email not available yet. Ask provider to update profile email.</string>
+    <string name="customer_support_no_email_client">No email app found on this device.</string>
+    <string name="customer_support_ticket_mail_subject">Complaint: %1$s</string>
+    <string name="customer_support_ticket_mail_body">Hello %1$s,\n\nI have raised a complaint from DailyDrop.\n\nCategory: %2$s\nSubject: %3$s\nIssue Details: %4$s\n\nPlease review and respond.\n\nCustomer: %5$s\nCustomer Email: %6$s</string>
+    <string name="provider_support_reply_subject">Complaint Update: %1$s</string>
+    <string name="provider_support_reply_body">Hello %1$s,\n\nYour complaint has been updated in DailyDrop.\n\nSubject: %2$s\nNew Status: %3$s\nProvider: %4$s\n\nIf needed, you can reply to this email for further discussion.</string>
+    <string name="provider_support_email_customer">Email Customer</string>
+    <string name="provider_support_update_status">Update Status</string>
+    <string name="provider_support_customer_unavailable">Customer email is not available for this ticket.</string>
 
     <string name="provider_dashboard_title">Dashboard</string>
     <string name="provider_dashboard_today_summary">Today\'s Summary</string>
@@ -187,6 +204,15 @@
     <string name="provider_dashboard_bills_payments">Bills &amp; Payments</string>
     <string name="provider_dashboard_my_customers">My Customers</string>
     <string name="provider_dashboard_join_requests">Join Requests</string>
+    <string name="provider_complaints_title">Customer Complaints</string>
+    <string name="provider_complaints_summary">Complaint Summary</string>
+    <string name="provider_complaints_open">Open</string>
+    <string name="provider_complaints_in_progress">In Progress</string>
+    <string name="provider_complaints_resolved">Resolved</string>
+    <string name="provider_complaints_recent">Recent Complaints</string>
+    <string name="provider_complaints_empty">No complaints yet. Customer tickets will appear here.</string>
+    <string name="provider_complaints_mark_resolved">Mark Resolved</string>
+    <string name="provider_complaints_mark_in_progress">Mark In Progress</string>
     <string name="auth_welcome_back">Welcome Back</string>
     <string name="auth_sign_in_continue">Sign in to continue</string>
     <string name="auth_login">Login</string>

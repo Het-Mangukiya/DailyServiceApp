@@ -9,8 +9,12 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import com.dailyserviceapp.R;
 import com.dailyserviceapp.core.utils.NetworkMonitor;
 import com.dailyserviceapp.core.utils.PreferenceManager;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 
 /**
  * Base Activity for all activities in the DailyDrop application.
@@ -166,7 +170,15 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void performLogout() {
         preferenceManager.clearAllData();
         com.google.firebase.auth.FirebaseAuth.getInstance().signOut();
-        navigateToLogin();
+
+        GoogleSignInClient googleSignInClient = GoogleSignIn.getClient(
+            this,
+            new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build()
+        );
+        googleSignInClient.signOut().addOnCompleteListener(this, task -> navigateToLogin());
     }
     
     @Override

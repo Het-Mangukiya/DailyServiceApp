@@ -71,7 +71,17 @@
             android:theme="@style/Theme.DailyServiceApp.NoActionBar" />
 
         <activity
+            android:name=".customer.ComplaintSupportActivity"
+            android:exported="false"
+            android:theme="@style/Theme.DailyServiceApp.NoActionBar" />
+
+        <activity
             android:name=".provider.JoinRequestsActivity"
+            android:exported="false"
+            android:theme="@style/Theme.DailyServiceApp.NoActionBar" />
+
+        <activity
+            android:name=".provider.ProviderComplaintsActivity"
             android:exported="false"
             android:theme="@style/Theme.DailyServiceApp.NoActionBar" />
 
