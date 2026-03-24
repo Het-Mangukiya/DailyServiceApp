@@ -90,7 +90,7 @@ public final class CustomerLedgerCalculator {
                 }
                 if (dueFromDate == null) {
                     String customerIdForLog = customer != null ? customer.getId() : "unknown";
-                    Log.w("CustomerLedgerCalculator",
+                    safeLogWarn("CustomerLedgerCalculator",
                         "dueFromDate fallback to firstServiceDate for customer=" + customerIdForLog
                             + ", outstanding=" + outstanding
                             + ", paidTillDate=" + (paidTillDate != null ? paidTillDate.toDate() : null));
@@ -119,5 +119,13 @@ public final class CustomerLedgerCalculator {
             rate = customer.getRatePerUnit();
         }
         return Math.max(0.0, quantity * Math.max(0.0, rate));
+    }
+
+    private static void safeLogWarn(String tag, String message) {
+        try {
+            Log.w(tag, message);
+        } catch (RuntimeException ignored) {
+            // Avoid crashing local unit tests where android.util.Log is not mocked.
+        }
     }
 }
