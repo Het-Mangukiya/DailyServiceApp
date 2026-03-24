@@ -1,0 +1,31 @@
+# Mac
+.DS_Store
+
+# Gradle
+.gradle/
+build/
+
+# Android build
+app/build/
+
+# Android Studio / IDE
+.idea/
+*.iml
+.vscode/
+
+# Local config
+local.properties
+
+# Logs & compiled files
+*.log
+*.class
+*.dex
+
+# Test files with credentials
+test_*.sh
+test_*.py
+*_test.sh
+
+test_screenshots/
+
+.secrets/

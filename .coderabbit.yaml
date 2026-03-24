@@ -1,0 +1,110 @@
+# CodeRabbit Configuration for DailyServiceApp
+# https://docs.coderabbit.ai/guides/configure-coderabbit
+
+language: en-US
+early_access: false
+reviews:
+  profile: chill
+  request_changes_workflow: false
+  high_level_summary: true
+  poem: false
+  review_status: true
+  collapse_walkthrough: false
+  auto_review:
+    enabled: true
+    drafts: false
+  tools:
+    shellcheck:
+      enabled: true
+    hadolint:
+      enabled: true
+    swiftlint:
+      enabled: false
+    phpstan:
+      enabled: false
+    golangci-lint:
+      enabled: false
+    yamllint:
+      enabled: true
+    eslint:
+      enabled: false
+    markdownlint:
+      enabled: true
+    github-actions:
+      enabled: true
+    detekt:
+      enabled: true
+    biome:
+      enabled: false
+    ruff:
+      enabled: false
+    buf:
+      enabled: false
+
+chat:
+  auto_reply: true
+
+# Android/Java specific settings
+knowledge_base:
+  learnings:
+    scope: auto
+  issues:
+    scope: auto
+  jira:
+    project_keys: []
+  linear:
+    team_keys: []
+
+# Patterns to ignore
+path_filters:
+  - "!**/build/**"
+  - "!**/gradle/**"
+  - "!**/.gradle/**"
+  - "!**/gradlew*"
+  - "!**/*.apk"
+  - "!**/*.aab"
+  - "!**/proguard-rules.pro"
+  - "!**/google-services.json"
+  - "!**/*.png"
+  - "!**/*.jpg"
+  - "!**/*.jpeg"
+  - "!**/*.gif"
+  - "!**/*.svg"
+
+# Focus areas for Android projects
+path_instructions:
+  - path: "app/src/main/java/**/*.java"
+    instructions: |
+      - Check for proper null safety and validation
+      - Ensure proper lifecycle management for Activities and Fragments
+      - Verify memory leak prevention (weak references, proper cleanup)
+      - Check for proper threading (UI operations on main thread, background work on worker threads)
+      - Ensure proper error handling and user feedback
+      - Check for hardcoded strings (should use string resources)
+      - Verify proper use of Android architecture components
+  
+  - path: "app/src/main/res/**/*.xml"
+    instructions: |
+      - Check for proper accessibility (contentDescription, hint text)
+      - Verify proper use of styles and themes
+      - Check for hardcoded dimensions (should use dimen resources)
+      - Ensure proper constraint layout usage
+      - Check for proper color resource usage
+  
+  - path: "app/src/main/AndroidManifest.xml"
+    instructions: |
+      - Verify proper permissions with minimum required
+      - Check for proper activity declarations
+      - Ensure proper intent filters
+      - Check for potential security issues
+
+# Custom review instructions
+instructions:
+  - Focus on Android best practices and Material Design guidelines
+  - Check for Firebase security and efficient queries
+  - Verify proper RecyclerView implementation and ViewHolder patterns
+  - Check for potential ANR issues (long operations on main thread)
+  - Ensure proper resource cleanup and memory management
+  - Verify proper use of LiveData/ViewModel pattern where applicable
+  - Check for SQL injection or Firestore security issues
+  - Ensure proper input validation before database operations

@@ -1,0 +1,165 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return isSignedIn() && uid == request.auth.uid;
+    }
+
+    function ownsCustomer(customerId) {
+      return isSignedIn()
+        && exists(/databases/$(database)/documents/customers/$(customerId))
+        && get(/databases/$(database)/documents/customers/$(customerId)).data.providerId == request.auth.uid;
+    }
+
+    match /providers/{providerId} {
+      // Any signed-in user can read provider profile for QR-based linking.
+      allow read: if isSignedIn();
+      allow delete: if isOwner(providerId);
+      allow create: if isOwner(providerId)
+        && request.resource.data.userId == request.auth.uid;
+      allow update: if isOwner(providerId)
+        && request.resource.data.userId == request.auth.uid
+        && resource.data.userId == request.auth.uid;
+    }
+
+    match /users/{userId} {
+      // Each authenticated user can manage only their own auth profile document.
+      allow read, create, update, delete: if isOwner(userId);
+    }
+
+    match /customerLinks/{customerId} {
+      // Customer-owned link document used for provider QR linking.
+      allow read: if isOwner(customerId)
+        || (isSignedIn() && resource.data.providerId == request.auth.uid);
+      allow delete: if isOwner(customerId)
+        || (isSignedIn() && resource.data.providerId == request.auth.uid);
+      allow create: if (isOwner(customerId)
+          && request.resource.data.customerId == request.auth.uid)
+        || (isSignedIn()
+          && request.resource.data.providerId == request.auth.uid
+          && request.resource.data.customerId == customerId);
+      allow update: if (isOwner(customerId)
+          && request.resource.data.customerId == request.auth.uid)
+        || (isSignedIn()
+          && request.resource.data.providerId == request.auth.uid
+          && request.resource.data.customerId == customerId
+          && (resource == null || resource.data.providerId == request.auth.uid));
+    }
+
+    match /customers/{customerId} {
+      // Allow get on non-existent docs (resource == null) so providers can check
+      // before creating during join-request approval.
+      allow get: if isOwner(customerId)
+        || (isSignedIn()
+          && (resource == null || resource.data.providerId == request.auth.uid));
+      allow list, delete: if isSignedIn() && resource.data.providerId == request.auth.uid;
+      allow create: if isSignedIn()
+        && request.resource.data.providerId == request.auth.uid;
+      allow update: if isSignedIn()
+        && resource.data.providerId == request.auth.uid
+        && request.resource.data.providerId == resource.data.providerId;
+
+      match /deliveries/{deliveryId} {
+        allow read, write: if ownsCustomer(customerId);
+      }
+
+      match /payments/{paymentId} {
+        allow read, write: if ownsCustomer(customerId);
+      }
+    }
+
+    match /serviceEntries/{entryId} {
+      // Providers run transaction pre-reads on deterministic IDs before create.
+      // Allow get on non-existent docs while keeping strict access for existing docs.
+      allow get: if isSignedIn()
+        && (resource == null
+          || resource.data.providerId == request.auth.uid
+          || resource.data.customerId == request.auth.uid);
+      allow list: if isSignedIn()
+        && (resource.data.providerId == request.auth.uid
+          || resource.data.customerId == request.auth.uid);
+      allow delete: if isSignedIn()
+        && resource.data.providerId == request.auth.uid;
+      allow create: if isSignedIn()
+        && request.resource.data.providerId == request.auth.uid
+        && request.resource.data.customerId is string
+        && ownsCustomer(request.resource.data.customerId);
+      allow update: if isSignedIn()
+        && resource.data.providerId == request.auth.uid
+        && request.resource.data.providerId == resource.data.providerId;
+    }
+
+    match /supportTickets/{ticketId} {
+      allow get, list: if isSignedIn()
+        && (resource.data.customerId == request.auth.uid
+          || resource.data.providerId == request.auth.uid);
+      allow create: if isSignedIn()
+        && request.resource.data.customerId == request.auth.uid
+        && request.resource.data.providerId is string;
+      allow update: if isSignedIn()
+        && (resource.data.customerId == request.auth.uid
+          || resource.data.providerId == request.auth.uid)
+        && request.resource.data.customerId == resource.data.customerId
+        && request.resource.data.providerId == resource.data.providerId;
+      allow delete: if false;
+    }
+
+    match /payments/{paymentId} {
+      // Keep existing-doc reads strict, but allow get on missing docs for
+      // client-side pre-check flows before create/update.
+      allow get: if isSignedIn()
+        && (resource == null
+          || resource.data.providerId == request.auth.uid
+          || resource.data.customerId == request.auth.uid);
+      allow list: if isSignedIn()
+        && (resource.data.providerId == request.auth.uid
+          || resource.data.customerId == request.auth.uid);
+      allow delete: if isSignedIn()
+        && resource.data.providerId == request.auth.uid;
+      allow create: if isSignedIn()
+        && request.resource.data.providerId == request.auth.uid
+        && request.resource.data.customerId is string
+        && ownsCustomer(request.resource.data.customerId);
+      allow update: if isSignedIn()
+        && resource.data.providerId == request.auth.uid
+        && request.resource.data.providerId == resource.data.providerId;
+    }
+
+    match /bills/{billId} {
+      // Keep existing-doc reads strict, but allow get on missing docs for
+      // client-side pre-check flows before create/update.
+      allow get: if isSignedIn()
+        && (resource == null
+          || resource.data.providerId == request.auth.uid
+          || resource.data.customerId == request.auth.uid);
+      allow list: if isSignedIn()
+        && (resource.data.providerId == request.auth.uid
+          || resource.data.customerId == request.auth.uid);
+      allow delete: if isSignedIn()
+        && resource.data.providerId == request.auth.uid;
+      allow create: if isSignedIn()
+        && request.resource.data.providerId == request.auth.uid
+        && request.resource.data.customerId is string
+        && ownsCustomer(request.resource.data.customerId);
+      allow update: if isSignedIn()
+        && resource.data.providerId == request.auth.uid
+        && request.resource.data.providerId == resource.data.providerId;
+    }
+
+    // Legacy root collection support.
+    match /deliveries/{deliveryId} {
+      allow read, delete: if isSignedIn()
+        && resource.data.providerId == request.auth.uid;
+      allow create: if isSignedIn()
+        && request.resource.data.providerId == request.auth.uid;
+      allow update: if isSignedIn()
+        && resource.data.providerId == request.auth.uid
+        && request.resource.data.providerId == resource.data.providerId;
+    }
+  }
+}

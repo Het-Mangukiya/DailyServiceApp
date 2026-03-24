@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Brand Palette -->
+    <color name="brand_teal_500">#4DB6AC</color>
+    <color name="brand_teal_700">#00897B</color>
+    <color name="brand_green_500">#66BB6A</color>
+    <color name="brand_sky_500">#42A5F5</color>
+    <color name="brand_amber_500">#FFA726</color>
+    <color name="brand_ink_900">#1C1B1F</color>
+    <color name="brand_ink_600">#49454F</color>
+
+    <!-- Primary Colors - Material Design 3 -->
+    <color name="md_theme_primary">#4DB6AC</color>
+    <color name="md_theme_primary_container">#B2DFDB</color>
+    <color name="md_theme_primary_dark">#00897B</color>
+    <color name="md_theme_secondary">#66BB6A</color>
+    <color name="md_theme_secondary_container">#C8E6C9</color>
+    <color name="md_theme_tertiary">#42A5F5</color>
+    <color name="md_theme_outline">#D5E5E3</color>
+    
+    <!-- Surface Colors -->
+    <color name="md_theme_surface">#FFFFFF</color>
+    <color name="md_theme_surface_variant">#F5F5F5</color>
+    <color name="md_theme_background">#FAFAFA</color>
+    <color name="md_theme_surface_raised">#F3FAF9</color>
+    <color name="md_theme_surface_tint">#E8F6F4</color>
+    
+    <!-- Text Colors -->
+    <color name="md_theme_on_primary">#FFFFFF</color>
+    <color name="md_theme_on_primary_container">#004D40</color>
+    <color name="md_theme_on_secondary">#FFFFFF</color>
+    <color name="md_theme_on_surface">#1C1B1F</color>
+    <color name="md_theme_on_surface_variant">#49454F</color>
+    <color name="text_muted">#757575</color>
+    <color name="icon_default">#2E5F5A</color>
+    
+    <!-- Status Colors -->
+    <color name="md_theme_error">#EF5350</color>
+    <color name="error">#EF5350</color>
+    <color name="md_theme_success">#66BB6A</color>
+    <color name="success">#66BB6A</color>
+    <color name="warning">#FFA726</color>
+    
+    <!-- Gradient Colors -->
+    <color name="gradient_start">#4DB6AC</color>
+    <color name="gradient_end">#00897B</color>
+    <color name="gradient_soft_start">#EAF8F5</color>
+    <color name="gradient_soft_end">#F7FBFA</color>
+
+    <!-- Chart Colors -->
+    <color name="chart_paid">#66BB6A</color>
+    <color name="chart_pending">#4DB6AC</color>
+    <color name="chart_overdue">#FFA726</color>
+    
+    <!-- Legacy Support -->
+    <color name="primary">#4DB6AC</color>
+    <color name="primary_dark">#00897B</color>
+    <color name="accent">#66BB6A</color>
+    <color name="background">#FAFAFA</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="surface_variant">#F5F5F5</color>
+    <color name="secondary">#66BB6A</color>
+    <color name="secondary_light">#80C7BE</color>
+    <color name="primary_container">#B2DFDB</color>
+    <color name="text_primary">#212121</color>
+    <color name="text_secondary">#757575</color>
+    <color name="divider">#E0E0E0</color>
+    
+    <!-- Feature Colors -->
+    <color name="color_customers">#66BB6A</color>
+    <color name="color_on_customers">#FFFFFF</color>
+    <color name="color_service_entry">#42A5F5</color>
+    <color name="color_bills">#FFA726</color>
+    <color name="color_payments">#AB47BC</color>
+    <color name="color_reports">#EF5350</color>
+    <color name="color_profile">#78909C</color>
+</resources>

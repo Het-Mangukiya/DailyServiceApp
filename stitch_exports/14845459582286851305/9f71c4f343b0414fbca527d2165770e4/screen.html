@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Provider Dashboard V2 Premium</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#4eb7ac",
+                        "background-light": "#f6f7f7",
+                        "background-dark": "#151d1c",
+                        "success": "#66BB6A",
+                        "accent-blue": "#42A5F5",
+                        "neutral-text": "#1C1B1F"
+                    },
+                    fontFamily: {
+                        "display": ["Work Sans", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Work Sans', sans-serif; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-neutral-text font-display">
+<!-- Main Container -->
+<div class="relative flex h-auto min-h-screen w-full flex-col overflow-x-hidden pb-24">
+<!-- Header Section -->
+<div class="bg-primary px-6 pt-12 pb-8 rounded-b-[2.5rem] shadow-lg">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="size-12 rounded-full border-2 border-white/50 overflow-hidden bg-white/20">
+<img alt="Provider Profile" class="h-full w-full object-cover" data-alt="Professional male portrait for provider profile" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDBdkLVpMrFS4RpaMB-cCROPvg89gZPo3H_NuAuupy2hcTiAuph6mNZKV8FpcGUQdpjZOVU779CCpX5Csi-8ZtXl0doFmVd1UeVjT8xBECGojKrl01JmG3HkieeDGCFE5oAjq38TyzE1STCVGkq_LOvNmH8VapZ2IiqtU_zQ_KhfMIQ5TcgoFUMuplUz6E91f2RagqFkpP7UwKaDzWT_O5tUyzmb6ZyCUz1ayKH8b-AXV_pSUXJ7fBntnNFn7MR1FqMZKTxz-Tlm9g-"/>
+</div>
+<div>
+<p class="text-white/80 text-xs font-medium uppercase tracking-wider">Good Morning</p>
+<h1 class="text-white text-xl font-bold">Alex Thompson</h1>
+</div>
+</div>
+<button class="relative bg-white/20 p-2 rounded-full text-white">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2.5 size-2 bg-red-400 rounded-full border border-primary"></span>
+</button>
+</div>
+</div>
+<!-- KPI Cards -->
+<div class="px-6 -mt-6 flex gap-4 overflow-x-auto hide-scrollbar">
+<div class="min-w-[160px] flex-1 bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-md border border-slate-100 dark:border-slate-700">
+<div class="flex justify-between items-start mb-3">
+<span class="material-symbols-outlined text-success">donut_large</span>
+<span class="text-success text-xs font-bold">+12%</span>
+</div>
+<p class="text-slate-500 dark:text-slate-400 text-xs font-medium">Today's Progress</p>
+<p class="text-2xl font-bold mt-1">85%</p>
+<div class="w-full bg-slate-100 dark:bg-slate-700 h-1.5 rounded-full mt-3 overflow-hidden">
+<div class="bg-success h-full rounded-full" style="width: 85%"></div>
+</div>
+</div>
+<div class="min-w-[160px] flex-1 bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-md border border-slate-100 dark:border-slate-700">
+<div class="flex justify-between items-start mb-3">
+<span class="material-symbols-outlined text-accent-blue">payments</span>
+<span class="text-accent-blue text-xs font-bold">+5.2%</span>
+</div>
+<p class="text-slate-500 dark:text-slate-400 text-xs font-medium">Monthly Revenue</p>
+<p class="text-2xl font-bold mt-1">₹42,500</p>
+<div class="w-full bg-slate-100 dark:bg-slate-700 h-1.5 rounded-full mt-3 overflow-hidden">
+<div class="bg-accent-blue h-full rounded-full" style="width: 65%"></div>
+</div>
+</div>
+</div>
+<!-- Quick Actions Scroll -->
+<div class="mt-8 px-6">
+<h3 class="text-slate-900 dark:text-slate-100 font-bold mb-4">Quick Actions</h3>
+<div class="flex gap-4 overflow-x-auto hide-scrollbar pb-2">
+<div class="flex flex-col items-center gap-2">
+<div class="size-14 bg-primary/10 rounded-2xl flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-3xl">person_add</span>
+</div>
+<span class="text-[10px] font-semibold text-center leading-tight">Add<br/>Customer</span>
+</div>
+<div class="flex flex-col items-center gap-2">
+<div class="size-14 bg-primary/10 rounded-2xl flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-3xl">receipt_long</span>
+</div>
+<span class="text-[10px] font-semibold text-center leading-tight">Generate<br/>Bill</span>
+</div>
+<div class="flex flex-col items-center gap-2">
+<div class="size-14 bg-primary/10 rounded-2xl flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-3xl">account_balance_wallet</span>
+</div>
+<span class="text-[10px] font-semibold text-center leading-tight">Record<br/>Payment</span>
+</div>
+<div class="flex flex-col items-center gap-2">
+<div class="size-14 bg-primary/10 rounded-2xl flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-3xl">local_shipping</span>
+</div>
+<span class="text-[10px] font-semibold text-center leading-tight">Track<br/>Routes</span>
+</div>
+</div>
+</div>
+<!-- Trend Chart Section -->
+<div class="mt-8 px-6">
+<div class="bg-white dark:bg-slate-800 p-6 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-bold text-slate-800 dark:text-slate-200">Delivery Volume</h3>
+<span class="text-xs text-slate-400 font-medium">Last 7 Days</span>
+</div>
+<div class="h-32 w-full flex items-end justify-between gap-2">
+<!-- Simple Bar/Line visual representation using Tailwind -->
+<div class="flex-1 bg-primary/20 rounded-t-lg h-[40%]"></div>
+<div class="flex-1 bg-primary/20 rounded-t-lg h-[60%]"></div>
+<div class="flex-1 bg-primary/40 rounded-t-lg h-[55%]"></div>
+<div class="flex-1 bg-primary/60 rounded-t-lg h-[85%]"></div>
+<div class="flex-1 bg-primary/40 rounded-t-lg h-[70%]"></div>
+<div class="flex-1 bg-primary/80 rounded-t-lg h-[95%]"></div>
+<div class="flex-1 bg-primary rounded-t-lg h-[80%]"></div>
+</div>
+<div class="flex justify-between mt-3 text-[10px] text-slate-400 font-bold uppercase">
+<span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+</div>
+</div>
+</div>
+<!-- Customer List -->
+<div class="mt-8 px-6 mb-12">
+<div class="flex justify-between items-center mb-4">
+<h3 class="font-bold text-slate-900 dark:text-slate-100">Today's Deliveries</h3>
+<button class="text-primary text-xs font-bold uppercase tracking-wider">View All</button>
+</div>
+<div class="space-y-4">
+<!-- Customer Card 1 -->
+<div class="bg-white dark:bg-slate-800 p-4 rounded-2xl flex items-center gap-4 shadow-sm border border-slate-50 dark:border-slate-700">
+<div class="size-12 rounded-full overflow-hidden bg-slate-100">
+<img alt="Customer Avatar" class="h-full w-full object-cover" data-alt="Profile photo of a smiling woman customer" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCwvPJVE_JE2Xz8OqmRP5JXSMrDz-Pkjf1L0nK0d78wmt4ebBL1LNFzIE5lXfH2i5wZk22U6PGMYFCu7fjirQWp9KCjGws5l-vbHylDaLUyH9GTiofd6xlCFJ1WpKT4wOu4cFitX2tq1L226WWdiDizhM_U0ksGrXi6QsKZE-OivjNEa3xLDP63-thFrGjHfQiMaazX1tz22T8PSGHUStkMZGE5-1yLGFt3Ektu6AyLNkWG1Ae-YfuPLUxl4F8P2Tv5jUo6y4U349eE"/>
+</div>
+<div class="flex-1">
+<h4 class="font-bold text-sm">Sarah Jenkins</h4>
+<p class="text-xs text-slate-500">2L Cow Milk • A-402 Skyline</p>
+</div>
+<div class="bg-success/10 text-success text-[10px] font-bold px-2 py-1 rounded-full uppercase">
+                        Delivered
+                    </div>
+</div>
+<!-- Customer Card 2 -->
+<div class="bg-white dark:bg-slate-800 p-4 rounded-2xl flex items-center gap-4 shadow-sm border border-slate-50 dark:border-slate-700">
+<div class="size-12 rounded-full overflow-hidden bg-slate-100">
+<img alt="Customer Avatar" class="h-full w-full object-cover" data-alt="Profile photo of a professional man customer" src="https://lh3.googleusercontent.com/aida-public/AB6AXuALSPSfVingLixcOTD7u5_yaKFohVShm8hKJ281UeJSGgonmHinBEftJPfVOu-j5AZvTkDR7TOTFzNoZ6ug86OgBKpTQ8VPp2WKSKDLcTDuNHHy1emfBmG4nEHXOBqqV3-p8vcN3T4X_fWKSacbgQb-J_qDoREwkS0OilHCka6ziCL5PTKkyHjLVIpIHFDIh6_vxJQk1E2NJErZdZhKfF5QNkgHJ2nImsRJ2BIhp7LUcue0mi1_ZGZ4m26dQWi9Za57c-NRrcN2r1DK"/>
+</div>
+<div class="flex-1">
+<h4 class="font-bold text-sm">Robert Chen</h4>
+<p class="text-xs text-slate-500">1L Buffalo Milk • B-105 Green View</p>
+</div>
+<div class="bg-orange-100 text-orange-600 text-[10px] font-bold px-2 py-1 rounded-full uppercase">
+                        Pending
+                    </div>
+</div>
+<!-- Customer Card 3 -->
+<div class="bg-white dark:bg-slate-800 p-4 rounded-2xl flex items-center gap-4 shadow-sm border border-slate-50 dark:border-slate-700">
+<div class="size-12 rounded-full overflow-hidden bg-slate-100">
+<img alt="Customer Avatar" class="h-full w-full object-cover" data-alt="Profile photo of a young woman customer" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCQ0WWVFk8xh4cj972y68ogbD81B9QTCuk1KOUaQbBjul7aEOcBNs59zm2WYFXBpTMTpW8J5IKrCEjwQ2CX-RlY1A52XaAnUd6x7LaIw78mwt2WlRZTvzQc1naepDM6wVP7jjeFc2oyU_gJwDZbqTjJxFC1co6_oh1IrDGgCG5OOhVb7EzLqFnkRzXe6PgiwBgPpZXvxB_FcrfRHhCLRe7nRV2pJsQu3gQMmF-QFbg_Ui9qj0XfJnnGLNNhUf6P4DWAstYgpc0LES62"/>
+</div>
+<div class="flex-1">
+<h4 class="font-bold text-sm">Emily Davis</h4>
+<p class="text-xs text-slate-500">500ml Curd • C-701 Royal Oaks</p>
+</div>
+<div class="bg-success/10 text-success text-[10px] font-bold px-2 py-1 rounded-full uppercase">
+                        Delivered
+                    </div>
+</div>
+</div>
+</div>
+<!-- Floating Action Button -->
+<button class="fixed right-6 bottom-28 size-14 bg-primary text-white rounded-full shadow-2xl flex items-center justify-center z-20">
+<span class="material-symbols-outlined text-3xl">qr_code_scanner</span>
+</button>
+<!-- Bottom Navigation Bar -->
+<div class="fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 px-6 py-4 flex items-center justify-between z-10">
+<a class="flex flex-col items-center gap-1 text-primary" href="#">
+<span class="material-symbols-outlined">grid_view</span>
+<span class="text-[10px] font-bold">Dashboard</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="text-[10px] font-medium">Customers</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400" href="#">
+<span class="material-symbols-outlined">receipt</span>
+<span class="text-[10px] font-medium">Bills</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="text-[10px] font-medium">Profile</span>
+</a>
+</div>
+</div>
+</body></html>
