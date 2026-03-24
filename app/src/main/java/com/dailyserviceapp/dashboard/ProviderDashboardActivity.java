@@ -271,6 +271,8 @@ public class ProviderDashboardActivity extends BaseActivity {
                 startActivity(new Intent(this, BillListActivity.class));
             } else if (itemId == R.id.nav_reports) {
                 startActivity(new Intent(this, com.dailyserviceapp.reports.ReportsActivity.class));
+            } else if (itemId == R.id.nav_sales) {
+                startActivity(new Intent(this, com.dailyserviceapp.sales.ui.SalesPredictionActivity.class));
             } else if (itemId == R.id.nav_profile) {
                 startActivity(new Intent(this, ProfileActivity.class));
             } else if (itemId == R.id.nav_qr_code) {

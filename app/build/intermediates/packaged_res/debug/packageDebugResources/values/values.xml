@@ -284,6 +284,7 @@
     <string name="menu_privacy_policy">Privacy Policy</string>
     <string name="menu_rate_us">Rate Us</string>
     <string name="menu_reports">Reports</string>
+    <string name="menu_sales_prediction">Sales Prediction</string>
     <string name="menu_service_entry">Service Entry</string>
     <string name="menu_share_app">Share App</string>
     <string name="menu_sort">Sort</string>

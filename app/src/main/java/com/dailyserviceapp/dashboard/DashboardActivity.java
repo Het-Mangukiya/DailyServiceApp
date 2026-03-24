@@ -812,6 +812,8 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
             startActivity(new Intent(this, BillListActivity.class));
         } else if (id == R.id.nav_reports) {
             startActivity(new Intent(this, ReportsActivity.class));
+        } else if (id == R.id.nav_sales) {
+            startActivity(new Intent(this, com.dailyserviceapp.sales.ui.SalesPredictionActivity.class));
         } else if (id == R.id.nav_profile) {
             startActivity(new Intent(this, ProfileActivity.class));
         } else if (id == R.id.nav_qr_code) {
