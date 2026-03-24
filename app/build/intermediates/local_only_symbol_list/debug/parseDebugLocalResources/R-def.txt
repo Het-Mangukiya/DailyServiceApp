@@ -305,7 +305,6 @@ id nav_qr_code
 id nav_rate_us
 id nav_reports
 id nav_requests
-id nav_sales_prediction
 id nav_service_entry
 id nav_share
 id nav_terms
@@ -675,7 +674,6 @@ string menu_notifications
 string menu_privacy_policy
 string menu_rate_us
 string menu_reports
-string menu_sales_prediction
 string menu_service_entry
 string menu_share_app
 string menu_sort

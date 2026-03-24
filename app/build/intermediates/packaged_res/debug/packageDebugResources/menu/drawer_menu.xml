@@ -38,11 +38,6 @@
             android:icon="@drawable/ic_nav_reports"
             android:title="@string/menu_reports" />
 
-        <item
-            android:id="@+id/nav_sales_prediction"
-            android:icon="@drawable/ic_reports_revenue"
-            android:title="@string/menu_sales_prediction" />
-
     </group>
 
     <item android:title="@string/menu_group_account">
