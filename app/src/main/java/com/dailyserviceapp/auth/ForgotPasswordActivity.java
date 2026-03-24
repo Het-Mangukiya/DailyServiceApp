@@ -1,5 +1,6 @@
 package com.dailyserviceapp.auth;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -12,6 +13,7 @@ import com.dailyserviceapp.core.base.BaseActivity;
 import com.dailyserviceapp.core.utils.ValidationUtils;
 import com.google.firebase.auth.FirebaseAuth;
 
+@AndroidEntryPoint
 public class ForgotPasswordActivity extends BaseActivity {
     
     private EditText emailInput;

@@ -2,6 +2,8 @@ plugins {
     id 'com.android.application'
     id 'com.google.gms.google-services'
     id 'com.google.firebase.crashlytics'
+    id 'com.google.dagger.hilt.android'
+    id 'org.jetbrains.kotlin.android'
 }
 
 android {
@@ -38,9 +40,17 @@ android {
     buildFeatures {
         viewBinding true
     }
+
+    kotlinOptions {
+        jvmTarget = '17'
+    }
 }
 
 dependencies {
+    // Hilt Dependency Injection
+    implementation 'com.google.dagger:hilt-android:2.51.1'
+    annotationProcessor 'com.google.dagger:hilt-compiler:2.51.1'
+
     // Core library desugaring for java.time API support on API 24+
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.4'
     

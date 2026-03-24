@@ -132,12 +132,18 @@ public class Constants {
 
     /** Support tickets collection in Firestore */
     public static final String COLLECTION_SUPPORT_TICKETS = "supportTickets";
+
+    /** Customer invite links collection in Firestore */
+    public static final String COLLECTION_CUSTOMER_INVITES = "customerInvites";
     
     /** Notifications collection in Firestore */
     public static final String COLLECTION_NOTIFICATIONS = "notifications";
     
     /** Products collection in Firestore */
     public static final String COLLECTION_PRODUCTS = "products";
+
+    /** Quantity requests collection in Firestore */
+    public static final String COLLECTION_QUANTITY_REQUESTS = "quantityRequests";
     
     // Date Formats
     /** Full date-time format (dd MMM yyyy, hh:mm a) */
@@ -168,6 +174,11 @@ public class Constants {
     public static final String EXTRA_MONTH = "month";
     public static final String EXTRA_YEAR = "year";
     public static final String EXTRA_FORCE_PROFILE_SETUP = "forceProfileSetup";
+    public static final String EXTRA_SKIP_SPLASH_DELAY = "skip_splash_delay";
+
+    // Invite flow cache keys
+    public static final String KEY_PENDING_INVITE_TOKEN = "pendingInviteToken";
+    public static final String KEY_PENDING_INVITE_CUSTOMER_ID = "pendingInviteCustomerId";
     
     // Pagination
     public static final int PAGE_SIZE = 50;

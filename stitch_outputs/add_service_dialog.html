@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "inverse-primary": "#b6f4e8",
+              "on-background": "#2a3532",
+              "on-tertiary-fixed": "#004e45",
+              "error-container": "#fa746f",
+              "secondary-fixed-dim": "#a8dfd5",
+              "on-error-container": "#6e0a12",
+              "tertiary-container": "#96fdeb",
+              "primary-container": "#b1efe3",
+              "on-primary-fixed": "#004840",
+              "tertiary-fixed-dim": "#88efdd",
+              "surface-bright": "#f6faf8",
+              "on-tertiary": "#e2fff8",
+              "on-tertiary-fixed-variant": "#006d61",
+              "on-tertiary-container": "#006257",
+              "inverse-surface": "#0a0f0e",
+              "primary-fixed-dim": "#a3e0d5",
+              "tertiary-dim": "#005e54",
+              "outline-variant": "#a9b4b1",
+              "on-secondary-fixed-variant": "#2e645d",
+              "tertiary-fixed": "#96fdeb",
+              "surface-tint": "#2c6960",
+              "surface-container-lowest": "#ffffff",
+              "on-surface-variant": "#56615f",
+              "secondary": "#326860",
+              "tertiary": "#006b60",
+              "on-primary-container": "#1b5b52",
+              "primary-fixed": "#b1efe3",
+              "surface-dim": "#d1dcd9",
+              "surface-variant": "#dae5e1",
+              "surface-container-highest": "#dae5e1",
+              "surface-container-low": "#eef5f2",
+              "outline": "#727d7a",
+              "on-surface": "#2a3532",
+              "secondary-container": "#b6ede4",
+              "surface": "#f6faf8",
+              "inverse-on-surface": "#999e9c",
+              "error": "#a83836",
+              "on-primary": "#e2fff8",
+              "on-error": "#fff7f6",
+              "error-dim": "#67040d",
+              "surface-container": "#e7f0ec",
+              "primary-dim": "#1d5c54",
+              "primary": "#2c6960",
+              "background": "#f6faf8",
+              "on-secondary": "#e2fff9",
+              "on-primary-fixed-variant": "#27655c",
+              "on-secondary-container": "#235a53",
+              "secondary-dim": "#255c54",
+              "on-secondary-fixed": "#0a4741",
+              "secondary-fixed": "#b6ede4",
+              "surface-container-high": "#e1eae7"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Manrope"],
+              "label": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      .glass-card {
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(20px);
+      }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface font-body text-on-surface antialiased min-h-screen">
+<!-- Background: Provider Dashboard (Dimmed Overlay) -->
+<div class="fixed inset-0 z-0 overflow-hidden opacity-40 grayscale-[0.2]">
+<!-- TopAppBar Placeholder -->
+<header class="bg-[#f6faf8] text-[#2c6960] font-manrope tracking-tight font-semibold w-full top-0 sticky flex justify-between items-center px-6 py-4">
+<div class="text-xl font-bold text-[#2c6960]">Clinical Finance</div>
+<div class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center">
+<span class="material-symbols-outlined">person</span>
+</div>
+</header>
+<main class="p-8 max-w-7xl mx-auto space-y-12">
+<!-- Bento Grid Dashboard Simulation -->
+<div class="grid grid-cols-12 gap-6">
+<div class="col-span-8 h-64 bg-surface-container rounded-lg"></div>
+<div class="col-span-4 h-64 bg-primary-container rounded-lg"></div>
+<div class="col-span-4 h-48 bg-surface-container-high rounded-lg"></div>
+<div class="col-span-8 h-48 bg-surface-container-low rounded-lg"></div>
+</div>
+<section>
+<div class="flex justify-between items-end mb-8">
+<h2 class="text-4xl font-headline font-extrabold tracking-tight">Services Inventory</h2>
+<div class="w-32 h-10 bg-primary rounded-full"></div>
+</div>
+<div class="grid grid-cols-3 gap-6">
+<div class="h-40 bg-surface-container-lowest rounded shadow-sm"></div>
+<div class="h-40 bg-surface-container-lowest rounded shadow-sm"></div>
+<div class="h-40 bg-surface-container-lowest rounded shadow-sm"></div>
+</div>
+</section>
+</main>
+</div>
+<!-- Modal Overlay Backdrop -->
+<div class="fixed inset-0 z-40 bg-on-background/30 backdrop-blur-sm flex items-center justify-center p-4">
+<!-- Modal Card (Dialog) -->
+<div class="glass-card w-full max-w-lg rounded-lg shadow-[0_20px_60px_rgba(42,53,50,0.15)] overflow-hidden">
+<!-- Modal Header -->
+<div class="px-8 pt-10 pb-6 text-center">
+<div class="inline-flex items-center justify-center w-14 h-14 bg-primary-container rounded-full mb-4 text-primary">
+<span class="material-symbols-outlined text-3xl">medical_services</span>
+</div>
+<h1 class="text-2xl font-headline font-bold text-on-surface tracking-tight">Add Service</h1>
+<p class="text-on-surface-variant text-sm mt-2">Create a new service entry for clinical billing</p>
+</div>
+<!-- Form Content -->
+<div class="px-8 pb-10 space-y-6">
+<!-- Service Name Input -->
+<div class="space-y-2">
+<label class="text-[11px] font-label uppercase tracking-widest font-bold text-on-surface-variant ml-1">Service Name</label>
+<div class="relative">
+<input class="w-full h-14 px-5 bg-surface-container-high border-none rounded-full focus:ring-2 focus:ring-primary/20 focus:bg-surface-container-lowest transition-all duration-300 placeholder:text-outline text-on-surface font-medium" placeholder="e.g. Diagnostic Ultrasound" type="text"/>
+</div>
+</div>
+<!-- Price and Type Row -->
+<div class="grid grid-cols-2 gap-4">
+<!-- Unit Price -->
+<div class="space-y-2">
+<label class="text-[11px] font-label uppercase tracking-widest font-bold text-on-surface-variant ml-1">Unit Price</label>
+<div class="relative flex items-center">
+<span class="absolute left-5 text-on-surface-variant font-medium">$</span>
+<input class="w-full h-14 pl-10 pr-5 bg-surface-container-high border-none rounded-full focus:ring-2 focus:ring-primary/20 focus:bg-surface-container-lowest transition-all duration-300 placeholder:text-outline text-on-surface font-medium" placeholder="0.00" type="number"/>
+</div>
+</div>
+<!-- Unit Type Dropdown -->
+<div class="space-y-2">
+<label class="text-[11px] font-label uppercase tracking-widest font-bold text-on-surface-variant ml-1">Unit Type</label>
+<div class="relative">
+<select class="w-full h-14 px-5 bg-surface-container-high border-none rounded-full focus:ring-2 focus:ring-primary/20 focus:bg-surface-container-lowest transition-all duration-300 text-on-surface font-medium appearance-none cursor-pointer">
+<option value="litre">Litre</option>
+<option value="month">Month</option>
+<option value="session">Session</option>
+</select>
+<span class="material-symbols-outlined absolute right-5 top-4 pointer-events-none text-outline">expand_more</span>
+</div>
+</div>
+</div>
+<!-- Footer Actions -->
+<div class="pt-6 flex items-center gap-4">
+<button class="flex-1 h-14 rounded-full font-bold text-primary hover:bg-surface-container-highest transition-colors active:scale-95 duration-200">
+                        Cancel
+                    </button>
+<button class="flex-1 h-14 rounded-full bg-gradient-to-br from-primary to-primary-dim text-white font-bold shadow-lg shadow-primary/20 hover:shadow-xl hover:-translate-y-0.5 transition-all active:scale-95 duration-200">
+                        Save Service
+                    </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom Navigation Bar (Contextually Suppressed on specific flows, but defined per Shared Components) -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-6 pt-2 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl z-50 rounded-t-[2rem] shadow-[0_-10px_40px_rgba(42,53,50,0.06)]">
+<div class="flex flex-col items-center justify-center text-[#a9b4b1] px-5 py-2 hover:text-[#2c6960] active:scale-90 transition-transform">
+<span class="material-symbols-outlined" data-icon="account_balance_wallet">account_balance_wallet</span>
+<span class="text-[11px] font-manrope uppercase tracking-wider font-medium mt-1">Ledger</span>
+</div>
+<!-- Services Active -->
+<div class="flex flex-col items-center justify-center bg-[#b1efe3] text-[#2c6960] rounded-full px-5 py-2 active:scale-90 transition-transform">
+<span class="material-symbols-outlined" data-icon="medical_services" style="font-variation-settings: 'FILL' 1;">medical_services</span>
+<span class="text-[11px] font-manrope uppercase tracking-wider font-medium mt-1">Services</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#a9b4b1] px-5 py-2 hover:text-[#2c6960] active:scale-90 transition-transform">
+<span class="material-symbols-outlined" data-icon="bar_chart">bar_chart</span>
+<span class="text-[11px] font-manrope uppercase tracking-wider font-medium mt-1">Analytics</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#a9b4b1] px-5 py-2 hover:text-[#2c6960] active:scale-90 transition-transform">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="text-[11px] font-manrope uppercase tracking-wider font-medium mt-1">Settings</span>
+</div>
+</nav>
+</body></html>

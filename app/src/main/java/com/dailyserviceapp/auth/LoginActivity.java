@@ -1,5 +1,6 @@
 package com.dailyserviceapp.auth;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -13,7 +14,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 
 import com.dailyserviceapp.R;
-import com.dailyserviceapp.customer.CustomerHomeActivity;
+import com.dailyserviceapp.SplashActivity;
 import com.dailyserviceapp.core.base.BaseActivity;
 import com.dailyserviceapp.core.utils.Constants;
 import com.dailyserviceapp.core.utils.ValidationUtils;
@@ -56,6 +57,7 @@ import java.util.Map;
  * @version 1.0
  * @since 2026-01-08
  */
+@AndroidEntryPoint
 public class LoginActivity extends BaseActivity {
 
     private ActivityLoginBinding binding;
@@ -552,7 +554,8 @@ public class LoginActivity extends BaseActivity {
     }
 
     private void navigateToCustomerHome() {
-        Intent intent = new Intent(this, CustomerHomeActivity.class);
+        Intent intent = new Intent(this, SplashActivity.class);
+        intent.putExtra(Constants.EXTRA_SKIP_SPLASH_DELAY, true);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();

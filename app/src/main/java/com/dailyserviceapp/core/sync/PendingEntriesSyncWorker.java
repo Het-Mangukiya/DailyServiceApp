@@ -4,6 +4,9 @@ import android.content.Context;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.room.Room;
+
+import com.dailyserviceapp.data.local.AppDatabase;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
@@ -36,7 +39,12 @@ public class PendingEntriesSyncWorker extends Worker {
     public PendingEntriesSyncWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
         this.firestore = FirebaseFirestore.getInstance();
-        this.offlineCache = new OfflineCache(context.getApplicationContext());
+        
+        AppDatabase db = Room.databaseBuilder(context.getApplicationContext(), AppDatabase.class, "dailyservice_db")
+                .fallbackToDestructiveMigration()
+                .allowMainThreadQueries()
+                .build();
+        this.offlineCache = new OfflineCache(context.getApplicationContext(), db.customerDao());
     }
 
     @NonNull

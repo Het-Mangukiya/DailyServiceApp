@@ -1,5 +1,6 @@
 package com.dailyserviceapp.dashboard;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -77,6 +78,7 @@ import java.util.Locale;
  * - Analytics cards (total customers, monthly revenue)
  * - Add customer via FAB (manual or QR code)
  */
+@AndroidEntryPoint
 public class DashboardActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private ActivityHomeBinding binding;
@@ -98,7 +100,8 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
     private com.google.android.material.button.MaterialButton sortButton;
     
     private FirebaseFirestore firestore;
-    private OfflineCache offlineCache;
+    @javax.inject.Inject
+    OfflineCache offlineCache;
     private GoogleSignInClient googleSignInClient;
     private String providerId;
     private List<Customer> allCustomers = new ArrayList<>();
@@ -130,7 +133,7 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         
         providerId = getCurrentUserId();
         firestore = FirebaseFirestore.getInstance();
-        offlineCache = new OfflineCache(this);
+        // offlineCache is injected by Hilt
         
         // Initialize Google Sign-In client for logout
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)

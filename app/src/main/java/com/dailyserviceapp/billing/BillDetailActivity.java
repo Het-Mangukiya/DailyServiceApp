@@ -1,5 +1,6 @@
 package com.dailyserviceapp.billing;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -29,6 +30,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * Customer ledger detail screen.
  */
+@AndroidEntryPoint
 public class BillDetailActivity extends BaseActivity {
 
     private static final double EPSILON = 0.01;

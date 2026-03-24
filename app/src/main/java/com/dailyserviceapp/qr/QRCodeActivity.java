@@ -1,5 +1,6 @@
 package com.dailyserviceapp.qr;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -31,6 +32,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+@AndroidEntryPoint
 public class QRCodeActivity extends BaseActivity {
 
     private ImageView qrCodeImage;

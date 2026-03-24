@@ -1,5 +1,6 @@
 package com.dailyserviceapp.profile;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -33,6 +34,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+@AndroidEntryPoint
 public class ProfileActivity extends BaseActivity {
 
     private ActivityProfileBinding binding;

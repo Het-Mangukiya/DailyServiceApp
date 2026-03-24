@@ -15,6 +15,7 @@
         android:required="false" />
 
     <application
+        android:name=".DailyDropApp"
         android:allowBackup="true"
         android:label="DailyDrop"
         android:supportsRtl="true"
@@ -31,6 +32,13 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="dailydrop" android:host="invite" />
+                <data android:scheme="https" android:host="dailydrop.app" android:pathPrefix="/invite" />
             </intent-filter>
         </activity>
 
@@ -82,6 +90,11 @@
 
         <activity
             android:name=".provider.ProviderComplaintsActivity"
+            android:exported="false"
+            android:theme="@style/Theme.DailyServiceApp.NoActionBar" />
+
+        <activity
+            android:name=".provider.QuantityRequestsActivity"
             android:exported="false"
             android:theme="@style/Theme.DailyServiceApp.NoActionBar" />
 

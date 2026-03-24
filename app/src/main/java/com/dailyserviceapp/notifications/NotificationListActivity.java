@@ -1,11 +1,13 @@
 package com.dailyserviceapp.notifications;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import android.os.Bundle;
 import android.widget.TextView;
 
 import com.dailyserviceapp.R;
 import com.dailyserviceapp.core.base.BaseActivity;
 
+@AndroidEntryPoint
 public class NotificationListActivity extends BaseActivity {
     
     @Override

@@ -1,5 +1,8 @@
 package com.dailyserviceapp.ui;
 
+import dagger.hilt.android.AndroidEntryPoint;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.widget.TextView;
@@ -11,6 +14,7 @@ import com.dailyserviceapp.R;
 import com.dailyserviceapp.billing.CustomerLedgerCalculator;
 import com.dailyserviceapp.billing.CustomerLedgerSummary;
 import com.dailyserviceapp.core.base.BaseActivity;
+import com.dailyserviceapp.core.utils.Constants;
 import com.dailyserviceapp.core.utils.CurrencyUtils;
 import com.dailyserviceapp.core.utils.DateUtils;
 import com.dailyserviceapp.data.FirestoreRepository;
@@ -22,13 +26,21 @@ import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.chip.Chip;
 import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.UUID;
 
+@AndroidEntryPoint
 public class CustomerDetailActivity extends BaseActivity {
 
     public static final String EXTRA_CUSTOMER_ID = "customerId";
@@ -36,6 +48,7 @@ public class CustomerDetailActivity extends BaseActivity {
     private ActivityCustomerDetailBinding binding;
 
     private FirestoreRepository repo;
+    private FirebaseFirestore firestore;
     private String customerId;
     private String providerId;
 
@@ -57,6 +70,7 @@ public class CustomerDetailActivity extends BaseActivity {
     private Chip customerStatusChip;
     private Chip customerVacationChip;
     private MaterialButton markDeliveredButton;
+    private MaterialButton inviteCustomerPortalButton;
 
     private Customer customer;
 
@@ -86,6 +100,7 @@ public class CustomerDetailActivity extends BaseActivity {
         }
 
         repo = new FirestoreRepository();
+        firestore = FirebaseFirestore.getInstance();
 
         MaterialToolbar toolbar = binding.toolbar;
         setupToolbar(toolbar, "Customer Profile", true);
@@ -108,8 +123,10 @@ public class CustomerDetailActivity extends BaseActivity {
         customerStatusChip = binding.customerStatusChip;
         customerVacationChip = binding.customerVacationChip;
         markDeliveredButton = binding.markDeliveredButton;
+        inviteCustomerPortalButton = binding.inviteCustomerPortalButton;
 
         markDeliveredButton.setOnClickListener(v -> markDeliveredToday());
+        inviteCustomerPortalButton.setOnClickListener(v -> inviteCustomerToPortal());
     }
 
     @Override
@@ -361,6 +378,87 @@ public class CustomerDetailActivity extends BaseActivity {
                     Toast.makeText(CustomerDetailActivity.this, error, Toast.LENGTH_LONG).show();
                 }
             });
+    }
+
+    private void inviteCustomerToPortal() {
+        if (customer == null || customerId == null || customerId.trim().isEmpty()) {
+            showToast("Customer not loaded");
+            return;
+        }
+        if (!isNetworkAvailable()) {
+            showToast("No internet connection");
+            return;
+        }
+
+        String inviteToken = UUID.randomUUID().toString().replace("-", "")
+            + Long.toHexString(System.currentTimeMillis());
+        String inviteHash = sha256(inviteToken);
+        if (inviteHash.isEmpty()) {
+            showToast("Unable to generate invite link");
+            return;
+        }
+
+        Map<String, Object> inviteData = new HashMap<>();
+        inviteData.put("providerId", providerId);
+        inviteData.put("providerName", safeText(preferenceManager.getUserName(), "Service Provider"));
+        inviteData.put("providerCustomerId", customerId);
+        inviteData.put("customerName", safeText(customer.getName(), "Customer"));
+        inviteData.put("status", "PENDING");
+        inviteData.put("createdAt", FieldValue.serverTimestamp());
+        inviteData.put("updatedAt", FieldValue.serverTimestamp());
+        inviteData.put(
+            "expiresAt",
+            new Timestamp(new Date(System.currentTimeMillis() + (48L * 60L * 60L * 1000L)))
+        );
+
+        inviteCustomerPortalButton.setEnabled(false);
+        firestore.collection(Constants.COLLECTION_CUSTOMER_INVITES)
+            .document(inviteHash)
+            .set(inviteData)
+            .addOnSuccessListener(unused -> {
+                if (!isUiActive()) return;
+                inviteCustomerPortalButton.setEnabled(true);
+                Uri inviteUri = new Uri.Builder()
+                    .scheme("https")
+                    .authority("dailydrop.app")
+                    .appendPath("invite")
+                    .appendQueryParameter("token", inviteToken)
+                    .appendQueryParameter("cid", customerId)
+                    .build();
+                shareInviteLink(inviteUri.toString(), safeText(customer.getName(), "Customer"));
+            })
+            .addOnFailureListener(e -> {
+                if (!isUiActive()) return;
+                inviteCustomerPortalButton.setEnabled(true);
+                Toast.makeText(this, "Failed to create invite link: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            });
+    }
+
+    private void shareInviteLink(String inviteLink, String name) {
+        String shareText = "Join your DailyDrop customer dashboard for " + name + ":\n"
+            + inviteLink + "\n\n"
+            + "This invite link expires in 48 hours.";
+
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(Intent.EXTRA_SUBJECT, "DailyDrop Customer Invite");
+        shareIntent.putExtra(Intent.EXTRA_TEXT, shareText);
+        startActivity(Intent.createChooser(shareIntent, "Share invite link"));
+    }
+
+    private String sha256(String input) {
+        if (input == null || input.trim().isEmpty()) return "";
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hash = digest.digest(input.trim().getBytes(java.nio.charset.StandardCharsets.UTF_8));
+            StringBuilder builder = new StringBuilder();
+            for (byte b : hash) {
+                builder.append(String.format(Locale.US, "%02x", b));
+            }
+            return builder.toString();
+        } catch (NoSuchAlgorithmException e) {
+            return "";
+        }
     }
 
     private boolean isUiActive() {
