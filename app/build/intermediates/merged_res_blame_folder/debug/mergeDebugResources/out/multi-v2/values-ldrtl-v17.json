@@ -1,0 +1,36 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.dailyserviceapp-mergeDebugResources-71:/values-ldrtl-v17/values-ldrtl-v17.xml",
+            "map": [
+                {
+                    "source": "/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values-ldrtl/dimens.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "50",
+                        "endOffsets": "101"
+                    }
+                },
+                {
+                    "source": "/Users/ghoriommukeshbai/.gradle/caches/8.14.4/transforms/5c858948cd6e6d01e64f9ef8b3f674a7/transformed/material-1.12.0/res/values-ldrtl-v17/values-ldrtl-v17.xml",
+                    "from": {
+                        "startLines": "2,3",
+                        "startColumns": "4,4",
+                        "startOffsets": "55,191",
+                        "endColumns": "135,140",
+                        "endOffsets": "186,327"
+                    },
+                    "to": {
+                        "startLines": "3,4",
+                        "startColumns": "4,4",
+                        "startOffsets": "106,242",
+                        "endColumns": "135,140",
+                        "endOffsets": "237,378"
+                    }
+                }
+            ]
+        }
+    ]
+}

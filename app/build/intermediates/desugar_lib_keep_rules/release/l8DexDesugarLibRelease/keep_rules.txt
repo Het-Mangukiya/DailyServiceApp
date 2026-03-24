@@ -1,0 +1,31 @@
+-keep class j$.time.Duration {
+  public static j$.time.Duration ofMillis(long);
+  public static j$.time.Duration ofMinutes(long);
+  public long toMillis();
+}
+-keep class j$.time.Instant {
+  public j$.time.OffsetDateTime atOffset(j$.time.ZoneOffset);
+}
+-keep class j$.time.LocalDateTime {
+  public java.lang.String format(j$.time.format.DateTimeFormatter);
+}
+-keep class j$.time.OffsetDateTime {
+  public j$.time.LocalDateTime toLocalDateTime();
+}
+-keep class j$.time.TimeConversions {
+  public static java.time.Duration convert(j$.time.Duration);
+  public static j$.time.Duration convert(java.time.Duration);
+}
+-keep class j$.time.ZoneOffset {
+  j$.time.ZoneOffset UTC;
+}
+-keep class j$.time.format.DateTimeFormatter {
+  j$.time.format.DateTimeFormatter BASIC_ISO_DATE;
+  j$.time.format.DateTimeFormatter ISO_LOCAL_DATE;
+}
+-keep class j$.util.DateRetargetClass {
+  public static j$.time.Instant toInstant(java.util.Date);
+}
+-keep class j$.util.DesugarTimeZone {
+  public static java.util.TimeZone getTimeZone(java.lang.String);
+}

@@ -1,0 +1,150 @@
+[
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-mergeDebugResources-72:/layout/row_bill.xml",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/layout/row_bill.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-mergeDebugResources-72:/layout/row_customer.xml",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/layout/row_customer.xml"
+    },
+    {
+        "merged": "com.dailyserviceapp-mergeDebugResources-72:/layout/activity_sales_prediction.xml",
+        "source": "com.dailyserviceapp-main-75:/layout/activity_sales_prediction.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-mergeDebugResources-72:/layout/activity_customer_home.xml",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/layout/activity_customer_home.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-mergeDebugResources-72:/layout/activity_home.xml",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/layout/activity_home.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-mergeDebugResources-72:/layout/row_service_entry.xml",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/layout/row_service_entry.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-mergeDebugResources-72:/layout/activity_login.xml",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/layout/activity_login.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-mergeDebugResources-72:/layout/activity_bill_detail.xml",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/layout/activity_bill_detail.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-mergeDebugResources-72:/layout/activity_payment.xml",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/layout/activity_payment.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-mergeDebugResources-72:/layout/bottomsheet_add_customer.xml",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/layout/bottomsheet_add_customer.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-mergeDebugResources-72:/layout/activity_service_entry.xml",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/layout/activity_service_entry.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-mergeDebugResources-72:/layout/item_customer.xml",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/layout/item_customer.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-mergeDebugResources-72:/layout/activity_complaint_support.xml",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/layout/activity_complaint_support.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-mergeDebugResources-72:/layout/activity_customer_edit.xml",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/layout/activity_customer_edit.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-mergeDebugResources-72:/layout/activity_profile.xml",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/layout/activity_profile.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-mergeDebugResources-72:/layout/activity_qr_code.xml",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/layout/activity_qr_code.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-mergeDebugResources-72:/layout/item_area_header.xml",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/layout/item_area_header.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-mergeDebugResources-72:/layout/activity_dashboard.xml",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/layout/activity_dashboard.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-mergeDebugResources-72:/layout/activity_provider_complaints.xml",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/layout/activity_provider_complaints.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-mergeDebugResources-72:/layout/row_join_request.xml",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/layout/row_join_request.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-mergeDebugResources-72:/layout/activity_join_requests.xml",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/layout/activity_join_requests.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-mergeDebugResources-72:/layout/dialog_add_product.xml",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/layout/dialog_add_product.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-mergeDebugResources-72:/layout/activity_bill_list_new.xml",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/layout/activity_bill_list_new.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-mergeDebugResources-72:/layout/activity_payment_new.xml",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/layout/activity_payment_new.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-mergeDebugResources-72:/layout/activity_reports.xml",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/layout/activity_reports.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-mergeDebugResources-72:/layout/activity_bill_list.xml",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/layout/activity_bill_list.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-mergeDebugResources-72:/layout/activity_provider_dashboard.xml",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/layout/activity_provider_dashboard.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-mergeDebugResources-72:/layout/activity_customer_service_dashboard.xml",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/layout/activity_customer_service_dashboard.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-mergeDebugResources-72:/layout/activity_forgot_password.xml",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/layout/activity_forgot_password.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-mergeDebugResources-72:/layout/activity_notification_list.xml",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/layout/activity_notification_list.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-mergeDebugResources-72:/layout/activity_signup.xml",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/layout/activity_signup.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-mergeDebugResources-72:/layout/activity_customer_detail.xml",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/layout/activity_customer_detail.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-mergeDebugResources-72:/layout/item_service_entry.xml",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/layout/item_service_entry.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-mergeDebugResources-72:/layout/row_customer_history.xml",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/layout/row_customer_history.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-mergeDebugResources-72:/layout/activity_sales_prediction.xml",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/layout/activity_sales_prediction.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-mergeDebugResources-72:/layout/activity_splash.xml",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/layout/activity_splash.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-mergeDebugResources-72:/layout/nav_header.xml",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/layout/nav_header.xml"
+    }
+]

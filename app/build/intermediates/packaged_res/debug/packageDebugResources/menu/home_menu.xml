@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/sortButton"
+        android:icon="@drawable/ic_sort_24"
+        android:title="@string/menu_sort"
+        app:iconTint="@android:color/white"
+        app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/action_notifications"
+        android:icon="@drawable/ic_notifications_24"
+        android:title="@string/menu_notifications"
+        app:iconTint="@android:color/white"
+        app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/action_calendar"
+        android:icon="@drawable/ic_calendar_24"
+        android:title="@string/menu_service_entry"
+        app:iconTint="@android:color/white"
+        app:showAsAction="ifRoom"/>
+
+</menu>

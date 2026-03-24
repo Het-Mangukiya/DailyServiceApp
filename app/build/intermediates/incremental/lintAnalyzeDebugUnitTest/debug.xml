@@ -1,0 +1,28 @@
+<variant
+    name="debug"
+    package="com.dailyserviceapp"
+    minSdkVersion="24"
+    targetSdkVersion="35"
+    debuggable="true"
+    mergedManifest="build/intermediates/merged_manifest/debug/processDebugMainManifest/AndroidManifest.xml"
+    partialResultsDir="build/intermediates/unit_test_lint_partial_results/debug/lintAnalyzeDebugUnitTest/out"
+    desugaredMethodsFiles="/Users/ghoriommukeshbai/.gradle/caches/8.14.4/transforms/c31cb14f505f1f1ab05b951190ac4adb/transformed/desugar_jdk_libs_configuration-2.0.4-desugar-lint.txt:/Users/ghoriommukeshbai/.gradle/caches/8.14.4/transforms/870784c405ec1c720a0ee6ba891b283e/transformed/D8BackportedDesugaredMethods.txt">
+  <buildFeatures
+      coreLibraryDesugaring="true"
+      viewBinding="true"
+      namespacing="REQUIRED"/>
+  <sourceProviders>
+  </sourceProviders>
+  <testSourceProviders>
+    <sourceProvider
+        manifests="src/test/AndroidManifest.xml"
+        javaDirectories="src/test/java:src/testDebug/java:src/test/kotlin:src/testDebug/kotlin"
+        assetsDirectories="src/test/assets:src/testDebug/assets"
+        unitTest="true"/>
+  </testSourceProviders>
+  <testFixturesSourceProviders>
+  </testFixturesSourceProviders>
+  <artifact
+      type="UNIT_TEST">
+  </artifact>
+</variant>

@@ -1,0 +1,3441 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<incidents format="6" by="lint 8.13.2" type="incidents">
+
+    <incident
+        id="DefaultLocale"
+        severity="warning"
+        message="Implicitly using the default locale is a common source of bugs: Use `String.format(Locale, ...)` instead">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/sales/ui/SalesPredictionActivity.java"
+            line="86"
+            column="33"
+            startOffset="3477"
+            endLine="86"
+            endColumn="96"
+            endOffset="3540"/>
+    </incident>
+
+    <incident
+        id="OldTargetApi"
+        severity="warning"
+        message="Not targeting the latest versions of Android; compatibility modes apply. Consider testing and updating this version. Consult the `android.os.Build.VERSION_CODES` javadoc for details.">
+        <fix-replace
+            description="Update targetSdkVersion to 36"
+            oldString="35"
+            replacement="36"
+            priority="0"/>
+        <location
+            file="${:app*projectDir}/build.gradle"
+            line="14"
+            column="9"
+            startOffset="282"
+            endLine="14"
+            endColumn="21"
+            endOffset="294"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of `compileSdkVersion` than 35 is available: 36">
+        <fix-replace
+            description="Set compileSdkVersion to 36"
+            oldString="35"
+            replacement="36"
+            priority="0"/>
+        <location
+            file="${:app*projectDir}/build.gradle"
+            line="9"
+            column="5"
+            startOffset="177"
+            endLine="9"
+            endColumn="18"
+            endOffset="190"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of com.android.tools:desugar_jdk_libs than 2.0.4 is available: 2.1.5">
+        <fix-replace
+            description="Change to 2.1.5"
+            family="Update versions"
+            oldString="2.0.4"
+            replacement="2.1.5"
+            priority="0"/>
+        <location
+            file="${:app*projectDir}/build.gradle"
+            line="45"
+            column="27"
+            startOffset="1040"
+            endLine="45"
+            endColumn="69"
+            endOffset="1082"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.appcompat:appcompat than 1.7.0 is available: 1.7.1">
+        <fix-replace
+            description="Change to 1.7.1"
+            family="Update versions"
+            oldString="1.7.0"
+            replacement="1.7.1"
+            priority="0"/>
+        <location
+            file="${:app*projectDir}/build.gradle"
+            line="48"
+            column="20"
+            startOffset="1128"
+            endLine="48"
+            endColumn="56"
+            endOffset="1164"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of com.google.android.material:material than 1.12.0 is available: 1.13.0">
+        <fix-replace
+            description="Change to 1.13.0"
+            family="Update versions"
+            oldString="1.12.0"
+            replacement="1.13.0"
+            priority="0"/>
+        <location
+            file="${:app*projectDir}/build.gradle"
+            line="49"
+            column="20"
+            startOffset="1184"
+            endLine="49"
+            endColumn="65"
+            endOffset="1229"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.constraintlayout:constraintlayout than 2.2.0 is available: 2.2.1">
+        <fix-replace
+            description="Change to 2.2.1"
+            family="Update versions"
+            oldString="2.2.0"
+            replacement="2.2.1"
+            priority="0"/>
+        <location
+            file="${:app*projectDir}/build.gradle"
+            line="50"
+            column="20"
+            startOffset="1249"
+            endLine="50"
+            endColumn="70"
+            endOffset="1299"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.recyclerview:recyclerview than 1.3.2 is available: 1.4.0">
+        <fix-replace
+            description="Change to 1.4.0"
+            family="Update versions"
+            oldString="1.3.2"
+            replacement="1.4.0"
+            priority="0"/>
+        <location
+            file="${:app*projectDir}/build.gradle"
+            line="51"
+            column="20"
+            startOffset="1319"
+            endLine="51"
+            endColumn="62"
+            endOffset="1361"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.swiperefreshlayout:swiperefreshlayout than 1.1.0 is available: 1.2.0">
+        <fix-replace
+            description="Change to 1.2.0"
+            family="Update versions"
+            oldString="1.1.0"
+            replacement="1.2.0"
+            priority="0"/>
+        <location
+            file="${:app*projectDir}/build.gradle"
+            line="53"
+            column="20"
+            startOffset="1435"
+            endLine="53"
+            endColumn="74"
+            endOffset="1489"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.lifecycle:lifecycle-viewmodel than 2.8.7 is available: 2.10.0">
+        <fix-replace
+            description="Change to 2.10.0"
+            family="Update versions"
+            oldString="2.8.7"
+            replacement="2.10.0"
+            priority="0"/>
+        <location
+            file="${:app*projectDir}/build.gradle"
+            line="56"
+            column="20"
+            startOffset="1559"
+            endLine="56"
+            endColumn="66"
+            endOffset="1605"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.lifecycle:lifecycle-livedata than 2.8.7 is available: 2.10.0">
+        <fix-replace
+            description="Change to 2.10.0"
+            family="Update versions"
+            oldString="2.8.7"
+            replacement="2.10.0"
+            priority="0"/>
+        <location
+            file="${:app*projectDir}/build.gradle"
+            line="57"
+            column="20"
+            startOffset="1625"
+            endLine="57"
+            endColumn="65"
+            endOffset="1670"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.lifecycle:lifecycle-runtime than 2.8.7 is available: 2.10.0">
+        <fix-replace
+            description="Change to 2.10.0"
+            family="Update versions"
+            oldString="2.8.7"
+            replacement="2.10.0"
+            priority="0"/>
+        <location
+            file="${:app*projectDir}/build.gradle"
+            line="58"
+            column="20"
+            startOffset="1690"
+            endLine="58"
+            endColumn="64"
+            endOffset="1734"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.lifecycle:lifecycle-common-java8 than 2.8.7 is available: 2.10.0">
+        <fix-replace
+            description="Change to 2.10.0"
+            family="Update versions"
+            oldString="2.8.7"
+            replacement="2.10.0"
+            priority="0"/>
+        <location
+            file="${:app*projectDir}/build.gradle"
+            line="59"
+            column="20"
+            startOffset="1754"
+            endLine="59"
+            endColumn="69"
+            endOffset="1803"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.navigation:navigation-fragment than 2.8.5 is available: 2.9.7">
+        <fix-replace
+            description="Change to 2.9.7"
+            family="Update versions"
+            oldString="2.8.5"
+            replacement="2.9.7"
+            priority="0"/>
+        <location
+            file="${:app*projectDir}/build.gradle"
+            line="62"
+            column="20"
+            startOffset="1851"
+            endLine="62"
+            endColumn="67"
+            endOffset="1898"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.navigation:navigation-ui than 2.8.5 is available: 2.9.7">
+        <fix-replace
+            description="Change to 2.9.7"
+            family="Update versions"
+            oldString="2.8.5"
+            replacement="2.9.7"
+            priority="0"/>
+        <location
+            file="${:app*projectDir}/build.gradle"
+            line="63"
+            column="20"
+            startOffset="1918"
+            endLine="63"
+            endColumn="61"
+            endOffset="1959"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.room:room-runtime than 2.6.1 is available: 2.8.4">
+        <fix-replace
+            description="Change to 2.8.4"
+            family="Update versions"
+            oldString="2.6.1"
+            replacement="2.8.4"
+            priority="0"/>
+        <location
+            file="${:app*projectDir}/build.gradle"
+            line="66"
+            column="20"
+            startOffset="2018"
+            endLine="66"
+            endColumn="54"
+            endOffset="2052"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.room:room-compiler than 2.6.1 is available: 2.8.4">
+        <fix-replace
+            description="Change to 2.8.4"
+            family="Update versions"
+            oldString="2.6.1"
+            replacement="2.8.4"
+            priority="0"/>
+        <location
+            file="${:app*projectDir}/build.gradle"
+            line="67"
+            column="25"
+            startOffset="2077"
+            endLine="67"
+            endColumn="60"
+            endOffset="2112"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.work:work-runtime than 2.9.1 is available: 2.11.1">
+        <fix-replace
+            description="Change to 2.11.1"
+            family="Update versions"
+            oldString="2.9.1"
+            replacement="2.11.1"
+            priority="0"/>
+        <location
+            file="${:app*projectDir}/build.gradle"
+            line="70"
+            column="20"
+            startOffset="2180"
+            endLine="70"
+            endColumn="54"
+            endOffset="2214"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.paging:paging-runtime than 3.2.1 is available: 3.4.2">
+        <fix-replace
+            description="Change to 3.4.2"
+            family="Update versions"
+            oldString="3.2.1"
+            replacement="3.4.2"
+            priority="0"/>
+        <location
+            file="${:app*projectDir}/build.gradle"
+            line="73"
+            column="20"
+            startOffset="2259"
+            endLine="73"
+            endColumn="58"
+            endOffset="2297"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of com.google.firebase:firebase-bom than 33.7.0 is available: 34.11.0">
+        <fix-replace
+            description="Change to 34.11.0"
+            family="Update versions"
+            oldString="33.7.0"
+            replacement="34.11.0"
+            priority="0"/>
+        <location
+            file="${:app*projectDir}/build.gradle"
+            line="76"
+            column="20"
+            startOffset="2338"
+            endLine="76"
+            endColumn="71"
+            endOffset="2389"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of com.google.android.gms:play-services-auth than 21.0.0 is available: 21.5.1">
+        <fix-replace
+            description="Change to 21.5.1"
+            family="Update versions"
+            oldString="21.0.0"
+            replacement="21.5.1"
+            priority="0"/>
+        <location
+            file="${:app*projectDir}/build.gradle"
+            line="85"
+            column="20"
+            startOffset="2791"
+            endLine="85"
+            endColumn="70"
+            endOffset="2841"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.dynamicanimation:dynamicanimation than 1.0.0 is available: 1.1.0">
+        <fix-replace
+            description="Change to 1.1.0"
+            family="Update versions"
+            oldString="1.0.0"
+            replacement="1.1.0"
+            priority="0"/>
+        <location
+            file="${:app*projectDir}/build.gradle"
+            line="102"
+            column="20"
+            startOffset="3330"
+            endLine="102"
+            endColumn="70"
+            endOffset="3380"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.test.ext:junit than 1.2.1 is available: 1.3.0">
+        <fix-replace
+            description="Change to 1.3.0"
+            family="Update versions"
+            oldString="1.2.1"
+            replacement="1.3.0"
+            priority="0"/>
+        <location
+            file="${:app*projectDir}/build.gradle"
+            line="118"
+            column="31"
+            startOffset="3945"
+            endLine="118"
+            endColumn="62"
+            endOffset="3976"/>
+    </incident>
+
+    <incident
+        id="GradleDependency"
+        severity="warning"
+        message="A newer version of androidx.test.espresso:espresso-core than 3.6.1 is available: 3.7.0">
+        <fix-replace
+            description="Change to 3.7.0"
+            family="Update versions"
+            oldString="3.6.1"
+            replacement="3.7.0"
+            priority="0"/>
+        <location
+            file="${:app*projectDir}/build.gradle"
+            line="119"
+            column="31"
+            startOffset="4007"
+            endLine="119"
+            endColumn="75"
+            endOffset="4051"/>
+    </incident>
+
+    <incident
+        id="NewerVersionAvailable"
+        severity="warning"
+        message="A newer version of com.itextpdf:itext7-core than 7.2.5 is available: 9.5.0">
+        <fix-replace
+            description="Change to 9.5.0"
+            family="Update versions"
+            oldString="7.2.5"
+            replacement="9.5.0"
+            priority="0"/>
+        <location
+            file="${:app*projectDir}/build.gradle"
+            line="88"
+            column="20"
+            startOffset="2884"
+            endLine="88"
+            endColumn="52"
+            endOffset="2916"/>
+    </incident>
+
+    <incident
+        id="NewerVersionAvailable"
+        severity="warning"
+        message="A newer version of com.github.bumptech.glide:glide than 4.16.0 is available: 5.0.5">
+        <fix-replace
+            description="Change to 5.0.5"
+            family="Update versions"
+            oldString="4.16.0"
+            replacement="5.0.5"
+            priority="0"/>
+        <location
+            file="${:app*projectDir}/build.gradle"
+            line="94"
+            column="20"
+            startOffset="3035"
+            endLine="94"
+            endColumn="60"
+            endOffset="3075"/>
+    </incident>
+
+    <incident
+        id="NewerVersionAvailable"
+        severity="warning"
+        message="A newer version of com.github.bumptech.glide:compiler than 4.16.0 is available: 5.0.5">
+        <fix-replace
+            description="Change to 5.0.5"
+            family="Update versions"
+            oldString="4.16.0"
+            replacement="5.0.5"
+            priority="0"/>
+        <location
+            file="${:app*projectDir}/build.gradle"
+            line="95"
+            column="25"
+            startOffset="3100"
+            endLine="95"
+            endColumn="68"
+            endOffset="3143"/>
+    </incident>
+
+    <incident
+        id="NewerVersionAvailable"
+        severity="warning"
+        message="A newer version of com.jakewharton.threetenabp:threetenabp than 1.4.6 is available: 1.4.9">
+        <fix-replace
+            description="Change to 1.4.9"
+            family="Update versions"
+            oldString="1.4.6"
+            replacement="1.4.9"
+            priority="0"/>
+        <location
+            file="${:app*projectDir}/build.gradle"
+            line="98"
+            column="20"
+            startOffset="3183"
+            endLine="98"
+            endColumn="67"
+            endOffset="3230"/>
+    </incident>
+
+    <incident
+        id="NewerVersionAvailable"
+        severity="warning"
+        message="A newer version of com.google.zxing:core than 3.5.3 is available: 3.5.4">
+        <fix-replace
+            description="Change to 3.5.4"
+            family="Update versions"
+            oldString="3.5.3"
+            replacement="3.5.4"
+            priority="0"/>
+        <location
+            file="${:app*projectDir}/build.gradle"
+            line="105"
+            column="20"
+            startOffset="3416"
+            endLine="105"
+            endColumn="49"
+            endOffset="3445"/>
+    </incident>
+
+    <incident
+        id="NewerVersionAvailable"
+        severity="warning"
+        message="A newer version of com.google.code.gson:gson than 2.10.1 is available: 2.13.2">
+        <fix-replace
+            description="Change to 2.13.2"
+            family="Update versions"
+            oldString="2.10.1"
+            replacement="2.13.2"
+            priority="0"/>
+        <location
+            file="${:app*projectDir}/build.gradle"
+            line="109"
+            column="20"
+            startOffset="3587"
+            endLine="109"
+            endColumn="54"
+            endOffset="3621"/>
+    </incident>
+
+    <incident
+        id="NewerVersionAvailable"
+        severity="warning"
+        message="A newer version of com.squareup.retrofit2:retrofit than 2.9.0 is available: 3.0.0">
+        <fix-replace
+            description="Change to 3.0.0"
+            family="Update versions"
+            oldString="2.9.0"
+            replacement="3.0.0"
+            priority="0"/>
+        <location
+            file="${:app*projectDir}/build.gradle"
+            line="112"
+            column="20"
+            startOffset="3694"
+            endLine="112"
+            endColumn="59"
+            endOffset="3733"/>
+    </incident>
+
+    <incident
+        id="NewerVersionAvailable"
+        severity="warning"
+        message="A newer version of com.squareup.retrofit2:converter-gson than 2.9.0 is available: 3.0.0">
+        <fix-replace
+            description="Change to 3.0.0"
+            family="Update versions"
+            oldString="2.9.0"
+            replacement="3.0.0"
+            priority="0"/>
+        <location
+            file="${:app*projectDir}/build.gradle"
+            line="113"
+            column="20"
+            startOffset="3753"
+            endLine="113"
+            endColumn="65"
+            endOffset="3798"/>
+    </incident>
+
+    <incident
+        id="NewerVersionAvailable"
+        severity="warning"
+        message="A newer version of org.mockito:mockito-core than 5.8.0 is available: 5.23.0">
+        <fix-replace
+            description="Change to 5.23.0"
+            family="Update versions"
+            oldString="5.8.0"
+            replacement="5.23.0"
+            priority="0"/>
+        <location
+            file="${:app*projectDir}/build.gradle"
+            line="117"
+            column="24"
+            startOffset="3882"
+            endLine="117"
+            endColumn="56"
+            endOffset="3914"/>
+    </incident>
+
+    <incident
+        id="UseCompatTextViewDrawableXml"
+        severity="warning"
+        message="Use `app:drawableStartCompat` instead of `android:drawableStart`">
+        <fix-composite
+            description="Use app namespace instead of android">
+            <fix-attribute
+                description="Set drawableStartCompat=&quot;@drawable/ic_nav_qr&quot;"
+                namespace="http://schemas.android.com/apk/res-auto"
+                attribute="drawableStartCompat"
+                value="@drawable/ic_nav_qr"/>
+            <fix-attribute
+                description="Delete drawableStart"
+                namespace="http://schemas.android.com/apk/res/android"
+                attribute="drawableStart"/>
+        </fix-composite>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_customer_home.xml"
+            line="69"
+            column="25"
+            startOffset="2865"
+            endLine="69"
+            endColumn="68"
+            endOffset="2908"/>
+    </incident>
+
+    <incident
+        id="UseCompatTextViewDrawableXml"
+        severity="warning"
+        message="Use `app:drawableTint` instead of `android:drawableTint`">
+        <fix-composite
+            description="Use app namespace instead of android">
+            <fix-attribute
+                description="Set drawableTint=&quot;@color/md_theme_primary&quot;"
+                namespace="http://schemas.android.com/apk/res-auto"
+                attribute="drawableTint"
+                value="@color/md_theme_primary"/>
+            <fix-attribute
+                description="Delete drawableTint"
+                namespace="http://schemas.android.com/apk/res/android"
+                attribute="drawableTint"/>
+        </fix-composite>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_customer_home.xml"
+            line="71"
+            column="25"
+            startOffset="2987"
+            endLine="71"
+            endColumn="71"
+            endOffset="3033"/>
+    </incident>
+
+    <incident
+        id="UseCompatTextViewDrawableXml"
+        severity="warning"
+        message="Use `app:drawableStartCompat` instead of `android:drawableStart`">
+        <fix-composite
+            description="Use app namespace instead of android">
+            <fix-attribute
+                description="Set drawableStartCompat=&quot;@drawable/ic_nav_profile&quot;"
+                namespace="http://schemas.android.com/apk/res-auto"
+                attribute="drawableStartCompat"
+                value="@drawable/ic_nav_profile"/>
+            <fix-attribute
+                description="Delete drawableStart"
+                namespace="http://schemas.android.com/apk/res/android"
+                attribute="drawableStart"/>
+        </fix-composite>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_customer_home.xml"
+            line="160"
+            column="25"
+            startOffset="7514"
+            endLine="160"
+            endColumn="73"
+            endOffset="7562"/>
+    </incident>
+
+    <incident
+        id="UseCompatTextViewDrawableXml"
+        severity="warning"
+        message="Use `app:drawableTint` instead of `android:drawableTint`">
+        <fix-composite
+            description="Use app namespace instead of android">
+            <fix-attribute
+                description="Set drawableTint=&quot;@color/md_theme_on_primary_container&quot;"
+                namespace="http://schemas.android.com/apk/res-auto"
+                attribute="drawableTint"
+                value="@color/md_theme_on_primary_container"/>
+            <fix-attribute
+                description="Delete drawableTint"
+                namespace="http://schemas.android.com/apk/res/android"
+                attribute="drawableTint"/>
+        </fix-composite>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_customer_home.xml"
+            line="162"
+            column="25"
+            startOffset="7641"
+            endLine="162"
+            endColumn="84"
+            endOffset="7700"/>
+    </incident>
+
+    <incident
+        id="UseCompatTextViewDrawableXml"
+        severity="warning"
+        message="Use `app:drawableStartCompat` instead of `android:drawableStart`">
+        <fix-composite
+            description="Use app namespace instead of android">
+            <fix-attribute
+                description="Set drawableStartCompat=&quot;@drawable/ic_nav_reports&quot;"
+                namespace="http://schemas.android.com/apk/res-auto"
+                attribute="drawableStartCompat"
+                value="@drawable/ic_nav_reports"/>
+            <fix-attribute
+                description="Delete drawableStart"
+                namespace="http://schemas.android.com/apk/res/android"
+                attribute="drawableStart"/>
+        </fix-composite>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_customer_home.xml"
+            line="239"
+            column="25"
+            startOffset="11577"
+            endLine="239"
+            endColumn="73"
+            endOffset="11625"/>
+    </incident>
+
+    <incident
+        id="UseCompatTextViewDrawableXml"
+        severity="warning"
+        message="Use `app:drawableTint` instead of `android:drawableTint`">
+        <fix-composite
+            description="Use app namespace instead of android">
+            <fix-attribute
+                description="Set drawableTint=&quot;@color/md_theme_primary&quot;"
+                namespace="http://schemas.android.com/apk/res-auto"
+                attribute="drawableTint"
+                value="@color/md_theme_primary"/>
+            <fix-attribute
+                description="Delete drawableTint"
+                namespace="http://schemas.android.com/apk/res/android"
+                attribute="drawableTint"/>
+        </fix-composite>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_customer_home.xml"
+            line="241"
+            column="25"
+            startOffset="11704"
+            endLine="241"
+            endColumn="71"
+            endOffset="11750"/>
+    </incident>
+
+    <incident
+        id="UseCompatTextViewDrawableXml"
+        severity="warning"
+        message="Use `app:drawableStartCompat` instead of `android:drawableStart`">
+        <fix-composite
+            description="Use app namespace instead of android">
+            <fix-attribute
+                description="Set drawableStartCompat=&quot;@drawable/ic_location_24&quot;"
+                namespace="http://schemas.android.com/apk/res-auto"
+                attribute="drawableStartCompat"
+                value="@drawable/ic_location_24"/>
+            <fix-attribute
+                description="Delete drawableStart"
+                namespace="http://schemas.android.com/apk/res/android"
+                attribute="drawableStart"/>
+        </fix-composite>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/item_area_header.xml"
+            line="21"
+            column="9"
+            startOffset="831"
+            endLine="21"
+            endColumn="57"
+            endOffset="879"/>
+    </incident>
+
+    <incident
+        id="UseCompatTextViewDrawableXml"
+        severity="warning"
+        message="Use `app:drawableTint` instead of `android:drawableTint`">
+        <fix-composite
+            description="Use app namespace instead of android">
+            <fix-attribute
+                description="Set drawableTint=&quot;@color/md_theme_primary&quot;"
+                namespace="http://schemas.android.com/apk/res-auto"
+                attribute="drawableTint"
+                value="@color/md_theme_primary"/>
+            <fix-attribute
+                description="Delete drawableTint"
+                namespace="http://schemas.android.com/apk/res/android"
+                attribute="drawableTint"/>
+        </fix-composite>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/item_area_header.xml"
+            line="23"
+            column="9"
+            startOffset="940"
+            endLine="23"
+            endColumn="55"
+            endOffset="986"/>
+    </incident>
+
+    <incident
+        id="PluralsCandidate"
+        severity="warning"
+        message="Formatting %d followed by words (&quot;delivered&quot;): This should probably be a plural rather than a string">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/values/strings.xml"
+            line="49"
+            column="5"
+            startOffset="2583"
+            endLine="49"
+            endColumn="65"
+            endOffset="2643"/>
+    </incident>
+
+    <incident
+        id="PluralsCandidate"
+        severity="warning"
+        message="Formatting %d followed by words (&quot;customers&quot;): This should probably be a plural rather than a string">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/values/strings.xml"
+            line="356"
+            column="5"
+            startOffset="23096"
+            endLine="356"
+            endColumn="95"
+            endOffset="23186"/>
+    </incident>
+
+    <incident
+        id="TrustAllX509TrustManager"
+        severity="warning"
+        message="`checkClientTrusted` is empty, which could cause insecure network traffic due to trusting arbitrary TLS/SSL certificates presented by peers">
+        <location
+            file="$GRADLE_USER_HOME/caches/modules-2/files-2.1/org.bouncycastle/bcpkix-jdk15on/1.70/f81e5af49571a9d5a109a88f239a73ce87055417/bcpkix-jdk15on-1.70.jar"/>
+    </incident>
+
+    <incident
+        id="TrustAllX509TrustManager"
+        severity="warning"
+        message="`checkClientTrusted` is empty, which could cause insecure network traffic due to trusting arbitrary TLS/SSL certificates presented by peers">
+        <location
+            file="$GRADLE_USER_HOME/caches/modules-2/files-2.1/org.bouncycastle/bcpkix-jdk15on/1.70/f81e5af49571a9d5a109a88f239a73ce87055417/bcpkix-jdk15on-1.70.jar"/>
+    </incident>
+
+    <incident
+        id="TrustAllX509TrustManager"
+        severity="warning"
+        message="`checkServerTrusted` is empty, which could cause insecure network traffic due to trusting arbitrary TLS/SSL certificates presented by peers">
+        <location
+            file="$GRADLE_USER_HOME/caches/modules-2/files-2.1/org.bouncycastle/bcpkix-jdk15on/1.70/f81e5af49571a9d5a109a88f239a73ce87055417/bcpkix-jdk15on-1.70.jar"/>
+    </incident>
+
+    <incident
+        id="ExportedReceiver"
+        severity="warning"
+        message="Exported receiver does not require permission">
+        <fix-attribute
+            description="Set permission"
+            namespace="http://schemas.android.com/apk/res/android"
+            attribute="permission"
+            value="TODO"
+            point="4"
+            mark="0"/>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*manifest*1}"
+            line="5"
+            column="10"
+            startOffset="137"
+            endLine="5"
+            endColumn="18"
+            endOffset="145"/>
+    </incident>
+
+    <incident
+        id="NotifyDataSetChanged"
+        severity="warning"
+        message="It will always be more efficient to use more specific change events if you can. Rely on `notifyDataSetChanged` as a last resort.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/provider/JoinRequestAdapter.java"
+            line="39"
+            column="9"
+            startOffset="1150"
+            endLine="39"
+            endColumn="31"
+            endOffset="1172"/>
+    </incident>
+
+    <incident
+        id="NotifyDataSetChanged"
+        severity="warning"
+        message="It will always be more efficient to use more specific change events if you can. Rely on `notifyDataSetChanged` as a last resort.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/service/ServiceEntryAdapter.java"
+            line="342"
+            column="9"
+            startOffset="14306"
+            endLine="342"
+            endColumn="31"
+            endOffset="14328"/>
+    </incident>
+
+    <incident
+        id="NotifyDataSetChanged"
+        severity="warning"
+        message="It will always be more efficient to use more specific change events if you can. Rely on `notifyDataSetChanged` as a last resort.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/service/ServiceEntryAdapter.java"
+            line="356"
+            column="9"
+            startOffset="14677"
+            endLine="356"
+            endColumn="31"
+            endOffset="14699"/>
+    </incident>
+
+    <incident
+        id="ObsoleteSdkInt"
+        severity="warning"
+        message="Unnecessary; `SDK_INT` is always >= 24">
+        <fix-data conditional="true"/>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/core/utils/NetworkMonitor.java"
+            line="79"
+            column="13"
+            startOffset="2380"
+            endLine="79"
+            endColumn="59"
+            endOffset="2426"/>
+    </incident>
+
+    <incident
+        id="ObsoleteSdkInt"
+        severity="warning"
+        message="Unnecessary; `SDK_INT` is always >= 24">
+        <fix-data conditional="true"/>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/core/utils/NetworkMonitor.java"
+            line="102"
+            column="13"
+            startOffset="3470"
+            endLine="102"
+            endColumn="66"
+            endOffset="3523"/>
+    </incident>
+
+    <incident
+        id="ObsoleteSdkInt"
+        severity="warning"
+        message="Unnecessary; `SDK_INT` is always >= 24">
+        <fix-data conditional="true"/>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/core/utils/NetworkMonitor.java"
+            line="117"
+            column="40"
+            startOffset="4116"
+            endLine="117"
+            endColumn="93"
+            endOffset="4169"/>
+    </incident>
+
+    <incident
+        id="UseCompoundDrawables"
+        severity="warning"
+        message="This tag and its children can be replaced by one `&lt;TextView/>` and a compound drawable">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_bill_list.xml"
+            line="18"
+            column="10"
+            startOffset="707"
+            endLine="18"
+            endColumn="22"
+            endOffset="719"/>
+    </incident>
+
+    <incident
+        id="UseCompoundDrawables"
+        severity="warning"
+        message="This tag and its children can be replaced by one `&lt;TextView/>` and a compound drawable">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_notification_list.xml"
+            line="18"
+            column="10"
+            startOffset="707"
+            endLine="18"
+            endColumn="22"
+            endOffset="719"/>
+    </incident>
+
+    <incident
+        id="UseCompoundDrawables"
+        severity="warning"
+        message="This tag and its children can be replaced by one `&lt;TextView/>` and a compound drawable">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_payment.xml"
+            line="18"
+            column="10"
+            startOffset="707"
+            endLine="18"
+            endColumn="22"
+            endOffset="719"/>
+    </incident>
+
+    <incident
+        id="UseCompoundDrawables"
+        severity="warning"
+        message="This tag and its children can be replaced by one `&lt;TextView/>` and a compound drawable">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_qr_code.xml"
+            line="147"
+            column="18"
+            startOffset="6913"
+            endLine="147"
+            endColumn="30"
+            endOffset="6925"/>
+    </incident>
+
+    <incident
+        id="DisableBaselineAlignment"
+        severity="warning"
+        message="Set `android:baselineAligned=&quot;false&quot;` on this element for better performance">
+        <fix-attribute
+            description="Set baselineAligned=&quot;false&quot;"
+            robot="true"
+            independent="true"
+            namespace="http://schemas.android.com/apk/res/android"
+            attribute="baselineAligned"
+            value="false"/>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_customer_detail.xml"
+            line="196"
+            column="22"
+            startOffset="8843"
+            endLine="196"
+            endColumn="34"
+            endOffset="8855"/>
+    </incident>
+
+    <incident
+        id="DisableBaselineAlignment"
+        severity="warning"
+        message="Set `android:baselineAligned=&quot;false&quot;` on this element for better performance">
+        <fix-attribute
+            description="Set baselineAligned=&quot;false&quot;"
+            robot="true"
+            independent="true"
+            namespace="http://schemas.android.com/apk/res/android"
+            attribute="baselineAligned"
+            value="false"/>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_customer_service_dashboard.xml"
+            line="173"
+            column="22"
+            startOffset="7905"
+            endLine="173"
+            endColumn="34"
+            endOffset="7917"/>
+    </incident>
+
+    <incident
+        id="DisableBaselineAlignment"
+        severity="warning"
+        message="Set `android:baselineAligned=&quot;false&quot;` on this element for better performance">
+        <fix-attribute
+            description="Set baselineAligned=&quot;false&quot;"
+            robot="true"
+            independent="true"
+            namespace="http://schemas.android.com/apk/res/android"
+            attribute="baselineAligned"
+            value="false"/>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_provider_complaints.xml"
+            line="78"
+            column="22"
+            startOffset="3339"
+            endLine="78"
+            endColumn="34"
+            endOffset="3351"/>
+    </incident>
+
+    <incident
+        id="DisableBaselineAlignment"
+        severity="warning"
+        message="Set `android:baselineAligned=&quot;false&quot;` on this element for better performance">
+        <fix-attribute
+            description="Set baselineAligned=&quot;false&quot;"
+            robot="true"
+            independent="true"
+            namespace="http://schemas.android.com/apk/res/android"
+            attribute="baselineAligned"
+            value="false"/>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_provider_dashboard.xml"
+            line="69"
+            column="26"
+            startOffset="3039"
+            endLine="69"
+            endColumn="38"
+            endOffset="3051"/>
+    </incident>
+
+    <incident
+        id="DisableBaselineAlignment"
+        severity="warning"
+        message="Set `android:baselineAligned=&quot;false&quot;` on this element for better performance">
+        <fix-attribute
+            description="Set baselineAligned=&quot;false&quot;"
+            robot="true"
+            independent="true"
+            namespace="http://schemas.android.com/apk/res/android"
+            attribute="baselineAligned"
+            value="false"/>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_sales_prediction.xml"
+            line="52"
+            column="22"
+            startOffset="2106"
+            endLine="52"
+            endColumn="34"
+            endOffset="2118"/>
+    </incident>
+
+    <incident
+        id="DisableBaselineAlignment"
+        severity="warning"
+        message="Set `android:baselineAligned=&quot;false&quot;` on this element for better performance">
+        <fix-attribute
+            description="Set baselineAligned=&quot;false&quot;"
+            robot="true"
+            independent="true"
+            namespace="http://schemas.android.com/apk/res/android"
+            attribute="baselineAligned"
+            value="false"/>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/bottomsheet_add_customer.xml"
+            line="142"
+            column="6"
+            startOffset="5164"
+            endLine="142"
+            endColumn="18"
+            endOffset="5176"/>
+    </incident>
+
+    <incident
+        id="Overdraw"
+        severity="warning"
+        message="Possible overdraw: Root element paints background `?android:attr/windowBackground` with a theme that also paints a background (inferred theme is `@style/Theme_DailyServiceApp_NoActionBar`)">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_sales_prediction.xml"
+            line="7"
+            column="5"
+            startOffset="297"
+            endLine="7"
+            endColumn="56"
+            endOffset="348"/>
+    </incident>
+
+    <incident
+        id="Overdraw"
+        severity="warning"
+        message="Possible overdraw: Root element paints background `@color/md_theme_surface` with a theme that also paints a background (inferred theme is `@style/Theme.DailyServiceApp`)">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/bottomsheet_add_customer.xml"
+            line="9"
+            column="5"
+            startOffset="319"
+            endLine="9"
+            endColumn="49"
+            endOffset="363"/>
+    </incident>
+
+    <incident
+        id="Overdraw"
+        severity="warning"
+        message="Possible overdraw: Root element paints background `@color/md_theme_surface` with a theme that also paints a background (inferred theme is `@style/Theme.DailyServiceApp`)">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/dialog_add_product.xml"
+            line="7"
+            column="5"
+            startOffset="274"
+            endLine="7"
+            endColumn="49"
+            endOffset="318"/>
+    </incident>
+
+    <incident
+        id="Overdraw"
+        severity="warning"
+        message="Possible overdraw: Root element paints background `@color/md_theme_surface_variant` with a theme that also paints a background (inferred theme is `@style/Theme.DailyServiceApp`)">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/item_area_header.xml"
+            line="10"
+            column="5"
+            startOffset="415"
+            endLine="10"
+            endColumn="57"
+            endOffset="467"/>
+    </incident>
+
+    <incident
+        id="UselessParent"
+        severity="warning"
+        message="This `LinearLayout` layout or its `RelativeLayout` parent is unnecessary; transfer the `background` attribute to the other view">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_splash.xml"
+            line="8"
+            column="6"
+            startOffset="309"
+            endLine="8"
+            endColumn="18"
+            endOffset="321"/>
+    </incident>
+
+    <incident
+        id="TypographyDashes"
+        severity="warning"
+        message="Replace &quot;--&quot; with an &quot;em dash&quot; character (—, &amp;#8212;) ?">
+        <fix-replace
+            description="Replace with —"
+            oldString="--"
+            replacement="—"
+            priority="0"/>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/values/strings.xml"
+            line="128"
+            column="43"
+            startOffset="7817"
+            endLine="128"
+            endColumn="53"
+            endOffset="7827"/>
+    </incident>
+
+    <incident
+        id="ButtonStyle"
+        severity="warning"
+        message="Buttons in button bars should be borderless; use `style=&quot;?android:attr/buttonBarButtonStyle&quot;` (and `?android:attr/buttonBarStyle` on the parent)">
+        <fix-composite
+            description="Make borderless">
+            <fix-attribute
+                description="Set style=&quot;?android:attr/buttonBarStyle&quot;"
+                attribute="style"
+                value="?android:attr/buttonBarStyle">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/dialog_add_product.xml"
+                    startOffset="4162"
+                    endOffset="5108"/>
+            </fix-attribute>
+            <fix-attribute
+                description="Set style=&quot;?android:attr/buttonBarButtonStyle&quot;"
+                attribute="style"
+                value="?android:attr/buttonBarButtonStyle">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/dialog_add_product.xml"
+                    startOffset="4401"
+                    endOffset="4777"/>
+            </fix-attribute>
+            <fix-attribute
+                description="Set style=&quot;?android:attr/buttonBarButtonStyle&quot;"
+                attribute="style"
+                value="?android:attr/buttonBarButtonStyle">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/dialog_add_product.xml"
+                    startOffset="4787"
+                    endOffset="5087"/>
+            </fix-attribute>
+        </fix-composite>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/dialog_add_product.xml"
+            line="113"
+            column="10"
+            startOffset="4402"
+            endLine="113"
+            endColumn="16"
+            endOffset="4408"/>
+    </incident>
+
+    <incident
+        id="ButtonStyle"
+        severity="warning"
+        message="Buttons in button bars should be borderless; use `style=&quot;?android:attr/buttonBarButtonStyle&quot;` (and `?android:attr/buttonBarStyle` on the parent)">
+        <fix-composite
+            description="Make borderless">
+            <fix-attribute
+                description="Set style=&quot;?android:attr/buttonBarStyle&quot;"
+                attribute="style"
+                value="?android:attr/buttonBarStyle">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/dialog_add_product.xml"
+                    startOffset="4162"
+                    endOffset="5108"/>
+            </fix-attribute>
+            <fix-attribute
+                description="Set style=&quot;?android:attr/buttonBarButtonStyle&quot;"
+                attribute="style"
+                value="?android:attr/buttonBarButtonStyle">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/dialog_add_product.xml"
+                    startOffset="4401"
+                    endOffset="4777"/>
+            </fix-attribute>
+            <fix-attribute
+                description="Set style=&quot;?android:attr/buttonBarButtonStyle&quot;"
+                attribute="style"
+                value="?android:attr/buttonBarButtonStyle">
+                <range
+                    file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/dialog_add_product.xml"
+                    startOffset="4787"
+                    endOffset="5087"/>
+            </fix-attribute>
+        </fix-composite>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/dialog_add_product.xml"
+            line="122"
+            column="10"
+            startOffset="4788"
+            endLine="122"
+            endColumn="16"
+            endOffset="4794"/>
+    </incident>
+
+    <incident
+        id="SmallSp"
+        severity="warning"
+        message="Avoid using sizes smaller than `11sp`: `10sp`">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_reports.xml"
+            line="215"
+            column="29"
+            startOffset="9742"
+            endLine="215"
+            endColumn="52"
+            endOffset="9765"/>
+    </incident>
+
+    <incident
+        id="SmallSp"
+        severity="warning"
+        message="Avoid using sizes smaller than `11sp`: `10sp`">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_reports.xml"
+            line="252"
+            column="29"
+            startOffset="11481"
+            endLine="252"
+            endColumn="52"
+            endOffset="11504"/>
+    </incident>
+
+    <incident
+        id="SmallSp"
+        severity="warning"
+        message="Avoid using sizes smaller than `11sp`: `10sp`">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_reports.xml"
+            line="288"
+            column="29"
+            startOffset="13163"
+            endLine="288"
+            endColumn="52"
+            endOffset="13186"/>
+    </incident>
+
+    <incident
+        id="SmallSp"
+        severity="warning"
+        message="Avoid using sizes smaller than `11sp`: `10sp`">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/item_customer.xml"
+            line="119"
+            column="17"
+            startOffset="4685"
+            endLine="119"
+            endColumn="40"
+            endOffset="4708"/>
+    </incident>
+
+    <incident
+        id="ContentDescription"
+        severity="warning"
+        message="Missing `contentDescription` attribute on image">
+        <fix-alternatives>
+            <fix-attribute
+                description="Set contentDescription"
+                namespace="http://schemas.android.com/apk/res/android"
+                attribute="contentDescription"
+                value="TODO"
+                point="4"
+                mark="0"/>
+            <fix-attribute
+                description="Set importantForAccessibility=&quot;no&quot;"
+                namespace="http://schemas.android.com/apk/res/android"
+                attribute="importantForAccessibility"
+                value="no"/>
+        </fix-alternatives>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_bill_list_new.xml"
+            line="59"
+            column="22"
+            startOffset="2458"
+            endLine="59"
+            endColumn="31"
+            endOffset="2467"/>
+    </incident>
+
+    <incident
+        id="ContentDescription"
+        severity="warning"
+        message="Missing `contentDescription` attribute on image">
+        <fix-alternatives>
+            <fix-attribute
+                description="Set contentDescription"
+                namespace="http://schemas.android.com/apk/res/android"
+                attribute="contentDescription"
+                value="TODO"
+                point="4"
+                mark="0"/>
+            <fix-attribute
+                description="Set importantForAccessibility=&quot;no&quot;"
+                namespace="http://schemas.android.com/apk/res/android"
+                attribute="importantForAccessibility"
+                value="no"/>
+        </fix-alternatives>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_customer_service_dashboard.xml"
+            line="81"
+            column="26"
+            startOffset="3476"
+            endLine="81"
+            endColumn="35"
+            endOffset="3485"/>
+    </incident>
+
+    <incident
+        id="ContentDescription"
+        severity="warning"
+        message="Missing `contentDescription` attribute on image">
+        <fix-alternatives>
+            <fix-attribute
+                description="Set contentDescription"
+                namespace="http://schemas.android.com/apk/res/android"
+                attribute="contentDescription"
+                value="TODO"
+                point="4"
+                mark="0"/>
+            <fix-attribute
+                description="Set importantForAccessibility=&quot;no&quot;"
+                namespace="http://schemas.android.com/apk/res/android"
+                attribute="importantForAccessibility"
+                value="no"/>
+        </fix-alternatives>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_dashboard.xml"
+            line="220"
+            column="18"
+            startOffset="9949"
+            endLine="220"
+            endColumn="27"
+            endOffset="9958"/>
+    </incident>
+
+    <incident
+        id="ContentDescription"
+        severity="warning"
+        message="Missing `contentDescription` attribute on image">
+        <fix-alternatives>
+            <fix-attribute
+                description="Set contentDescription"
+                namespace="http://schemas.android.com/apk/res/android"
+                attribute="contentDescription"
+                value="TODO"
+                point="4"
+                mark="0"/>
+            <fix-attribute
+                description="Set importantForAccessibility=&quot;no&quot;"
+                namespace="http://schemas.android.com/apk/res/android"
+                attribute="importantForAccessibility"
+                value="no"/>
+        </fix-alternatives>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_home.xml"
+            line="220"
+            column="18"
+            startOffset="9949"
+            endLine="220"
+            endColumn="27"
+            endOffset="9958"/>
+    </incident>
+
+    <incident
+        id="ContentDescription"
+        severity="warning"
+        message="Missing `contentDescription` attribute on image">
+        <fix-alternatives>
+            <fix-attribute
+                description="Set contentDescription"
+                namespace="http://schemas.android.com/apk/res/android"
+                attribute="contentDescription"
+                value="TODO"
+                point="4"
+                mark="0"/>
+            <fix-attribute
+                description="Set importantForAccessibility=&quot;no&quot;"
+                namespace="http://schemas.android.com/apk/res/android"
+                attribute="importantForAccessibility"
+                value="no"/>
+        </fix-alternatives>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_service_entry.xml"
+            line="107"
+            column="22"
+            startOffset="4753"
+            endLine="107"
+            endColumn="31"
+            endOffset="4762"/>
+    </incident>
+
+    <incident
+        id="ContentDescription"
+        severity="warning"
+        message="Missing `contentDescription` attribute on image">
+        <fix-alternatives>
+            <fix-attribute
+                description="Set contentDescription"
+                namespace="http://schemas.android.com/apk/res/android"
+                attribute="contentDescription"
+                value="TODO"
+                point="4"
+                mark="0"/>
+            <fix-attribute
+                description="Set importantForAccessibility=&quot;no&quot;"
+                namespace="http://schemas.android.com/apk/res/android"
+                attribute="importantForAccessibility"
+                value="no"/>
+        </fix-alternatives>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/bottomsheet_add_customer.xml"
+            line="28"
+            column="10"
+            startOffset="957"
+            endLine="28"
+            endColumn="19"
+            endOffset="966"/>
+    </incident>
+
+    <incident
+        id="ContentDescription"
+        severity="warning"
+        message="Missing `contentDescription` attribute on image">
+        <fix-alternatives>
+            <fix-attribute
+                description="Set contentDescription"
+                namespace="http://schemas.android.com/apk/res/android"
+                attribute="contentDescription"
+                value="TODO"
+                point="4"
+                mark="0"/>
+            <fix-attribute
+                description="Set importantForAccessibility=&quot;no&quot;"
+                namespace="http://schemas.android.com/apk/res/android"
+                attribute="importantForAccessibility"
+                value="no"/>
+        </fix-alternatives>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/bottomsheet_add_customer.xml"
+            line="48"
+            column="10"
+            startOffset="1622"
+            endLine="48"
+            endColumn="19"
+            endOffset="1631"/>
+    </incident>
+
+    <incident
+        id="ConstantLocale"
+        severity="warning"
+        message="Assigning `Locale.getDefault()` to a final static field is suspicious; this code will not work correctly if the user changes locale while the app is running">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/core/utils/DateUtils.java"
+            line="24"
+            column="105"
+            startOffset="785"
+            endLine="24"
+            endColumn="124"
+            endOffset="804"/>
+    </incident>
+
+    <incident
+        id="ConstantLocale"
+        severity="warning"
+        message="Assigning `Locale.getDefault()` to a final static field is suspicious; this code will not work correctly if the user changes locale while the app is running">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/core/utils/DateUtils.java"
+            line="27"
+            column="107"
+            startOffset="983"
+            endLine="27"
+            endColumn="126"
+            endOffset="1002"/>
+    </incident>
+
+    <incident
+        id="ConstantLocale"
+        severity="warning"
+        message="Assigning `Locale.getDefault()` to a final static field is suspicious; this code will not work correctly if the user changes locale while the app is running">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/core/utils/DateUtils.java"
+            line="30"
+            column="116"
+            startOffset="1191"
+            endLine="30"
+            endColumn="135"
+            endOffset="1210"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/billing/BillAdapter.java"
+            line="136"
+            column="42"
+            startOffset="5366"
+            endLine="136"
+            endColumn="54"
+            endOffset="5378"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/billing/BillAdapter.java"
+            line="141"
+            column="42"
+            startOffset="5725"
+            endLine="141"
+            endColumn="49"
+            endOffset="5732"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/billing/BillAdapter.java"
+            line="146"
+            column="42"
+            startOffset="6064"
+            endLine="146"
+            endColumn="51"
+            endOffset="6073"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/billing/BillAdapter.java"
+            line="151"
+            column="42"
+            startOffset="6354"
+            endLine="151"
+            endColumn="51"
+            endOffset="6363"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/billing/BillAdapter.java"
+            line="157"
+            column="42"
+            startOffset="6633"
+            endLine="157"
+            endColumn="50"
+            endOffset="6641"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/billing/BillAdapter.java"
+            line="158"
+            column="40"
+            startOffset="6683"
+            endLine="158"
+            endColumn="47"
+            endOffset="6690"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/billing/BillDetailActivity.java"
+            line="161"
+            column="42"
+            startOffset="5569"
+            endLine="161"
+            endColumn="60"
+            endOffset="5587"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/billing/BillDetailActivity.java"
+            line="272"
+            column="36"
+            startOffset="9851"
+            endLine="272"
+            endColumn="87"
+            endOffset="9902"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/billing/BillDetailActivity.java"
+            line="272"
+            column="36"
+            startOffset="9851"
+            endLine="272"
+            endColumn="49"
+            endOffset="9864"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/billing/BillDetailActivity.java"
+            line="272"
+            column="67"
+            startOffset="9882"
+            endLine="272"
+            endColumn="87"
+            endOffset="9902"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/billing/BillDetailActivity.java"
+            line="274"
+            column="36"
+            startOffset="9957"
+            endLine="274"
+            endColumn="96"
+            endOffset="10017"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/billing/BillDetailActivity.java"
+            line="274"
+            column="36"
+            startOffset="9957"
+            endLine="274"
+            endColumn="49"
+            endOffset="9970"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/billing/BillDetailActivity.java"
+            line="274"
+            column="67"
+            startOffset="9988"
+            endLine="274"
+            endColumn="82"
+            endOffset="10003"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/billing/BillDetailActivity.java"
+            line="281"
+            column="39"
+            startOffset="10294"
+            endLine="281"
+            endColumn="51"
+            endOffset="10306"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/billing/BillDetailActivity.java"
+            line="285"
+            column="38"
+            startOffset="10621"
+            endLine="285"
+            endColumn="53"
+            endOffset="10636"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/billing/BillDetailActivity.java"
+            line="287"
+            column="39"
+            startOffset="10741"
+            endLine="287"
+            endColumn="46"
+            endOffset="10748"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/billing/BillDetailActivity.java"
+            line="291"
+            column="38"
+            startOffset="11051"
+            endLine="291"
+            endColumn="51"
+            endOffset="11064"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/billing/BillDetailActivity.java"
+            line="293"
+            column="39"
+            startOffset="11166"
+            endLine="293"
+            endColumn="48"
+            endOffset="11175"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/billing/BillDetailActivity.java"
+            line="297"
+            column="38"
+            startOffset="11450"
+            endLine="297"
+            endColumn="54"
+            endOffset="11466"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/billing/BillDetailActivity.java"
+            line="299"
+            column="39"
+            startOffset="11524"
+            endLine="299"
+            endColumn="48"
+            endOffset="11533"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/billing/BillDetailActivity.java"
+            line="303"
+            column="38"
+            startOffset="11803"
+            endLine="303"
+            endColumn="54"
+            endOffset="11819"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/billing/BillDetailActivity.java"
+            line="309"
+            column="40"
+            startOffset="11997"
+            endLine="309"
+            endColumn="67"
+            endOffset="12024"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/billing/BillDetailActivity.java"
+            line="361"
+            column="40"
+            startOffset="14095"
+            endLine="361"
+            endColumn="77"
+            endOffset="14132"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/billing/BillDetailActivity.java"
+            line="373"
+            column="40"
+            startOffset="14489"
+            endLine="373"
+            endColumn="77"
+            endOffset="14526"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/billing/BillListActivity.java"
+            line="110"
+            column="35"
+            startOffset="3904"
+            endLine="110"
+            endColumn="57"
+            endOffset="3926"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/billing/BillListActivity.java"
+            line="113"
+            column="34"
+            startOffset="4066"
+            endLine="113"
+            endColumn="43"
+            endOffset="4075"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/billing/BillListActivity.java"
+            line="189"
+            column="47"
+            startOffset="6504"
+            endLine="189"
+            endColumn="67"
+            endOffset="6524"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/customer/ComplaintSupportActivity.java"
+            line="158"
+            column="53"
+            startOffset="4902"
+            endLine="158"
+            endColumn="85"
+            endOffset="4934"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/customer/ComplaintSupportActivity.java"
+            line="170"
+            column="53"
+            startOffset="5475"
+            endLine="170"
+            endColumn="110"
+            endOffset="5532"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/customer/ComplaintSupportActivity.java"
+            line="170"
+            column="53"
+            startOffset="5475"
+            endLine="170"
+            endColumn="68"
+            endOffset="5490"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/customer/ComplaintSupportActivity.java"
+            line="196"
+            column="45"
+            startOffset="6569"
+            endLine="196"
+            endColumn="73"
+            endOffset="6597"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/customer/ComplaintSupportActivity.java"
+            line="196"
+            column="45"
+            startOffset="6569"
+            endLine="196"
+            endColumn="58"
+            endOffset="6582"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/customer/ComplaintSupportActivity.java"
+            line="298"
+            column="27"
+            startOffset="10760"
+            endLine="298"
+            endColumn="90"
+            endOffset="10823"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/customer/ComplaintSupportActivity.java"
+            line="299"
+            column="30"
+            startOffset="10855"
+            endLine="299"
+            endColumn="128"
+            endOffset="10953"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/ui/CustomerDetailActivity.java"
+            line="153"
+            column="30"
+            startOffset="5546"
+            endLine="153"
+            endColumn="66"
+            endOffset="5582"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/ui/CustomerDetailActivity.java"
+            line="153"
+            column="59"
+            startOffset="5575"
+            endLine="153"
+            endColumn="66"
+            endOffset="5582"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/customer/CustomerHomeActivity.java"
+            line="506"
+            column="39"
+            startOffset="19349"
+            endLine="506"
+            endColumn="68"
+            endOffset="19378"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/customer/CustomerHomeActivity.java"
+            line="506"
+            column="39"
+            startOffset="19349"
+            endLine="506"
+            endColumn="49"
+            endOffset="19359"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/customer/CustomerServiceDashboardActivity.java"
+            line="342"
+            column="41"
+            startOffset="12452"
+            endLine="342"
+            endColumn="77"
+            endOffset="12488"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/customer/CustomerServiceDashboardActivity.java"
+            line="342"
+            column="41"
+            startOffset="12452"
+            endLine="342"
+            endColumn="47"
+            endOffset="12458"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/customer/CustomerServiceDashboardActivity.java"
+            line="377"
+            column="44"
+            startOffset="13771"
+            endLine="377"
+            endColumn="61"
+            endOffset="13788"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/customer/CustomerServiceDashboardActivity.java"
+            line="382"
+            column="44"
+            startOffset="14120"
+            endLine="382"
+            endColumn="63"
+            endOffset="14139"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/customer/CustomerServiceDashboardActivity.java"
+            line="384"
+            column="46"
+            startOffset="14246"
+            endLine="384"
+            endColumn="52"
+            endOffset="14252"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/dashboard/DashboardActivity.java"
+            line="895"
+            column="25"
+            startOffset="38755"
+            endLine="895"
+            endColumn="63"
+            endOffset="38793"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/dashboard/DashboardActivity.java"
+            line="905"
+            column="26"
+            startOffset="39205"
+            endLine="905"
+            endColumn="45"
+            endOffset="39224"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/dashboard/DashboardActivity.java"
+            line="916"
+            column="27"
+            startOffset="39685"
+            endLine="916"
+            endColumn="47"
+            endOffset="39705"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/dashboard/DashboardActivity.java"
+            line="920"
+            column="24"
+            startOffset="39843"
+            endLine="920"
+            endColumn="30"
+            endOffset="39849"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/dashboard/DashboardActivity.java"
+            line="927"
+            column="28"
+            startOffset="40177"
+            endLine="927"
+            endColumn="42"
+            endOffset="40191"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/dashboard/DashboardActivity.java"
+            line="943"
+            column="29"
+            startOffset="41056"
+            endLine="943"
+            endColumn="48"
+            endOffset="41075"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/payment/PaymentActivity.java"
+            line="138"
+            column="39"
+            startOffset="4662"
+            endLine="138"
+            endColumn="45"
+            endOffset="4668"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/payment/PaymentActivity.java"
+            line="175"
+            column="38"
+            startOffset="5878"
+            endLine="175"
+            endColumn="50"
+            endOffset="5890"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/payment/PaymentActivity.java"
+            line="179"
+            column="36"
+            startOffset="5972"
+            endLine="179"
+            endColumn="100"
+            endOffset="6036"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/payment/PaymentActivity.java"
+            line="179"
+            column="36"
+            startOffset="5972"
+            endLine="179"
+            endColumn="47"
+            endOffset="5983"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/payment/PaymentActivity.java"
+            line="181"
+            column="36"
+            startOffset="6091"
+            endLine="181"
+            endColumn="70"
+            endOffset="6125"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/payment/PaymentActivity.java"
+            line="239"
+            column="40"
+            startOffset="8665"
+            endLine="239"
+            endColumn="114"
+            endOffset="8739"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/payment/PaymentActivity.java"
+            line="239"
+            column="40"
+            startOffset="8665"
+            endLine="239"
+            endColumn="51"
+            endOffset="8676"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/payment/PaymentActivity.java"
+            line="332"
+            column="42"
+            startOffset="12405"
+            endLine="332"
+            endColumn="60"
+            endOffset="12423"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/provider/ProviderComplaintsActivity.java"
+            line="156"
+            column="27"
+            startOffset="5515"
+            endLine="156"
+            endColumn="57"
+            endOffset="5545"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/dashboard/ProviderDashboardActivity.java"
+            line="586"
+            column="47"
+            startOffset="24972"
+            endLine="586"
+            endColumn="70"
+            endOffset="24995"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/qr/QRCodeActivity.java"
+            line="107"
+            column="44"
+            startOffset="3605"
+            endLine="107"
+            endColumn="89"
+            endOffset="3650"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/qr/QRCodeActivity.java"
+            line="107"
+            column="44"
+            startOffset="3605"
+            endLine="107"
+            endColumn="50"
+            endOffset="3611"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/qr/QRCodeActivity.java"
+            line="115"
+            column="44"
+            startOffset="4153"
+            endLine="115"
+            endColumn="89"
+            endOffset="4198"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/qr/QRCodeActivity.java"
+            line="115"
+            column="44"
+            startOffset="4153"
+            endLine="115"
+            endColumn="50"
+            endOffset="4159"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/qr/QRCodeActivity.java"
+            line="126"
+            column="40"
+            startOffset="4781"
+            endLine="126"
+            endColumn="85"
+            endOffset="4826"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/qr/QRCodeActivity.java"
+            line="126"
+            column="40"
+            startOffset="4781"
+            endLine="126"
+            endColumn="46"
+            endOffset="4787"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/sales/ui/SalesPredictionActivity.java"
+            line="101"
+            column="41"
+            startOffset="4451"
+            endLine="101"
+            endColumn="102"
+            endOffset="4512"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/service/ServiceEntryActivity.java"
+            line="174"
+            column="38"
+            startOffset="6376"
+            endLine="174"
+            endColumn="58"
+            endOffset="6396"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/service/ServiceEntryActivity.java"
+            line="174"
+            column="38"
+            startOffset="6376"
+            endLine="174"
+            endColumn="48"
+            endOffset="6386"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/service/ServiceEntryActivity.java"
+            line="501"
+            column="33"
+            startOffset="18311"
+            endLine="501"
+            endColumn="52"
+            endOffset="18330"/>
+    </incident>
+
+    <incident
+        id="SetTextI18n"
+        severity="warning"
+        message="String literal in `setText` can not be translated. Use Android resources instead.">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*javaDir*0}/com/dailyserviceapp/service/ServiceEntryActivity.java"
+            line="502"
+            column="67"
+            startOffset="18399"
+            endLine="502"
+            endColumn="82"
+            endOffset="18414"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Complaint &amp; Support&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_complaint_support.xml"
+            line="21"
+            column="13"
+            startOffset="927"
+            endLine="21"
+            endColumn="52"
+            endOffset="966"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Linked to: Service Provider&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_complaint_support.xml"
+            line="59"
+            column="25"
+            startOffset="2494"
+            endLine="59"
+            endColumn="67"
+            endOffset="2536"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Raise a Complaint&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_complaint_support.xml"
+            line="95"
+            column="25"
+            startOffset="4153"
+            endLine="95"
+            endColumn="57"
+            endOffset="4185"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Subject&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_complaint_support.xml"
+            line="110"
+            column="25"
+            startOffset="4902"
+            endLine="110"
+            endColumn="47"
+            endOffset="4924"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Describe your issue&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_complaint_support.xml"
+            line="125"
+            column="25"
+            startOffset="5672"
+            endLine="125"
+            endColumn="59"
+            endOffset="5706"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Submit Ticket&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_complaint_support.xml"
+            line="145"
+            column="25"
+            startOffset="6728"
+            endLine="145"
+            endColumn="53"
+            endOffset="6756"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;My Tickets&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_complaint_support.xml"
+            line="168"
+            column="25"
+            startOffset="7631"
+            endLine="168"
+            endColumn="50"
+            endOffset="7656"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;No complaints yet. Submit your first ticket below.&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_complaint_support.xml"
+            line="178"
+            column="25"
+            startOffset="8115"
+            endLine="178"
+            endColumn="90"
+            endOffset="8180"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;ACTIVE&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_customer_service_dashboard.xml"
+            line="129"
+            column="25"
+            startOffset="5933"
+            endLine="129"
+            endColumn="46"
+            endOffset="5954"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Today&apos;s Service&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_customer_service_dashboard.xml"
+            line="158"
+            column="25"
+            startOffset="7160"
+            endLine="158"
+            endColumn="55"
+            endOffset="7190"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;0&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_customer_service_dashboard.xml"
+            line="198"
+            column="33"
+            startOffset="9205"
+            endLine="198"
+            endColumn="49"
+            endOffset="9221"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;0.00&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_customer_service_dashboard.xml"
+            line="223"
+            column="33"
+            startOffset="10457"
+            endLine="223"
+            endColumn="52"
+            endOffset="10476"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;₹0.00&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_customer_service_dashboard.xml"
+            line="248"
+            column="33"
+            startOffset="11708"
+            endLine="248"
+            endColumn="53"
+            endOffset="11728"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Billing&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_customer_service_dashboard.xml"
+            line="288"
+            column="29"
+            startOffset="13340"
+            endLine="288"
+            endColumn="51"
+            endOffset="13362"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;₹0.00&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_customer_service_dashboard.xml"
+            line="306"
+            column="29"
+            startOffset="14298"
+            endLine="306"
+            endColumn="49"
+            endOffset="14318"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;₹0.00&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_customer_service_dashboard.xml"
+            line="324"
+            column="29"
+            startOffset="15237"
+            endLine="324"
+            endColumn="49"
+            endOffset="15257"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Payment Status&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_customer_service_dashboard.xml"
+            line="353"
+            column="29"
+            startOffset="16506"
+            endLine="353"
+            endColumn="58"
+            endOffset="16535"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;₹0.00&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_customer_service_dashboard.xml"
+            line="371"
+            column="29"
+            startOffset="17457"
+            endLine="371"
+            endColumn="49"
+            endOffset="17477"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;₹0.00&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_customer_service_dashboard.xml"
+            line="407"
+            column="29"
+            startOffset="19376"
+            endLine="407"
+            endColumn="49"
+            endOffset="19396"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;0&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_provider_complaints.xml"
+            line="103"
+            column="33"
+            startOffset="4644"
+            endLine="103"
+            endColumn="49"
+            endOffset="4660"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;0&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_provider_complaints.xml"
+            line="128"
+            column="33"
+            startOffset="5931"
+            endLine="128"
+            endColumn="49"
+            endOffset="5947"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;0&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_provider_complaints.xml"
+            line="153"
+            column="33"
+            startOffset="7213"
+            endLine="153"
+            endColumn="49"
+            endOffset="7229"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Today Snapshot&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_provider_dashboard.xml"
+            line="64"
+            column="29"
+            startOffset="2790"
+            endLine="64"
+            endColumn="58"
+            endOffset="2819"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Delivered&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_provider_dashboard.xml"
+            line="86"
+            column="37"
+            startOffset="3932"
+            endLine="86"
+            endColumn="61"
+            endOffset="3956"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;0 / 0&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_provider_dashboard.xml"
+            line="95"
+            column="37"
+            startOffset="4476"
+            endLine="95"
+            endColumn="57"
+            endOffset="4496"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Today Earnings&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_provider_dashboard.xml"
+            line="112"
+            column="37"
+            startOffset="5330"
+            endLine="112"
+            endColumn="66"
+            endOffset="5359"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;₹0.00&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_provider_dashboard.xml"
+            line="121"
+            column="37"
+            startOffset="5878"
+            endLine="121"
+            endColumn="57"
+            endOffset="5898"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Payment Overview&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_provider_dashboard.xml"
+            line="167"
+            column="33"
+            startOffset="7923"
+            endLine="167"
+            endColumn="64"
+            endOffset="7954"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Total Lent&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_provider_dashboard.xml"
+            line="176"
+            column="33"
+            startOffset="8422"
+            endLine="176"
+            endColumn="58"
+            endOffset="8447"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;₹0.00&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_provider_dashboard.xml"
+            line="185"
+            column="33"
+            startOffset="8911"
+            endLine="185"
+            endColumn="53"
+            endOffset="8931"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Total Received&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_provider_dashboard.xml"
+            line="194"
+            column="33"
+            startOffset="9398"
+            endLine="194"
+            endColumn="62"
+            endOffset="9427"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;₹0.00&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_provider_dashboard.xml"
+            line="203"
+            column="33"
+            startOffset="9895"
+            endLine="203"
+            endColumn="53"
+            endOffset="9915"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Pending&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_provider_dashboard.xml"
+            line="212"
+            column="33"
+            startOffset="10370"
+            endLine="212"
+            endColumn="55"
+            endOffset="10392"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;₹0.00&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_provider_dashboard.xml"
+            line="221"
+            column="33"
+            startOffset="10860"
+            endLine="221"
+            endColumn="53"
+            endOffset="10880"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;This Month&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_provider_dashboard.xml"
+            line="250"
+            column="33"
+            startOffset="12237"
+            endLine="250"
+            endColumn="58"
+            endOffset="12262"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Earnings&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_provider_dashboard.xml"
+            line="259"
+            column="33"
+            startOffset="12730"
+            endLine="259"
+            endColumn="56"
+            endOffset="12753"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;₹0.00&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_provider_dashboard.xml"
+            line="268"
+            column="33"
+            startOffset="13223"
+            endLine="268"
+            endColumn="53"
+            endOffset="13243"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Deliveries&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_provider_dashboard.xml"
+            line="277"
+            column="33"
+            startOffset="13698"
+            endLine="277"
+            endColumn="58"
+            endOffset="13723"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;0&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_provider_dashboard.xml"
+            line="286"
+            column="33"
+            startOffset="14195"
+            endLine="286"
+            endColumn="49"
+            endOffset="14211"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Quick Actions&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_provider_dashboard.xml"
+            line="322"
+            column="29"
+            startOffset="15811"
+            endLine="322"
+            endColumn="57"
+            endOffset="15839"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Jump into common tasks in one tap&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_provider_dashboard.xml"
+            line="331"
+            column="29"
+            startOffset="16274"
+            endLine="331"
+            endColumn="77"
+            endOffset="16322"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Revenue&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_reports.xml"
+            line="132"
+            column="29"
+            startOffset="5953"
+            endLine="132"
+            endColumn="51"
+            endOffset="5975"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Deliveries&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_reports.xml"
+            line="168"
+            column="29"
+            startOffset="7639"
+            endLine="168"
+            endColumn="54"
+            endOffset="7664"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Customers&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_reports.xml"
+            line="213"
+            column="29"
+            startOffset="9620"
+            endLine="213"
+            endColumn="53"
+            endOffset="9644"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Payments&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_reports.xml"
+            line="250"
+            column="29"
+            startOffset="11360"
+            endLine="250"
+            endColumn="52"
+            endOffset="11383"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Overdue&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_reports.xml"
+            line="286"
+            column="29"
+            startOffset="13043"
+            endLine="286"
+            endColumn="51"
+            endOffset="13065"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Revenue Insights&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_reports.xml"
+            line="332"
+            column="29"
+            startOffset="15063"
+            endLine="332"
+            endColumn="60"
+            endOffset="15094"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Bar&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_reports.xml"
+            line="351"
+            column="33"
+            startOffset="16188"
+            endLine="351"
+            endColumn="51"
+            endOffset="16206"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Pie&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_reports.xml"
+            line="361"
+            column="33"
+            startOffset="16780"
+            endLine="361"
+            endColumn="51"
+            endOffset="16798"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;30-Day Outlook&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_sales_prediction.xml"
+            line="49"
+            column="25"
+            startOffset="1972"
+            endLine="49"
+            endColumn="54"
+            endOffset="2001"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Est. Total Quantity&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_sales_prediction.xml"
+            line="66"
+            column="33"
+            startOffset="2834"
+            endLine="66"
+            endColumn="67"
+            endOffset="2868"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Loading...&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_sales_prediction.xml"
+            line="72"
+            column="33"
+            startOffset="3230"
+            endLine="72"
+            endColumn="58"
+            endOffset="3255"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Est. Total Revenue&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_sales_prediction.xml"
+            line="86"
+            column="33"
+            startOffset="3994"
+            endLine="86"
+            endColumn="66"
+            endOffset="4027"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Loading...&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_sales_prediction.xml"
+            line="92"
+            column="33"
+            startOffset="4388"
+            endLine="92"
+            endColumn="58"
+            endOffset="4413"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Category Breakdown&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_sales_prediction.xml"
+            line="105"
+            column="17"
+            startOffset="4950"
+            endLine="105"
+            endColumn="50"
+            endOffset="4983"/>
+    </incident>
+
+    <incident
+        id="HardcodedText"
+        severity="warning"
+        message="Hardcoded string &quot;Connecting to ML Server...&quot;, should use `@string` resource">
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/layout/activity_sales_prediction.xml"
+            line="113"
+            column="17"
+            startOffset="5306"
+            endLine="113"
+            endColumn="58"
+            endOffset="5347"/>
+    </incident>
+
+</incidents>

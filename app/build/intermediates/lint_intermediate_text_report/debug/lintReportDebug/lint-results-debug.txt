@@ -1,0 +1,1361 @@
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/sales/ui/SalesPredictionActivity.java:86: Warning: Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead [DefaultLocale]
+        tvTotalQuantity.setText(String.format("%.1f units", data.getOverallPredictedQuantity()));
+                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "DefaultLocale":
+   Calling String#toLowerCase() or #toUpperCase() without specifying an
+   explicit locale is a common source of bugs. The reason for that is that
+   those methods will use the current locale on the user's device, and even
+   though the code appears to work correctly when you are developing the app,
+   it will fail in some locales. For example, in the Turkish locale, the
+   uppercase replacement for i is not I.
+
+   If you want the methods to just perform ASCII replacement, for example to
+   convert an enum name, call String#toUpperCase(Locale.ROOT) instead. If you
+   really want to use the current locale, call
+   String#toUpperCase(Locale.getDefault()) instead.
+
+   https://developer.android.com/reference/java/util/Locale.html#default_locale
+
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/build.gradle:14: Warning: Not targeting the latest versions of Android; compatibility modes apply. Consider testing and updating this version. Consult the android.os.Build.VERSION_CODES javadoc for details. [OldTargetApi]
+        targetSdk 35
+        ~~~~~~~~~~~~
+
+   Explanation for issues of type "OldTargetApi":
+   When your application or sdk runs on a version of Android that is more
+   recent than your targetSdkVersion specifies that it has been tested with,
+   various compatibility modes kick in. This ensures that your application
+   continues to work, but it may look out of place. For example, if the
+   targetSdkVersion is less than 14, your app may get an option button in the
+   UI.
+
+   To fix this issue, set the targetSdkVersion to the highest available value.
+   Then test your app to make sure everything works correctly. You may want to
+   consult the compatibility notes to see what changes apply to each version
+   you are adding support for:
+   https://developer.android.com/reference/android/os/Build.VERSION_CODES.html
+   as well as follow this guide:
+   https://developer.android.com/distribute/best-practices/develop/target-sdk.
+   html
+
+   https://developer.android.com/distribute/best-practices/develop/target-sdk.html
+
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/SplashActivity.java:34: Warning: The application should not provide its own launch screen [CustomSplashScreen]
+public class SplashActivity extends AppCompatActivity {
+             ~~~~~~~~~~~~~~
+
+   Explanation for issues of type "CustomSplashScreen":
+   Starting in Android 12 (API 31+), the application's Launch Screen is
+   provided by the system and the application should not create its own,
+   otherwise the user will see two splashscreens. Please check the
+   SplashScreen class to check how the Splash Screen can be controlled and
+   customized.
+
+   https://developer.android.com/guide/topics/ui/splash-screen
+
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/build.gradle:9: Warning: A newer version of compileSdkVersion than 35 is available: 36 [GradleDependency]
+    compileSdk 35
+    ~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/build.gradle:45: Warning: A newer version of com.android.tools:desugar_jdk_libs than 2.0.4 is available: 2.1.5 [GradleDependency]
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.4'
+                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/build.gradle:48: Warning: A newer version of androidx.appcompat:appcompat than 1.7.0 is available: 1.7.1 [GradleDependency]
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/build.gradle:49: Warning: A newer version of com.google.android.material:material than 1.12.0 is available: 1.13.0 [GradleDependency]
+    implementation 'com.google.android.material:material:1.12.0'
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/build.gradle:50: Warning: A newer version of androidx.constraintlayout:constraintlayout than 2.2.0 is available: 2.2.1 [GradleDependency]
+    implementation 'androidx.constraintlayout:constraintlayout:2.2.0'
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/build.gradle:51: Warning: A newer version of androidx.recyclerview:recyclerview than 1.3.2 is available: 1.4.0 [GradleDependency]
+    implementation 'androidx.recyclerview:recyclerview:1.3.2'
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/build.gradle:53: Warning: A newer version of androidx.swiperefreshlayout:swiperefreshlayout than 1.1.0 is available: 1.2.0 [GradleDependency]
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/build.gradle:56: Warning: A newer version of androidx.lifecycle:lifecycle-viewmodel than 2.8.7 is available: 2.10.0 [GradleDependency]
+    implementation 'androidx.lifecycle:lifecycle-viewmodel:2.8.7'
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/build.gradle:57: Warning: A newer version of androidx.lifecycle:lifecycle-livedata than 2.8.7 is available: 2.10.0 [GradleDependency]
+    implementation 'androidx.lifecycle:lifecycle-livedata:2.8.7'
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/build.gradle:58: Warning: A newer version of androidx.lifecycle:lifecycle-runtime than 2.8.7 is available: 2.10.0 [GradleDependency]
+    implementation 'androidx.lifecycle:lifecycle-runtime:2.8.7'
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/build.gradle:59: Warning: A newer version of androidx.lifecycle:lifecycle-common-java8 than 2.8.7 is available: 2.10.0 [GradleDependency]
+    implementation 'androidx.lifecycle:lifecycle-common-java8:2.8.7'
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/build.gradle:62: Warning: A newer version of androidx.navigation:navigation-fragment than 2.8.5 is available: 2.9.7 [GradleDependency]
+    implementation 'androidx.navigation:navigation-fragment:2.8.5'
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/build.gradle:63: Warning: A newer version of androidx.navigation:navigation-ui than 2.8.5 is available: 2.9.7 [GradleDependency]
+    implementation 'androidx.navigation:navigation-ui:2.8.5'
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/build.gradle:66: Warning: A newer version of androidx.room:room-runtime than 2.6.1 is available: 2.8.4 [GradleDependency]
+    implementation 'androidx.room:room-runtime:2.6.1'
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/build.gradle:67: Warning: A newer version of androidx.room:room-compiler than 2.6.1 is available: 2.8.4 [GradleDependency]
+    annotationProcessor 'androidx.room:room-compiler:2.6.1'
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/build.gradle:70: Warning: A newer version of androidx.work:work-runtime than 2.9.1 is available: 2.11.1 [GradleDependency]
+    implementation 'androidx.work:work-runtime:2.9.1'
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/build.gradle:73: Warning: A newer version of androidx.paging:paging-runtime than 3.2.1 is available: 3.4.2 [GradleDependency]
+    implementation 'androidx.paging:paging-runtime:3.2.1'
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/build.gradle:76: Warning: A newer version of com.google.firebase:firebase-bom than 33.7.0 is available: 34.11.0 [GradleDependency]
+    implementation platform('com.google.firebase:firebase-bom:33.7.0')
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/build.gradle:85: Warning: A newer version of com.google.android.gms:play-services-auth than 21.0.0 is available: 21.5.1 [GradleDependency]
+    implementation 'com.google.android.gms:play-services-auth:21.0.0'
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/build.gradle:102: Warning: A newer version of androidx.dynamicanimation:dynamicanimation than 1.0.0 is available: 1.1.0 [GradleDependency]
+    implementation 'androidx.dynamicanimation:dynamicanimation:1.0.0'
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/build.gradle:118: Warning: A newer version of androidx.test.ext:junit than 1.2.1 is available: 1.3.0 [GradleDependency]
+    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
+                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/build.gradle:119: Warning: A newer version of androidx.test.espresso:espresso-core than 3.6.1 is available: 3.7.0 [GradleDependency]
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
+                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "GradleDependency":
+   This detector looks for usages of libraries where the version you are using
+   is not the current stable release. Using older versions is fine, and there
+   are cases where you deliberately want to stick with an older version.
+   However, you may simply not be aware that a more recent version is
+   available, and that is what this lint check helps find.
+
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/build.gradle:88: Warning: A newer version of com.itextpdf:itext7-core than 7.2.5 is available: 9.5.0 [NewerVersionAvailable]
+    implementation 'com.itextpdf:itext7-core:7.2.5'
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/build.gradle:94: Warning: A newer version of com.github.bumptech.glide:glide than 4.16.0 is available: 5.0.5 [NewerVersionAvailable]
+    implementation 'com.github.bumptech.glide:glide:4.16.0'
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/build.gradle:95: Warning: A newer version of com.github.bumptech.glide:compiler than 4.16.0 is available: 5.0.5 [NewerVersionAvailable]
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.16.0'
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/build.gradle:98: Warning: A newer version of com.jakewharton.threetenabp:threetenabp than 1.4.6 is available: 1.4.9 [NewerVersionAvailable]
+    implementation 'com.jakewharton.threetenabp:threetenabp:1.4.6'
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/build.gradle:105: Warning: A newer version of com.google.zxing:core than 3.5.3 is available: 3.5.4 [NewerVersionAvailable]
+    implementation 'com.google.zxing:core:3.5.3'
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/build.gradle:109: Warning: A newer version of com.google.code.gson:gson than 2.10.1 is available: 2.13.2 [NewerVersionAvailable]
+    implementation 'com.google.code.gson:gson:2.10.1'
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/build.gradle:112: Warning: A newer version of com.squareup.retrofit2:retrofit than 2.9.0 is available: 3.0.0 [NewerVersionAvailable]
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/build.gradle:113: Warning: A newer version of com.squareup.retrofit2:converter-gson than 2.9.0 is available: 3.0.0 [NewerVersionAvailable]
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/build.gradle:117: Warning: A newer version of org.mockito:mockito-core than 5.8.0 is available: 5.23.0 [NewerVersionAvailable]
+    testImplementation 'org.mockito:mockito-core:5.8.0'
+                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "NewerVersionAvailable":
+   This detector checks with a central repository to see if there are newer
+   versions available for the dependencies used by this project. This is
+   similar to the GradleDependency check, which checks for newer versions
+   available in the Android SDK tools and libraries, but this works with any
+   MavenCentral dependency, and connects to the library every time, which
+   makes it more flexible but also much slower.
+
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_customer_home.xml:69: Warning: Use app:drawableStartCompat instead of android:drawableStart [UseCompatTextViewDrawableXml from androidx.appcompat]
+                        android:drawableStart="@drawable/ic_nav_qr"
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_customer_home.xml:71: Warning: Use app:drawableTint instead of android:drawableTint [UseCompatTextViewDrawableXml from androidx.appcompat]
+                        android:drawableTint="@color/md_theme_primary"
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_customer_home.xml:160: Warning: Use app:drawableStartCompat instead of android:drawableStart [UseCompatTextViewDrawableXml from androidx.appcompat]
+                        android:drawableStart="@drawable/ic_nav_profile"
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_customer_home.xml:162: Warning: Use app:drawableTint instead of android:drawableTint [UseCompatTextViewDrawableXml from androidx.appcompat]
+                        android:drawableTint="@color/md_theme_on_primary_container"
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_customer_home.xml:239: Warning: Use app:drawableStartCompat instead of android:drawableStart [UseCompatTextViewDrawableXml from androidx.appcompat]
+                        android:drawableStart="@drawable/ic_nav_reports"
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_customer_home.xml:241: Warning: Use app:drawableTint instead of android:drawableTint [UseCompatTextViewDrawableXml from androidx.appcompat]
+                        android:drawableTint="@color/md_theme_primary"
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/item_area_header.xml:21: Warning: Use app:drawableStartCompat instead of android:drawableStart [UseCompatTextViewDrawableXml from androidx.appcompat]
+        android:drawableStart="@drawable/ic_location_24"
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/item_area_header.xml:23: Warning: Use app:drawableTint instead of android:drawableTint [UseCompatTextViewDrawableXml from androidx.appcompat]
+        android:drawableTint="@color/md_theme_primary" />
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "UseCompatTextViewDrawableXml":
+   TextView uses android: compound drawable attributes instead of app: ones
+
+   Vendor: Android Open Source Project
+   Identifier: androidx.appcompat
+   Feedback: https://issuetracker.google.com/issues/new?component=460343
+
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:49: Warning: Formatting %d followed by words ("delivered"): This should probably be a plural rather than a string [PluralsCandidate]
+    <string name="delivered_format">%1$d/%2$d delivered</string>
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:356: Warning: Formatting %d followed by words ("customers"): This should probably be a plural rather than a string [PluralsCandidate]
+    <string name="test_generated">✅ Generated %1$d customers and %2$d service entries</string>
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "PluralsCandidate":
+   This lint check looks for potential errors in internationalization where
+   you have translated a message which involves a quantity and it looks like
+   other parts of the string may need grammatical changes.
+
+   For example, rather than something like this:
+     <string name="try_again">Try again in %d seconds.</string>
+   you should be using a plural:
+      <plurals name="try_again">
+           <item quantity="one">Try again in %d second</item>
+           <item quantity="other">Try again in %d seconds</item>
+       </plurals>
+   This will ensure that in other languages the right set of translations are
+   provided for the different quantity classes.
+
+   (This check depends on some heuristics, so it may not accurately determine
+   whether a string really should be a quantity. You can use tools:ignore to
+   filter out false positives.
+
+   https://developer.android.com/guide/topics/resources/string-resource.html#Plurals
+
+/Users/ghoriommukeshbai/.gradle/caches/modules-2/files-2.1/org.bouncycastle/bcpkix-jdk15on/1.70/f81e5af49571a9d5a109a88f239a73ce87055417/bcpkix-jdk15on-1.70.jar: Warning: checkClientTrusted is empty, which could cause insecure network traffic due to trusting arbitrary TLS/SSL certificates presented by peers [TrustAllX509TrustManager]
+/Users/ghoriommukeshbai/.gradle/caches/modules-2/files-2.1/org.bouncycastle/bcpkix-jdk15on/1.70/f81e5af49571a9d5a109a88f239a73ce87055417/bcpkix-jdk15on-1.70.jar: Warning: checkClientTrusted is empty, which could cause insecure network traffic due to trusting arbitrary TLS/SSL certificates presented by peers [TrustAllX509TrustManager]
+/Users/ghoriommukeshbai/.gradle/caches/modules-2/files-2.1/org.bouncycastle/bcpkix-jdk15on/1.70/f81e5af49571a9d5a109a88f239a73ce87055417/bcpkix-jdk15on-1.70.jar: Warning: checkServerTrusted is empty, which could cause insecure network traffic due to trusting arbitrary TLS/SSL certificates presented by peers [TrustAllX509TrustManager]
+
+   Explanation for issues of type "TrustAllX509TrustManager":
+   This check looks for X509TrustManager implementations whose
+   checkServerTrusted or checkClientTrusted methods do nothing (thus trusting
+   any certificate chain) which could result in insecure network traffic
+   caused by trusting arbitrary TLS/SSL certificates presented by peers.
+
+   https://goo.gle/TrustAllX509TrustManager
+
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/debug/AndroidManifest.xml:5: Warning: Exported receiver does not require permission [ExportedReceiver]
+        <receiver
+         ~~~~~~~~
+
+   Explanation for issues of type "ExportedReceiver":
+   Exported receivers (receivers which either set exported=true or contain an
+   intent-filter and do not specify exported=false) should define a permission
+   that an entity must have in order to launch the receiver or bind to it.
+   Without this, any application can use this receiver.
+
+   https://goo.gle/ExportedReceiver
+
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/provider/JoinRequestAdapter.java:39: Warning: It will always be more efficient to use more specific change events if you can. Rely on notifyDataSetChanged as a last resort. [NotifyDataSetChanged]
+        notifyDataSetChanged();
+        ~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/service/ServiceEntryAdapter.java:342: Warning: It will always be more efficient to use more specific change events if you can. Rely on notifyDataSetChanged as a last resort. [NotifyDataSetChanged]
+        notifyDataSetChanged();
+        ~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/service/ServiceEntryAdapter.java:356: Warning: It will always be more efficient to use more specific change events if you can. Rely on notifyDataSetChanged as a last resort. [NotifyDataSetChanged]
+        notifyDataSetChanged();
+        ~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "NotifyDataSetChanged":
+   The RecyclerView adapter's onNotifyDataSetChanged method does not specify
+   what about the data set has changed, forcing any observers to assume that
+   all existing items and structure may no longer be valid. `LayoutManager`s
+   will be forced to fully rebind and relayout all visible views.
+
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/core/utils/NetworkMonitor.java:79: Warning: Unnecessary; SDK_INT is always >= 24 [ObsoleteSdkInt]
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/core/utils/NetworkMonitor.java:102: Warning: Unnecessary; SDK_INT is always >= 24 [ObsoleteSdkInt]
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/core/utils/NetworkMonitor.java:117: Warning: Unnecessary; SDK_INT is always >= 24 [ObsoleteSdkInt]
+        if (networkCallback != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "ObsoleteSdkInt":
+   This check flags version checks that are not necessary, because the
+   minSdkVersion (or surrounding known API level) is already at least as high
+   as the version checked for.
+
+   Similarly, it also looks for resources in -vNN folders, such as values-v14
+   where the version qualifier is less than or equal to the minSdkVersion,
+   where the contents should be merged into the best folder.
+
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_bill_list.xml:18: Warning: This tag and its children can be replaced by one <TextView/> and a compound drawable [UseCompoundDrawables]
+        <LinearLayout
+         ~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_notification_list.xml:18: Warning: This tag and its children can be replaced by one <TextView/> and a compound drawable [UseCompoundDrawables]
+        <LinearLayout
+         ~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_payment.xml:18: Warning: This tag and its children can be replaced by one <TextView/> and a compound drawable [UseCompoundDrawables]
+        <LinearLayout
+         ~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_qr_code.xml:147: Warning: This tag and its children can be replaced by one <TextView/> and a compound drawable [UseCompoundDrawables]
+                <LinearLayout
+                 ~~~~~~~~~~~~
+
+   Explanation for issues of type "UseCompoundDrawables":
+   A LinearLayout which contains an ImageView and a TextView can be more
+   efficiently handled as a compound drawable (a single TextView, using the
+   drawableTop, drawableLeft, drawableRight and/or drawableBottom attributes
+   to draw one or more images adjacent to the text).
+
+   If the two widgets are offset from each other with margins, this can be
+   replaced with a drawablePadding attribute.
+
+   There's a lint quickfix to perform this conversion in the Eclipse plugin.
+
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_customer_detail.xml:196: Warning: Set android:baselineAligned="false" on this element for better performance [DisableBaselineAlignment]
+                    <LinearLayout
+                     ~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_customer_service_dashboard.xml:173: Warning: Set android:baselineAligned="false" on this element for better performance [DisableBaselineAlignment]
+                    <LinearLayout
+                     ~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_provider_complaints.xml:78: Warning: Set android:baselineAligned="false" on this element for better performance [DisableBaselineAlignment]
+                    <LinearLayout
+                     ~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_provider_dashboard.xml:69: Warning: Set android:baselineAligned="false" on this element for better performance [DisableBaselineAlignment]
+                        <LinearLayout
+                         ~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_sales_prediction.xml:52: Warning: Set android:baselineAligned="false" on this element for better performance [DisableBaselineAlignment]
+                    <LinearLayout
+                     ~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/bottomsheet_add_customer.xml:142: Warning: Set android:baselineAligned="false" on this element for better performance [DisableBaselineAlignment]
+    <LinearLayout
+     ~~~~~~~~~~~~
+
+   Explanation for issues of type "DisableBaselineAlignment":
+   When a LinearLayout is used to distribute the space proportionally between
+   nested layouts, the baseline alignment property should be turned off to
+   make the layout computation faster.
+
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_sales_prediction.xml:7: Warning: Possible overdraw: Root element paints background ?android:attr/windowBackground with a theme that also paints a background (inferred theme is @style/Theme_DailyServiceApp_NoActionBar) [Overdraw]
+    android:background="?android:attr/windowBackground">
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/bottomsheet_add_customer.xml:9: Warning: Possible overdraw: Root element paints background @color/md_theme_surface with a theme that also paints a background (inferred theme is @style/Theme.DailyServiceApp) [Overdraw]
+    android:background="@color/md_theme_surface">
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/dialog_add_product.xml:7: Warning: Possible overdraw: Root element paints background @color/md_theme_surface with a theme that also paints a background (inferred theme is @style/Theme.DailyServiceApp) [Overdraw]
+    android:background="@color/md_theme_surface">
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/item_area_header.xml:10: Warning: Possible overdraw: Root element paints background @color/md_theme_surface_variant with a theme that also paints a background (inferred theme is @style/Theme.DailyServiceApp) [Overdraw]
+    android:background="@color/md_theme_surface_variant">
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "Overdraw":
+   If you set a background drawable on a root view, then you should use a
+   custom theme where the theme background is null. Otherwise, the theme
+   background will be painted first, only to have your custom background
+   completely cover it; this is called "overdraw".
+
+   NOTE: This detector relies on figuring out which layouts are associated
+   with which activities based on scanning the Java code, and it's currently
+   doing that using an inexact pattern matching algorithm. Therefore, it can
+   incorrectly conclude which activity the layout is associated with and then
+   wrongly complain that a background-theme is hidden.
+
+   If you want your custom background on multiple pages, then you should
+   consider making a custom theme with your custom background and just using
+   that theme instead of a root element background.
+
+   Of course it's possible that your custom drawable is translucent and you
+   want it to be mixed with the background. However, you will get better
+   performance if you pre-mix the background with your drawable and use that
+   resulting image or color as a custom theme background instead.
+
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_bill_list.xml:2: Warning: The resource R.layout.activity_bill_list appears to be unused [UnusedResources]
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+^
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_dashboard.xml:2: Warning: The resource R.layout.activity_dashboard appears to be unused [UnusedResources]
+<androidx.drawerlayout.widget.DrawerLayout
+^
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_payment.xml:2: Warning: The resource R.layout.activity_payment appears to be unused [UnusedResources]
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+^
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/drawable/bg_card_gradient_products.xml:2: Warning: The resource R.drawable.bg_card_gradient_products appears to be unused [UnusedResources]
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+^
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/drawable/bg_circle_minimal.xml:2: Warning: The resource R.drawable.bg_circle_minimal appears to be unused [UnusedResources]
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+^
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/drawable/bg_success_pill.xml:2: Warning: The resource R.drawable.bg_success_pill appears to be unused [UnusedResources]
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+^
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/bottomsheet_add_customer.xml:2: Warning: The resource R.layout.bottomsheet_add_customer appears to be unused [UnusedResources]
+<LinearLayout
+^
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/colors.xml:4: Warning: The resource R.color.brand_teal_500 appears to be unused [UnusedResources]
+    <color name="brand_teal_500">#4DB6AC</color>
+           ~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/colors.xml:5: Warning: The resource R.color.brand_teal_700 appears to be unused [UnusedResources]
+    <color name="brand_teal_700">#00897B</color>
+           ~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/colors.xml:6: Warning: The resource R.color.brand_green_500 appears to be unused [UnusedResources]
+    <color name="brand_green_500">#66BB6A</color>
+           ~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/colors.xml:8: Warning: The resource R.color.brand_amber_500 appears to be unused [UnusedResources]
+    <color name="brand_amber_500">#FFA726</color>
+           ~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/colors.xml:9: Warning: The resource R.color.brand_ink_900 appears to be unused [UnusedResources]
+    <color name="brand_ink_900">#1C1B1F</color>
+           ~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/colors.xml:10: Warning: The resource R.color.brand_ink_600 appears to be unused [UnusedResources]
+    <color name="brand_ink_600">#49454F</color>
+           ~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/colors.xml:25: Warning: The resource R.color.md_theme_surface_raised appears to be unused [UnusedResources]
+    <color name="md_theme_surface_raised">#F3FAF9</color>
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/colors.xml:26: Warning: The resource R.color.md_theme_surface_tint appears to be unused [UnusedResources]
+    <color name="md_theme_surface_tint">#E8F6F4</color>
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/colors.xml:35: Warning: The resource R.color.icon_default appears to be unused [UnusedResources]
+    <color name="icon_default">#2E5F5A</color>
+           ~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/colors.xml:40: Warning: The resource R.color.md_theme_success appears to be unused [UnusedResources]
+    <color name="md_theme_success">#66BB6A</color>
+           ~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/colors.xml:42: Warning: The resource R.color.warning appears to be unused [UnusedResources]
+    <color name="warning">#FFA726</color>
+           ~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/colors.xml:45: Warning: The resource R.color.gradient_start appears to be unused [UnusedResources]
+    <color name="gradient_start">#4DB6AC</color>
+           ~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/colors.xml:46: Warning: The resource R.color.gradient_end appears to be unused [UnusedResources]
+    <color name="gradient_end">#00897B</color>
+           ~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/colors.xml:47: Warning: The resource R.color.gradient_soft_start appears to be unused [UnusedResources]
+    <color name="gradient_soft_start">#EAF8F5</color>
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/colors.xml:48: Warning: The resource R.color.gradient_soft_end appears to be unused [UnusedResources]
+    <color name="gradient_soft_end">#F7FBFA</color>
+           ~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/colors.xml:57: Warning: The resource R.color.primary_dark appears to be unused [UnusedResources]
+    <color name="primary_dark">#00897B</color>
+           ~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/colors.xml:58: Warning: The resource R.color.accent appears to be unused [UnusedResources]
+    <color name="accent">#66BB6A</color>
+           ~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/colors.xml:59: Warning: The resource R.color.background appears to be unused [UnusedResources]
+    <color name="background">#FAFAFA</color>
+           ~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/colors.xml:60: Warning: The resource R.color.surface appears to be unused [UnusedResources]
+    <color name="surface">#FFFFFF</color>
+           ~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/colors.xml:61: Warning: The resource R.color.surface_variant appears to be unused [UnusedResources]
+    <color name="surface_variant">#F5F5F5</color>
+           ~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/colors.xml:62: Warning: The resource R.color.secondary appears to be unused [UnusedResources]
+    <color name="secondary">#66BB6A</color>
+           ~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/colors.xml:63: Warning: The resource R.color.secondary_light appears to be unused [UnusedResources]
+    <color name="secondary_light">#80C7BE</color>
+           ~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/colors.xml:64: Warning: The resource R.color.primary_container appears to be unused [UnusedResources]
+    <color name="primary_container">#B2DFDB</color>
+           ~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/colors.xml:67: Warning: The resource R.color.divider appears to be unused [UnusedResources]
+    <color name="divider">#E0E0E0</color>
+           ~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/colors.xml:73: Warning: The resource R.color.color_bills appears to be unused [UnusedResources]
+    <color name="color_bills">#FFA726</color>
+           ~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/colors.xml:76: Warning: The resource R.color.color_profile appears to be unused [UnusedResources]
+    <color name="color_profile">#78909C</color>
+           ~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/menu/dashboard_menu.xml:2: Warning: The resource R.menu.dashboard_menu appears to be unused [UnusedResources]
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+^
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/dialog_add_product.xml:2: Warning: The resource R.layout.dialog_add_product appears to be unused [UnusedResources]
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+^
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/dimens.xml:14: Warning: The resource R.dimen.corner_radius_sm appears to be unused [UnusedResources]
+    <dimen name="corner_radius_sm">8dp</dimen>
+           ~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/dimens.xml:20: Warning: The resource R.dimen.corner_radius_xl appears to be unused [UnusedResources]
+    <dimen name="corner_radius_xl">24dp</dimen>
+           ~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/dimens.xml:23: Warning: The resource R.dimen.elevation_sm appears to be unused [UnusedResources]
+    <dimen name="elevation_sm">2dp</dimen>
+           ~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/dimens.xml:31: Warning: The resource R.dimen.card_size_xl appears to be unused [UnusedResources]
+    <dimen name="card_size_xl">96dp</dimen>
+           ~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/dimens.xml:32: Warning: The resource R.dimen.card_size_xxl appears to be unused [UnusedResources]
+    <dimen name="card_size_xxl">128dp</dimen>
+           ~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/dimens.xml:35: Warning: The resource R.dimen.icon_size_md appears to be unused [UnusedResources]
+    <dimen name="icon_size_md">24dp</dimen>
+           ~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/dimens.xml:45: Warning: The resource R.dimen.text_size_md appears to be unused [UnusedResources]
+    <dimen name="text_size_md">16sp</dimen>
+           ~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/dimens.xml:55: Warning: The resource R.dimen.corner_radius_round appears to be unused [UnusedResources]
+    <dimen name="corner_radius_round">999dp</dimen>
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/anim/fade_in.xml:2: Warning: The resource R.anim.fade_in appears to be unused [UnusedResources]
+<alpha xmlns:android="http://schemas.android.com/apk/res/android"
+^
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/drawable/gradient_primary.xml:2: Warning: The resource R.drawable.gradient_primary appears to be unused [UnusedResources]
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+^
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/drawable/ic_close_24.xml:2: Warning: The resource R.drawable.ic_close_24 appears to be unused [UnusedResources]
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+^
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/drawable/ic_dashboard_24.xml:1: Warning: The resource R.drawable.ic_dashboard_24 appears to be unused [UnusedResources]
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+^
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/drawable/ic_grid_view_24.xml:2: Warning: The resource R.drawable.ic_grid_view_24 appears to be unused [UnusedResources]
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+^
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/drawable/ic_reports_customers.xml:2: Warning: The resource R.drawable.ic_reports_customers appears to be unused [UnusedResources]
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+^
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/drawable/ic_reports_delivery.xml:2: Warning: The resource R.drawable.ic_reports_delivery appears to be unused [UnusedResources]
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+^
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/drawable/ic_reports_overdue.xml:2: Warning: The resource R.drawable.ic_reports_overdue appears to be unused [UnusedResources]
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+^
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/drawable/ic_service_24.xml:1: Warning: The resource R.drawable.ic_service_24 appears to be unused [UnusedResources]
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+^
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/item_customer.xml:2: Warning: The resource R.layout.item_customer appears to be unused [UnusedResources]
+<com.google.android.material.card.MaterialCardView
+^
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/menu/menu_drawer.xml:2: Warning: The resource R.menu.menu_drawer appears to be unused [UnusedResources]
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+^
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/drawable/rounded_background.xml:2: Warning: The resource R.drawable.rounded_background appears to be unused [UnusedResources]
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+^
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/row_service_entry.xml:2: Warning: The resource R.layout.row_service_entry appears to be unused [UnusedResources]
+<com.google.android.material.card.MaterialCardView
+^
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/anim/scale_in.xml:2: Warning: The resource R.anim.scale_in appears to be unused [UnusedResources]
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+^
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/anim/slide_up.xml:2: Warning: The resource R.anim.slide_up appears to be unused [UnusedResources]
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+^
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:16: Warning: The resource R.string.products appears to be unused [UnusedResources]
+    <string name="products">Products</string>
+            ~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:17: Warning: The resource R.string.add_product appears to be unused [UnusedResources]
+    <string name="add_product">Add Product</string>
+            ~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:20: Warning: The resource R.string.error_name_required appears to be unused [UnusedResources]
+    <string name="error_name_required">Name is required</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:21: Warning: The resource R.string.error_rate_required appears to be unused [UnusedResources]
+    <string name="error_rate_required">Rate is required</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:25: Warning: The resource R.string.error_loading_customers appears to be unused [UnusedResources]
+    <string name="error_loading_customers">Failed to load customers: %s</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:26: Warning: The resource R.string.error_loading_entries appears to be unused [UnusedResources]
+    <string name="error_loading_entries">Error loading entries: %s</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:37: Warning: The resource R.string.validation_no_internet appears to be unused [UnusedResources]
+    <string name="validation_no_internet">No internet connection</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:38: Warning: The resource R.string.validation_please_login appears to be unused [UnusedResources]
+    <string name="validation_please_login">Please login again</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:40: Warning: The resource R.string.validation_future_date appears to be unused [UnusedResources]
+    <string name="validation_future_date">Cannot mark deliveries for future dates</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:48: Warning: The resource R.string.today_prefix appears to be unused [UnusedResources]
+    <string name="today_prefix">Today - %s</string>
+            ~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:51: Warning: The resource R.string.rupee_zero appears to be unused [UnusedResources]
+    <string name="rupee_zero">₹0</string>
+            ~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:72: Warning: The resource R.string.default_decimal_zero appears to be unused [UnusedResources]
+    <string name="default_decimal_zero">0.00</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:73: Warning: The resource R.string.reports_total_revenue appears to be unused [UnusedResources]
+    <string name="reports_total_revenue">Total Revenue</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:74: Warning: The resource R.string.reports_deliveries appears to be unused [UnusedResources]
+    <string name="reports_deliveries">Deliveries</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:75: Warning: The resource R.string.reports_customers appears to be unused [UnusedResources]
+    <string name="reports_customers">Customers</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:76: Warning: The resource R.string.reports_payments appears to be unused [UnusedResources]
+    <string name="reports_payments">Payments</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:77: Warning: The resource R.string.reports_overdue appears to be unused [UnusedResources]
+    <string name="reports_overdue">Overdue</string>
+            ~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:78: Warning: The resource R.string.reports_top_customers_chart appears to be unused [UnusedResources]
+    <string name="reports_top_customers_chart">Top 5 Customers</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:81: Warning: The resource R.string.reports_total_revenue_content_desc appears to be unused [UnusedResources]
+    <string name="reports_total_revenue_content_desc">Total Revenue card</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:82: Warning: The resource R.string.reports_total_deliveries_content_desc appears to be unused [UnusedResources]
+    <string name="reports_total_deliveries_content_desc">Total Deliveries card</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:118: Warning: The resource R.string.reports_customers_content_desc appears to be unused [UnusedResources]
+    <string name="reports_customers_content_desc">Customers card</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:119: Warning: The resource R.string.reports_payments_content_desc appears to be unused [UnusedResources]
+    <string name="reports_payments_content_desc">Payments card</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:120: Warning: The resource R.string.reports_overdue_content_desc appears to be unused [UnusedResources]
+    <string name="reports_overdue_content_desc">Overdue card</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:121: Warning: The resource R.string.reports_icon_revenue appears to be unused [UnusedResources]
+    <string name="reports_icon_revenue">Revenue icon</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:122: Warning: The resource R.string.reports_icon_delivery appears to be unused [UnusedResources]
+    <string name="reports_icon_delivery">Delivery icon</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:123: Warning: The resource R.string.reports_icon_customers appears to be unused [UnusedResources]
+    <string name="reports_icon_customers">Customers icon</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:124: Warning: The resource R.string.reports_icon_payments appears to be unused [UnusedResources]
+    <string name="reports_icon_payments">Payments icon</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:125: Warning: The resource R.string.reports_icon_overdue appears to be unused [UnusedResources]
+    <string name="reports_icon_overdue">Overdue icon</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:138: Warning: The resource R.string.menu_my_requests appears to be unused [UnusedResources]
+    <string name="menu_my_requests">My Requests</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:139: Warning: The resource R.string.menu_future_orders_calendar appears to be unused [UnusedResources]
+    <string name="menu_future_orders_calendar">Future Orders Calendar</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:140: Warning: The resource R.string.menu_deleted_history appears to be unused [UnusedResources]
+    <string name="menu_deleted_history">Deleted History</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:151: Warning: The resource R.string.menu_rate_us appears to be unused [UnusedResources]
+    <string name="menu_rate_us">Rate Us</string>
+            ~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:152: Warning: The resource R.string.menu_terms_conditions appears to be unused [UnusedResources]
+    <string name="menu_terms_conditions">Terms &amp; Conditions</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:153: Warning: The resource R.string.menu_privacy_policy appears to be unused [UnusedResources]
+    <string name="menu_privacy_policy">Privacy Policy</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:154: Warning: The resource R.string.menu_language appears to be unused [UnusedResources]
+    <string name="menu_language">Language</string>
+            ~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:160: Warning: The resource R.string.customer_dashboard_today_service appears to be unused [UnusedResources]
+    <string name="customer_dashboard_today_service">Today\'s Service</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:165: Warning: The resource R.string.customer_dashboard_billing_snapshot appears to be unused [UnusedResources]
+    <string name="customer_dashboard_billing_snapshot">Billing Snapshot</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:177: Warning: The resource R.string.customer_dashboard_download_monthly_bill_pdf appears to be unused [UnusedResources]
+    <string name="customer_dashboard_download_monthly_bill_pdf">Download Monthly Bill PDF</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:193: Warning: The resource R.string.provider_dashboard_today_summary appears to be unused [UnusedResources]
+    <string name="provider_dashboard_today_summary">Today\'s Summary</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:194: Warning: The resource R.string.provider_dashboard_delivered appears to be unused [UnusedResources]
+    <string name="provider_dashboard_delivered">Delivered</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:195: Warning: The resource R.string.provider_dashboard_today_earnings appears to be unused [UnusedResources]
+    <string name="provider_dashboard_today_earnings">Today\'s Earnings</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:196: Warning: The resource R.string.provider_dashboard_payment_overview appears to be unused [UnusedResources]
+    <string name="provider_dashboard_payment_overview">Payment Overview</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:197: Warning: The resource R.string.provider_dashboard_total_lent appears to be unused [UnusedResources]
+    <string name="provider_dashboard_total_lent">Total Lent</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:198: Warning: The resource R.string.provider_dashboard_total_received appears to be unused [UnusedResources]
+    <string name="provider_dashboard_total_received">Total Received</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:199: Warning: The resource R.string.provider_dashboard_pending_amount appears to be unused [UnusedResources]
+    <string name="provider_dashboard_pending_amount">Pending Amount</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:200: Warning: The resource R.string.provider_dashboard_this_month appears to be unused [UnusedResources]
+    <string name="provider_dashboard_this_month">This Month</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:201: Warning: The resource R.string.provider_dashboard_total_earnings appears to be unused [UnusedResources]
+    <string name="provider_dashboard_total_earnings">Total Earnings</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:202: Warning: The resource R.string.provider_dashboard_total_deliveries appears to be unused [UnusedResources]
+    <string name="provider_dashboard_total_deliveries">Total Deliveries</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:203: Warning: The resource R.string.provider_dashboard_quick_actions appears to be unused [UnusedResources]
+    <string name="provider_dashboard_quick_actions">Quick Actions</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:325: Warning: The resource R.string.product_name_hint appears to be unused [UnusedResources]
+    <string name="product_name_hint">Product Name</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:326: Warning: The resource R.string.category_hint appears to be unused [UnusedResources]
+    <string name="category_hint">Category</string>
+            ~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:327: Warning: The resource R.string.price_hint appears to be unused [UnusedResources]
+    <string name="price_hint">Price</string>
+            ~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:328: Warning: The resource R.string.quantity_hint appears to be unused [UnusedResources]
+    <string name="quantity_hint">Quantity</string>
+            ~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:329: Warning: The resource R.string.description_optional appears to be unused [UnusedResources]
+    <string name="description_optional">Description (Optional)</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:330: Warning: The resource R.string.action_cancel appears to be unused [UnusedResources]
+    <string name="action_cancel">Cancel</string>
+            ~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:331: Warning: The resource R.string.action_add appears to be unused [UnusedResources]
+    <string name="action_add">Add</string>
+            ~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:332: Warning: The resource R.string.rupee_symbol appears to be unused [UnusedResources]
+    <string name="rupee_symbol">₹</string>
+            ~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:334: Warning: The resource R.string.quantity_minus appears to be unused [UnusedResources]
+    <string name="quantity_minus">-</string>
+            ~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:335: Warning: The resource R.string.quantity_plus appears to be unused [UnusedResources]
+    <string name="quantity_plus">+</string>
+            ~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:336: Warning: The resource R.string.delivered_label appears to be unused [UnusedResources]
+    <string name="delivered_label">Delivered</string>
+            ~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:337: Warning: The resource R.string.initial_placeholder appears to be unused [UnusedResources]
+    <string name="initial_placeholder">A</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:338: Warning: The resource R.string.dot_separator appears to be unused [UnusedResources]
+    <string name="dot_separator"> • </string>
+            ~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:339: Warning: The resource R.string.rate_day_placeholder appears to be unused [UnusedResources]
+    <string name="rate_day_placeholder">₹60/day</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:340: Warning: The resource R.string.pending_placeholder appears to be unused [UnusedResources]
+    <string name="pending_placeholder">Pending: ₹500</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:341: Warning: The resource R.string.check_mark appears to be unused [UnusedResources]
+    <string name="check_mark">✓</string>
+            ~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:345: Warning: The resource R.string.tap_add_photo appears to be unused [UnusedResources]
+    <string name="tap_add_photo">Tap to add photo</string>
+            ~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:346: Warning: The resource R.string.customer_name_required appears to be unused [UnusedResources]
+    <string name="customer_name_required">Customer Name *</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:347: Warning: The resource R.string.phone_number appears to be unused [UnusedResources]
+    <string name="phone_number">Phone Number</string>
+            ~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:348: Warning: The resource R.string.delivery_address appears to be unused [UnusedResources]
+    <string name="delivery_address">Delivery Address</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:349: Warning: The resource R.string.service_type_required appears to be unused [UnusedResources]
+    <string name="service_type_required">Service Type *</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:350: Warning: The resource R.string.rate_per_day_required appears to be unused [UnusedResources]
+    <string name="rate_per_day_required">Rate/Day *</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:351: Warning: The resource R.string.save_customer appears to be unused [UnusedResources]
+    <string name="save_customer">Save Customer</string>
+            ~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:355: Warning: The resource R.string.test_generating appears to be unused [UnusedResources]
+    <string name="test_generating">Generating test data…</string>
+            ~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:356: Warning: The resource R.string.test_generated appears to be unused [UnusedResources]
+    <string name="test_generated">✅ Generated %1$d customers and %2$d service entries</string>
+            ~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/themes.xml:36: Warning: The resource R.style.TextAppearance_App_Headline appears to be unused [UnusedResources]
+    <style name="TextAppearance.App.Headline" parent="TextAppearance.Material3.HeadlineMedium" />
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/themes.xml:42: Warning: The resource R.style.TextAppearance_App_Headline_Small appears to be unused [UnusedResources]
+    <style name="TextAppearance.App.Headline.Small">
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/themes.xml:48: Warning: The resource R.style.TextAppearance_App_Title appears to be unused [UnusedResources]
+    <style name="TextAppearance.App.Title">
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/themes.xml:103: Warning: The resource R.style.Widget_App_Toolbar appears to be unused [UnusedResources]
+    <style name="Widget.App.Toolbar" parent="Widget.Material3.Toolbar">
+           ~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "UnusedResources":
+   Unused resources make applications larger and slow down builds.
+
+
+   The unused resource check can ignore tests. If you want to include
+   resources that are only referenced from tests, consider packaging them in a
+   test source set instead.
+
+   You can include test sources in the unused resource check by setting the
+   system property lint.unused-resources.include-tests =true, and to exclude
+   them (usually for performance reasons), use
+   lint.unused-resources.exclude-tests =true.
+   ,
+
+   Available options:
+
+   **skip-libraries** (default is true):
+   Whether the unused resource check should skip reporting unused resources in libraries.
+
+   Many libraries will declare resources that are part of the library surface; other modules depending on the library will also reference the resources. To avoid reporting all these resources as unused (in the context of a library), the unused resource check normally skips reporting unused resources in libraries. Instead, run the unused resource check on the consuming app module (along with `checkDependencies=true`).
+
+   However, there are cases where you want to check that all the resources declared in a library are used; in that case, you can disable the skip option.
+
+   To configure this option, use a `lint.xml` file with an <option> like this:
+
+   ```xml
+   <lint>
+       <issue id="UnusedResources">
+           <option name="skip-libraries" value="true" />
+       </issue>
+   </lint>
+   ```
+
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_splash.xml:8: Warning: This LinearLayout layout or its RelativeLayout parent is unnecessary; transfer the background attribute to the other view [UselessParent]
+    <LinearLayout
+     ~~~~~~~~~~~~
+
+   Explanation for issues of type "UselessParent":
+   A layout with children that has no siblings, is not a scrollview or a root
+   layout, and does not have a background, can be removed and have its
+   children moved directly into the parent for a flatter and more efficient
+   layout hierarchy.
+
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/values/strings.xml:128: Warning: Replace "--" with an "em dash" character (—, &#8212;) ? [TypographyDashes]
+    <string name="month_ring_placeholder">Month:\n--</string>
+                                          ~~~~~~~~~~
+
+   Explanation for issues of type "TypographyDashes":
+   The "n dash" (u2013, &#8211;) and the "m dash" (u2014, &#8212;) characters
+   are used for ranges (n dash) and breaks (m dash). Using these instead of
+   plain hyphens can make text easier to read and your application will look
+   more polished.
+
+   https://en.wikipedia.org/wiki/Dash
+
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/AndroidManifest.xml:17: Warning: Should explicitly set android:icon, there is no default [MissingApplicationIcon]
+    <application
+     ~~~~~~~~~~~
+
+   Explanation for issues of type "MissingApplicationIcon":
+   You should set an icon for the application as whole because there is no
+   default. This attribute must be set as a reference to a drawable resource
+   containing the image (for example @drawable/icon).
+
+   https://developer.android.com/studio/publish/preparing#publishing-configure
+
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/dialog_add_product.xml:113: Warning: Buttons in button bars should be borderless; use style="?android:attr/buttonBarButtonStyle" (and ?android:attr/buttonBarStyle on the parent) [ButtonStyle]
+        <Button
+         ~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/dialog_add_product.xml:122: Warning: Buttons in button bars should be borderless; use style="?android:attr/buttonBarButtonStyle" (and ?android:attr/buttonBarStyle on the parent) [ButtonStyle]
+        <Button
+         ~~~~~~
+
+   Explanation for issues of type "ButtonStyle":
+   Button bars typically use a borderless style for the buttons. Set the
+   style="?android:attr/buttonBarButtonStyle" attribute on each of the
+   buttons, and set style="?android:attr/buttonBarStyle" on the parent layout
+
+   https://d.android.com/r/studio-ui/designer/material/dialogs
+
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_reports.xml:215: Warning: Avoid using sizes smaller than 11sp: 10sp [SmallSp]
+                            android:textSize="10sp" />
+                            ~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_reports.xml:252: Warning: Avoid using sizes smaller than 11sp: 10sp [SmallSp]
+                            android:textSize="10sp" />
+                            ~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_reports.xml:288: Warning: Avoid using sizes smaller than 11sp: 10sp [SmallSp]
+                            android:textSize="10sp" />
+                            ~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/item_customer.xml:119: Warning: Avoid using sizes smaller than 11sp: 10sp [SmallSp]
+                android:textSize="10sp"
+                ~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "SmallSp":
+   Avoid using sizes smaller than 11sp.
+
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_bill_list_new.xml:59: Warning: Missing contentDescription attribute on image [ContentDescription]
+                    <ImageView
+                     ~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_customer_service_dashboard.xml:81: Warning: Missing contentDescription attribute on image [ContentDescription]
+                        <ImageView
+                         ~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_dashboard.xml:220: Warning: Missing contentDescription attribute on image [ContentDescription]
+                <ImageView
+                 ~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_home.xml:220: Warning: Missing contentDescription attribute on image [ContentDescription]
+                <ImageView
+                 ~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_service_entry.xml:107: Warning: Missing contentDescription attribute on image [ContentDescription]
+                    <ImageView
+                     ~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/bottomsheet_add_customer.xml:28: Warning: Missing contentDescription attribute on image [ContentDescription]
+        <ImageView
+         ~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/bottomsheet_add_customer.xml:48: Warning: Missing contentDescription attribute on image [ContentDescription]
+        <ImageView
+         ~~~~~~~~~
+
+   Explanation for issues of type "ContentDescription":
+   Non-textual widgets like ImageViews and ImageButtons should use the
+   contentDescription attribute to specify a textual description of the widget
+   such that screen readers and other accessibility tools can adequately
+   describe the user interface.
+
+   Note that elements in application screens that are purely decorative and do
+   not provide any content or enable a user action should not have
+   accessibility content descriptions. In this case, set their descriptions to
+   @null. If your app's minSdkVersion is 16 or higher, you can instead set
+   these graphical elements' android:importantForAccessibility attributes to
+   no.
+
+   Note that for text fields, you should not set both the hint and the
+   contentDescription attributes since the hint will never be shown. Just set
+   the hint.
+
+   https://developer.android.com/guide/topics/ui/accessibility/apps#special-cases
+
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_payment_new.xml:193: Warning: 'clickable' attribute found, please also add 'focusable' [KeyboardInaccessibleWidget]
+                            android:clickable="true"
+                            ~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "KeyboardInaccessibleWidget":
+   A widget that is declared to be clickable but not declared to be focusable
+   is not accessible via the keyboard. Please add the focusable attribute as
+   well.
+
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_payment_new.xml:169: Warning: Missing accessibility label: provide either a view with an android:labelFor that references this view or provide an android:hint [LabelFor]
+                        <AutoCompleteTextView
+                         ~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/bottomsheet_add_customer.xml:132: Warning: Missing accessibility label: provide either a view with an android:labelFor that references this view or provide an android:hint [LabelFor]
+        <AutoCompleteTextView
+         ~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "LabelFor":
+   Editable text fields should provide an android:hint or, provided your
+   minSdkVersion is at least 17, they may be referenced by a view with a
+   android:labelFor attribute.
+
+   When using android:labelFor, be sure to provide an android:text or an
+   android:contentDescription.
+
+   If your view is labeled but by a label in a different layout which includes
+   this one, just suppress this warning from lint.
+
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/core/utils/DateUtils.java:24: Warning: Assigning Locale.getDefault() to a final static field is suspicious; this code will not work correctly if the user changes locale while the app is running [ConstantLocale]
+    private static final SimpleDateFormat fullFormat = new SimpleDateFormat(Constants.DATE_FORMAT_FULL, Locale.getDefault());
+                                                                                                        ~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/core/utils/DateUtils.java:27: Warning: Assigning Locale.getDefault() to a final static field is suspicious; this code will not work correctly if the user changes locale while the app is running [ConstantLocale]
+    private static final SimpleDateFormat shortFormat = new SimpleDateFormat(Constants.DATE_FORMAT_SHORT, Locale.getDefault());
+                                                                                                          ~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/core/utils/DateUtils.java:30: Warning: Assigning Locale.getDefault() to a final static field is suspicious; this code will not work correctly if the user changes locale while the app is running [ConstantLocale]
+    private static final SimpleDateFormat monthYearFormat = new SimpleDateFormat(Constants.DATE_FORMAT_MONTH_YEAR, Locale.getDefault());
+                                                                                                                   ~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "ConstantLocale":
+   Assigning Locale.getDefault() to a constant is suspicious, because the
+   locale can change while the app is running.
+
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/billing/BillAdapter.java:136: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+            holder.paymentStatus.setText("No Service");
+                                         ~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/billing/BillAdapter.java:141: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+            holder.paymentStatus.setText("Clear");
+                                         ~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/billing/BillAdapter.java:146: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+            holder.paymentStatus.setText("Partial");
+                                         ~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/billing/BillAdapter.java:151: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+            holder.paymentStatus.setText("Pending");
+                                         ~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/billing/BillAdapter.java:157: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+        holder.viewDetailsButton.setText("Ledger");
+                                         ~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/billing/BillAdapter.java:158: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+        holder.shareBillButton.setText("Share");
+                                       ~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/billing/BillDetailActivity.java:161: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+                customerNameText.setText("Unknown Customer");
+                                         ~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/billing/BillDetailActivity.java:272: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+            billPeriodText.setText("Paid till: " + paidTillText + " • No pending dues");
+                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/billing/BillDetailActivity.java:272: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+            billPeriodText.setText("Paid till: " + paidTillText + " • No pending dues");
+                                   ~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/billing/BillDetailActivity.java:272: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+            billPeriodText.setText("Paid till: " + paidTillText + " • No pending dues");
+                                                                  ~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/billing/BillDetailActivity.java:274: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+            billPeriodText.setText("Paid till: " + paidTillText + " • Due from: " + dueFromText);
+                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/billing/BillDetailActivity.java:274: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+            billPeriodText.setText("Paid till: " + paidTillText + " • Due from: " + dueFromText);
+                                   ~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/billing/BillDetailActivity.java:274: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+            billPeriodText.setText("Paid till: " + paidTillText + " • Due from: " + dueFromText);
+                                                                  ~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/billing/BillDetailActivity.java:281: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+            paymentStatusChip.setText("No Service");
+                                      ~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/billing/BillDetailActivity.java:285: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+            markAsPaidButton.setText("No Due Amount");
+                                     ~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/billing/BillDetailActivity.java:287: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+            paymentStatusChip.setText("Clear");
+                                      ~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/billing/BillDetailActivity.java:291: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+            markAsPaidButton.setText("All Cleared");
+                                     ~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/billing/BillDetailActivity.java:293: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+            paymentStatusChip.setText("Partial");
+                                      ~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/billing/BillDetailActivity.java:297: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+            markAsPaidButton.setText("Record Payment");
+                                     ~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/billing/BillDetailActivity.java:299: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+            paymentStatusChip.setText("Pending");
+                                      ~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/billing/BillDetailActivity.java:303: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+            markAsPaidButton.setText("Record Payment");
+                                     ~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/billing/BillDetailActivity.java:309: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+            paymentHistoryText.setText("No payments recorded yet.");
+                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/billing/BillDetailActivity.java:361: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+            serviceHistoryText.setText("No delivered service entries found.");
+                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/billing/BillDetailActivity.java:373: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+            serviceHistoryText.setText("No delivered service entries found.");
+                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/billing/BillListActivity.java:110: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+        selectedMonthText.setText("Live customer ledger");
+                                  ~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/billing/BillListActivity.java:113: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+        generateBillsFab.setText("Refresh");
+                                 ~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/billing/BillListActivity.java:189: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+                    selectedMonthText.setText("No customers found");
+                                              ~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/customer/ComplaintSupportActivity.java:158: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+                    binding.txtProviderInfo.setText("No active provider link found.");
+                                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/customer/ComplaintSupportActivity.java:170: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+                    binding.txtProviderInfo.setText("Link status: " + (status.isEmpty() ? "PENDING" : status));
+                                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/customer/ComplaintSupportActivity.java:170: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+                    binding.txtProviderInfo.setText("Link status: " + (status.isEmpty() ? "PENDING" : status));
+                                                    ~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/customer/ComplaintSupportActivity.java:196: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+            binding.txtProviderInfo.setText("Linked to: " + providerName);
+                                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/customer/ComplaintSupportActivity.java:196: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+            binding.txtProviderInfo.setText("Linked to: " + providerName);
+                                            ~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/customer/ComplaintSupportActivity.java:298: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+            title.setText((subject.isEmpty() ? "Support Ticket" : subject) + " • " + date);
+                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/customer/ComplaintSupportActivity.java:299: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+            subtitle.setText((category.isEmpty() ? "General" : category) + " • " + (message.isEmpty() ? "No details" : message));
+                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/ui/CustomerDetailActivity.java:153: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+        customerMeta.setText(service + " • " + rateText + "/unit");
+                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/ui/CustomerDetailActivity.java:153: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+        customerMeta.setText(service + " • " + rateText + "/unit");
+                                                          ~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/customer/CustomerHomeActivity.java:506: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+        binding.txtLinkStatus.setText("Status: " + normalizedStatus);
+                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/customer/CustomerHomeActivity.java:506: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+        binding.txtLinkStatus.setText("Status: " + normalizedStatus);
+                                      ~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/customer/CustomerServiceDashboardActivity.java:342: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+        binding.txtProviderCode.setText("ID: " + shortProviderId(providerId));
+                                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/customer/CustomerServiceDashboardActivity.java:342: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+        binding.txtProviderCode.setText("ID: " + shortProviderId(providerId));
+                                        ~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/customer/CustomerServiceDashboardActivity.java:377: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+            binding.txtTodayStatus.setText("Delivered Today");
+                                           ~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/customer/CustomerServiceDashboardActivity.java:382: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+            binding.txtTodayStatus.setText("Not Delivered Yet");
+                                           ~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/customer/CustomerServiceDashboardActivity.java:384: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+            binding.txtTodayQuantity.setText("0.00");
+                                             ~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/dashboard/DashboardActivity.java:895: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+        labelId.setText("Customer ID (Firestore document ID):");
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/dashboard/DashboardActivity.java:905: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+        labelQty.setText("Quantity per day:");
+                         ~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/dashboard/DashboardActivity.java:916: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+        labelRate.setText("Rate per unit (₹):");
+                          ~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/dashboard/DashboardActivity.java:920: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+        etRate.setText("30.0");
+                       ~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/dashboard/DashboardActivity.java:927: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+        labelMonth.setText("Start month:");
+                           ~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/dashboard/DashboardActivity.java:943: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+        labelMonths.setText("Number of months:");
+                            ~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/payment/PaymentActivity.java:138: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+        paymentMethodDropdown.setText("Cash", false);
+                                      ~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/payment/PaymentActivity.java:175: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+            customerNameText.setText("Loading...");
+                                     ~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/payment/PaymentActivity.java:179: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+            billPeriodText.setText("Due from " + DateUtils.formatShortDate(new Date(dueFromMillis)));
+                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/payment/PaymentActivity.java:179: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+            billPeriodText.setText("Due from " + DateUtils.formatShortDate(new Date(dueFromMillis)));
+                                   ~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/payment/PaymentActivity.java:181: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+            billPeriodText.setText("Outstanding from service entries");
+                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/payment/PaymentActivity.java:239: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+                billPeriodText.setText("Due from " + DateUtils.formatShortDate(summary.getDueFromDate().toDate()));
+                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/payment/PaymentActivity.java:239: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+                billPeriodText.setText("Due from " + DateUtils.formatShortDate(summary.getDueFromDate().toDate()));
+                                       ~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/payment/PaymentActivity.java:332: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+        }, e -> customerNameText.setText("Unknown Customer"));
+                                         ~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/provider/ProviderComplaintsActivity.java:156: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+            title.setText(subject + " • " + customerName);
+                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/dashboard/ProviderDashboardActivity.java:586: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+                    txtTodayDelivered.setText("0 / " + totalCustomers);
+                                              ~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/qr/QRCodeActivity.java:107: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+                        providerId.setText("ID: " + shortProviderCode(currentProviderId));
+                                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/qr/QRCodeActivity.java:107: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+                        providerId.setText("ID: " + shortProviderCode(currentProviderId));
+                                           ~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/qr/QRCodeActivity.java:115: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+                        providerId.setText("ID: " + shortProviderCode(currentProviderId));
+                                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/qr/QRCodeActivity.java:115: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+                        providerId.setText("ID: " + shortProviderCode(currentProviderId));
+                                           ~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/qr/QRCodeActivity.java:126: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+                    providerId.setText("ID: " + shortProviderCode(currentProviderId));
+                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/qr/QRCodeActivity.java:126: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+                    providerId.setText("ID: " + shortProviderCode(currentProviderId));
+                                       ~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/sales/ui/SalesPredictionActivity.java:101: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+            tvCategoryBreakdown.setText("No active customers/categories found to run predictions on.");
+                                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/service/ServiceEntryActivity.java:174: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+            selectedDateText.setText("Today - " + dateStr);
+                                     ~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/service/ServiceEntryActivity.java:174: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+            selectedDateText.setText("Today - " + dateStr);
+                                     ~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/service/ServiceEntryActivity.java:501: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+        btnMarkDelivery.setText("✓ Queued for Sync");
+                                ~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/java/com/dailyserviceapp/service/ServiceEntryActivity.java:502: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+        btnMarkDelivery.postDelayed(() -> btnMarkDelivery.setText("Mark Delivery"), 2000);
+                                                                  ~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "SetTextI18n":
+   When calling TextView#setText
+   * Never call Number#toString() to format numbers; it will not handle
+   fraction separators and locale-specific digits properly. Consider using
+   String#format with proper format specifications (%d or %f) instead.
+   * Do not pass a string literal (e.g. "Hello") to display text. Hardcoded
+   text can not be properly translated to other languages. Consider using
+   Android resource strings instead.
+   * Do not build messages by concatenating text chunks. Such messages can not
+   be properly translated.
+
+   https://developer.android.com/guide/topics/resources/localization.html
+
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_complaint_support.xml:21: Warning: Hardcoded string "Complaint & Support", should use @string resource [HardcodedText]
+            android:title="Complaint &amp; Support"
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_complaint_support.xml:59: Warning: Hardcoded string "Linked to: Service Provider", should use @string resource [HardcodedText]
+                        android:text="Linked to: Service Provider"
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_complaint_support.xml:95: Warning: Hardcoded string "Raise a Complaint", should use @string resource [HardcodedText]
+                        android:text="Raise a Complaint"
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_complaint_support.xml:110: Warning: Hardcoded string "Subject", should use @string resource [HardcodedText]
+                        android:hint="Subject"
+                        ~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_complaint_support.xml:125: Warning: Hardcoded string "Describe your issue", should use @string resource [HardcodedText]
+                        android:hint="Describe your issue"
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_complaint_support.xml:145: Warning: Hardcoded string "Submit Ticket", should use @string resource [HardcodedText]
+                        android:text="Submit Ticket" />
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_complaint_support.xml:168: Warning: Hardcoded string "My Tickets", should use @string resource [HardcodedText]
+                        android:text="My Tickets"
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_complaint_support.xml:178: Warning: Hardcoded string "No complaints yet. Submit your first ticket below.", should use @string resource [HardcodedText]
+                        android:text="No complaints yet. Submit your first ticket below."
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_customer_service_dashboard.xml:129: Warning: Hardcoded string "ACTIVE", should use @string resource [HardcodedText]
+                        android:text="ACTIVE"
+                        ~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_customer_service_dashboard.xml:158: Warning: Hardcoded string "Today's Service", should use @string resource [HardcodedText]
+                        android:text="Today's Service"
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_customer_service_dashboard.xml:198: Warning: Hardcoded string "0", should use @string resource [HardcodedText]
+                                android:text="0"
+                                ~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_customer_service_dashboard.xml:223: Warning: Hardcoded string "0.00", should use @string resource [HardcodedText]
+                                android:text="0.00"
+                                ~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_customer_service_dashboard.xml:248: Warning: Hardcoded string "₹0.00", should use @string resource [HardcodedText]
+                                android:text="₹0.00"
+                                ~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_customer_service_dashboard.xml:288: Warning: Hardcoded string "Billing", should use @string resource [HardcodedText]
+                            android:text="Billing"
+                            ~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_customer_service_dashboard.xml:306: Warning: Hardcoded string "₹0.00", should use @string resource [HardcodedText]
+                            android:text="₹0.00"
+                            ~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_customer_service_dashboard.xml:324: Warning: Hardcoded string "₹0.00", should use @string resource [HardcodedText]
+                            android:text="₹0.00"
+                            ~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_customer_service_dashboard.xml:353: Warning: Hardcoded string "Payment Status", should use @string resource [HardcodedText]
+                            android:text="Payment Status"
+                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_customer_service_dashboard.xml:371: Warning: Hardcoded string "₹0.00", should use @string resource [HardcodedText]
+                            android:text="₹0.00"
+                            ~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_customer_service_dashboard.xml:407: Warning: Hardcoded string "₹0.00", should use @string resource [HardcodedText]
+                            android:text="₹0.00"
+                            ~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_provider_complaints.xml:103: Warning: Hardcoded string "0", should use @string resource [HardcodedText]
+                                android:text="0"
+                                ~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_provider_complaints.xml:128: Warning: Hardcoded string "0", should use @string resource [HardcodedText]
+                                android:text="0"
+                                ~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_provider_complaints.xml:153: Warning: Hardcoded string "0", should use @string resource [HardcodedText]
+                                android:text="0"
+                                ~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_provider_dashboard.xml:64: Warning: Hardcoded string "Today Snapshot", should use @string resource [HardcodedText]
+                            android:text="Today Snapshot"
+                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_provider_dashboard.xml:86: Warning: Hardcoded string "Delivered", should use @string resource [HardcodedText]
+                                    android:text="Delivered"
+                                    ~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_provider_dashboard.xml:95: Warning: Hardcoded string "0 / 0", should use @string resource [HardcodedText]
+                                    android:text="0 / 0"
+                                    ~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_provider_dashboard.xml:112: Warning: Hardcoded string "Today Earnings", should use @string resource [HardcodedText]
+                                    android:text="Today Earnings"
+                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_provider_dashboard.xml:121: Warning: Hardcoded string "₹0.00", should use @string resource [HardcodedText]
+                                    android:text="₹0.00"
+                                    ~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_provider_dashboard.xml:167: Warning: Hardcoded string "Payment Overview", should use @string resource [HardcodedText]
+                                android:text="Payment Overview"
+                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_provider_dashboard.xml:176: Warning: Hardcoded string "Total Lent", should use @string resource [HardcodedText]
+                                android:text="Total Lent"
+                                ~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_provider_dashboard.xml:185: Warning: Hardcoded string "₹0.00", should use @string resource [HardcodedText]
+                                android:text="₹0.00"
+                                ~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_provider_dashboard.xml:194: Warning: Hardcoded string "Total Received", should use @string resource [HardcodedText]
+                                android:text="Total Received"
+                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_provider_dashboard.xml:203: Warning: Hardcoded string "₹0.00", should use @string resource [HardcodedText]
+                                android:text="₹0.00"
+                                ~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_provider_dashboard.xml:212: Warning: Hardcoded string "Pending", should use @string resource [HardcodedText]
+                                android:text="Pending"
+                                ~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_provider_dashboard.xml:221: Warning: Hardcoded string "₹0.00", should use @string resource [HardcodedText]
+                                android:text="₹0.00"
+                                ~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_provider_dashboard.xml:250: Warning: Hardcoded string "This Month", should use @string resource [HardcodedText]
+                                android:text="This Month"
+                                ~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_provider_dashboard.xml:259: Warning: Hardcoded string "Earnings", should use @string resource [HardcodedText]
+                                android:text="Earnings"
+                                ~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_provider_dashboard.xml:268: Warning: Hardcoded string "₹0.00", should use @string resource [HardcodedText]
+                                android:text="₹0.00"
+                                ~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_provider_dashboard.xml:277: Warning: Hardcoded string "Deliveries", should use @string resource [HardcodedText]
+                                android:text="Deliveries"
+                                ~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_provider_dashboard.xml:286: Warning: Hardcoded string "0", should use @string resource [HardcodedText]
+                                android:text="0"
+                                ~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_provider_dashboard.xml:322: Warning: Hardcoded string "Quick Actions", should use @string resource [HardcodedText]
+                            android:text="Quick Actions"
+                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_provider_dashboard.xml:331: Warning: Hardcoded string "Jump into common tasks in one tap", should use @string resource [HardcodedText]
+                            android:text="Jump into common tasks in one tap"
+                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_reports.xml:132: Warning: Hardcoded string "Revenue", should use @string resource [HardcodedText]
+                            android:text="Revenue"
+                            ~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_reports.xml:168: Warning: Hardcoded string "Deliveries", should use @string resource [HardcodedText]
+                            android:text="Deliveries"
+                            ~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_reports.xml:213: Warning: Hardcoded string "Customers", should use @string resource [HardcodedText]
+                            android:text="Customers"
+                            ~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_reports.xml:250: Warning: Hardcoded string "Payments", should use @string resource [HardcodedText]
+                            android:text="Payments"
+                            ~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_reports.xml:286: Warning: Hardcoded string "Overdue", should use @string resource [HardcodedText]
+                            android:text="Overdue"
+                            ~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_reports.xml:332: Warning: Hardcoded string "Revenue Insights", should use @string resource [HardcodedText]
+                            android:text="Revenue Insights"
+                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_reports.xml:351: Warning: Hardcoded string "Bar", should use @string resource [HardcodedText]
+                                android:text="Bar"
+                                ~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_reports.xml:361: Warning: Hardcoded string "Pie", should use @string resource [HardcodedText]
+                                android:text="Pie"
+                                ~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_sales_prediction.xml:49: Warning: Hardcoded string "30-Day Outlook", should use @string resource [HardcodedText]
+                        android:text="30-Day Outlook"
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_sales_prediction.xml:66: Warning: Hardcoded string "Est. Total Quantity", should use @string resource [HardcodedText]
+                                android:text="Est. Total Quantity"
+                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_sales_prediction.xml:72: Warning: Hardcoded string "Loading...", should use @string resource [HardcodedText]
+                                android:text="Loading..."
+                                ~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_sales_prediction.xml:86: Warning: Hardcoded string "Est. Total Revenue", should use @string resource [HardcodedText]
+                                android:text="Est. Total Revenue"
+                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_sales_prediction.xml:92: Warning: Hardcoded string "Loading...", should use @string resource [HardcodedText]
+                                android:text="Loading..."
+                                ~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_sales_prediction.xml:105: Warning: Hardcoded string "Category Breakdown", should use @string resource [HardcodedText]
+                android:text="Category Breakdown"
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/ghoriommukeshbai/Desktop/DailyServiceApp/app/src/main/res/layout/activity_sales_prediction.xml:113: Warning: Hardcoded string "Connecting to ML Server...", should use @string resource [HardcodedText]
+                android:text="Connecting to ML Server..."
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "HardcodedText":
+   Hardcoding text attributes directly in layout files is bad for several
+   reasons:
+
+   * When creating configuration variations (for example for landscape or
+   portrait) you have to repeat the actual text (and keep it up to date when
+   making changes)
+
+   * The application cannot be translated to other languages by just adding
+   new translations for existing string resources.
+
+   There are quickfixes to automatically extract this hardcoded string into a
+   resource lookup.
+
+0 errors, 352 warnings

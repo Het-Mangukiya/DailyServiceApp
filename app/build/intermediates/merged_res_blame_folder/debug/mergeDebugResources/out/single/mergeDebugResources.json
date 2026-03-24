@@ -1,0 +1,454 @@
+[
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/layout_item_area_header.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/layout/item_area_header.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/menu_home_menu.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/menu/home_menu.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/anim_slide_up.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/anim/slide_up.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/layout_activity_customer_detail.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/layout/activity_customer_detail.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/drawable_ic_nav_service.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/drawable/ic_nav_service.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/layout_activity_complaint_support.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/layout/activity_complaint_support.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/layout_row_customer_history.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/layout/row_customer_history.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/drawable_ic_reports_overdue.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/drawable/ic_reports_overdue.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/color_nav_item_text_tint.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/color/nav_item_text_tint.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/anim_fade_in.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/anim/fade_in.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/layout_activity_home.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/layout/activity_home.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/layout_activity_bill_list.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/layout/activity_bill_list.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/drawable_bg_month_ring_green.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/drawable/bg_month_ring_green.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/layout_row_service_entry.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/layout/row_service_entry.xml"
+    },
+    {
+        "merged": "com.dailyserviceapp-debug-73:/layout_activity_sales_prediction.xml.flat",
+        "source": "com.dailyserviceapp-main-75:/layout/activity_sales_prediction.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/menu_dashboard_menu.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/menu/dashboard_menu.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/drawable_ic_nav_share.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/drawable/ic_nav_share.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/drawable_ic_nav_qr.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/drawable/ic_nav_qr.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/layout_activity_payment_new.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/layout/activity_payment_new.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/drawable_ic_nav_bills.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/drawable/ic_nav_bills.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/drawable_ic_edit_24.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/drawable/ic_edit_24.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/drawable_ic_product_24.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/drawable/ic_product_24.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/anim_scale_in.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/anim/scale_in.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/layout_item_customer.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/layout/item_customer.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/drawable_ic_service_24.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/drawable/ic_service_24.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/layout_nav_header.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/layout/nav_header.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/menu_customer_home_more_menu.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/menu/customer_home_more_menu.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/drawable_ic_phone_24.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/drawable/ic_phone_24.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/layout_activity_dashboard.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/layout/activity_dashboard.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/drawable_ic_notifications_24.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/drawable/ic_notifications_24.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/drawable_ic_nav_test_data.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/drawable/ic_nav_test_data.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/drawable_ic_nav_profile.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/drawable/ic_nav_profile.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/layout_activity_notification_list.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/layout/activity_notification_list.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/drawable_ic_expand_more.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/drawable/ic_expand_more.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/drawable_bg_nav_header_gradient.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/drawable/bg_nav_header_gradient.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/menu_customer_home_menu.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/menu/customer_home_menu.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/drawable_ic_download.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/drawable/ic_download.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/drawable_ic_back.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/drawable/ic_back.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/xml_file_paths.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/xml/file_paths.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/drawable_bg_app_backdrop.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/drawable/bg_app_backdrop.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/drawable_bg_circle_minimal.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/drawable/bg_circle_minimal.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/xml_network_security_config.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/xml/network_security_config.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/drawable_gradient_primary.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/drawable/gradient_primary.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/drawable_ic_reports_revenue.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/drawable/ic_reports_revenue.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/drawable_ic_dashboard_24.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/drawable/ic_dashboard_24.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/drawable_ic_camera.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/drawable/ic_camera.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/drawable_ic_nav_dashboard.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/drawable/ic_nav_dashboard.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/drawable_ic_share.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/drawable/ic_share.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/layout_activity_provider_complaints.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/layout/activity_provider_complaints.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/menu_menu_drawer.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/menu/menu_drawer.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/drawable_ic_nav_reports.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/drawable/ic_nav_reports.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/layout_activity_signup.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/layout/activity_signup.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/layout_activity_login.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/layout/activity_login.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/layout_item_service_entry.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/layout/item_service_entry.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/layout_row_join_request.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/layout/row_join_request.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/layout_activity_customer_service_dashboard.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/layout/activity_customer_service_dashboard.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/drawable_ic_calendar_24.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/drawable/ic_calendar_24.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/drawable_ic_email_24.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/drawable/ic_email_24.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/drawable_ic_nav_customers.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/drawable/ic_nav_customers.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/drawable_ic_delete_24.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/drawable/ic_delete_24.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/drawable_ic_bill_24.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/drawable/ic_bill_24.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/drawable_bg_month_ring_teal.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/drawable/bg_month_ring_teal.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/drawable_bg_history_row.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/drawable/bg_history_row.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/drawable_ic_search_24.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/drawable/ic_search_24.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/drawable_ic_menu_24.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/drawable/ic_menu_24.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/drawable_ic_chevron_right_24.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/drawable/ic_chevron_right_24.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/layout_bottomsheet_add_customer.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/layout/bottomsheet_add_customer.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/drawable_ic_grid_view_24.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/drawable/ic_grid_view_24.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/drawable_logo_circle_bg.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/drawable/logo_circle_bg.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/layout_activity_qr_code.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/layout/activity_qr_code.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/layout_activity_bill_list_new.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/layout/activity_bill_list_new.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/layout_activity_provider_dashboard.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/layout/activity_provider_dashboard.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/layout_activity_profile.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/layout/activity_profile.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/layout_activity_splash.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/layout/activity_splash.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/menu_drawer_menu.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/menu/drawer_menu.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/drawable_ic_nav_requests.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/drawable/ic_nav_requests.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/drawable_bg_customer_detail_top_bar.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/drawable/bg_customer_detail_top_bar.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/drawable_ic_reports_delivery.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/drawable/ic_reports_delivery.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/drawable_ic_add_24.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/drawable/ic_add_24.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/drawable_ic_chevron_left_24.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/drawable/ic_chevron_left_24.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/layout_activity_customer_edit.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/layout/activity_customer_edit.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/drawable_ic_lock_24.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/drawable/ic_lock_24.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/layout_dialog_add_product.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/layout/dialog_add_product.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/layout_activity_sales_prediction.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/layout/activity_sales_prediction.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/layout_activity_bill_detail.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/layout/activity_bill_detail.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/drawable_ic_refresh_24.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/drawable/ic_refresh_24.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/layout_row_customer.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/layout/row_customer.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/drawable_splash_gradient.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/drawable/splash_gradient.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/drawable_bg_card_gradient_products.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/drawable/bg_card_gradient_products.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/drawable_ic_reports_customers.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/drawable/ic_reports_customers.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/drawable_rounded_background.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/drawable/rounded_background.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/drawable_bg_toolbar_gradient.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/drawable/bg_toolbar_gradient.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/drawable_bg_success_pill.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/drawable/bg_success_pill.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/layout_activity_service_entry.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/layout/activity_service_entry.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/drawable_ic_person_24.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/drawable/ic_person_24.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/drawable_ic_expand_less.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/drawable/ic_expand_less.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/drawable_ic_nav_logout.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/drawable/ic_nav_logout.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/layout_activity_join_requests.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/layout/activity_join_requests.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/layout_activity_forgot_password.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/layout/activity_forgot_password.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/menu_profile_menu.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/menu/profile_menu.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/drawable_ic_reports_payments.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/drawable/ic_reports_payments.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/drawable_ic_info.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/drawable/ic_info.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/drawable_nav_item_background.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/drawable/nav_item_background.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/drawable_ic_location_24.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/drawable/ic_location_24.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/drawable_bg_error_pill.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/drawable/bg_error_pill.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/layout_activity_payment.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/layout/activity_payment.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/layout_row_bill.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/layout/row_bill.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/drawable_ic_sort_24.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/drawable/ic_sort_24.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/layout_activity_customer_home.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/layout/activity_customer_home.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/drawable_ic_close_24.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/drawable/ic_close_24.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/color_nav_item_icon_tint.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/color/nav_item_icon_tint.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/drawable_ic_more_vert_24.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/drawable/ic_more_vert_24.xml"
+    },
+    {
+        "merged": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-debug-73:/layout_activity_reports.xml.flat",
+        "source": "/Users/ghoriommukeshbai/.gradle/daemon/8.14.4/com.dailyserviceapp-main-75:/layout/activity_reports.xml"
+    }
+]

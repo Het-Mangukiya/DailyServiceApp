@@ -1,0 +1,19 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.dailyserviceapp-mergeDebugResources-71:/values-he/values-he.xml",
+            "map": [
+                {
+                    "source": "/Users/ghoriommukeshbai/.gradle/caches/8.14.4/transforms/7aeae85a2ca14edc15e3c215b35ece9c/transformed/jetified-zxing-android-embedded-4.3.0/res/values-he/values-he.xml",
+                    "from": {
+                        "startLines": "2,3,4,5",
+                        "startColumns": "4,4,4,4",
+                        "startOffsets": "55,111,161,296",
+                        "endColumns": "55,49,134,89",
+                        "endOffsets": "106,156,291,381"
+                    }
+                }
+            ]
+        }
+    ]
+}

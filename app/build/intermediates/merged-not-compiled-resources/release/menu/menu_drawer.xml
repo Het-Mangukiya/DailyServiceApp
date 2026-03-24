@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/nav_profile"
+        android:icon="@drawable/ic_nav_profile"
+        android:title="@string/menu_my_profile" />
+
+    <item
+        android:id="@+id/nav_requests"
+        android:icon="@drawable/ic_nav_requests"
+        android:title="@string/menu_my_requests" />
+
+    <item
+        android:id="@+id/nav_calendar"
+        android:icon="@drawable/ic_calendar_24"
+        android:title="@string/menu_future_orders_calendar" />
+
+    <item
+        android:id="@+id/nav_deleted_history"
+        android:icon="@drawable/ic_delete_24"
+        android:title="@string/menu_deleted_history" />
+
+    <item
+        android:id="@+id/nav_share"
+        android:icon="@drawable/ic_nav_share"
+        android:title="@string/menu_share_app" />
+
+    <item
+        android:id="@+id/nav_rate_us"
+        android:icon="@drawable/ic_reports_revenue"
+        android:title="@string/menu_rate_us" />
+
+    <group android:id="@+id/group_separator1">
+        <item
+            android:id="@+id/nav_terms"
+            android:icon="@drawable/ic_info"
+            android:title="@string/menu_terms_conditions" />
+
+        <item
+            android:id="@+id/nav_privacy"
+            android:icon="@drawable/ic_nav_reports"
+            android:title="@string/menu_privacy_policy" />
+    </group>
+
+    <group android:id="@+id/group_separator2">
+        <item
+            android:id="@+id/nav_language"
+            android:icon="@drawable/ic_location_24"
+            android:title="@string/menu_language" />
+    </group>
+
+    <group android:id="@+id/group_logout">
+        <item
+            android:id="@+id/nav_logout"
+            android:icon="@drawable/ic_nav_logout"
+            android:title="@string/action_logout" />
+    </group>
+
+</menu>
