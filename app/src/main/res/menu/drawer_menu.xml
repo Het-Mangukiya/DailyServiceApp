@@ -34,6 +34,11 @@
             android:title="@string/menu_service_entry" />
 
         <item
+            android:id="@+id/nav_route"
+            android:icon="@drawable/ic_calendar_24"
+            android:title="Delivery Route" />
+
+        <item
             android:id="@+id/nav_bills"
             android:icon="@drawable/ic_nav_bills"
             android:title="@string/menu_bills" />

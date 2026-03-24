@@ -8,18 +8,27 @@
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:liftOnScroll="true">
+        android:layout_height="wrap_content">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:title="Notifications"
+            app:title="Delivery Route"
             app:titleTextColor="@android:color/white"
-            android:background="@color/md_theme_primary" />
+            android:background="@color/md_theme_primary"
+            app:menu="@menu/menu_route" />
 
     </com.google.android.material.appbar.AppBarLayout>
+
+    <!-- Loading -->
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
     <!-- Empty state -->
     <LinearLayout
@@ -29,38 +38,49 @@
         android:gravity="center"
         android:orientation="vertical"
         android:padding="32dp"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:visibility="gone">
+        android:visibility="gone"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <ImageView
             android:layout_width="72dp"
             android:layout_height="72dp"
             android:layout_marginBottom="16dp"
-            android:src="@drawable/ic_notifications_24"
             android:importantForAccessibility="no"
-            app:tint="@color/md_theme_primary"
-            android:alpha="0.4" />
+            android:src="@drawable/ic_nav_qr"
+            android:alpha="0.4"
+            app:tint="@color/md_theme_primary" />
 
         <TextView
             android:id="@+id/emptyStateText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="No notifications yet"
-            android:textSize="16sp"
+            android:gravity="center"
+            android:text="No active customers today"
             android:textColor="@color/md_theme_on_surface"
-            android:alpha="0.6"
-            android:gravity="center" />
+            android:textSize="16sp"
+            android:alpha="0.6" />
 
     </LinearLayout>
 
-    <!-- Notifications list -->
+    <!-- Route stops list -->
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/notificationsRecycler"
+        android:id="@+id/routeRecycler"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
         android:paddingTop="8dp"
-        android:paddingBottom="16dp"
+        android:paddingBottom="88dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+    <!-- Open in Maps FAB -->
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/fabOpenMaps"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_margin="16dp"
+        android:text="Open in Maps"
+        app:icon="@drawable/ic_nav_qr"
+        app:layout_anchorGravity="bottom|center_horizontal" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

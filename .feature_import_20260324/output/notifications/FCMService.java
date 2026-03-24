@@ -80,7 +80,7 @@ public class FCMService extends FirebaseMessagingService {
         if (!data.isEmpty()) {
             title   = data.get("title");
             body    = data.get("body");
-            type    = data.containsKey("type") ? data.get("type") : type;
+            type    = data.containsKey("type")    ? data.get("type")    : type;
             related = data.containsKey("relatedId") ? data.get("relatedId") : null;
         }
 
@@ -91,7 +91,7 @@ public class FCMService extends FirebaseMessagingService {
         }
 
         if (title == null) title = getString(R.string.app_name);
-        if (body == null) body = "";
+        if (body  == null) body  = "";
 
         // 1. Show the system (heads-up) notification
         showSystemNotification(title, body, type);
@@ -128,19 +128,19 @@ public class FCMService extends FirebaseMessagingService {
             flags |= PendingIntent.FLAG_IMMUTABLE;
         }
         PendingIntent pendingIntent = PendingIntent.getActivity(
-            this, notifIdCounter, intent, flags);
+                this, notifIdCounter, intent, flags);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, channelId)
-            .setSmallIcon(R.drawable.ic_notifications_24)
-            .setContentTitle(title)
-            .setContentText(body)
-            .setStyle(new NotificationCompat.BigTextStyle().bigText(body))
-            .setAutoCancel(true)
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setContentIntent(pendingIntent);
+                .setSmallIcon(R.drawable.ic_notifications_24)
+                .setContentTitle(title)
+                .setContentText(body)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(body))
+                .setAutoCancel(true)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setContentIntent(pendingIntent);
 
         NotificationManager manager =
-            (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         if (manager != null) {
             manager.notify(notifIdCounter++, builder.build());
         }
@@ -154,7 +154,7 @@ public class FCMService extends FirebaseMessagingService {
      * Save received notification to Firestore so the in-app list shows it.
      */
     private void saveNotificationToFirestore(String title, String body,
-                                             String type, String relatedId) {
+                                              String type, String relatedId) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) return;
 
@@ -162,10 +162,10 @@ public class FCMService extends FirebaseMessagingService {
         if (relatedId != null) notification.setRelatedId(relatedId);
 
         FirebaseFirestore.getInstance()
-            .collection(Constants.COLLECTION_NOTIFICATIONS)
-            .add(notification)
-            .addOnFailureListener(e ->
-                Log.w(TAG, "Failed to save notification to Firestore", e));
+                .collection(Constants.COLLECTION_NOTIFICATIONS)
+                .add(notification)
+                .addOnFailureListener(e ->
+                        Log.w(TAG, "Failed to save notification to Firestore", e));
     }
 
     /**
@@ -185,11 +185,11 @@ public class FCMService extends FirebaseMessagingService {
         update.put(FIELD_FCM_TOKEN_UPDATED, com.google.firebase.Timestamp.now());
 
         FirebaseFirestore.getInstance()
-            .collection(Constants.COLLECTION_USERS)
-            .document(user.getUid())
-            .update(update)
-            .addOnSuccessListener(v -> Log.d(TAG, "FCM token saved"))
-            .addOnFailureListener(e -> Log.w(TAG, "Failed to save FCM token", e));
+                .collection(Constants.COLLECTION_USERS)
+                .document(user.getUid())
+                .update(update)
+                .addOnSuccessListener(v  -> Log.d(TAG, "FCM token saved"))
+                .addOnFailureListener(e  -> Log.w(TAG, "Failed to save FCM token", e));
     }
 
     // ────────────────────────────────────────────────────────────────────────
@@ -204,25 +204,25 @@ public class FCMService extends FirebaseMessagingService {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return;
 
         NotificationManager manager =
-            (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         if (manager == null) return;
 
         manager.createNotificationChannel(new NotificationChannel(
-            CHANNEL_GENERAL,
-            "General",
-            NotificationManager.IMPORTANCE_DEFAULT));
+                CHANNEL_GENERAL,
+                "General",
+                NotificationManager.IMPORTANCE_DEFAULT));
 
         NotificationChannel billing = new NotificationChannel(
-            CHANNEL_BILLING,
-            "Billing & Payments",
-            NotificationManager.IMPORTANCE_HIGH);
+                CHANNEL_BILLING,
+                "Billing & Payments",
+                NotificationManager.IMPORTANCE_HIGH);
         billing.setDescription("Bill generation and payment reminders");
         manager.createNotificationChannel(billing);
 
         NotificationChannel delivery = new NotificationChannel(
-            CHANNEL_DELIVERY,
-            "Service Deliveries",
-            NotificationManager.IMPORTANCE_DEFAULT);
+                CHANNEL_DELIVERY,
+                "Service Deliveries",
+                NotificationManager.IMPORTANCE_DEFAULT);
         delivery.setDescription("Daily delivery updates");
         manager.createNotificationChannel(delivery);
     }

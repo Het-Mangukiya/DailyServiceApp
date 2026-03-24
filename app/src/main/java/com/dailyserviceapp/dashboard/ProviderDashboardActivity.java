@@ -21,6 +21,7 @@ import com.dailyserviceapp.core.utils.Constants;
 import com.dailyserviceapp.core.utils.CurrencyUtils;
 import com.dailyserviceapp.databinding.ActivityProviderDashboardBinding;
 import com.dailyserviceapp.databinding.NavHeaderBinding;
+import com.dailyserviceapp.maps.RouteOptimizationActivity;
 import com.dailyserviceapp.profile.ProfileActivity;
 import com.dailyserviceapp.provider.JoinRequestsActivity;
 import com.dailyserviceapp.provider.ProviderComplaintsActivity;
@@ -284,6 +285,8 @@ public class ProviderDashboardActivity extends BaseActivity {
                 startActivity(new Intent(this, ProviderComplaintsActivity.class));
             } else if (itemId == R.id.nav_quantity_requests) {
                 startActivity(new Intent(this, QuantityRequestsActivity.class));
+            } else if (itemId == R.id.nav_route) {
+                startActivity(new Intent(this, RouteOptimizationActivity.class));
             } else if (itemId == R.id.nav_bills) {
                 startActivity(new Intent(this, BillListActivity.class));
             } else if (itemId == R.id.nav_reports) {
