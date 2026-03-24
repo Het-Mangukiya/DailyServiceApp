@@ -21,6 +21,8 @@ import java.util.Locale;
  * Use this to populate the database with test customers, service entries, and bills.
  */
 public class TestDataGenerator {
+
+    private static final int TEST_CUSTOMER_COUNT = 30;
     
     private final String providerId;
     private final List<String> createdCustomerIds = new ArrayList<>();
@@ -54,9 +56,20 @@ public class TestDataGenerator {
      * Create test customers with different service types.
      */
     private void generateTestCustomers(OnCustomersGeneratedListener listener) {
-        int customerCount = 20;
+        int customerCount = TEST_CUSTOMER_COUNT;
         String[] serviceTypes = {"Milk", "Newspaper", "Water", "Tiffin"};
-        String[] areas = {"MG Road", "Koramangala", "Whitefield", "Indiranagar", "Jayanagar"};
+        String[] areas = {
+            "MG Road",
+            "Koramangala",
+            "Whitefield",
+            "Indiranagar",
+            "Jayanagar",
+            "HSR Layout",
+            "BTM Layout",
+            "Banashankari",
+            "Rajajinagar",
+            "Electronic City"
+        };
 
         List<String> customerIds = new ArrayList<>();
         WriteBatch batch = db.batch();
@@ -65,6 +78,7 @@ public class TestDataGenerator {
             String name = "Test Customer " + (i + 1);
             String phone = "9876543" + String.format(Locale.US, "%03d", i);
             String address = "House " + (100 + i) + ", " + areas[i % areas.length] + ", Bangalore";
+                String area = areas[i % areas.length];
             String serviceType = serviceTypes[i % serviceTypes.length];
             double rate = 25 + (i % 6) * 5;
 
@@ -78,6 +92,9 @@ public class TestDataGenerator {
             );
             customer.setProviderId(providerId);
             customer.setStatus("ACTIVE");
+            customer.setArea(area);
+            customer.setOnVacation(false);
+            customer.setDefaultQuantity(1.0 + (i % 3) * 0.5);
             createdCustomers.add(customer);
 
             DocumentReference ref = db.collection("customers").document();

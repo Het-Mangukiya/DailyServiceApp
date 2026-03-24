@@ -21,6 +21,7 @@ import com.dailyserviceapp.core.utils.ValidationUtils;
 import com.dailyserviceapp.dashboard.DashboardActivity;
 import com.dailyserviceapp.databinding.ActivityLoginBinding;
 import com.dailyserviceapp.profile.ProfileActivity;
+import com.dailyserviceapp.notifications.FCMService;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -34,6 +35,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -443,6 +445,8 @@ public class LoginActivity extends BaseActivity {
             return;
         }
 
+        saveFcmTokenIfAvailable();
+
         if (role == null || role.trim().isEmpty()) {
             resolveRoleAndRoute(userId);
             return;
@@ -455,6 +459,15 @@ public class LoginActivity extends BaseActivity {
 
         hideLoading();
         navigateToCustomerHome();
+    }
+
+    private void saveFcmTokenIfAvailable() {
+        FirebaseMessaging.getInstance().getToken()
+            .addOnSuccessListener(token -> {
+                if (token != null && !token.trim().isEmpty()) {
+                    FCMService.saveTokenToFirestore(token);
+                }
+            });
     }
 
     private void resolveRoleAndRoute(String userId) {

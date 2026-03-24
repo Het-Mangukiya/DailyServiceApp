@@ -7,12 +7,14 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.OptIn;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
@@ -37,6 +39,8 @@ import com.dailyserviceapp.core.utils.CurrencyUtils;
 import com.dailyserviceapp.data.models.Customer;
 import com.dailyserviceapp.databinding.ActivityHomeBinding;
 import com.dailyserviceapp.databinding.NavHeaderBinding;
+import com.dailyserviceapp.maps.RouteOptimizationActivity;
+import com.dailyserviceapp.notifications.NotificationListActivity;
 import com.dailyserviceapp.payment.PaymentActivity;
 import com.dailyserviceapp.profile.ProfileActivity;
 import com.dailyserviceapp.provider.ProviderComplaintsActivity;
@@ -49,6 +53,9 @@ import com.dailyserviceapp.ui.CustomerEditActivity;
 import com.dailyserviceapp.ui.PagedCustomerAdapter;
 import com.dailyserviceapp.ui.CustomerDetailActivity;
 import com.dailyserviceapp.utils.TestDataGenerator;
+import com.google.android.material.badge.BadgeDrawable;
+import com.google.android.material.badge.ExperimentalBadgeUtils;
+import com.google.android.material.badge.BadgeUtils;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
@@ -109,6 +116,11 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
     private ListenerRegistration customersListener;
     private LiveData<PagingData<Customer>> pagedCustomersLiveData;
     private boolean pagingMode = false;
+
+    // Notification badge
+    private ListenerRegistration notifListener;
+    private int unreadNotifCount = 0;
+    private BadgeDrawable notifBadge;
     
     // Search debouncing
     private final Handler searchHandler = new Handler(Looper.getMainLooper());
@@ -148,6 +160,11 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         setupListeners();
         loadCachedDashboardMetrics();
         loadData();
+
+        loadUnreadNotificationCount();
+        if (getIntent() != null && getIntent().getBooleanExtra("openNotifications", false)) {
+            startActivity(new Intent(this, NotificationListActivity.class));
+        }
     }
     
     private void initializeViews() {
@@ -781,6 +798,47 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
             customerRecyclerView.setVisibility(View.VISIBLE);
         }
     }
+
+    private void loadUnreadNotificationCount() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) return;
+
+        if (notifListener != null) {
+            notifListener.remove();
+        }
+
+        notifListener = FirebaseFirestore.getInstance()
+            .collection(Constants.COLLECTION_NOTIFICATIONS)
+            .whereEqualTo("userId", user.getUid())
+            .whereEqualTo("read", false)
+            .addSnapshotListener((snapshots, error) -> {
+                if (error != null || snapshots == null) return;
+                unreadNotifCount = snapshots.size();
+                updateNotificationBadge();
+            });
+    }
+
+    @OptIn(markerClass = ExperimentalBadgeUtils.class)
+    private void updateNotificationBadge() {
+        if (toolbar == null) return;
+        Menu menu = toolbar.getMenu();
+        if (menu == null) return;
+
+        MenuItem notifItem = menu.findItem(R.id.action_notifications);
+        if (notifItem == null) return;
+
+        if (notifBadge == null) {
+            notifBadge = BadgeDrawable.create(this);
+            BadgeUtils.attachBadgeDrawable(notifBadge, toolbar, R.id.action_notifications);
+        }
+
+        if (unreadNotifCount > 0) {
+            notifBadge.setVisible(true);
+            notifBadge.setNumber(unreadNotifCount);
+        } else {
+            notifBadge.setVisible(false);
+        }
+    }
     
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -791,6 +849,9 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
             return true;
         } else if (id == R.id.action_calendar) {
             startActivity(new Intent(this, ServiceEntryActivity.class));
+            return true;
+        } else if (id == R.id.action_notifications) {
+            startActivity(new Intent(this, NotificationListActivity.class));
             return true;
         }
         
@@ -811,6 +872,8 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
             startActivity(new Intent(this, ProviderComplaintsActivity.class));
         } else if (id == R.id.nav_service_entry) {
             startActivity(new Intent(this, ServiceEntryActivity.class));
+        } else if (id == R.id.nav_route) {
+            startActivity(new Intent(this, RouteOptimizationActivity.class));
         } else if (id == R.id.nav_bills) {
             startActivity(new Intent(this, BillListActivity.class));
         } else if (id == R.id.nav_reports) {
@@ -835,8 +898,8 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         new MaterialAlertDialogBuilder(this)
             .setTitle("Generate Test Data")
             .setMessage("This will create:\n\n" +
-                    "✓ 5 test customers\n" +
-                    "✓ ~120 service entries for January 2026\n" +
+                    "✓ 30 test customers with address + area\n" +
+                    "✓ ~900 service entries for Jan-Feb 2026\n" +
                     "✓ Ready for bill generation\n\n" +
                     "Continue?")
             .setPositiveButton("Generate", (dialog, which) -> {
@@ -1119,6 +1182,10 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         if (customersListener != null) {
             customersListener.remove();
             customersListener = null;
+        }
+        if (notifListener != null) {
+            notifListener.remove();
+            notifListener = null;
         }
         binding = null;
     }
