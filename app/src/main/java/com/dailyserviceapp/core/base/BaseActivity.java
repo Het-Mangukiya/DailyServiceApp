@@ -16,22 +16,22 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 
+import dagger.hilt.android.AndroidEntryPoint;
+import javax.inject.Inject;
+
 /**
- * Base Activity for all activities in the DailyDrop application.
- * Provides common functionality including preference management,
- * network monitoring, toolbar setup, and utility methods.
- * 
- * <p>All activities should extend this base class to inherit
- * common features like user session management, network checking,
- * and consistent UI patterns.</p>
+ * Base Activity class providing common functionality for all activities.
+ * Handles network monitoring, UI setup, and user preferences.
  * 
  * @author DailyDrop Team
  * @version 1.0
  * @since 2026-01-08
  */
+@AndroidEntryPoint
 public abstract class BaseActivity extends AppCompatActivity {
     
     /** Preference manager for accessing user data */
+    @Inject
     protected PreferenceManager preferenceManager;
     
     /** Network monitor for checking connectivity */
@@ -46,7 +46,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        preferenceManager = new PreferenceManager(this);
+        // preferenceManager is injected by Hilt
         networkMonitor = new NetworkMonitor(this);
     }
     

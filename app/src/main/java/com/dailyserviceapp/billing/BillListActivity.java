@@ -1,5 +1,6 @@
 package com.dailyserviceapp.billing;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.LruCache;
@@ -31,6 +32,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * Customer-wise billing ledger derived from service entries and payments.
  */
+@AndroidEntryPoint
 public class BillListActivity extends BaseActivity {
 
     private static final long MANUAL_REFRESH_COOLDOWN_MS = 3000L;

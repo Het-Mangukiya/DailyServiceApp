@@ -24,6 +24,11 @@
             android:title="@string/menu_complaints" />
 
         <item
+            android:id="@+id/nav_quantity_requests"
+            android:icon="@drawable/ic_nav_requests"
+            android:title="@string/menu_quantity_requests" />
+
+        <item
             android:id="@+id/nav_service_entry"
             android:icon="@drawable/ic_nav_service"
             android:title="@string/menu_service_entry" />

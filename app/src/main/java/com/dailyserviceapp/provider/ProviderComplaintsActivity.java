@@ -1,5 +1,6 @@
 package com.dailyserviceapp.provider;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
@@ -31,6 +32,7 @@ import java.util.Map;
 /**
  * Provider-facing complaints inbox and detail viewer.
  */
+@AndroidEntryPoint
 public class ProviderComplaintsActivity extends BaseActivity {
 
     private ActivityProviderComplaintsBinding binding;

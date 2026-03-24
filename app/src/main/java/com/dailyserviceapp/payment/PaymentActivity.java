@@ -1,5 +1,6 @@
 package com.dailyserviceapp.payment;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.text.Editable;
@@ -37,6 +38,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * Payment Activity for recording customer payments.
  */
+@AndroidEntryPoint
 public class PaymentActivity extends BaseActivity {
 
     private static final double EPSILON = 0.01;

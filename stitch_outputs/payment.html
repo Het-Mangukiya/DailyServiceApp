@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Payment - Veridian Ledger</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "secondary-container": "#a9eef3",
+              "on-tertiary-fixed-variant": "#1f4e4a",
+              "primary-container": "#1d8187",
+              "on-background": "#181c1d",
+              "surface-container": "#ebeeee",
+              "on-surface-variant": "#3e494a",
+              "secondary": "#1c686d",
+              "on-surface": "#181c1d",
+              "surface-container-lowest": "#ffffff",
+              "surface-dim": "#d7dbdb",
+              "on-tertiary-container": "#f3fffc",
+              "surface-container-low": "#f1f4f4",
+              "on-primary-fixed": "#002022",
+              "outline-variant": "#bdc9c9",
+              "on-primary-fixed-variant": "#004f54",
+              "surface-container-high": "#e5e9e9",
+              "error-container": "#ffdad6",
+              "tertiary-fixed-dim": "#a0d0ca",
+              "on-tertiary": "#ffffff",
+              "surface-variant": "#e0e3e3",
+              "primary-fixed-dim": "#7ed4db",
+              "on-primary-container": "#f4feff",
+              "inverse-primary": "#7ed4db",
+              "background": "#f7fafa",
+              "secondary-fixed": "#a9eef3",
+              "primary-fixed": "#9af1f8",
+              "inverse-surface": "#2d3131",
+              "surface-tint": "#00696f",
+              "tertiary": "#36645f",
+              "on-secondary-fixed": "#002022",
+              "on-tertiary-fixed": "#00201e",
+              "on-secondary": "#ffffff",
+              "surface": "#f7fafa",
+              "primary": "#00666c",
+              "error": "#ba1a1a",
+              "secondary-fixed-dim": "#8ed2d7",
+              "on-secondary-fixed-variant": "#004f53",
+              "tertiary-fixed": "#bbece6",
+              "tertiary-container": "#4f7d78",
+              "outline": "#6e797a",
+              "on-error-container": "#93000a",
+              "on-error": "#ffffff",
+              "on-secondary-container": "#256e73",
+              "surface-bright": "#f7fafa",
+              "on-primary": "#ffffff",
+              "inverse-on-surface": "#eef1f1",
+              "surface-container-highest": "#e0e3e3"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Manrope"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface font-body antialiased">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#f7fafa]/80 dark:bg-[#181c1d]/80 backdrop-blur-md after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-full after:h-[1px] after:bg-[#bdc9c9]/15">
+<div class="flex items-center justify-between px-6 py-4 w-full">
+<div class="flex items-center gap-4">
+<button class="text-[#00666c] dark:text-[#8ed2d7] active:scale-95 duration-200">
+<span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
+</button>
+<h1 class="text-[#00666c] dark:text-[#8ed2d7] font-['Manrope'] font-semibold tracking-tight text-xl">Payment</h1>
+</div>
+<button class="text-[#00666c] dark:text-[#8ed2d7] font-['Manrope'] font-semibold text-sm hover:bg-[#f1f4f4] dark:hover:bg-[#3e494a] transition-colors px-3 py-1 rounded-lg">
+                Add Payment
+            </button>
+</div>
+</header>
+<main class="pt-24 pb-32 px-6 max-w-2xl mx-auto space-y-8">
+<!-- Customer Header Card -->
+<section class="bg-surface-container-lowest rounded-xl p-6 shadow-sm ring-1 ring-outline-variant/10">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-4">
+<div class="w-16 h-16 rounded-full bg-secondary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-on-secondary-container text-3xl" data-icon="person">person</span>
+</div>
+<div>
+<h2 class="font-headline font-bold text-2xl tracking-tight text-on-surface">Aman Gupta</h2>
+<p class="text-on-surface-variant font-medium">Medical Consultation</p>
+</div>
+</div>
+<div class="bg-tertiary-fixed text-on-tertiary-fixed-variant px-3 py-1 rounded-md text-xs font-bold uppercase tracking-wider">
+                    Active
+                </div>
+</div>
+</section>
+<!-- Summary Chips (Horizontal Scroll) -->
+<section class="hide-scrollbar flex overflow-x-auto gap-3 py-2 -mx-6 px-6">
+<div class="flex-shrink-0 bg-primary-container text-on-primary-container px-5 py-3 rounded-full flex items-center gap-2 shadow-sm">
+<span class="material-symbols-outlined text-sm" data-icon="account_balance_wallet">account_balance_wallet</span>
+<span class="font-label text-sm font-semibold">Total Due: ₹1,500</span>
+</div>
+<div class="flex-shrink-0 bg-secondary-container text-on-secondary-container px-5 py-3 rounded-full flex items-center gap-2 shadow-sm">
+<span class="material-symbols-outlined text-sm" data-icon="check_circle">check_circle</span>
+<span class="font-label text-sm font-semibold">Paid: ₹1,200</span>
+</div>
+<div class="flex-shrink-0 bg-error-container text-on-error-container px-5 py-3 rounded-full flex items-center gap-2 shadow-sm">
+<span class="material-symbols-outlined text-sm" data-icon="pending">pending</span>
+<span class="font-label text-sm font-semibold">Outstanding: ₹300</span>
+</div>
+</section>
+<!-- Transaction List -->
+<section class="space-y-4">
+<div class="flex items-center justify-between px-2">
+<h3 class="font-headline font-bold text-lg text-on-surface">Recent Transactions</h3>
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="filter_list">filter_list</span>
+</div>
+<div class="space-y-3">
+<!-- Transaction Item 1 -->
+<div class="bg-surface-container-low hover:bg-surface-container-lowest transition-colors p-5 rounded-xl flex items-center justify-between group">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-xl bg-surface-container-high flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" data-icon="payments">payments</span>
+</div>
+<div>
+<p class="font-headline font-bold text-on-surface">₹1,000</p>
+<p class="font-label text-xs text-on-surface-variant">Oct 15, 2023 • UPI</p>
+</div>
+</div>
+<div class="bg-tertiary-fixed/40 text-on-tertiary-fixed-variant px-3 py-1 rounded-lg text-xs font-bold">
+                        Settled
+                    </div>
+</div>
+<!-- Transaction Item 2 -->
+<div class="bg-surface-container-low hover:bg-surface-container-lowest transition-colors p-5 rounded-xl flex items-center justify-between group">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-xl bg-surface-container-high flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" data-icon="credit_card">credit_card</span>
+</div>
+<div>
+<p class="font-headline font-bold text-on-surface">₹200</p>
+<p class="font-label text-xs text-on-surface-variant">Oct 12, 2023 • Card</p>
+</div>
+</div>
+<div class="bg-tertiary-fixed/40 text-on-tertiary-fixed-variant px-3 py-1 rounded-lg text-xs font-bold">
+                        Settled
+                    </div>
+</div>
+<!-- Transaction Item 3 (Pending) -->
+<div class="bg-surface-container-low hover:bg-surface-container-lowest transition-colors p-5 rounded-xl flex items-center justify-between group">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-xl bg-surface-container-high flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" data-icon="account_balance">account_balance</span>
+</div>
+<div>
+<p class="font-headline font-bold text-on-surface">₹300</p>
+<p class="font-label text-xs text-on-surface-variant">Oct 10, 2023 • Bank Transfer</p>
+</div>
+</div>
+<div class="bg-surface-variant text-on-surface-variant px-3 py-1 rounded-lg text-xs font-bold">
+                        Pending
+                    </div>
+</div>
+</div>
+</section>
+<!-- Bento Style Insights Card -->
+<section class="grid grid-cols-2 gap-4">
+<div class="bg-secondary-fixed-dim/20 p-5 rounded-xl flex flex-col justify-between h-32">
+<span class="material-symbols-outlined text-on-secondary-fixed-variant" data-icon="trending_up">trending_up</span>
+<div>
+<p class="text-[10px] font-label font-bold uppercase tracking-widest text-on-secondary-fixed-variant">Payment Velocity</p>
+<p class="text-lg font-headline font-extrabold text-on-secondary-fixed-variant">High</p>
+</div>
+</div>
+<div class="bg-primary-fixed-dim/20 p-5 rounded-xl flex flex-col justify-between h-32">
+<span class="material-symbols-outlined text-on-primary-fixed-variant" data-icon="schedule">schedule</span>
+<div>
+<p class="text-[10px] font-label font-bold uppercase tracking-widest text-on-primary-fixed-variant">Avg. Settlement</p>
+<p class="text-lg font-headline font-extrabold text-on-primary-fixed-variant">2.4 Days</p>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom Action Area -->
+<div class="fixed bottom-0 left-0 w-full px-6 pb-10 pt-4 bg-gradient-to-t from-background via-background to-transparent pointer-events-none">
+<div class="max-w-2xl mx-auto flex justify-center pointer-events-auto">
+<button class="bg-gradient-to-r from-primary to-primary-container text-white px-8 py-4 rounded-full shadow-lg flex items-center gap-3 active:scale-95 transition-transform">
+<span class="material-symbols-outlined" data-icon="add" style="font-variation-settings: 'FILL' 1;">add</span>
+<span class="font-headline font-bold">Add Payment</span>
+</button>
+</div>
+</div>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full z-50 rounded-t-[1.5rem] bg-[#ffffff] dark:bg-[#181c1d] border-t border-[#bdc9c9]/15 shadow-[0_-8px_24px_rgba(24,28,29,0.06)]">
+<div class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-6 pt-3">
+<a class="flex flex-col items-center justify-center text-[#3e494a] dark:text-[#bdc9c9] px-4 py-1 hover:opacity-80 transition-transform active:scale-90" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-['Inter'] text-[10px] font-medium">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-[#a9eef3] dark:bg-[#004f53] text-[#004f53] dark:text-[#a9eef3] rounded-2xl px-4 py-1 transition-transform active:scale-90" href="#">
+<span class="material-symbols-outlined" data-icon="payments" style="font-variation-settings: 'FILL' 1;">payments</span>
+<span class="font-['Inter'] text-[10px] font-medium">Payments</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#3e494a] dark:text-[#bdc9c9] px-4 py-1 hover:opacity-80 transition-transform active:scale-90" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-['Inter'] text-[10px] font-medium">Patients</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#3e494a] dark:text-[#bdc9c9] px-4 py-1 hover:opacity-80 transition-transform active:scale-90" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-['Inter'] text-[10px] font-medium">Settings</span>
+</a>
+</div>
+</nav>
+</body></html>

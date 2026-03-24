@@ -1,5 +1,6 @@
 package com.dailyserviceapp.customer;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import android.content.ActivityNotFoundException;
 import android.content.ClipData;
 import android.content.DialogInterface;
@@ -30,6 +31,10 @@ import com.dailyserviceapp.data.models.Customer;
 import com.dailyserviceapp.data.models.Payment;
 import com.dailyserviceapp.data.models.ServiceEntry;
 import com.dailyserviceapp.databinding.ActivityCustomerServiceDashboardBinding;
+import com.dailyserviceapp.data.models.QuantityRequest;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -49,12 +54,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * Customer dashboard after provider link approval.
  */
+@AndroidEntryPoint
 public class CustomerServiceDashboardActivity extends BaseActivity {
 
     private ActivityCustomerServiceDashboardBinding binding;
 
     private FirebaseFirestore firestore;
     private String customerId;
+    private String serviceCustomerId;
     private String providerId;
     private String providerName;
     private String providerServiceType;
@@ -89,6 +96,7 @@ public class CustomerServiceDashboardActivity extends BaseActivity {
             navigateToLogin();
             return;
         }
+        serviceCustomerId = customerId;
 
         firestore = FirebaseFirestore.getInstance();
 
@@ -97,6 +105,7 @@ public class CustomerServiceDashboardActivity extends BaseActivity {
         binding.btnComplaintSupport.setOnClickListener(v -> openComplaintSupport());
         binding.btnShareCustomerSummary.setOnClickListener(v -> shareCustomerSummary());
         binding.btnDownloadAndSharePdf.setOnClickListener(v -> showMonthPickerAndGenerate(true));
+        binding.btnRequestExtraQuantity.setOnClickListener(v -> showExtraQuantityBottomSheet());
 
         loadActiveLinkAndDashboard();
     }
@@ -170,6 +179,8 @@ public class CustomerServiceDashboardActivity extends BaseActivity {
 
                 providerId = safeTrim(linkDoc.getString("providerId"));
                 providerName = safeTrim(linkDoc.getString("providerName"));
+                String mappedCustomerId = safeTrim(linkDoc.getString("providerCustomerId"));
+                serviceCustomerId = mappedCustomerId.isEmpty() ? customerId : mappedCustomerId;
                 if (providerId.isEmpty()) {
                     setLoading(false);
                     showToast("Invalid provider link. Please reconnect.");
@@ -200,24 +211,24 @@ public class CustomerServiceDashboardActivity extends BaseActivity {
 
     private void loadCustomerDocument() {
         firestore.collection(Constants.COLLECTION_CUSTOMERS)
-            .document(customerId)
+            .document(serviceCustomerId)
             .get()
             .addOnSuccessListener(doc -> {
                 if (!isUiActive()) return;
                 customer = doc != null ? doc.toObject(Customer.class) : null;
                 if (customer == null) {
                     customer = new Customer();
-                    customer.setId(customerId);
+                    customer.setId(serviceCustomerId);
                     customer.setName(preferenceManager.getUserName());
                 } else {
-                    customer.setId(customerId);
+                    customer.setId(serviceCustomerId);
                 }
                 markLoadComplete();
             })
             .addOnFailureListener(e -> {
                 if (!isUiActive()) return;
                 customer = new Customer();
-                customer.setId(customerId);
+                customer.setId(serviceCustomerId);
                 customer.setName(preferenceManager.getUserName());
                 markLoadComplete();
             });
@@ -262,7 +273,7 @@ public class CustomerServiceDashboardActivity extends BaseActivity {
             return;
         }
         firestore.collection(Constants.COLLECTION_SERVICE_ENTRIES)
-            .whereEqualTo("customerId", customerId)
+            .whereEqualTo("customerId", serviceCustomerId)
             .whereEqualTo("providerId", providerId)
             .limit(1000)
             .get()
@@ -296,7 +307,7 @@ public class CustomerServiceDashboardActivity extends BaseActivity {
             return;
         }
         firestore.collection(Constants.COLLECTION_PAYMENTS)
-            .whereEqualTo("customerId", customerId)
+            .whereEqualTo("customerId", serviceCustomerId)
             .whereEqualTo("providerId", providerId)
             .limit(1000)
             .get()
@@ -389,7 +400,7 @@ public class CustomerServiceDashboardActivity extends BaseActivity {
     private void renderBillingSummary() {
         Customer safeCustomer = customer != null ? customer : new Customer();
         if (safeCustomer.getId() == null) {
-            safeCustomer.setId(customerId);
+            safeCustomer.setId(serviceCustomerId);
         }
 
         CustomerLedgerSummary summary = CustomerLedgerCalculator.calculate(safeCustomer, serviceEntries, payments);
@@ -534,6 +545,117 @@ public class CustomerServiceDashboardActivity extends BaseActivity {
         startActivity(intent);
     }
 
+    // ─── Extra Quantity Request Bottom Sheet ─────────────────────────────
+
+    private void showExtraQuantityBottomSheet() {
+        if (providerId == null || providerId.trim().isEmpty()) {
+            showToast("Provider not linked. Please connect first.");
+            return;
+        }
+
+        BottomSheetDialog bottomSheet = new BottomSheetDialog(this);
+        View sheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_quantity_request, null);
+        bottomSheet.setContentView(sheetView);
+
+        TextInputEditText inputCurrent = sheetView.findViewById(R.id.inputCurrentQuantity);
+        TextInputEditText inputRequested = sheetView.findViewById(R.id.inputRequestedQuantity);
+        TextInputEditText inputNote = sheetView.findViewById(R.id.inputNote);
+        MaterialButton btnSubmit = sheetView.findViewById(R.id.btnSubmitRequest);
+        View progressBar = sheetView.findViewById(R.id.progressBar);
+        android.widget.TextView txtPendingStatus = sheetView.findViewById(R.id.txtPendingStatus);
+
+        double currentQty = (customer != null) ? customer.getDefaultQuantity() : 1.0;
+        inputCurrent.setText(String.format(Locale.US, "%.1f", currentQty));
+        inputRequested.setText(String.format(Locale.US, "%.1f", currentQty + 1.0));
+
+        // Check if a pending request already exists for today
+        checkExistingTodayRequest(txtPendingStatus, btnSubmit);
+
+        btnSubmit.setOnClickListener(v -> {
+            String reqQtyStr = inputRequested.getText() != null
+                ? inputRequested.getText().toString().trim() : "";
+            if (reqQtyStr.isEmpty()) {
+                showToast(getString(R.string.request_invalid_quantity));
+                return;
+            }
+
+            double requestedQty;
+            try {
+                requestedQty = Double.parseDouble(reqQtyStr);
+            } catch (NumberFormatException e) {
+                showToast(getString(R.string.request_invalid_quantity));
+                return;
+            }
+
+            if (requestedQty <= currentQty) {
+                showToast(getString(R.string.request_invalid_quantity));
+                return;
+            }
+
+            String note = inputNote.getText() != null ? inputNote.getText().toString().trim() : "";
+
+            String customerName = safeTrim(preferenceManager.getUserName());
+            if (customerName.isEmpty() && customer != null) {
+                customerName = safeTrim(customer.getName());
+            }
+            if (customerName.isEmpty()) customerName = "Customer";
+
+            String serviceType = safeTrim(providerServiceType);
+            if (serviceType.isEmpty() && customer != null) {
+                serviceType = safeTrim(customer.getServiceType());
+            }
+
+            QuantityRequest request = new QuantityRequest(
+                customerId, providerId, customerName,
+                serviceType, currentQty, requestedQty,
+                Timestamp.now()
+            );
+            if (!note.isEmpty()) {
+                request.setNote(note);
+            }
+
+            btnSubmit.setEnabled(false);
+            progressBar.setVisibility(View.VISIBLE);
+
+            firestore.collection(Constants.COLLECTION_QUANTITY_REQUESTS)
+                .add(request)
+                .addOnSuccessListener(docRef -> {
+                    if (!isUiActive()) return;
+                    progressBar.setVisibility(View.GONE);
+                    showToast(getString(R.string.request_submitted_success));
+                    bottomSheet.dismiss();
+                })
+                .addOnFailureListener(e -> {
+                    if (!isUiActive()) return;
+                    progressBar.setVisibility(View.GONE);
+                    btnSubmit.setEnabled(true);
+                    showToast("Failed to submit request: " + e.getMessage());
+                });
+        });
+
+        bottomSheet.show();
+    }
+
+    private void checkExistingTodayRequest(android.widget.TextView txtPendingStatus,
+                                           MaterialButton btnSubmit) {
+        if (customerId == null || providerId == null) return;
+
+        firestore.collection(Constants.COLLECTION_QUANTITY_REQUESTS)
+            .whereEqualTo("customerId", customerId)
+            .whereEqualTo("providerId", providerId)
+            .whereEqualTo("status", QuantityRequest.STATUS_PENDING)
+            .limit(1)
+            .get()
+            .addOnSuccessListener(query -> {
+                if (!isUiActive()) return;
+                if (query != null && !query.isEmpty()) {
+                    txtPendingStatus.setVisibility(View.VISIBLE);
+                    btnSubmit.setEnabled(false);
+                    btnSubmit.setText(getString(R.string.request_already_pending));
+                }
+            });
+    }
+
     private void shareCustomerSummary() {
         if (customer == null) {
             showToast("Dashboard is still loading. Please try again.");
@@ -624,7 +746,7 @@ public class CustomerServiceDashboardActivity extends BaseActivity {
                 ? "Customer" : preferenceManager.getUserName());
         }
         if (safeCustomer.getId() == null || safeCustomer.getId().trim().isEmpty()) {
-            safeCustomer.setId(customerId);
+            safeCustomer.setId(serviceCustomerId);
         }
 
         setLoading(true);

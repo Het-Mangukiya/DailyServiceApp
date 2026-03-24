@@ -3,6 +3,8 @@ package com.dailyserviceapp.core.offline;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.dailyserviceapp.data.local.dao.CustomerDao;
+import com.dailyserviceapp.data.local.entity.CustomerEntity;
 import com.dailyserviceapp.data.models.Customer;
 import com.dailyserviceapp.data.models.ServiceEntry;
 import com.google.firebase.Timestamp;
@@ -18,52 +20,90 @@ import java.util.Set;
 
 /**
  * Offline cache manager for storing data locally when network is unavailable.
- * Uses SharedPreferences and Gson for simple key-value persistence.
+ * Upgraded to use Room Database for Customer caching, improving performance and scale.
  * 
  * @author DailyDrop Team
- * @version 1.0
- * @since 2026-01-28
+ * @version 2.0
  */
 public class OfflineCache {
     
     private static final String PREF_NAME = "offline_cache";
-    private static final String KEY_CUSTOMERS = "cached_customers";
     private static final String KEY_PENDING_ENTRIES = "pending_entries";
     private static final String KEY_LAST_SYNC = "last_sync_time";
     
     private final SharedPreferences prefs;
     private final Gson gson;
+    private final CustomerDao customerDao;
     private final Object syncLock = new Object();
     
-    public OfflineCache(Context context) {
+    public OfflineCache(Context context, CustomerDao customerDao) {
         this.prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         this.gson = new Gson();
+        this.customerDao = customerDao;
     }
     
     /**
-     * Cache customer list for offline access
+     * Cache customer list for offline access into Room Database
      */
     public void cacheCustomers(List<Customer> customers) {
         synchronized (syncLock) {
-            String json = gson.toJson(customers);
+            List<CustomerEntity> entities = new ArrayList<>();
+            for (Customer c : customers) {
+                CustomerEntity e = new CustomerEntity();
+                e.id = c.getId() != null ? c.getId() : java.util.UUID.randomUUID().toString();
+                e.name = c.getName();
+                e.phone = c.getPhone();
+                e.address = c.getAddress();
+                e.serviceType = c.getServiceType();
+                e.ratePerUnit = c.getRatePerUnit();
+                e.defaultQuantity = c.getDefaultQuantity();
+                e.lentAmount = c.getLentAmount();
+                e.providerId = c.getProviderId();
+                e.status = c.getStatus();
+                e.onVacation = c.isOnVacation();
+                if (c.getCreatedAt() != null) {
+                    e.createdAtMillis = c.getCreatedAt().toDate().getTime();
+                }
+                entities.add(e);
+            }
+            
+            customerDao.clearAll();
+            customerDao.insertAll(entities);
+            
             prefs.edit()
-                .putString(KEY_CUSTOMERS, json)
                 .putLong(KEY_LAST_SYNC, System.currentTimeMillis())
                 .apply();
         }
     }
     
     /**
-     * Retrieve cached customers
+     * Retrieve cached customers from Room Database
      */
     public List<Customer> getCachedCustomers() {
         synchronized (syncLock) {
-            String json = prefs.getString(KEY_CUSTOMERS, null);
-            if (json == null) {
-                return new ArrayList<>();
+            List<CustomerEntity> entities = customerDao.getAllCustomers();
+            List<Customer> customers = new ArrayList<>();
+            for (CustomerEntity e : entities) {
+                Customer c = new Customer();
+                c.setId(e.id);
+                c.setName(e.name);
+                c.setPhone(e.phone);
+                c.setAddress(e.address);
+                c.setServiceType(e.serviceType);
+                c.setRatePerUnit(e.ratePerUnit);
+                c.setDefaultQuantity(e.defaultQuantity);
+                c.setLentAmount(e.lentAmount);
+                c.setProviderId(e.providerId);
+                c.setStatus(e.status);
+                c.setOnVacation(e.onVacation);
+                if (e.createdAtMillis > 0) {
+                    c.setCreatedAt(new Timestamp(new Date(e.createdAtMillis)));
+                } else {
+                    c.setCreatedAt(new Timestamp(new Date()));
+                }
+                customers.add(c);
             }
-            Type type = new TypeToken<List<Customer>>(){}.getType();
-            return gson.fromJson(json, type);
+            return customers;
         }
     }
     
@@ -104,7 +144,6 @@ public class OfflineCache {
 
     /**
      * Reconciles a sync pass without clobbering entries queued concurrently.
-     * Keeps entries added after snapshot retrieval and appends retry entries.
      */
     public void reconcilePendingEntriesAfterSync(List<PendingServiceEntry> processedSnapshot,
                                                  List<PendingServiceEntry> retryEntries) {
@@ -174,7 +213,7 @@ public class OfflineCache {
      */
     public boolean hasCachedData() {
         synchronized (syncLock) {
-            return prefs.contains(KEY_CUSTOMERS);
+            return prefs.contains(KEY_LAST_SYNC);
         }
     }
     
@@ -190,6 +229,7 @@ public class OfflineCache {
      */
     public void clearAll() {
         synchronized (syncLock) {
+            customerDao.clearAll();
             prefs.edit().clear().apply();
         }
     }

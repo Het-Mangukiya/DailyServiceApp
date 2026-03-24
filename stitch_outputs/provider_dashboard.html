@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Veridian Ledger - Provider Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-variant": "#d8e5e4",
+              "primary-fixed-dim": "#86d3d9",
+              "outline": "#6f797a",
+              "tertiary": "#693710",
+              "on-tertiary-fixed": "#311400",
+              "on-surface-variant": "#3f4949",
+              "primary": "#004c51",
+              "surface": "#effcfb",
+              "secondary-fixed": "#cae8ea",
+              "on-error": "#ffffff",
+              "on-surface": "#121e1d",
+              "outline-variant": "#bec8c9",
+              "tertiary-fixed-dim": "#ffb786",
+              "surface-dim": "#d0dddc",
+              "inverse-primary": "#86d3d9",
+              "tertiary-fixed": "#ffdcc6",
+              "surface-tint": "#07696f",
+              "on-background": "#121e1d",
+              "surface-container-highest": "#d8e5e4",
+              "tertiary-container": "#854e25",
+              "inverse-on-surface": "#e6f3f2",
+              "primary-fixed": "#a2eff6",
+              "surface-container-lowest": "#ffffff",
+              "secondary-container": "#cae8ea",
+              "on-primary-container": "#94e1e7",
+              "on-secondary": "#ffffff",
+              "secondary": "#486365",
+              "on-error-container": "#93000a",
+              "surface-bright": "#effcfb",
+              "on-primary-fixed-variant": "#004f54",
+              "on-primary": "#ffffff",
+              "surface-container": "#e3f0f0",
+              "on-tertiary-container": "#ffc9a7",
+              "secondary-fixed-dim": "#afccce",
+              "on-secondary-fixed-variant": "#304b4d",
+              "inverse-surface": "#273332",
+              "on-tertiary": "#ffffff",
+              "primary-container": "#00666c",
+              "error-container": "#ffdad6",
+              "on-primary-fixed": "#002022",
+              "on-tertiary-fixed-variant": "#6c3a12",
+              "background": "#effcfb",
+              "surface-container-low": "#e9f6f5",
+              "on-secondary-fixed": "#021f22",
+              "on-secondary-container": "#4e696b",
+              "error": "#ba1a1a",
+              "surface-container-high": "#deebea"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Manrope"],
+              "label": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+      body { font-family: 'Manrope', sans-serif; }
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      .tonal-depth-shift {
+        backdrop-filter: blur(20px);
+      }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface min-h-screen pb-32">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 flex justify-between items-center px-6 h-16 bg-[#004c51] dark:bg-[#002d30] shadow-[0_12px_40px_rgba(0,76,81,0.06)] tonal-depth-shift">
+<div class="flex items-center gap-4">
+<button class="text-teal-50 hover:bg-teal-700/50 transition-colors p-2 rounded-full active:scale-90 transition-transform">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<h1 class="font-['Manrope'] font-bold tracking-tight text-lg text-teal-50">Veridian Ledger</h1>
+</div>
+<div class="flex items-center">
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary-fixed active:scale-95 transition-transform cursor-pointer">
+<img alt="Provider Avatar" class="w-full h-full object-cover" data-alt="professional portrait of a medical doctor in a clinical setting with soft blue lighting and blurred hospital background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB2ItGGGtMb-c4RTpp1XkiAt4JOlRc7RpmgGjMZ3si6tNyAGqT6Ywh1iD-fXNu87l6Ai2AfuhgOA7z4wQaPVY24xsq-_DZAUBCFQpdk9VqWQCOGY02L3H2HrKnvwSK0v8v_rdKahZRkUWO0vaFQqF7b5YVDWOOmPYtx5E8r5rUkNlpPDcO0OFNqHhyk9DQWv-htbo9clTj2wL5uXyLsZ77cEnid_HTooSZ1UxkHE9oXDhYatrs4KlSroQGKM89K1rIi_23NpJhKK6EC"/>
+</div>
+</div>
+</header>
+<main class="pt-24 px-6 max-w-5xl mx-auto space-y-8">
+<!-- Header Card: Greetings -->
+<section class="relative overflow-hidden bg-primary-container rounded-xl p-8 text-white shadow-lg">
+<div class="relative z-10">
+<p class="text-teal-100 font-medium tracking-wide mb-1 opacity-90">Welcome back,</p>
+<h2 class="text-3xl font-extrabold tracking-tight mb-2">Dr. Vane</h2>
+<div class="inline-flex items-center px-3 py-1 bg-white/10 backdrop-blur-md rounded-full text-xs font-bold tracking-widest uppercase">
+                    ID: VL-88291
+                </div>
+</div>
+<!-- Decorative Abstract Elements -->
+<div class="absolute -top-12 -right-12 w-48 h-48 bg-teal-400/10 rounded-full blur-3xl"></div>
+<div class="absolute -bottom-8 -left-8 w-32 h-32 bg-teal-300/10 rounded-full blur-2xl"></div>
+</section>
+<!-- Stats Grid (2x2) -->
+<section class="grid grid-cols-2 md:grid-cols-4 gap-4">
+<!-- Card 1 -->
+<div class="bg-surface-container-lowest p-6 rounded-DEFAULT shadow-[0_12px_40px_rgba(0,76,81,0.06)] hover:translate-y-[-4px] transition-all duration-300">
+<div class="flex flex-col items-start gap-3">
+<div class="p-2 bg-surface-container-low rounded-lg text-primary">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+</div>
+<div>
+<p class="text-on-surface-variant text-[10px] font-bold uppercase tracking-wider">Active Customers</p>
+<h3 class="text-2xl font-extrabold text-on-surface tracking-tighter mt-1">128</h3>
+</div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-container-lowest p-6 rounded-DEFAULT shadow-[0_12px_40px_rgba(0,76,81,0.06)] hover:translate-y-[-4px] transition-all duration-300">
+<div class="flex flex-col items-start gap-3">
+<div class="p-2 bg-tertiary-fixed rounded-lg text-tertiary">
+<span class="material-symbols-outlined" data-icon="pending_actions">pending_actions</span>
+</div>
+<div>
+<p class="text-on-surface-variant text-[10px] font-bold uppercase tracking-wider">Pending Requests</p>
+<h3 class="text-2xl font-extrabold text-on-surface tracking-tighter mt-1">14</h3>
+</div>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface-container-lowest p-6 rounded-DEFAULT shadow-[0_12px_40px_rgba(0,76,81,0.06)] hover:translate-y-[-4px] transition-all duration-300">
+<div class="flex flex-col items-start gap-3">
+<div class="p-2 bg-secondary-container rounded-lg text-secondary">
+<span class="material-symbols-outlined" data-icon="local_shipping">local_shipping</span>
+</div>
+<div>
+<p class="text-on-surface-variant text-[10px] font-bold uppercase tracking-wider">Today's Deliveries</p>
+<h3 class="text-2xl font-extrabold text-on-surface tracking-tighter mt-1">42</h3>
+</div>
+</div>
+</div>
+<!-- Card 4 -->
+<div class="bg-surface-container-lowest p-6 rounded-DEFAULT shadow-[0_12px_40px_rgba(0,76,81,0.06)] hover:translate-y-[-4px] transition-all duration-300 border-l-4 border-primary">
+<div class="flex flex-col items-start gap-3">
+<div class="p-2 bg-primary-fixed rounded-lg text-primary">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+</div>
+<div>
+<p class="text-on-surface-variant text-[10px] font-bold uppercase tracking-wider">Total Due</p>
+<h3 class="text-2xl font-extrabold text-on-surface tracking-tighter mt-1">₹1.2L</h3>
+</div>
+</div>
+</div>
+</section>
+<!-- Quick Actions Section -->
+<section class="space-y-4">
+<h4 class="text-xs font-black text-primary uppercase tracking-[0.2em] px-1">Quick Actions</h4>
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+<button class="aspect-square bg-surface-container-high hover:bg-primary hover:text-white transition-all duration-300 rounded-DEFAULT flex flex-col items-center justify-center gap-3 group">
+<div class="w-12 h-12 rounded-full bg-white/50 flex items-center justify-center group-hover:bg-white/20">
+<span class="material-symbols-outlined" data-icon="add_box">add_box</span>
+</div>
+<span class="text-sm font-bold tracking-tight">Service Entry</span>
+</button>
+<button class="aspect-square bg-surface-container-high hover:bg-primary hover:text-white transition-all duration-300 rounded-DEFAULT flex flex-col items-center justify-center gap-3 group">
+<div class="w-12 h-12 rounded-full bg-white/50 flex items-center justify-center group-hover:bg-white/20">
+<span class="material-symbols-outlined" data-icon="receipt_long">receipt_long</span>
+</div>
+<span class="text-sm font-bold tracking-tight">Bills</span>
+</button>
+<button class="aspect-square bg-surface-container-high hover:bg-primary hover:text-white transition-all duration-300 rounded-DEFAULT flex flex-col items-center justify-center gap-3 group">
+<div class="w-12 h-12 rounded-full bg-white/50 flex items-center justify-center group-hover:bg-white/20">
+<span class="material-symbols-outlined" data-icon="bar_chart">bar_chart</span>
+</div>
+<span class="text-sm font-bold tracking-tight">Reports</span>
+</button>
+<button class="aspect-square bg-surface-container-high hover:bg-primary hover:text-white transition-all duration-300 rounded-DEFAULT flex flex-col items-center justify-center gap-3 group">
+<div class="w-12 h-12 rounded-full bg-white/50 flex items-center justify-center group-hover:bg-white/20">
+<span class="material-symbols-outlined" data-icon="diversity_3">diversity_3</span>
+</div>
+<span class="text-sm font-bold tracking-tight">Customers</span>
+</button>
+</div>
+</section>
+<!-- Featured Analysis (Asymmetric Bento Component) -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-6 pb-12">
+<div class="md:col-span-2 bg-surface-container-lowest p-8 rounded-DEFAULT shadow-[0_12px_40px_rgba(0,76,81,0.06)] flex flex-col justify-between min-h-[240px]">
+<div>
+<h4 class="text-xl font-bold text-on-surface mb-2">Ledger Insights</h4>
+<p class="text-on-surface-variant text-sm max-w-md">Collections have increased by 12% this week. Monitor pending requests from the Sector 7 hub for optimization.</p>
+</div>
+<div class="mt-8 flex items-end gap-2 h-24">
+<div class="flex-1 bg-surface-container-high rounded-t-lg h-[40%]"></div>
+<div class="flex-1 bg-surface-container-high rounded-t-lg h-[65%]"></div>
+<div class="flex-1 bg-primary rounded-t-lg h-[85%]"></div>
+<div class="flex-1 bg-surface-container-high rounded-t-lg h-[55%]"></div>
+<div class="flex-1 bg-surface-container-high rounded-t-lg h-[45%]"></div>
+<div class="flex-1 bg-primary-container rounded-t-lg h-[95%]"></div>
+<div class="flex-1 bg-surface-container-high rounded-t-lg h-[70%]"></div>
+</div>
+</div>
+<div class="bg-primary text-white p-8 rounded-DEFAULT shadow-xl flex flex-col justify-center items-center text-center space-y-4">
+<div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
+<span class="material-symbols-outlined scale-150" data-icon="verified">verified</span>
+</div>
+<h4 class="text-lg font-bold">Health Score</h4>
+<div class="text-5xl font-black">94</div>
+<p class="text-teal-100 text-xs font-medium uppercase tracking-widest">Efficiency Rating</p>
+</div>
+</section>
+</main>
+<!-- NavigationDrawer (Mobile Hidden Shell Concept) -->
+<nav class="hidden fixed inset-y-0 left-0 z-[60] flex flex-col bg-[#effcfb]/80 dark:bg-[#0a1a19]/80 backdrop-blur-xl rounded-r-3xl h-full w-72 shadow-2xl transition-all duration-300 ease-in-out">
+<div class="p-8 flex flex-col items-start">
+<div class="w-16 h-16 rounded-full overflow-hidden mb-4 border-2 border-primary">
+<img alt="Provider Avatar" class="w-full h-full object-cover" data-alt="professional portrait of a confident healthcare provider in a modern office with natural light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBkxLgpVNU9-SIZhguTjgkAI0MMBkVQqjPwfxqmyEHizkXP3j9AKPwYLQFiF2uQ_1yoD1bTFO0b2oHvgGx_9ciq7tRK-ZdEhLi4OcVOnVIhE06Dm6HFtDA60RGyxUy1p4zLNZohKfxZqLDF8SM6I0u-SJi-31V1huKHwuUWoq5lWk-WGs8iCaopfKlqKpxtfxQV8czpo5qk2jhUz7e94aOo0qxhjd3ed1l_rMO57zt8rn8uYikBsyEELt6N3ZOEOCPK58hRGXDmcDEz"/>
+</div>
+<h3 class="text-2xl font-black text-[#004c51] font-['Manrope']">Veridian Provider</h3>
+<p class="text-sm font-medium text-[#121e1d] opacity-60">ID: VL-88291</p>
+</div>
+<div class="flex flex-col gap-1 px-4">
+<a class="bg-[#004c51] text-white rounded-full mx-2 px-4 py-3 flex items-center gap-4" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-['Manrope'] font-medium text-sm">Dashboard</span>
+</a>
+<a class="text-[#121e1d] dark:text-teal-100 px-4 py-3 flex items-center gap-4 hover:bg-[#d8e5e4] dark:hover:bg-teal-900/30 transition-all rounded-full" href="#">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+<span class="font-['Manrope'] font-medium text-sm">Ledger History</span>
+</a>
+<a class="text-[#121e1d] dark:text-teal-100 px-4 py-3 flex items-center gap-4 hover:bg-[#d8e5e4] dark:hover:bg-teal-900/30 transition-all rounded-full" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-['Manrope'] font-medium text-sm">Settings</span>
+</a>
+<a class="text-[#121e1d] dark:text-teal-100 px-4 py-3 flex items-center gap-4 hover:bg-[#d8e5e4] dark:hover:bg-teal-900/30 transition-all rounded-full" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+<span class="font-['Manrope'] font-medium text-sm">Support</span>
+</a>
+</div>
+</nav>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-2 bg-white/90 dark:bg-slate-900/90 backdrop-blur-lg rounded-t-[20px] shadow-[0_-8px_30px_rgba(0,76,81,0.04)]">
+<a class="flex flex-col items-center justify-center bg-[#e9f6f5] dark:bg-teal-900/40 text-[#004c51] dark:text-teal-100 rounded-2xl px-5 py-2 active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="home" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="font-['Manrope'] text-[10px] font-semibold uppercase tracking-wider mt-1">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-5 py-2 hover:text-[#00666c] dark:hover:text-teal-300 active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="font-['Manrope'] text-[10px] font-semibold uppercase tracking-wider mt-1">Customers</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-5 py-2 hover:text-[#00666c] dark:hover:text-teal-300 active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="equalizer">equalizer</span>
+<span class="font-['Manrope'] text-[10px] font-semibold uppercase tracking-wider mt-1">Stats</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-5 py-2 hover:text-[#00666c] dark:hover:text-teal-300 active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-['Manrope'] text-[10px] font-semibold uppercase tracking-wider mt-1">Profile</span>
+</a>
+</nav>
+</body></html>

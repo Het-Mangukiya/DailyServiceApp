@@ -51,6 +51,27 @@ service cloud.firestore {
           && (resource == null || resource.data.providerId == request.auth.uid));
     }
 
+    match /customerInvites/{inviteId} {
+      // Invite docs are keyed by token hash. Providers create/manage invites.
+      // Customers can claim pending invites by hashed token after login.
+      allow get: if isSignedIn();
+      allow list: if isSignedIn() && resource.data.providerId == request.auth.uid;
+      allow delete: if isSignedIn() && resource.data.providerId == request.auth.uid;
+      allow create: if isSignedIn()
+        && request.resource.data.providerId == request.auth.uid
+        && request.resource.data.providerCustomerId is string;
+      allow update: if isSignedIn() && (
+          (resource.data.providerId == request.auth.uid
+            && request.resource.data.providerId == resource.data.providerId)
+          ||
+          (resource.data.status == "PENDING"
+            && request.resource.data.status == "CLAIMED"
+            && request.resource.data.claimedByUserId == request.auth.uid
+            && request.resource.data.providerId == resource.data.providerId
+            && request.resource.data.providerCustomerId == resource.data.providerCustomerId)
+        );
+    }
+
     match /customers/{customerId} {
       // Allow get on non-existent docs (resource == null) so providers can check
       // before creating during join-request approval.
@@ -160,6 +181,24 @@ service cloud.firestore {
       allow update: if isSignedIn()
         && resource.data.providerId == request.auth.uid
         && request.resource.data.providerId == resource.data.providerId;
+    }
+
+    match /quantityRequests/{requestId} {
+      // Customers can read their own requests; providers can read requests for them.
+      allow get, list: if isSignedIn()
+        && (resource.data.customerId == request.auth.uid
+          || resource.data.providerId == request.auth.uid);
+      // Customers create requests with their own customerId.
+      allow create: if isSignedIn()
+        && request.resource.data.customerId == request.auth.uid
+        && request.resource.data.providerId is string
+        && request.resource.data.status == "PENDING";
+      // Providers can update status (approve/reject); customers cannot update.
+      allow update: if isSignedIn()
+        && resource.data.providerId == request.auth.uid
+        && request.resource.data.customerId == resource.data.customerId
+        && request.resource.data.providerId == resource.data.providerId;
+      allow delete: if false;
     }
   }
 }

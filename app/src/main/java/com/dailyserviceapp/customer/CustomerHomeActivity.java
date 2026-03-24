@@ -1,5 +1,6 @@
 package com.dailyserviceapp.customer;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -27,7 +28,6 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
-import com.google.firebase.firestore.SetOptions;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
@@ -43,6 +43,7 @@ import java.util.Map;
  * - Viewing currently linked provider
  * - Unlinking provider
  */
+@AndroidEntryPoint
 public class CustomerHomeActivity extends BaseActivity {
 
     private ActivityCustomerHomeBinding binding;
@@ -166,6 +167,10 @@ public class CustomerHomeActivity extends BaseActivity {
         binding.btnScanProviderQr.setOnClickListener(v -> startQrScan());
         binding.btnJoinProvider.setOnClickListener(v -> joinProviderFromInput());
         binding.btnUnlinkProvider.setOnClickListener(v -> confirmUnlinkProvider());
+        binding.btnCustomerSupport.setOnClickListener(v ->
+            startActivity(new Intent(this, ComplaintSupportActivity.class))
+        );
+        binding.btnCustomerLogout.setOnClickListener(v -> logout());
         binding.btnOpenDashboard.setOnClickListener(v ->
             startActivity(new Intent(this, CustomerServiceDashboardActivity.class))
         );

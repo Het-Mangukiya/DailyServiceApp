@@ -1,5 +1,6 @@
 package com.dailyserviceapp.reports;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.app.DatePickerDialog;
@@ -52,6 +53,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+@AndroidEntryPoint
 public class ReportsActivity extends BaseActivity {
 
     private ActivityReportsBinding binding;

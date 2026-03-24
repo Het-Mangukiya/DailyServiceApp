@@ -349,6 +349,25 @@
     <string name="rate_per_day_required">Rate/Day *</string>
     <string name="save_customer">Save Customer</string>
     <string name="area_name_placeholder">Area Name</string>
+    <string name="customer_invite_to_app">Invite To App</string>
+
+    <!-- Quantity Request Feature -->
+    <string name="menu_quantity_requests">Quantity Requests</string>
+    <string name="request_extra_quantity">Request Extra Quantity</string>
+    <string name="request_extra_quantity_title">Request Extra Quantity</string>
+    <string name="request_extra_quantity_subtitle">Ask your provider for extra quantity before today\'s delivery</string>
+    <string name="current_quantity_hint">Current Quantity</string>
+    <string name="requested_quantity_hint">Requested Quantity</string>
+    <string name="request_note_hint">Note to provider (optional)</string>
+    <string name="submit_request">Submit Request</string>
+    <string name="request_already_pending">You already have a pending request for today</string>
+    <string name="request_submitted_success">Extra quantity request submitted!</string>
+    <string name="request_invalid_quantity">Requested quantity must be greater than current</string>
+    <string name="pending_qty_requests">Pending Qty Requests</string>
+    <string name="pending_qty_requests_count">%1$d pending</string>
+    <string name="no_pending_qty_requests">No pending requests</string>
+    <string name="quantity_request_approved">Request approved for %1$s</string>
+    <string name="quantity_request_rejected">Request rejected</string>
 
     <!-- Test data -->
     <string name="test_generating">Generating test data…</string>

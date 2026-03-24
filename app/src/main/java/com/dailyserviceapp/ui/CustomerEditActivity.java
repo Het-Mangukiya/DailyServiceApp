@@ -1,5 +1,6 @@
 package com.dailyserviceapp.ui;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -20,6 +21,7 @@ import com.google.firebase.Timestamp;
 import java.util.List;
 import java.util.Locale;
 
+@AndroidEntryPoint
 public class CustomerEditActivity extends BaseActivity {
 
     private ActivityCustomerEditBinding binding;

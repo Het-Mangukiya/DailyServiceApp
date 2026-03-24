@@ -1,5 +1,6 @@
 package com.dailyserviceapp.service;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.view.View;
@@ -38,6 +39,7 @@ import java.util.List;
  * @version 2.0
  * @since 2026-01-10
  */
+@AndroidEntryPoint
 public class ServiceEntryActivity extends BaseActivity {
 
     private ActivityServiceEntryBinding binding;
@@ -55,7 +57,8 @@ public class ServiceEntryActivity extends BaseActivity {
     private android.widget.ProgressBar loadingProgress;
     
     private FirestoreRepository repository;
-    private OfflineCache offlineCache;
+    @javax.inject.Inject
+    OfflineCache offlineCache;
     private ServiceEntryAdapter adapter;
     private Date selectedDate;
     private String providerId;
@@ -102,7 +105,7 @@ public class ServiceEntryActivity extends BaseActivity {
     
     private void initializeData() {
         repository = new FirestoreRepository();
-        offlineCache = new OfflineCache(this);
+        // offlineCache is injected by Hilt
         SyncWorkScheduler.ensurePeriodicSync(this);
         selectedDate = new Date();
         providerId = resolveProviderId();

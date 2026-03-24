@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Bill Details</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-secondary-fixed": "#002022",
+                        "tertiary-container": "#4f7d78",
+                        "surface-variant": "#e0e3e3",
+                        "secondary-container": "#a9eef3",
+                        "on-secondary": "#ffffff",
+                        "on-primary-fixed-variant": "#004f54",
+                        "on-tertiary-fixed-variant": "#1f4e4a",
+                        "surface": "#f7fafa",
+                        "secondary": "#1c686d",
+                        "primary-fixed": "#9af1f8",
+                        "on-error-container": "#93000a",
+                        "inverse-primary": "#7ed4db",
+                        "on-primary-fixed": "#002022",
+                        "inverse-on-surface": "#eef1f1",
+                        "error-container": "#ffdad6",
+                        "on-error": "#ffffff",
+                        "secondary-fixed": "#a9eef3",
+                        "background": "#f7fafa",
+                        "on-surface": "#181c1d",
+                        "error": "#ba1a1a",
+                        "secondary-fixed-dim": "#8ed2d7",
+                        "primary-container": "#1d8187",
+                        "on-primary-container": "#f4feff",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-bright": "#f7fafa",
+                        "tertiary": "#36645f",
+                        "outline": "#6e797a",
+                        "primary": "#00666c",
+                        "on-primary": "#ffffff",
+                        "on-surface-variant": "#3e494a",
+                        "surface-tint": "#00696f",
+                        "surface-dim": "#d7dbdb",
+                        "outline-variant": "#bdc9c9",
+                        "on-secondary-fixed-variant": "#004f53",
+                        "surface-container-highest": "#e0e3e3",
+                        "on-background": "#181c1d",
+                        "surface-container": "#ebeeee",
+                        "on-tertiary-container": "#f3fffc",
+                        "surface-container-low": "#f1f4f4",
+                        "primary-fixed-dim": "#7ed4db",
+                        "on-tertiary-fixed": "#00201e",
+                        "surface-container-high": "#e5e9e9",
+                        "on-secondary-container": "#256e73",
+                        "on-tertiary": "#ffffff",
+                        "tertiary-fixed-dim": "#a0d0ca",
+                        "tertiary-fixed": "#bbece6",
+                        "inverse-surface": "#2d3131"
+                    },
+                    fontFamily: {
+                        "headline": ["Manrope"],
+                        "body": ["Manrope"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Manrope', sans-serif;
+            background-color: #f7fafa;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="text-on-surface selection:bg-secondary-container">
+<!-- Top App Bar -->
+<header class="sticky top-0 z-50 w-full px-4 flex items-center justify-between h-16 bg-[#00666c] dark:bg-slate-900 shadow-none backdrop-blur-md bg-opacity-80">
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-full hover:bg-white/10 transition-colors text-white active:opacity-80 active:scale-95 transition-all">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h1 class="font-manrope font-semibold tracking-tight text-lg text-white">Bill Details</h1>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-2 rounded-full hover:bg-white/10 transition-colors text-teal-100 active:opacity-80 active:scale-95 transition-all">
+<span class="material-symbols-outlined">share</span>
+</button>
+</div>
+</header>
+<main class="max-w-2xl mx-auto pb-32 px-4 pt-6 space-y-6">
+<!-- Summary Section (Atmospheric Depth) -->
+<section class="relative overflow-hidden bg-gradient-to-br from-primary to-primary-container rounded-[2rem] p-8 text-white shadow-lg">
+<!-- Background Texture Pattern -->
+<div class="absolute inset-0 opacity-10 pointer-events-none" style="background-image: radial-gradient(circle at 2px 2px, white 1px, transparent 0); background-size: 24px 24px;"></div>
+<div class="relative z-10 flex flex-col gap-6">
+<div class="flex justify-between items-start">
+<div>
+<p class="font-label text-xs uppercase tracking-widest text-teal-100 mb-1">Patient Name</p>
+<h2 class="text-3xl font-extrabold tracking-tight">Aman Gupta</h2>
+</div>
+<div class="bg-white/10 backdrop-blur-md p-3 rounded-2xl border border-white/10">
+<span class="material-symbols-outlined text-3xl">receipt_long</span>
+</div>
+</div>
+<div class="flex flex-wrap gap-x-8 gap-y-4 py-4 border-y border-white/10">
+<div>
+<p class="font-label text-xs text-teal-100 uppercase mb-1">Service</p>
+<p class="font-semibold">Medical Consultation</p>
+</div>
+<div>
+<p class="font-label text-xs text-teal-100 uppercase mb-1">Billing Period</p>
+<p class="font-semibold">Oct 1 - Oct 31, 2023</p>
+</div>
+</div>
+<div class="grid grid-cols-3 gap-4 pt-2">
+<div class="flex flex-col">
+<p class="font-label text-xs text-teal-100 uppercase mb-1">Total Due</p>
+<p class="text-xl font-bold">₹1,500</p>
+</div>
+<div class="flex flex-col">
+<p class="font-label text-xs text-teal-100 uppercase mb-1">Paid</p>
+<p class="text-xl font-bold">₹1,200</p>
+</div>
+<div class="flex flex-col">
+<p class="font-label text-xs text-teal-100 uppercase mb-1 text-red-200">Outstanding</p>
+<p class="text-xl font-bold text-white bg-white/10 px-2 rounded-lg inline-block w-fit">₹300</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Payment History (The "No-Line" Surface Shift) -->
+<section class="space-y-4">
+<div class="flex items-center justify-between px-2">
+<h3 class="text-xl font-bold tracking-tight text-on-surface">Payment History</h3>
+<span class="text-xs font-label font-medium px-3 py-1 bg-tertiary-fixed text-on-tertiary-fixed rounded-full">2 Payments</span>
+</div>
+<div class="bg-surface-container-low rounded-3xl p-2 space-y-2">
+<!-- Payment Row 1 -->
+<div class="flex items-center justify-between p-4 bg-surface-container-lowest rounded-2xl">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container">
+<span class="material-symbols-outlined">check_circle</span>
+</div>
+<div>
+<p class="font-bold text-on-surface">Oct 15, 2023</p>
+<p class="text-sm font-label text-on-surface-variant">Transaction ID: #8829</p>
+</div>
+</div>
+<div class="text-right">
+<p class="font-extrabold text-primary">₹1,000</p>
+<span class="text-[10px] font-bold uppercase tracking-wider text-secondary px-2 py-0.5 bg-secondary-container rounded-md">Settled</span>
+</div>
+</div>
+<!-- Payment Row 2 -->
+<div class="flex items-center justify-between p-4 bg-surface-container-lowest rounded-2xl">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container">
+<span class="material-symbols-outlined">check_circle</span>
+</div>
+<div>
+<p class="font-bold text-on-surface">Oct 22, 2023</p>
+<p class="text-sm font-label text-on-surface-variant">Transaction ID: #8941</p>
+</div>
+</div>
+<div class="text-right">
+<p class="font-extrabold text-primary">₹200</p>
+<span class="text-[10px] font-bold uppercase tracking-wider text-secondary px-2 py-0.5 bg-secondary-container rounded-md">Settled</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Service Entries -->
+<section class="space-y-4">
+<h3 class="text-xl font-bold tracking-tight text-on-surface px-2">Service Entries</h3>
+<div class="space-y-3">
+<!-- Service Card 1 -->
+<div class="p-6 bg-surface-container-lowest rounded-3xl flex items-start gap-4 shadow-sm border border-outline-variant/15">
+<div class="w-10 h-10 rounded-xl bg-surface-container-highest flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined">stethoscope</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between">
+<p class="font-bold text-lg text-on-surface">General Consultation</p>
+<p class="font-label text-sm text-on-surface-variant">Oct 12</p>
+</div>
+<div class="flex items-center gap-2 mt-2">
+<span class="px-3 py-1 bg-surface-container-low rounded-full text-xs font-label text-on-surface-variant">1 unit</span>
+<span class="px-3 py-1 bg-surface-container-low rounded-full text-xs font-label text-on-surface-variant">Billable</span>
+</div>
+</div>
+</div>
+<!-- Service Card 2 -->
+<div class="p-6 bg-surface-container-lowest rounded-3xl flex items-start gap-4 shadow-sm border border-outline-variant/15">
+<div class="w-10 h-10 rounded-xl bg-surface-container-highest flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined">history_edu</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between">
+<p class="font-bold text-lg text-on-surface">Follow-up</p>
+<p class="font-label text-sm text-on-surface-variant">Oct 19</p>
+</div>
+<div class="flex items-center gap-2 mt-2">
+<span class="px-3 py-1 bg-surface-container-low rounded-full text-xs font-label text-on-surface-variant">1 unit</span>
+<span class="px-3 py-1 bg-surface-container-low rounded-full text-xs font-label text-on-surface-variant">Billable</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Fixed Action Bar -->
+<div class="fixed bottom-0 left-0 w-full p-4 md:p-6 bg-surface/80 backdrop-blur-xl border-t border-outline-variant/10 z-50">
+<div class="max-w-2xl mx-auto flex items-center gap-4">
+<button class="flex-1 bg-gradient-to-r from-primary to-primary-container text-on-primary font-bold py-4 px-6 rounded-full shadow-lg shadow-primary/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">add_card</span>
+                    Record Payment
+                </button>
+<button class="w-14 h-14 bg-secondary-container text-on-secondary-container rounded-full flex items-center justify-center active:scale-[0.98] transition-all">
+<span class="material-symbols-outlined">picture_as_pdf</span>
+</button>
+</div>
+</div>
+</main>
+<!-- Navigation Shell (BottomNavBar Logic) - Suppressed per rules for transactional screen (Bill Details) -->
+</body></html>

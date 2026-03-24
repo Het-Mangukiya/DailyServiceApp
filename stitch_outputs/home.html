@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Home - Veridian Clinical Ledger</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-container-highest": "#d8e5e4",
+              "primary-container": "#00666c",
+              "on-primary-fixed-variant": "#004f54",
+              "on-surface-variant": "#3f4949",
+              "on-surface": "#121e1d",
+              "on-primary-fixed": "#002022",
+              "on-error-container": "#93000a",
+              "on-error": "#ffffff",
+              "on-primary-container": "#94e1e7",
+              "surface-bright": "#effcfb",
+              "outline": "#6f797a",
+              "inverse-surface": "#273332",
+              "secondary-fixed-dim": "#afccce",
+              "secondary": "#486365",
+              "surface-tint": "#07696f",
+              "on-background": "#121e1d",
+              "surface-variant": "#d8e5e4",
+              "inverse-on-surface": "#e6f3f2",
+              "on-secondary-fixed": "#021f22",
+              "secondary-fixed": "#cae8ea",
+              "primary": "#004c51",
+              "on-secondary": "#ffffff",
+              "inverse-primary": "#86d3d9",
+              "on-primary": "#ffffff",
+              "surface-container-high": "#deebea",
+              "surface": "#effcfb",
+              "primary-fixed-dim": "#86d3d9",
+              "tertiary-container": "#854e25",
+              "tertiary": "#693710",
+              "on-tertiary-fixed-variant": "#6c3a12",
+              "on-tertiary": "#ffffff",
+              "surface-container": "#e3f0f0",
+              "on-secondary-fixed-variant": "#304b4d",
+              "error": "#ba1a1a",
+              "tertiary-fixed-dim": "#ffb786",
+              "secondary-container": "#cae8ea",
+              "error-container": "#ffdad6",
+              "surface-container-lowest": "#ffffff",
+              "surface-container-low": "#e9f6f5",
+              "on-tertiary-fixed": "#311400",
+              "primary-fixed": "#a2eff6",
+              "background": "#effcfb",
+              "surface-dim": "#d0dddc",
+              "on-secondary-container": "#4e696b",
+              "on-tertiary-container": "#ffc9a7",
+              "tertiary-fixed": "#ffdcc6",
+              "outline-variant": "#bec8c9"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Manrope"],
+              "label": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Manrope', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface min-h-screen">
+<!-- TopAppBar -->
+<header class="fixed top-0 left-0 w-full z-50 flex items-center px-4 h-16 bg-[#00666C] shadow-lg">
+<div class="flex items-center gap-4 w-full">
+<button class="text-white hover:bg-teal-700/50 p-2 rounded-full transition-all duration-100 scale-95 active:duration-100">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<h1 class="font-['Manrope'] text-lg font-bold tracking-tight text-white">Home</h1>
+<div class="ml-auto flex items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-teal-500/30 flex items-center justify-center overflow-hidden border border-white/20">
+<img alt="Dr. Architect Profile" data-alt="Professional clinical profile avatar portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAFT4GUaKB-G5b20ceZ2F9QDxtxWV0mYMMYUwqT4kKa0dUr7k79BKRl902oMUv42NKAPWCK8P1XTKkjs3TSJweAYZqP7ZmWr7L319oyF1ZGIKBq1pjNd7f7tM47CyglJCuVDUmReqKZIEJUhJ6i6Or5NZ9I1TXsl0iIegtRQACspW3vcGdka1ALGwKkyYLiuX2hRVgpFNzeB8-VX7VtjWhAl9IQiwiz-Cv-ufXmBWu8YiaIj2Fy8FHnZIFCRgXJ-aPY-JOtwlACOsAQ"/>
+</div>
+</div>
+</div>
+</header>
+<main class="pt-24 pb-32 px-4 md:px-8 max-w-7xl mx-auto space-y-8">
+<!-- Welcome Card: "The Ledger Glass" Aesthetic -->
+<section class="relative overflow-hidden rounded-xl bg-surface-container-lowest shadow-[0_12px_40px_rgba(0,76,81,0.06)] p-8 border border-outline-variant/10">
+<div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+<div class="space-y-2">
+<span class="text-primary font-bold tracking-wider text-xs uppercase">Welcome Back</span>
+<h2 class="text-3xl font-extrabold tracking-tight text-on-surface">Dr. Architect</h2>
+<p class="text-on-surface-variant max-w-md">Your clinical ledger is synchronized. You have 4 pending reports and 12 scheduled entries for today.</p>
+</div>
+<div class="flex gap-4">
+<button class="bg-gradient-to-br from-primary to-primary-container text-white px-6 py-3 rounded-full font-bold transition-all hover:scale-105 active:scale-95 shadow-lg">
+                        Quick Entry
+                    </button>
+</div>
+</div>
+<!-- Decorative "Ethereal" circle -->
+<div class="absolute -right-12 -top-12 w-48 h-48 bg-primary-fixed/20 blur-3xl rounded-full"></div>
+</section>
+<!-- Stats Overview (Asymmetric Bento Lite) -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="md:col-span-2 bg-surface-container-low rounded-xl p-6 flex flex-col justify-between">
+<div class="flex justify-between items-start mb-8">
+<h3 class="text-sm font-bold text-on-surface-variant uppercase tracking-widest">Revenue Forecast</h3>
+<span class="material-symbols-outlined text-primary" data-icon="trending_up">trending_up</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="text-4xl font-extrabold tracking-tighter text-on-surface">$24,850.00</span>
+<span class="text-primary font-bold text-sm">+12.5%</span>
+</div>
+</div>
+<div class="bg-surface-container-highest/40 backdrop-blur-md rounded-xl p-6 border border-outline-variant/15">
+<h3 class="text-sm font-bold text-on-surface-variant uppercase tracking-widest mb-4">Daily Clients</h3>
+<div class="text-4xl font-extrabold tracking-tighter text-on-surface">18</div>
+<div class="mt-4 flex -space-x-2">
+<img alt="Client" class="w-8 h-8 rounded-full border-2 border-surface" data-alt="Client profile thumbnail" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDfU9M-FegQ8nBM8JO_kbA4edMWxDGnx6i9wMfGfgIJn3nLW6fLNh9JbM_wKhUU0iHLf0O1VymL1jMWYUhotH9BTsOPGxj0b--ZMaSfTNd8OuPfADfKKn4KGNDHOREYBBRS2PHyFmRFF30ge6W2zv_uSRxUOhTi2azDDRS3pqFxXF75NZZib7bkFil6FU4sB2nxif7qExYRSNruyAnh5QdSWTd9kn7mtodK4Bk8Sy09ufOuNvfaBuxht-kEXpM3II94JINDddZb8pda"/>
+<img alt="Client" class="w-8 h-8 rounded-full border-2 border-surface" data-alt="Client profile thumbnail" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCjLTo6oegOROzvJvHVC97m70opWEQRyd0S3QkO0BUH1yhqAlPaBHFeLiH6Wfpvig7mJcXpatMakbPtEiJq_iYtWSFqbGzC1qtSQMSLNDP57ehwwTZt4rWZMjwyNfnJ26dir5cfTAwibd8rHVvvtR095O_uZpdWhX_CpFyiYDiMphBU04-oer_iarL98E8ii4KCpdrDaMZ4udWECGuv_qWWyg9kWrqSU1Fo9fNKu3tVvI4XGz1tLn6g-MGM_n72Lx_xorZEzDR0B7Yt"/>
+<img alt="Client" class="w-8 h-8 rounded-full border-2 border-surface" data-alt="Client profile thumbnail" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDiX5MyiDNnCqBNnXkcD4gPG0pseQNtHJeHdoFmC1-F4cdX8WmqQTMq25RNOoX3FOjDb0kSaUIsnPMoTAn8glEdD45WQEgEfcR5PaEkqhvL56HVn0HyOTUB8kTkrCL0GmPqXR-GeF-71-gWv_lndLnVKEqU_aVYQbmWX-9Uckrsx3U6obMnFEidi34dH5H7X8Y7CR618eOrSOuHHc1ku0gPmuQSCEarkv6lg6qSvhsud1T5tmJ3FLT-zoC8jJzhpcSMI-f7M0LD5EL0"/>
+<div class="w-8 h-8 rounded-full border-2 border-surface bg-primary-container text-[10px] text-white flex items-center justify-center font-bold">+15</div>
+</div>
+</div>
+</div>
+<!-- Quick Links Section -->
+<section class="space-y-6">
+<div class="flex items-center justify-between">
+<h3 class="text-xl font-bold tracking-tight text-on-surface">Command Center</h3>
+<button class="text-primary font-bold text-sm hover:underline">Customize</button>
+</div>
+<!-- Quick Links Grid (Mapping from JSON Labels) -->
+<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+<!-- Dashboard -->
+<a class="group flex flex-col items-center justify-center p-6 bg-surface-container-lowest rounded-xl shadow-[0_4px_20px_rgba(0,76,81,0.04)] hover:bg-surface-container-high transition-all duration-300" href="#">
+<div class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center text-primary mb-3 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+</div>
+<span class="font-bold text-sm text-on-surface">Dashboard</span>
+</a>
+<!-- Customers -->
+<a class="group flex flex-col items-center justify-center p-6 bg-surface-container-lowest rounded-xl shadow-[0_4px_20px_rgba(0,76,81,0.04)] hover:bg-surface-container-high transition-all duration-300" href="#">
+<div class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center text-primary mb-3 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+</div>
+<span class="font-bold text-sm text-on-surface">Customers</span>
+</a>
+<!-- Service Entry -->
+<a class="group flex flex-col items-center justify-center p-6 bg-surface-container-lowest rounded-xl shadow-[0_4px_20px_rgba(0,76,81,0.04)] hover:bg-surface-container-high transition-all duration-300 text-center" href="#">
+<div class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center text-primary mb-3 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined" data-icon="medical_services">medical_services</span>
+</div>
+<span class="font-bold text-sm text-on-surface">Service Entry</span>
+</a>
+<!-- Bills -->
+<a class="group flex flex-col items-center justify-center p-6 bg-surface-container-lowest rounded-xl shadow-[0_4px_20px_rgba(0,76,81,0.04)] hover:bg-surface-container-high transition-all duration-300" href="#">
+<div class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center text-primary mb-3 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined" data-icon="receipt_long">receipt_long</span>
+</div>
+<span class="font-bold text-sm text-on-surface">Bills</span>
+</a>
+<!-- Reports -->
+<a class="group flex flex-col items-center justify-center p-6 bg-surface-container-lowest rounded-xl shadow-[0_4px_20px_rgba(0,76,81,0.04)] hover:bg-surface-container-high transition-all duration-300" href="#">
+<div class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center text-primary mb-3 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined" data-icon="assessment">assessment</span>
+</div>
+<span class="font-bold text-sm text-on-surface">Reports</span>
+</a>
+</div>
+</section>
+<!-- Recent Activity (No-Line List Rule) -->
+<section class="bg-surface-container-lowest rounded-xl p-8 border border-outline-variant/10 shadow-sm">
+<h3 class="text-xl font-bold tracking-tight text-on-surface mb-8">Recent Activity</h3>
+<div class="space-y-6">
+<!-- Activity Item -->
+<div class="flex items-center gap-4 bg-surface p-4 rounded-lg">
+<div class="w-10 h-10 rounded-full bg-primary-container/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="check_circle">check_circle</span>
+</div>
+<div class="flex-1">
+<p class="font-bold text-sm text-on-surface">Consultation Billing Completed</p>
+<p class="text-xs text-on-surface-variant">Patient ID: #8492-X • 2 mins ago</p>
+</div>
+<div class="text-right">
+<span class="font-bold text-primary">+$450.00</span>
+</div>
+</div>
+<!-- Activity Item -->
+<div class="flex items-center gap-4 bg-surface-container-low p-4 rounded-lg">
+<div class="w-10 h-10 rounded-full bg-tertiary/10 flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined" data-icon="pending_actions">pending_actions</span>
+</div>
+<div class="flex-1">
+<p class="font-bold text-sm text-on-surface">Signature Required</p>
+<p class="text-xs text-on-surface-variant">Weekly Summary Report • 1 hour ago</p>
+</div>
+<button class="px-3 py-1 text-xs font-bold border border-tertiary text-tertiary rounded-full hover:bg-tertiary/5">Review</button>
+</div>
+<!-- Activity Item -->
+<div class="flex items-center gap-4 bg-surface p-4 rounded-lg">
+<div class="w-10 h-10 rounded-full bg-primary-container/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="person_add">person_add</span>
+</div>
+<div class="flex-1">
+<p class="font-bold text-sm text-on-surface">New Customer Registered</p>
+<p class="text-xs text-on-surface-variant">Clinical Dept • 3 hours ago</p>
+</div>
+<div class="text-right">
+<span class="text-xs font-bold text-on-surface-variant">View Profile</span>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar (Mobile Only & Semantic Shell Logic) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-safe h-20 bg-white/80 backdrop-blur-lg border-t border-[#bec8c9]/20 shadow-[0_-4px_20px_rgba(0,76,81,0.06)] rounded-t-[20px]">
+<!-- Home Active -->
+<a class="flex flex-col items-center justify-center text-[#00666C] bg-[#e9f6f5] rounded-full px-4 py-1 transition-all duration-200 scale-110" href="#">
+<span class="material-symbols-outlined" data-icon="home" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="font-['Manrope'] text-[10px] font-bold uppercase tracking-wider">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-400 hover:text-[#00666C]" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-['Manrope'] text-[10px] font-bold uppercase tracking-wider">Clients</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-400 hover:text-[#00666C]" href="#">
+<span class="material-symbols-outlined" data-icon="add_box">add_box</span>
+<span class="font-['Manrope'] text-[10px] font-bold uppercase tracking-wider">Services</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-400 hover:text-[#00666C]" href="#">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+<span class="font-['Manrope'] text-[10px] font-bold uppercase tracking-wider">Billing</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-400 hover:text-[#00666C]" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="font-['Manrope'] text-[10px] font-bold uppercase tracking-wider">Data</span>
+</a>
+</nav>
+<!-- Floating Action Button (Only for specific primary home actions) -->
+<button class="fixed bottom-24 right-6 md:bottom-8 md:right-8 w-14 h-14 bg-gradient-to-br from-primary to-primary-container text-white rounded-full flex items-center justify-center shadow-xl hover:scale-110 transition-transform">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+</button>
+</body></html>

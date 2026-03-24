@@ -1,5 +1,6 @@
 package com.dailyserviceapp.customer;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
@@ -34,6 +35,7 @@ import java.util.Map;
 /**
  * Customer complaint and support ticket screen.
  */
+@AndroidEntryPoint
 public class ComplaintSupportActivity extends BaseActivity {
 
     private ActivityComplaintSupportBinding binding;

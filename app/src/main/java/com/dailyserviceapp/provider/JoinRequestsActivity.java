@@ -1,5 +1,6 @@
 package com.dailyserviceapp.provider;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import android.os.Bundle;
 import android.view.View;
 
@@ -30,6 +31,7 @@ import java.util.Map;
 /**
  * Provider-facing inbox for customer join requests.
  */
+@AndroidEntryPoint
 public class JoinRequestsActivity extends BaseActivity {
 
     private ActivityJoinRequestsBinding binding;

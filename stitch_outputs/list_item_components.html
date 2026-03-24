@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Clinical Ledger - List Item Components</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-secondary": "#e2fff9",
+                        "on-primary": "#e2fff8",
+                        "surface-tint": "#2c6960",
+                        "surface-container-highest": "#dae5e1",
+                        "on-secondary-fixed-variant": "#2e645d",
+                        "secondary-fixed-dim": "#a8dfd5",
+                        "inverse-primary": "#b6f4e8",
+                        "surface-dim": "#d1dcd9",
+                        "on-primary-fixed-variant": "#27655c",
+                        "tertiary-fixed": "#96fdeb",
+                        "secondary-dim": "#255c54",
+                        "on-secondary-container": "#235a53",
+                        "on-error-container": "#6e0a12",
+                        "tertiary": "#006b60",
+                        "on-surface-variant": "#56615f",
+                        "surface-container-high": "#e1eae7",
+                        "error-container": "#fa746f",
+                        "primary-dim": "#1d5c54",
+                        "on-tertiary": "#e2fff8",
+                        "on-background": "#2a3532",
+                        "primary": "#2c6960",
+                        "error-dim": "#67040d",
+                        "tertiary-dim": "#005e54",
+                        "on-secondary-fixed": "#0a4741",
+                        "primary-fixed-dim": "#a3e0d5",
+                        "on-primary-container": "#1b5b52",
+                        "surface-variant": "#dae5e1",
+                        "primary-container": "#b1efe3",
+                        "error": "#a83836",
+                        "on-tertiary-fixed": "#004e45",
+                        "on-primary-fixed": "#004840",
+                        "on-surface": "#2a3532",
+                        "surface-bright": "#f6faf8",
+                        "inverse-surface": "#0a0f0e",
+                        "outline-variant": "#a9b4b1",
+                        "tertiary-fixed-dim": "#88efdd",
+                        "surface-container": "#e7f0ec",
+                        "on-tertiary-container": "#006257",
+                        "secondary": "#326860",
+                        "outline": "#727d7a",
+                        "background": "#f6faf8",
+                        "surface": "#f6faf8",
+                        "tertiary-container": "#96fdeb",
+                        "secondary-fixed": "#b6ede4",
+                        "on-tertiary-fixed-variant": "#006d61",
+                        "on-error": "#fff7f6",
+                        "primary-fixed": "#b1efe3",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-low": "#eef5f2",
+                        "secondary-container": "#b6ede4",
+                        "inverse-on-surface": "#999e9c"
+                    },
+                    fontFamily: {
+                        "headline": ["Manrope"],
+                        "body": ["Manrope"],
+                        "label": ["Manrope"]
+                    },
+                    borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Manrope', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface min-h-screen pb-32">
+<!-- TopAppBar -->
+<header class="w-full top-0 sticky z-50 no-border tonal-shift bg-[#eef5f2] dark:bg-slate-900 flex justify-between items-center px-6 py-4 w-full">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-[#2c6960] dark:text-[#98FFED]" data-icon="menu">menu</span>
+<h1 class="font-['Manrope'] tracking-tight font-bold text-2xl text-[#2c6960] dark:text-[#98FFED]">Clinical Ledger</h1>
+</div>
+<div class="w-10 h-10 rounded-full overflow-hidden bg-surface-container-highest">
+<img alt="User profile avatar" data-alt="professional portrait of a medical practitioner in a clean clinical setting with soft natural lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAV2yqBfpIuZU2gP7H3kVhNUk1ElnD4NtcobbeyEyZTVK6hgR79fUyayDoJG5t_39q7y8YzItFkhfU8V_WgEL5B4Gbw24nB2112OT_Un2nHE1Qnex6LLxRs1SzFOVwjhh3xFya_FgVrT7rbzskn0LRY6el5ryyUDWEmI7Xsci3aJ-yiOm4NhnBQ-dnEj8ko7nLd8bPCHo5fq1km0sm2MNFnjiAScHiARdwxPhNL_YMgTzYkMR7Z7IgrciKLgv06D-mobsfhcMr1fY5I"/>
+</div>
+</header>
+<main class="max-w-3xl mx-auto px-6 pt-12 space-y-12">
+<!-- Section: Component Showcase Header -->
+<header class="space-y-2">
+<h2 class="text-display-sm font-bold tracking-tight text-primary">Component Ledger</h2>
+<p class="text-on-surface-variant font-medium">A systematic collection of clinical row interactions.</p>
+</header>
+<!-- Area Header Component -->
+<section class="space-y-4">
+<div class="flex items-center justify-between mt-8">
+<h3 class="font-headline text-xl font-bold text-primary tracking-tight">Recent Activity</h3>
+<span class="text-label-sm font-bold tracking-widest text-outline uppercase">View All</span>
+</div>
+<div class="space-y-4">
+<!-- Customer Row Component -->
+<div class="bg-surface-container-lowest p-5 rounded-lg flex items-center justify-between transition-colors hover:bg-surface-container transition-all duration-300">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full overflow-hidden border-2 border-primary-container">
+<img alt="Elena Rodriguez" data-alt="portrait of Elena Rodriguez with a friendly expression in a brightly lit modern office" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCtoGOzSF85ebhgXr69-np6BN9QUL4KBmmewPSS_Am27yEZ0uFVMjvrZve6NkSAHMYl-X2cZFfwJY_DmGW4stSHeePluRH7NlCiHytKV71UC2BCbzXYF5k2R-INvrtXGH2eIIZC6H3l9JKhRHEvKBx5Bo4i3w9fLcjIPDz-Uebw8lgJIrbDH8IJcS-bSd0hsMIBjI0WxFCjlIqXlxvlL92rPNQG0LkCIpktu2Y1GQ34sLwQhZHGyTt3tuPgcYBaZNdTmZngOrI2XMYf"/>
+</div>
+<div>
+<p class="font-bold text-on-surface">Elena Rodriguez</p>
+<p class="text-sm text-on-surface-variant">Home Wellness Visit</p>
+</div>
+</div>
+<span class="bg-primary-container text-on-primary-container px-3 py-1 rounded-full text-[10px] font-extrabold tracking-widest uppercase">ACTIVE</span>
+</div>
+<!-- Bill Row Component -->
+<div class="bg-surface-container-lowest p-5 rounded-lg flex items-center justify-between transition-colors hover:bg-surface-container transition-all duration-300">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container">
+<span class="material-symbols-outlined" data-icon="receipt_long">receipt_long</span>
+</div>
+<div>
+<p class="font-bold text-on-surface">Marcus Thompson</p>
+<p class="text-sm font-bold text-primary">$1,200.00</p>
+</div>
+</div>
+<span class="bg-surface-container-highest text-on-surface-variant px-3 py-1 rounded-full text-[10px] font-extrabold tracking-widest uppercase">SETTLED</span>
+</div>
+</div>
+</section>
+<!-- Service Details Section -->
+<section class="space-y-4">
+<div class="flex items-center justify-between mt-12">
+<h3 class="font-headline text-xl font-bold text-primary tracking-tight">Service Details</h3>
+</div>
+<div class="space-y-4">
+<!-- Join Request Row Component -->
+<div class="bg-surface-container-lowest p-5 rounded-lg space-y-4">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-tertiary-container flex items-center justify-center text-on-tertiary-container">
+<span class="material-symbols-outlined" data-icon="person_add">person_add</span>
+</div>
+<div>
+<p class="font-bold text-on-surface">Aman Gupta</p>
+<p class="text-sm font-mono text-outline">#VS-8829</p>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="px-4 py-2 bg-primary text-on-primary rounded-full text-sm font-bold hover:opacity-90 transition-opacity">Approve</button>
+<button class="px-4 py-2 bg-surface-container-high text-on-surface-variant rounded-full text-sm font-bold hover:bg-surface-container-highest transition-colors">Deny</button>
+</div>
+</div>
+</div>
+<!-- Service Entry Row Component -->
+<div class="bg-surface-container-lowest p-5 rounded-lg flex items-center justify-between">
+<div class="flex items-center gap-4">
+<input class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary-container bg-surface-container-high" type="checkbox"/>
+<div>
+<p class="font-bold text-on-surface">Sarah Jenkins</p>
+<p class="text-xs text-on-surface-variant uppercase tracking-widest font-bold">Standard Consultation</p>
+</div>
+</div>
+<div class="flex items-center bg-surface-container-high rounded-full p-1 gap-3">
+<button class="w-8 h-8 rounded-full bg-surface-container-lowest flex items-center justify-center shadow-sm text-primary hover:bg-primary-container transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="remove">remove</span>
+</button>
+<span class="font-bold text-on-surface w-4 text-center">2</span>
+<button class="w-8 h-8 rounded-full bg-surface-container-lowest flex items-center justify-center shadow-sm text-primary hover:bg-primary-container transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="add">add</span>
+</button>
+</div>
+</div>
+<!-- Customer History Row Component -->
+<div class="bg-surface-container-lowest p-5 rounded-lg flex items-center justify-between border-l-4 border-secondary-container">
+<div class="flex flex-col">
+<span class="text-[10px] font-extrabold text-outline uppercase tracking-tighter">Visit Date</span>
+<p class="font-bold text-on-surface">Oct 12, 2023</p>
+</div>
+<div class="text-center">
+<span class="text-[10px] font-extrabold text-outline uppercase tracking-tighter">Volume</span>
+<p class="font-bold text-on-surface">3L</p>
+</div>
+<div class="text-right">
+<span class="text-[10px] font-extrabold text-outline uppercase tracking-tighter">Amount</span>
+<p class="font-bold text-primary">$25.00</p>
+</div>
+</div>
+<!-- Quantity Request Item Component -->
+<div class="bg-surface-container-lowest p-6 rounded-lg relative overflow-hidden">
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary-container/10 rounded-full -mr-16 -mt-16 blur-2xl"></div>
+<div class="flex items-center justify-between relative z-10">
+<div class="space-y-1">
+<p class="text-xs font-bold text-outline uppercase tracking-widest">Adjust Request</p>
+<div class="flex items-center gap-6">
+<div class="flex flex-col items-center">
+<span class="text-display-sm font-extrabold text-on-surface-variant opacity-40">2L</span>
+<span class="text-[10px] font-bold text-outline">CURRENT</span>
+</div>
+<span class="material-symbols-outlined text-primary text-3xl" data-icon="trending_flat">trending_flat</span>
+<div class="flex flex-col items-center">
+<span class="text-display-sm font-black text-primary">3L</span>
+<span class="text-[10px] font-bold text-primary">REQUESTED</span>
+</div>
+</div>
+</div>
+<div class="h-12 w-12 rounded-full bg-primary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary-container" data-icon="edit_square">edit_square</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Empty State / Decorative Bento Item -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div class="bg-primary p-8 rounded-lg text-on-primary flex flex-col justify-end min-h-[160px] relative overflow-hidden group">
+<span class="material-symbols-outlined absolute top-4 right-4 text-6xl opacity-10 group-hover:scale-110 transition-transform" data-icon="clinical_notes">clinical_notes</span>
+<h4 class="text-xl font-bold">Ledger Insights</h4>
+<p class="text-sm opacity-80">Syncing with clinical cloud...</p>
+</div>
+<div class="bg-secondary-container p-8 rounded-lg text-on-secondary-container flex flex-col justify-end min-h-[160px] border border-primary/5">
+<h4 class="text-xl font-bold">Protocol Active</h4>
+<p class="text-sm opacity-80">All 14 components rendered successfully.</p>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-6 pt-3 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl z-50 rounded-t-[2rem] shadow-[0_-10px_40px_rgba(42,53,50,0.06)]">
+<div class="flex flex-col items-center justify-center text-[#2a3532] dark:text-slate-400 opacity-60 px-5 py-2 hover:opacity-100 transition-opacity active:scale-95 duration-200">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="font-['Manrope'] text-[11px] font-semibold uppercase tracking-wider">Customers</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#2a3532] dark:text-slate-400 opacity-60 px-5 py-2 hover:opacity-100 transition-opacity active:scale-95 duration-200">
+<span class="material-symbols-outlined" data-icon="receipt_long">receipt_long</span>
+<span class="font-['Manrope'] text-[11px] font-semibold uppercase tracking-wider">Bills</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#2a3532] dark:text-slate-400 opacity-60 px-5 py-2 hover:opacity-100 transition-opacity active:scale-95 duration-200">
+<span class="material-symbols-outlined" data-icon="person_add">person_add</span>
+<span class="font-['Manrope'] text-[11px] font-semibold uppercase tracking-wider">Requests</span>
+</div>
+<div class="flex flex-col items-center justify-center bg-[#b1efe3] dark:bg-[#2c6960]/30 text-[#2c6960] dark:text-[#98FFED] rounded-full px-5 py-2 hover:opacity-100 transition-opacity active:scale-95 duration-200">
+<span class="material-symbols-outlined" data-icon="medical_services">medical_services</span>
+<span class="font-['Manrope'] text-[11px] font-semibold uppercase tracking-wider">Services</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#2a3532] dark:text-slate-400 opacity-60 px-5 py-2 hover:opacity-100 transition-opacity active:scale-95 duration-200">
+<span class="material-symbols-outlined" data-icon="more_horiz">more_horiz</span>
+<span class="font-['Manrope'] text-[11px] font-semibold uppercase tracking-wider">More</span>
+</div>
+</nav>
+</body></html>
