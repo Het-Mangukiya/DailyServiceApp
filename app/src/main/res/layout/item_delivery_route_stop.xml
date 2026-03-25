@@ -20,7 +20,7 @@
             android:id="@+id/txtStopNumber"
             android:layout_width="52dp"
             android:layout_height="52dp"
-            android:background="@drawable/status_pill_active"
+            android:background="@drawable/bg_status_pill_active"
             android:gravity="center"
             android:textColor="@color/brand_teal_700"
             android:textSize="12sp"
