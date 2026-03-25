@@ -554,7 +554,9 @@ public class CustomerServiceDashboardActivity extends BaseActivity {
         }
 
         BottomSheetDialog bottomSheet = new BottomSheetDialog(this);
-        View sheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_quantity_request, null);
+        android.widget.FrameLayout sheetContainer = new android.widget.FrameLayout(this);
+        View sheetView = getLayoutInflater()
+            .inflate(R.layout.bottom_sheet_quantity_request, sheetContainer, false);
         bottomSheet.setContentView(sheetView);
 
         TextInputEditText inputCurrent = sheetView.findViewById(R.id.inputCurrentQuantity);
@@ -598,7 +600,7 @@ public class CustomerServiceDashboardActivity extends BaseActivity {
             if (customerName.isEmpty() && customer != null) {
                 customerName = safeTrim(customer.getName());
             }
-            if (customerName.isEmpty()) customerName = "Customer";
+            if (customerName.isEmpty()) customerName = getString(R.string.customer_default);
 
             String serviceType = safeTrim(providerServiceType);
             if (serviceType.isEmpty() && customer != null) {

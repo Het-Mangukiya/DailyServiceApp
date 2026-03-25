@@ -5,7 +5,6 @@ import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
 import android.net.NetworkRequest;
-import android.os.Build;
 
 import androidx.annotation.NonNull;
 
@@ -14,8 +13,7 @@ import androidx.annotation.NonNull;
  * Provides real-time network availability checking and callbacks
  * for network state changes (connected/disconnected).
  * 
- * <p>Supports both legacy (pre-Lollipop) and modern Android network APIs.
- * Can detect WiFi, cellular, and ethernet connections.</p>
+ * <p>Supports WiFi, cellular, and ethernet connections on API 24+.</p>
  * 
  * @author DailyDrop Team
  * @version 1.0
@@ -75,38 +73,32 @@ public class NetworkMonitor {
      */
     public boolean isNetworkAvailable() {
         if (connectivityManager == null) return false;
-        
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            Network network = connectivityManager.getActiveNetwork();
-            if (network == null) return false;
-            
-            NetworkCapabilities capabilities = connectivityManager.getNetworkCapabilities(network);
-            return capabilities != null && (
-                capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
-                capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ||
-                capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)
-            );
-        } else {
-            android.net.NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-            return networkInfo != null && networkInfo.isConnected();
-        }
+
+        Network network = connectivityManager.getActiveNetwork();
+        if (network == null) return false;
+
+        NetworkCapabilities capabilities = connectivityManager.getNetworkCapabilities(network);
+        return capabilities != null && (
+            capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
+            capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ||
+            capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)
+        );
     }
     
     /**
      * Registers a callback to listen for network changes.
-     * Only works on Android Lollipop (API 21) and above.
      * 
      * @param listener The listener to receive network change callbacks
      */
     public void registerNetworkCallback(OnNetworkChangeListener listener) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            NetworkRequest networkRequest = new NetworkRequest.Builder()
-                .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
-                .build();
-            
-            networkCallback = new NetworkCallback(listener);
-            connectivityManager.registerNetworkCallback(networkRequest, networkCallback);
-        }
+        if (connectivityManager == null) return;
+
+        NetworkRequest networkRequest = new NetworkRequest.Builder()
+            .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+            .build();
+
+        networkCallback = new NetworkCallback(listener);
+        connectivityManager.registerNetworkCallback(networkRequest, networkCallback);
     }
     
     /**
@@ -114,11 +106,13 @@ public class NetworkMonitor {
      * Safe to call even if callback was not registered.
      */
     public void unregisterNetworkCallback() {
-        if (networkCallback != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (connectivityManager != null && networkCallback != null) {
             try {
                 connectivityManager.unregisterNetworkCallback(networkCallback);
             } catch (Exception e) {
                 e.printStackTrace();
+            } finally {
+                networkCallback = null;
             }
         }
     }

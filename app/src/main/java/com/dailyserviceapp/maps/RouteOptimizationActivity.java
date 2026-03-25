@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
@@ -65,7 +66,7 @@ public class RouteOptimizationActivity extends BaseActivity {
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setTitle("Delivery Route");
+            getSupportActionBar().setTitle(R.string.delivery_route_title);
         }
 
         recyclerView = findViewById(R.id.routeRecycler);
@@ -335,11 +336,18 @@ public class RouteOptimizationActivity extends BaseActivity {
             holder.stopNumber.setText(String.valueOf(position + 1));
             holder.customerName.setText(c.getName() != null ? c.getName() : "");
             String routeAddress = getRouteAddress(c);
-            holder.customerAddress.setText(routeAddress.isEmpty() ? "No address/area" : routeAddress);
+            holder.customerAddress.setText(routeAddress.isEmpty()
+                ? holder.itemView.getContext().getString(R.string.delivery_route_address_missing)
+                : routeAddress);
             holder.customerArea.setText(c.getArea() != null ? c.getArea() : "");
 
             holder.dragHandle.setOnTouchListener((v, event) -> {
-                if (touchHelper != null) touchHelper.startDrag(holder);
+                if (event.getActionMasked() == MotionEvent.ACTION_DOWN && touchHelper != null) {
+                    touchHelper.startDrag(holder);
+                }
+                if (event.getActionMasked() == MotionEvent.ACTION_UP) {
+                    v.performClick();
+                }
                 return false;
             });
         }

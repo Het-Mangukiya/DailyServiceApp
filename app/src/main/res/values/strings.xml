@@ -156,6 +156,10 @@
     <string name="menu_more">More</string>
     <string name="menu_sort">Sort</string>
     <string name="menu_notifications">Notifications</string>
+    <string name="notifications_empty_state">No notifications yet</string>
+    <string name="notifications_all_read">All notifications are already read</string>
+    <string name="notifications_mark_all_read_done">All marked as read</string>
+    <string name="notifications_update_failed">Failed to update notifications</string>
 
     <string name="customer_service_dashboard_title">My Service Dashboard</string>
     <string name="customer_dashboard_today_service">Today\'s Service</string>
@@ -350,6 +354,8 @@
     <string name="action_details">Details</string>
     <string name="action_share">Share</string>
     <string name="tap_add_photo">Tap to add photo</string>
+    <string name="close_dialog">Close dialog</string>
+    <string name="customer_photo_picker">Select customer photo</string>
     <string name="customer_name_required">Customer Name *</string>
     <string name="phone_number">Phone Number</string>
     <string name="delivery_address">Delivery Address</string>

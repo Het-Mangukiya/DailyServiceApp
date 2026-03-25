@@ -21,7 +21,9 @@
     <application
         android:name=".DailyDropApp"
         android:allowBackup="true"
+        android:icon="@drawable/ic_app_icon"
         android:label="DailyDrop"
+        android:roundIcon="@drawable/ic_app_icon"
         android:supportsRtl="true"
         android:theme="@style/Theme.DailyServiceApp"
         android:usesCleartextTraffic="false"
@@ -41,8 +43,18 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="dailydrop" android:host="invite" />
-                <data android:scheme="https" android:host="dailydrop.app" android:pathPrefix="/invite" />
+                <data
+                    android:scheme="dailydrop"
+                    android:host="invite" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:scheme="https"
+                    android:host="dailydrop.app"
+                    android:pathPrefix="/invite" />
             </intent-filter>
         </activity>
 

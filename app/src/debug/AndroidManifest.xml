@@ -4,7 +4,7 @@
     <application>
         <receiver
             android:name="com.dailyserviceapp.debug.TestDataBroadcastReceiver"
-            android:exported="true">
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.dailyserviceapp.DEBUG_GENERATE_TEST_DATA" />
             </intent-filter>

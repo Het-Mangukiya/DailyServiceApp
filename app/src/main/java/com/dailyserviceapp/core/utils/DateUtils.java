@@ -20,15 +20,6 @@ import java.util.Locale;
  */
 public class DateUtils {
     
-    /** SimpleDateFormat for full date-time display (dd MMM yyyy, hh:mm a) */
-    private static final SimpleDateFormat fullFormat = new SimpleDateFormat(Constants.DATE_FORMAT_FULL, Locale.getDefault());
-    
-    /** SimpleDateFormat for short date display (dd MMM yyyy) */
-    private static final SimpleDateFormat shortFormat = new SimpleDateFormat(Constants.DATE_FORMAT_SHORT, Locale.getDefault());
-    
-    /** SimpleDateFormat for month and year display (MMM yyyy) */
-    private static final SimpleDateFormat monthYearFormat = new SimpleDateFormat(Constants.DATE_FORMAT_MONTH_YEAR, Locale.getDefault());
-    
     /**
      * Gets the current date and time.
      * 
@@ -47,7 +38,7 @@ public class DateUtils {
      */
     public static String formatFullDate(Date date) {
         if (date == null) return "";
-        return fullFormat.format(date);
+        return format(date, Constants.DATE_FORMAT_FULL);
     }
     
     /**
@@ -59,7 +50,7 @@ public class DateUtils {
      */
     public static String formatShortDate(Date date) {
         if (date == null) return "";
-        return shortFormat.format(date);
+        return format(date, Constants.DATE_FORMAT_SHORT);
     }
     
     /**
@@ -71,7 +62,7 @@ public class DateUtils {
      */
     public static String formatMonthYear(Date date) {
         if (date == null) return "";
-        return monthYearFormat.format(date);
+        return format(date, Constants.DATE_FORMAT_MONTH_YEAR);
     }
     
     /**
@@ -234,5 +225,9 @@ public class DateUtils {
     
     private DateUtils() {
         // Private constructor to prevent instantiation
+    }
+
+    private static String format(Date date, String pattern) {
+        return new SimpleDateFormat(pattern, Locale.getDefault()).format(date);
     }
 }

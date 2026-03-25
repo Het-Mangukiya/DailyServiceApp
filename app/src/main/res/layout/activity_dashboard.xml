@@ -73,6 +73,8 @@
                         <ImageView
                             android:layout_width="20dp"
                             android:layout_height="20dp"
+                            android:contentDescription="@null"
+                            android:importantForAccessibility="no"
                             android:src="@drawable/ic_dashboard_24"
                             app:tint="@color/md_theme_on_primary_container"/>
 
@@ -347,6 +349,8 @@
                                 <ImageView
                                     android:layout_width="20dp"
                                     android:layout_height="20dp"
+                                    android:contentDescription="@null"
+                                    android:importantForAccessibility="no"
                                     android:src="@drawable/ic_service_24"
                                     app:tint="@color/md_theme_primary"/>
 
@@ -379,6 +383,8 @@
                                 <ImageView
                                     android:layout_width="20dp"
                                     android:layout_height="20dp"
+                                    android:contentDescription="@null"
+                                    android:importantForAccessibility="no"
                                     android:src="@drawable/ic_bill_24"
                                     app:tint="@color/md_theme_primary"/>
 
@@ -411,6 +417,8 @@
                                 <ImageView
                                     android:layout_width="20dp"
                                     android:layout_height="20dp"
+                                    android:contentDescription="@null"
+                                    android:importantForAccessibility="no"
                                     android:src="@drawable/ic_nav_customers"
                                     app:tint="@color/md_theme_primary"/>
 
@@ -443,6 +451,8 @@
                                 <ImageView
                                     android:layout_width="20dp"
                                     android:layout_height="20dp"
+                                    android:contentDescription="@null"
+                                    android:importantForAccessibility="no"
                                     android:src="@drawable/ic_nav_requests"
                                     app:tint="@color/md_theme_primary"/>
 
@@ -599,6 +609,8 @@
                 <ImageView
                     android:layout_width="120dp"
                     android:layout_height="120dp"
+                    android:contentDescription="@null"
+                    android:importantForAccessibility="no"
                     android:src="@drawable/ic_product_24"
                     android:alpha="0.3"
                     app:tint="@color/md_theme_primary"/>

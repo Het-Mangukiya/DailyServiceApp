@@ -15,7 +15,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:title="Notifications"
+            app:title="@string/menu_notifications"
             app:titleTextColor="@android:color/white"
             android:background="@color/md_theme_primary" />
 
@@ -45,7 +45,7 @@
             android:id="@+id/emptyStateText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="No notifications yet"
+            android:text="@string/notifications_empty_state"
             android:textSize="16sp"
             android:textColor="@color/md_theme_on_surface"
             android:alpha="0.6"

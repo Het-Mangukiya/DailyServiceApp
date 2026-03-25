@@ -64,7 +64,7 @@ public class NotificationListActivity extends BaseActivity {
             setSupportActionBar(toolbar);
             if (getSupportActionBar() != null) {
                 getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-                getSupportActionBar().setTitle("Notifications");
+                getSupportActionBar().setTitle(R.string.menu_notifications);
             }
         }
 
@@ -142,7 +142,7 @@ public class NotificationListActivity extends BaseActivity {
                     emptyStateContainer.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
                 }
                 emptyStateText.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
-                if (isEmpty) emptyStateText.setText("No notifications yet");
+                if (isEmpty) emptyStateText.setText(R.string.notifications_empty_state);
             });
     }
 
@@ -161,7 +161,7 @@ public class NotificationListActivity extends BaseActivity {
     private void markAllAsRead() {
         List<Notification> unread = adapter.getUnreadNotifications();
         if (unread.isEmpty()) {
-            Snackbar.make(recyclerView, "All notifications are already read", Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(recyclerView, R.string.notifications_all_read, Snackbar.LENGTH_SHORT).show();
             return;
         }
 
@@ -175,9 +175,9 @@ public class NotificationListActivity extends BaseActivity {
         }
         batch.commit()
             .addOnSuccessListener(v ->
-                Snackbar.make(recyclerView, "All marked as read", Snackbar.LENGTH_SHORT).show())
+                Snackbar.make(recyclerView, R.string.notifications_mark_all_read_done, Snackbar.LENGTH_SHORT).show())
             .addOnFailureListener(e ->
-                Snackbar.make(recyclerView, "Failed to update", Snackbar.LENGTH_SHORT).show());
+                Snackbar.make(recyclerView, R.string.notifications_update_failed, Snackbar.LENGTH_SHORT).show());
     }
 
     // ════════════════════════════════════════════════════════════════════════
@@ -193,9 +193,6 @@ public class NotificationListActivity extends BaseActivity {
 
         private final List<Notification> items = new ArrayList<>();
         private final OnNotificationClick clickListener;
-        private static final SimpleDateFormat SDF =
-            new SimpleDateFormat("dd MMM, hh:mm a", Locale.getDefault());
-
         NotificationAdapter(OnNotificationClick clickListener) {
             this.clickListener = clickListener;
         }
@@ -230,7 +227,7 @@ public class NotificationListActivity extends BaseActivity {
             holder.message.setText(n.getMessage() != null ? n.getMessage() : "");
 
             if (n.getTimestamp() != null) {
-                holder.timestamp.setText(SDF.format(n.getTimestamp().toDate()));
+                holder.timestamp.setText(formatTimestamp(n.getTimestamp().toDate()));
             } else {
                 holder.timestamp.setText("");
             }
@@ -262,6 +259,10 @@ public class NotificationListActivity extends BaseActivity {
                 default:
                     return R.drawable.ic_notifications_24;
             }
+        }
+
+        private String formatTimestamp(java.util.Date date) {
+            return new SimpleDateFormat("dd MMM, hh:mm a", Locale.getDefault()).format(date);
         }
 
         static class ViewHolder extends RecyclerView.ViewHolder {
