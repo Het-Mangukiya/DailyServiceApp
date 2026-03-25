@@ -39,25 +39,24 @@ import com.dailyserviceapp.core.utils.CurrencyUtils;
 import com.dailyserviceapp.data.models.Customer;
 import com.dailyserviceapp.databinding.ActivityHomeBinding;
 import com.dailyserviceapp.databinding.NavHeaderBinding;
-import com.dailyserviceapp.maps.RouteOptimizationActivity;
 import com.dailyserviceapp.notifications.NotificationListActivity;
 import com.dailyserviceapp.payment.PaymentActivity;
 import com.dailyserviceapp.profile.ProfileActivity;
 import com.dailyserviceapp.provider.ProviderComplaintsActivity;
 import com.dailyserviceapp.provider.JoinRequestsActivity;
 import com.dailyserviceapp.reports.ReportsActivity;
+import com.dailyserviceapp.route.DeliveryRouteActivity;
+import com.dailyserviceapp.sales.ui.SalesPredictionActivity;
 import com.dailyserviceapp.service.ServiceEntryActivity;
 import com.dailyserviceapp.ui.CustomerAdapter;
 import com.dailyserviceapp.ui.CustomerPagingSource;
 import com.dailyserviceapp.ui.CustomerEditActivity;
 import com.dailyserviceapp.ui.PagedCustomerAdapter;
 import com.dailyserviceapp.ui.CustomerDetailActivity;
-import com.dailyserviceapp.utils.TestDataGenerator;
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.badge.ExperimentalBadgeUtils;
 import com.google.android.material.badge.BadgeUtils;
 import com.google.android.material.appbar.MaterialToolbar;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -873,17 +872,17 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         } else if (id == R.id.nav_service_entry) {
             startActivity(new Intent(this, ServiceEntryActivity.class));
         } else if (id == R.id.nav_route) {
-            startActivity(new Intent(this, RouteOptimizationActivity.class));
+            startActivity(new Intent(this, DeliveryRouteActivity.class));
         } else if (id == R.id.nav_bills) {
             startActivity(new Intent(this, BillListActivity.class));
         } else if (id == R.id.nav_reports) {
             startActivity(new Intent(this, ReportsActivity.class));
+        } else if (id == R.id.nav_sales) {
+            startActivity(new Intent(this, SalesPredictionActivity.class));
         } else if (id == R.id.nav_profile) {
             startActivity(new Intent(this, ProfileActivity.class));
         } else if (id == R.id.nav_qr_code) {
             startActivity(new Intent(this, com.dailyserviceapp.qr.QRCodeActivity.class));
-        } else if (id == R.id.nav_test_data) {
-            generateTestData();
         } else if (id == R.id.nav_share) {
             shareApp();
         } else if (id == R.id.nav_logout) {
@@ -892,36 +891,6 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
-    }
-    
-    private void generateTestData() {
-        new MaterialAlertDialogBuilder(this)
-            .setTitle("Generate Test Data")
-            .setMessage("This will create:\n\n" +
-                    "✓ 30 test customers with address + area\n" +
-                    "✓ ~900 service entries for Jan-Feb 2026\n" +
-                    "✓ Ready for bill generation\n\n" +
-                    "Continue?")
-            .setPositiveButton("Generate", (dialog, which) -> {
-                showToast("Generating test data...");
-                
-                TestDataGenerator generator = new TestDataGenerator(this, getCurrentUserId());
-                generator.generateCompleteTestData(new TestDataGenerator.OnTestDataGeneratedListener() {
-                    @Override
-                    public void onTestDataGenerated(List<String> customerIds, int entriesCount) {
-                        showToast("✅ Generated " + customerIds.size() + " customers and " + 
-                                entriesCount + " service entries!");
-                        loadData(); // Refresh the list
-                    }
-                    
-                    @Override
-                    public void onError(String error) {
-                        showToast("Error: " + error);
-                    }
-                });
-            })
-            .setNegativeButton("Cancel", null)
-            .show();
     }
     
     private void shareApp() {

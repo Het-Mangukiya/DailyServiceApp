@@ -74,4 +74,18 @@
     <color name="color_payments">#AB47BC</color>
     <color name="color_reports">#EF5350</color>
     <color name="color_profile">#78909C</color>
+
+    <!-- Sales prediction / Stitch compatibility tokens -->
+    <color name="dailydrop_primary_container">#B2DFDB</color>
+    <color name="dailydrop_secondary_container">#C8E6C9</color>
+    <color name="dailydrop_surface_container">#F5F5F5</color>
+    <color name="dailydrop_surface_container_lowest">#FFFFFF</color>
+    <color name="dailydrop_teal_800">#00897B</color>
+    <color name="dailydrop_emerald_50">#EAF8F5</color>
+    <color name="stitch_header_scrim">#EAF6F4</color>
+    <color name="stitch_on_surface">#1C1B1F</color>
+    <color name="stitch_on_surface_variant">#49454F</color>
+    <color name="stitch_nav_active_bg">#B2DFDB</color>
+    <color name="dailydrop_on_secondary_container">#1F4D31</color>
+    <color name="stitch_search_fill">#E8F1F0</color>
 </resources>

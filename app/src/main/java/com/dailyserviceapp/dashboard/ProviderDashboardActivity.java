@@ -21,11 +21,12 @@ import com.dailyserviceapp.core.utils.Constants;
 import com.dailyserviceapp.core.utils.CurrencyUtils;
 import com.dailyserviceapp.databinding.ActivityProviderDashboardBinding;
 import com.dailyserviceapp.databinding.NavHeaderBinding;
-import com.dailyserviceapp.maps.RouteOptimizationActivity;
 import com.dailyserviceapp.profile.ProfileActivity;
 import com.dailyserviceapp.provider.JoinRequestsActivity;
 import com.dailyserviceapp.provider.ProviderComplaintsActivity;
 import com.dailyserviceapp.provider.QuantityRequestsActivity;
+import com.dailyserviceapp.route.DeliveryRouteActivity;
+import com.dailyserviceapp.sales.ui.SalesPredictionActivity;
 import com.dailyserviceapp.service.ServiceEntryActivity;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.button.MaterialButton;
@@ -286,11 +287,13 @@ public class ProviderDashboardActivity extends BaseActivity {
             } else if (itemId == R.id.nav_quantity_requests) {
                 startActivity(new Intent(this, QuantityRequestsActivity.class));
             } else if (itemId == R.id.nav_route) {
-                startActivity(new Intent(this, RouteOptimizationActivity.class));
+                startActivity(new Intent(this, DeliveryRouteActivity.class));
             } else if (itemId == R.id.nav_bills) {
                 startActivity(new Intent(this, BillListActivity.class));
             } else if (itemId == R.id.nav_reports) {
                 startActivity(new Intent(this, com.dailyserviceapp.reports.ReportsActivity.class));
+            } else if (itemId == R.id.nav_sales) {
+                startActivity(new Intent(this, SalesPredictionActivity.class));
             } else if (itemId == R.id.nav_profile) {
                 startActivity(new Intent(this, ProfileActivity.class));
             } else if (itemId == R.id.nav_qr_code) {

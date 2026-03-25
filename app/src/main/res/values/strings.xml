@@ -141,6 +141,8 @@
     <string name="menu_service_entry">Service Entry</string>
     <string name="menu_bills">Bills</string>
     <string name="menu_reports">Reports</string>
+    <string name="menu_sales_prediction">Sales Prediction</string>
+    <string name="menu_delivery_route">Delivery Route</string>
     <string name="menu_group_account">Account</string>
     <string name="menu_group_settings">Settings</string>
     <string name="menu_my_profile">My Profile</string>
@@ -204,6 +206,12 @@
     <string name="provider_dashboard_bills_payments">Bills &amp; Payments</string>
     <string name="provider_dashboard_my_customers">My Customers</string>
     <string name="provider_dashboard_join_requests">Join Requests</string>
+    <string name="customers_insight_title">Customer Insights</string>
+    <string name="customers_insight_body">Review customer trends, dues, and delivery activity from one place.</string>
+    <string name="customers_insight_cta">Add Customer</string>
+    <string name="balance_label">Balance</string>
+    <string name="nav_bills">Bills</string>
+    <string name="nav_profile">Profile</string>
     <string name="provider_complaints_title">Customer Complaints</string>
     <string name="provider_complaints_summary">Complaint Summary</string>
     <string name="provider_complaints_open">Open</string>
@@ -368,7 +376,26 @@
     <string name="no_pending_qty_requests">No pending requests</string>
     <string name="quantity_request_approved">Request approved for %1$s</string>
     <string name="quantity_request_rejected">Request rejected</string>
-
+    <string name="customer_precision_service_format">%1$s • %2$s</string>
+    <string name="status_vacation_pill">Vacation</string>
+    <string name="status_dues_pill">Dues</string>
+    <string name="status_active_pill">Active</string>
+    <string name="customers_area_unassigned">Other Areas</string>
+    <string name="customers_group_subtitle_default">Customer deliveries</string>
+    <string name="customers_group_count_format">%1$d customers</string>
+    <string name="delivery_route_title">Delivery Route</string>
+    <string name="delivery_route_subtitle">Area-wise customer order for faster rounds</string>
+    <string name="delivery_route_active_count">%1$d active stops</string>
+    <string name="delivery_route_open_first_stop">Open First Stop</string>
+    <string name="delivery_route_refresh">Refresh</string>
+    <string name="delivery_route_empty_title">No route stops yet</string>
+    <string name="delivery_route_empty_body">Add active customers with addresses to see a delivery route here.</string>
+    <string name="delivery_route_area_fallback">Other Areas</string>
+    <string name="delivery_route_open_maps">Open in Maps</string>
+    <string name="delivery_route_call">Call</string>
+    <string name="delivery_route_address_missing">Address not available</string>
+    <string name="delivery_route_maps_missing">Add a customer address to open Maps.</string>
+    <string name="delivery_route_stop_number">Stop %1$d</string>
     <!-- Test data -->
     <string name="test_generating">Generating test data…</string>
     <string name="test_generated">✅ Generated %1$d customers and %2$d service entries</string>

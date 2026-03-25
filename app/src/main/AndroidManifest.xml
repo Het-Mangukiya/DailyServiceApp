@@ -148,6 +148,18 @@
             android:exported="false"
             android:theme="@style/Theme.DailyServiceApp.NoActionBar" />
 
+        <!-- Delivery Route -->
+        <activity
+            android:name=".route.DeliveryRouteActivity"
+            android:exported="false"
+            android:theme="@style/Theme.DailyServiceApp.NoActionBar" />
+
+        <!-- Sales Prediction -->
+        <activity
+            android:name=".sales.ui.SalesPredictionActivity"
+            android:exported="false"
+            android:theme="@style/Theme.DailyServiceApp.NoActionBar" />
+
         <!-- Profile -->
         <activity
             android:name=".profile.ProfileActivity"
