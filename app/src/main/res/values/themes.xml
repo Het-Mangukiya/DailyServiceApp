@@ -23,7 +23,7 @@
     <style name="Widget.App" parent="Widget.MaterialComponents.Button">
     </style>
     <style name="Theme.DailyServiceApp" parent="Base.Theme.DailyServiceApp" />
-    
+
     <style name="Theme.DailyServiceApp.NoActionBar" parent="Theme.DailyServiceApp">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
@@ -34,16 +34,16 @@
         <item name="cardCornerRadius">16dp</item>
         <item name="cardElevation">2dp</item>
     </style>
-    
+
     <style name="Widget.App.Card.Elevated" parent="Widget.Material3.CardView.Elevated">
         <item name="cardCornerRadius">16dp</item>
     </style>
-    
+
     <style name="Widget.App.Button.Primary" parent="Widget.Material3.Button">
         <item name="cornerRadius">12dp</item>
         <item name="backgroundTint">@color/teal_primary</item>
     </style>
-    
+
     <style name="Widget.App.Button.Outlined" parent="Widget.Material3.Button.OutlinedButton">
         <item name="cornerRadius">12dp</item>
         <item name="strokeColor">@color/teal_primary</item>
@@ -56,9 +56,9 @@
         <item name="boxCornerRadiusBottomStart">12dp</item>
         <item name="boxCornerRadiusBottomEnd">12dp</item>
     </style>
-    
+
     <style name="Widget.App.TextInputEditText" parent="Widget.Material3.TextInputEditText.OutlinedBox" />
-    
+
     <style name="Widget.App.CircularProgressIndicator" parent="Widget.Material3.CircularProgressIndicator">
         <item name="indicatorColor">@color/teal_primary</item>
     </style>

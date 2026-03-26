@@ -37,11 +37,6 @@ import java.util.Map;
 
 /**
  * Customer home screen.
- *
- * Supports:
- * - Joining a provider via QR/manual provider code
- * - Viewing currently linked provider
- * - Unlinking provider
  */
 @AndroidEntryPoint
 public class CustomerHomeActivity extends BaseActivity {
@@ -66,7 +61,6 @@ public class CustomerHomeActivity extends BaseActivity {
         }
 
         if (!isCustomer()) {
-            // Defensive routing: if a provider somehow lands here, send them back.
             startActivity(new Intent(this, DashboardActivity.class));
             finish();
             return;
@@ -110,39 +104,35 @@ public class CustomerHomeActivity extends BaseActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_more) {
-            showMoreMenu();
+        if (item.getItemId() == R.id.action_settings) {
+            showSettingsMenu();
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
-    private void showMoreMenu() {
-        PopupMenu popupMenu = new PopupMenu(this, binding.toolbar, Gravity.END);
+    private void showSettingsMenu() {
+        // Use the toolbar's menu item view as anchor
+        View view = findViewById(R.id.action_settings);
+        if (view == null) view = binding.toolbar;
+
+        PopupMenu popupMenu = new PopupMenu(this, view, Gravity.END);
         popupMenu.getMenuInflater().inflate(R.menu.customer_home_more_menu, popupMenu.getMenu());
-        popupMenu.setOnMenuItemClickListener(this::handleToolbarMenuClick);
+        popupMenu.setOnMenuItemClickListener(item -> {
+            if (item.getItemId() == R.id.action_support) {
+                startActivity(new Intent(this, ComplaintSupportActivity.class));
+                return true;
+            }
+            if (item.getItemId() == R.id.action_logout) {
+                logout();
+                return true;
+            }
+            return false;
+        });
         popupMenu.show();
     }
 
-    private boolean handleToolbarMenuClick(MenuItem item) {
-        if (item.getItemId() == R.id.action_support) {
-            startActivity(new Intent(this, ComplaintSupportActivity.class));
-            return true;
-        }
-        if (item.getItemId() == R.id.action_logout) {
-            logout();
-            return true;
-        }
-        return false;
-    }
-
     private void setupContent() {
-        String name = preferenceManager.getUserName();
-        if (name == null || name.trim().isEmpty()) {
-            name = getString(R.string.default_user_name);
-        }
-        binding.txtWelcome.setText(getString(R.string.customer_home_welcome, name));
-
         binding.providerCodeInput.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -167,10 +157,6 @@ public class CustomerHomeActivity extends BaseActivity {
         binding.btnScanProviderQr.setOnClickListener(v -> startQrScan());
         binding.btnJoinProvider.setOnClickListener(v -> joinProviderFromInput());
         binding.btnUnlinkProvider.setOnClickListener(v -> confirmUnlinkProvider());
-        binding.btnCustomerSupport.setOnClickListener(v ->
-            startActivity(new Intent(this, ComplaintSupportActivity.class))
-        );
-        binding.btnCustomerLogout.setOnClickListener(v -> logout());
         binding.btnOpenDashboard.setOnClickListener(v ->
             startActivity(new Intent(this, CustomerServiceDashboardActivity.class))
         );
@@ -332,7 +318,6 @@ public class CustomerHomeActivity extends BaseActivity {
             value = value.substring(0, newLine).trim();
         }
 
-        // Firebase UIDs are URL-safe alpha-numeric strings. Keep only expected chars.
         value = value.replaceAll("[^A-Za-z0-9_-]", "");
 
         return value;
