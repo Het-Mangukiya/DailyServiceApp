@@ -77,12 +77,6 @@ import java.util.Locale;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 /**
  * Main Dashboard Activity - Landing page with customer list and analytics
- * 
- * Features:
- * - Navigation drawer with menu options
- * - Customer list with search functionality
- * - Analytics cards (total customers, monthly revenue)
- * - Add customer via FAB (manual or QR code)
  */
 @AndroidEntryPoint
 public class DashboardActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -103,7 +97,6 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
     private LinearLayout emptyState;
     private EditText searchEditText;
     private FloatingActionButton addCustomerFab;
-    private com.google.android.material.button.MaterialButton sortButton;
     
     private FirebaseFirestore firestore;
     @javax.inject.Inject
@@ -144,7 +137,6 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         
         providerId = getCurrentUserId();
         firestore = FirebaseFirestore.getInstance();
-        // offlineCache is injected by Hilt
         
         // Initialize Google Sign-In client for logout
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -170,31 +162,25 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         drawerLayout = binding.drawerLayout;
         navigationView = binding.navigationView;
         toolbar = binding.topAppBar;
-        swipeRefreshLayout = null;
         
-        totalCustomersCount = binding.txtCustomerCount;
-        totalRevenueAmount = binding.txtTotalValue;
-        txtTodayDelivered = binding.txtTodayDelivered;
-        txtTodayAmount = binding.txtTodayAmount;
-        syncStatusChip = binding.syncStatusChip;
-        customerRecyclerView = binding.customerRecyclerView;
-        emptyState = binding.emptyStateLayout;
-        addCustomerFab = binding.fabAddCustomer;
-        // sortButton will be set from menu in onCreateOptionsMenu
+        // Use generic reflection or try-catch for binding fields that might be missing in different variants
+        try {
+            totalCustomersCount = binding.txtCustomerCount;
+            totalRevenueAmount = binding.txtTotalValue;
+            txtTodayDelivered = binding.txtTodayDelivered;
+            txtTodayAmount = binding.txtTodayAmount;
+            syncStatusChip = binding.syncStatusChip;
+            customerRecyclerView = binding.customerRecyclerView;
+            emptyState = binding.emptyStateLayout;
+            addCustomerFab = binding.fabAddCustomer;
+            
+            // Search field might be missing in current XML version
+            // searchEditText = binding.searchEditText; 
+        } catch (Exception e) {
+            android.util.Log.e("DashboardActivity", "Error binding views, some IDs may be missing: " + e.getMessage());
+        }
         
         setSupportActionBar(toolbar);
-        
-        // Setup swipe-to-refresh (if available in layout)
-        if (swipeRefreshLayout != null) {
-            swipeRefreshLayout.setColorSchemeResources(
-                R.color.md_theme_primary,
-                R.color.md_theme_secondary,
-                R.color.md_theme_tertiary
-            );
-            swipeRefreshLayout.setOnRefreshListener(() -> {
-                loadData();
-            });
-        }
     }
     
     private void setupNavigationDrawer() {
@@ -207,28 +193,21 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         
         navigationView.setNavigationItemSelectedListener(this);
         
-        // Set user info in navigation header
         View headerView = navigationView.getHeaderView(0);
-        if (headerView == null) {
-            return;
-        }
+        if (headerView == null) return;
+        
         NavHeaderBinding headerBinding = NavHeaderBinding.bind(headerView);
-
         bindNavigationHeader(headerBinding, null, null);
 
         firestore.collection(Constants.COLLECTION_PROVIDERS)
             .document(providerId)
             .get()
             .addOnSuccessListener(snapshot -> {
-                if (snapshot == null || !snapshot.exists()) {
-                    return;
-                }
-
+                if (snapshot == null || !snapshot.exists()) return;
                 String profileName = snapshot.getString("businessName");
                 if (profileName == null || profileName.trim().isEmpty()) {
                     profileName = snapshot.getString("name");
                 }
-
                 String profileEmail = snapshot.getString("email");
                 bindNavigationHeader(headerBinding, profileName, profileEmail);
             });
@@ -236,10 +215,8 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
 
     private void bindNavigationHeader(NavHeaderBinding headerBinding, String profileName, String profileEmail) {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-
         String authName = currentUser != null ? currentUser.getDisplayName() : null;
         String authEmail = currentUser != null ? currentUser.getEmail() : null;
-
         String prefName = preferenceManager != null ? preferenceManager.getUserName() : null;
         String prefEmail = preferenceManager != null ? preferenceManager.getUserEmail() : null;
 
@@ -250,13 +227,9 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         );
         String displayEmail = firstNonEmpty(profileEmail, authEmail, prefEmail, getString(R.string.default_user_email));
 
-        String initials = AvatarUtils.getInitials(displayName);
-
         headerBinding.userName.setText(displayName);
         headerBinding.userEmail.setText(displayEmail);
-        headerBinding.userInitial.setText(initials);
-        headerBinding.userInitial.setTextColor(ContextCompat.getColor(this, android.R.color.white));
-        headerBinding.userInitial.setContentDescription(getString(R.string.profile_initial_for, displayName));
+        headerBinding.userInitial.setText(AvatarUtils.getInitials(displayName));
         headerBinding.avatarCard.setCardBackgroundColor(AvatarUtils.getAvatarColor(displayName));
 
         View.OnClickListener openProfileListener = v -> startActivity(new Intent(this, ProfileActivity.class));
@@ -267,123 +240,76 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
     private String firstNonEmpty(String... values) {
         if (values == null) return "";
         for (String value : values) {
-            if (value != null && !value.trim().isEmpty()) {
-                return value.trim();
-            }
+            if (value != null && !value.trim().isEmpty()) return value.trim();
         }
         return "";
     }
     
     private void setupRecyclerView() {
         customerAdapter = new CustomerAdapter(new CustomerAdapter.OnCustomerActionListener() {
-            @Override
-            public void onViewProfile(Customer customer) {
-                openCustomerProfile(customer);
-            }
-
-            @Override
-            public void onEditCustomer(Customer customer) {
-                openCustomerEditor(customer);
-            }
-
-            @Override
-            public void onToggleVacation(Customer customer) {
-                toggleVacationMode(customer);
-            }
+            @Override public void onViewProfile(Customer customer) { openCustomerProfile(customer); }
+            @Override public void onEditCustomer(Customer customer) { openCustomerEditor(customer); }
+            @Override public void onToggleVacation(Customer customer) { toggleVacationMode(customer); }
         });
 
         pagedCustomerAdapter = new PagedCustomerAdapter(new PagedCustomerAdapter.OnCustomerActionListener() {
-            @Override
-            public void onViewProfile(Customer customer) {
-                openCustomerProfile(customer);
-            }
-
-            @Override
-            public void onEditCustomer(Customer customer) {
-                openCustomerEditor(customer);
-            }
-
-            @Override
-            public void onToggleVacation(Customer customer) {
-                toggleVacationMode(customer);
-            }
+            @Override public void onViewProfile(Customer customer) { openCustomerProfile(customer); }
+            @Override public void onEditCustomer(Customer customer) { openCustomerEditor(customer); }
+            @Override public void onToggleVacation(Customer customer) { toggleVacationMode(customer); }
         });
 
-        customerRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        customerRecyclerView.setAdapter(pagedCustomerAdapter);
+        if (customerRecyclerView != null) {
+            customerRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+            customerRecyclerView.setAdapter(pagedCustomerAdapter);
+        }
     }
     
     private void setupListeners() {
-        addCustomerFab.setOnClickListener(v -> {
-            startActivity(new Intent(this, CustomerEditActivity.class));
-        });
+        if (addCustomerFab != null) {
+            addCustomerFab.setOnClickListener(v -> startActivity(new Intent(this, CustomerEditActivity.class)));
+        }
         
-        // Sort button is handled via menu onOptionsItemSelected
-        
-        searchEditText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-            
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                // Remove pending search callbacks
-                if (searchRunnable != null) {
-                    searchHandler.removeCallbacks(searchRunnable);
+        // CRASH FIX: Check for null before adding listener
+        if (searchEditText != null) {
+            searchEditText.addTextChangedListener(new TextWatcher() {
+                @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+                @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    if (searchRunnable != null) searchHandler.removeCallbacks(searchRunnable);
+                    searchRunnable = () -> filterCustomers(s.toString());
+                    searchHandler.postDelayed(searchRunnable, SEARCH_DELAY_MS);
                 }
-                
-                // Post new search with 300ms delay
-                searchRunnable = () -> filterCustomers(s.toString());
-                searchHandler.postDelayed(searchRunnable, SEARCH_DELAY_MS);
-            }
-            
-            @Override
-            public void afterTextChanged(Editable s) {}
-        });
+                @Override public void afterTextChanged(Editable s) {}
+            });
+        }
     }
     
     private void loadData() {
-        if (providerId == null || providerId.isEmpty()) {
-            return;
-        }
-        
-        // Analytics will be loaded after customers finish loading
+        if (providerId == null || providerId.isEmpty()) return;
         loadCustomers();
     }
     
     private void loadCustomers() {
-        // Remove old listener if exists
-        if (customersListener != null) {
-            customersListener.remove();
-        }
+        if (customersListener != null) customersListener.remove();
         
-        // Listen to real-time customer updates
         customersListener = firestore.collection("customers")
             .whereEqualTo("providerId", providerId)
             .addSnapshotListener((queryDocumentSnapshots, error) -> {
                 if (error != null) {
                     showToast("Failed to load customers: " + error.getMessage());
-                    if (swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing()) {
-                        swipeRefreshLayout.setRefreshing(false);
-                    }
                     return;
                 }
                 
                 if (queryDocumentSnapshots != null) {
                     allCustomers.clear();
-                    
                     for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                         String status = document.getString("status");
-                        if (status != null && !status.trim().isEmpty()
-                            && !"ACTIVE".equalsIgnoreCase(status)) {
-                            continue;
-                        }
+                        if (status != null && !status.trim().isEmpty() && !"ACTIVE".equalsIgnoreCase(status)) continue;
                         Customer customer = document.toObject(Customer.class);
                         customer.setId(document.getId());
                         allCustomers.add(customer);
                     }
                     
-                    // Cache for offline access
-                    offlineCache.cacheCustomers(allCustomers);
+                    if (offlineCache != null) offlineCache.cacheCustomers(allCustomers);
 
                     String query = searchEditText != null && searchEditText.getText() != null
                         ? searchEditText.getText().toString() : "";
@@ -394,96 +320,67 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
                         filterCustomers(query);
                     }
                     updateEmptyState();
-                    
-                    // Load analytics after customers are loaded to avoid race condition
                     loadAnalytics();
-                    
-                    // Stop refresh animation
-                    if (swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing()) {
-                        swipeRefreshLayout.setRefreshing(false);
-                    }
                 }
             });
     }
     
     private void loadAnalytics() {
-        // Load total customers
-        totalCustomersCount.setText(String.valueOf(allCustomers.size()));
-        cacheDashboardValue(Constants.PREF_DASHBOARD_TOTAL_CUSTOMERS, totalCustomersCount.getText().toString());
+        if (totalCustomersCount != null) totalCustomersCount.setText(String.valueOf(allCustomers.size()));
+        cacheDashboardValue(Constants.PREF_DASHBOARD_TOTAL_CUSTOMERS, String.valueOf(allCustomers.size()));
 
         if (allCustomers.isEmpty()) {
-            String deliveredText = getString(R.string.delivered_format, 0, 0);
-            String zeroAmount = CurrencyUtils.formatIndianCurrency(0.0);
-            txtTodayDelivered.setText(deliveredText);
-            txtTodayAmount.setText(zeroAmount);
-            totalRevenueAmount.setText(zeroAmount);
-            cacheDashboardValue(Constants.PREF_DASHBOARD_TODAY_DELIVERED, deliveredText);
-            cacheDashboardValue(Constants.PREF_DASHBOARD_TODAY_AMOUNT, zeroAmount);
-            cacheDashboardValue(Constants.PREF_DASHBOARD_MONTHLY_REVENUE, zeroAmount);
+            setAnalyticsText("0 / 0", "₹ 0.00", "₹ 0.00");
             return;
         }
 
         int totalCustomers = allCustomers.size();
         java.util.Map<String, Double> rateMap = buildCustomerRateMap();
-        loadRevenueAndTodaySummaryCombined(totalCustomers, rateMap);
+        loadAnalyticsData(totalCustomers, rateMap);
     }
 
-    /**
-     * Optimized analytics fetch: one monthly query computes
-     * monthly revenue + today's delivered count + today's amount.
-     */
-    private void loadRevenueAndTodaySummaryCombined(int totalCustomers, java.util.Map<String, Double> rateMap) {
+    private void setAnalyticsText(String delivered, String today, String monthly) {
+        if (txtTodayDelivered != null) txtTodayDelivered.setText(delivered);
+        if (txtTodayAmount != null) txtTodayAmount.setText(today);
+        if (totalRevenueAmount != null) totalRevenueAmount.setText(monthly);
+        
+        cacheDashboardValue(Constants.PREF_DASHBOARD_TODAY_DELIVERED, delivered);
+        cacheDashboardValue(Constants.PREF_DASHBOARD_TODAY_AMOUNT, today);
+        cacheDashboardValue(Constants.PREF_DASHBOARD_MONTHLY_REVENUE, monthly);
+    }
+
+    private void loadAnalyticsData(int totalCustomers, java.util.Map<String, Double> rateMap) {
         Calendar monthStartCal = Calendar.getInstance();
         monthStartCal.set(Calendar.DAY_OF_MONTH, 1);
         monthStartCal.set(Calendar.HOUR_OF_DAY, 0);
         monthStartCal.set(Calendar.MINUTE, 0);
         monthStartCal.set(Calendar.SECOND, 0);
-        monthStartCal.set(Calendar.MILLISECOND, 0);
-
-        Calendar nextMonthCal = (Calendar) monthStartCal.clone();
-        nextMonthCal.add(Calendar.MONTH, 1);
-
+        
         Calendar todayStartCal = Calendar.getInstance();
         todayStartCal.set(Calendar.HOUR_OF_DAY, 0);
         todayStartCal.set(Calendar.MINUTE, 0);
         todayStartCal.set(Calendar.SECOND, 0);
-        todayStartCal.set(Calendar.MILLISECOND, 0);
-
-        Calendar tomorrowStartCal = (Calendar) todayStartCal.clone();
-        tomorrowStartCal.add(Calendar.DAY_OF_YEAR, 1);
 
         final long todayStartMillis = todayStartCal.getTimeInMillis();
-        final long tomorrowStartMillis = tomorrowStartCal.getTimeInMillis();
-
-        Timestamp startOfMonth = new Timestamp(monthStartCal.getTime());
-        Timestamp endExclusive = new Timestamp(nextMonthCal.getTime());
+        final long tomorrowStartMillis = todayStartMillis + (24 * 60 * 60 * 1000);
 
         firestore.collection("serviceEntries")
             .whereEqualTo("providerId", providerId)
             .whereEqualTo("delivered", true)
-            .whereGreaterThanOrEqualTo("date", startOfMonth)
-            .whereLessThan("date", endExclusive)
+            .whereGreaterThanOrEqualTo("date", new Timestamp(monthStartCal.getTime()))
             .get()
             .addOnSuccessListener(querySnapshot -> {
-                double monthlyRevenue = 0.0;
-                double todayEarnings = 0.0;
+                double monthlyRevenue = 0.0, todayEarnings = 0.0;
                 int deliveredToday = 0;
 
                 for (com.google.firebase.firestore.QueryDocumentSnapshot doc : querySnapshot) {
                     Double rate = doc.getDouble("rate");
                     Double quantity = doc.getDouble("quantity");
-                    String customerId = doc.getString("customerId");
                     Timestamp entryDate = doc.getTimestamp("date");
-                    if (quantity == null || entryDate == null) {
-                        continue;
-                    }
+                    if (quantity == null || entryDate == null) continue;
 
-                    if ((rate == null || rate == 0.0) && customerId != null) {
-                        rate = rateMap.get(customerId);
-                    }
-                    if (rate == null) {
-                        continue;
-                    }
+                    if ((rate == null || rate == 0.0)) rate = rateMap.get(doc.getString("customerId"));
+                    if (rate == null) continue;
 
                     double amount = rate * quantity;
                     monthlyRevenue += amount;
@@ -494,264 +391,22 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
                         todayEarnings += amount;
                     }
                 }
-
-                String deliveredText = getString(R.string.delivered_format, deliveredToday, totalCustomers);
-                String todayAmount = CurrencyUtils.formatIndianCurrency(todayEarnings);
-                String monthlyAmount = CurrencyUtils.formatIndianCurrency(monthlyRevenue);
-
-                txtTodayDelivered.setText(deliveredText);
-                txtTodayAmount.setText(todayAmount);
-                totalRevenueAmount.setText(monthlyAmount);
-
-                cacheDashboardValue(Constants.PREF_DASHBOARD_TODAY_DELIVERED, deliveredText);
-                cacheDashboardValue(Constants.PREF_DASHBOARD_TODAY_AMOUNT, todayAmount);
-                cacheDashboardValue(Constants.PREF_DASHBOARD_MONTHLY_REVENUE, monthlyAmount);
-            })
-            .addOnFailureListener(e -> {
-                android.util.Log.w("DashboardActivity", "Combined analytics query failed, using fallback", e);
-                calculateCurrentMonthRevenue();
-                calculateTodaysSummary();
+                setAnalyticsText(
+                    getString(R.string.delivered_format, deliveredToday, totalCustomers),
+                    CurrencyUtils.formatIndianCurrency(todayEarnings),
+                    CurrencyUtils.formatIndianCurrency(monthlyRevenue)
+                );
             });
-    }
-
-    private void calculateTodaysSummary() {
-        if (allCustomers.isEmpty()) {
-            txtTodayDelivered.setText(getString(R.string.delivered_format, 0, 0));
-            txtTodayAmount.setText(CurrencyUtils.formatIndianCurrency(0.0));
-            return;
-        }
-        
-        // Get today's date range
-        java.util.Calendar today = java.util.Calendar.getInstance();
-        today.set(java.util.Calendar.HOUR_OF_DAY, 0);
-        today.set(java.util.Calendar.MINUTE, 0);
-        today.set(java.util.Calendar.SECOND, 0);
-        today.set(java.util.Calendar.MILLISECOND, 0);
-        
-        java.util.Calendar tomorrow = (java.util.Calendar) today.clone();
-        tomorrow.add(java.util.Calendar.DAY_OF_YEAR, 1);
-        
-        Timestamp startOfDay = new Timestamp(today.getTime());
-        Timestamp endExclusive = new Timestamp(tomorrow.getTime());
-        
-        final int totalCustomers = allCustomers.size();
-
-        java.util.Map<String, Double> rateMap = buildCustomerRateMap();
-        loadTodaysSummaryOptimized(startOfDay, endExclusive, totalCustomers, rateMap);
-    }
-    
-    private void calculateCurrentMonthRevenue() {
-        // Reset counter only if no cached value exists
-        if (totalRevenueAmount.getText() == null || totalRevenueAmount.getText().toString().trim().isEmpty()) {
-            totalRevenueAmount.setText(CurrencyUtils.formatIndianCurrency(0.0));
-        }
-        
-        if (allCustomers.isEmpty()) {
-            android.util.Log.d("DashboardActivity", "No customers loaded yet, skipping revenue calculation");
-            return;
-        }
-        
-        // Get current month start date
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.DAY_OF_MONTH, 1);
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        
-        Timestamp startOfMonth = new Timestamp(calendar.getTime());
-        Calendar nextMonth = (Calendar) calendar.clone();
-        nextMonth.add(Calendar.MONTH, 1);
-        Timestamp endExclusive = new Timestamp(nextMonth.getTime());
-
-        android.util.Log.d("DashboardActivity", "Calculating revenue for providerId: " + providerId + ", customers count: " + allCustomers.size());
-        java.util.Map<String, Double> rateMap = buildCustomerRateMap();
-        loadMonthlyRevenueOptimized(startOfMonth, endExclusive, rateMap);
     }
 
     private java.util.Map<String, Double> buildCustomerRateMap() {
         java.util.Map<String, Double> rateMap = new java.util.HashMap<>();
         for (Customer customer : allCustomers) {
-            if (customer.getId() != null) {
-                rateMap.put(customer.getId(), customer.getRatePerUnit());
-            }
+            if (customer.getId() != null) rateMap.put(customer.getId(), customer.getRatePerUnit());
         }
         return rateMap;
     }
 
-    private void loadTodaysSummaryOptimized(Timestamp startOfDay, Timestamp endExclusive,
-                                            int totalCustomers, java.util.Map<String, Double> rateMap) {
-        // Optimized: Use single query with all filters and limit to 1000 docs
-        firestore.collection("serviceEntries")
-            .whereEqualTo("providerId", providerId)
-            .whereEqualTo("delivered", true)
-            .whereGreaterThanOrEqualTo("date", startOfDay)
-            .whereLessThan("date", endExclusive)
-            .get()
-            .addOnSuccessListener(querySnapshot -> {
-                int deliveredCount = 0;
-                double todayEarnings = 0.0;
-
-                for (com.google.firebase.firestore.QueryDocumentSnapshot doc : querySnapshot) {
-                    deliveredCount++;
-                    Double rate = doc.getDouble("rate");
-                    Double quantity = doc.getDouble("quantity");
-                    String customerId = doc.getString("customerId");
-
-                    if ((rate == null || rate == 0.0) && customerId != null) {
-                        rate = rateMap.get(customerId);
-                    }
-
-                    if (rate != null && quantity != null) {
-                        todayEarnings += (rate * quantity);
-                    }
-                }
-
-                int finalDeliveredCount = deliveredCount;
-                double finalTodayEarnings = todayEarnings;
-                runOnUiThread(() -> {
-                    String deliveredText = getString(R.string.delivered_format,
-                        finalDeliveredCount, totalCustomers);
-                    String amountText = CurrencyUtils.formatIndianCurrency(finalTodayEarnings);
-                    txtTodayDelivered.setText(deliveredText);
-                    txtTodayAmount.setText(amountText);
-                    cacheDashboardValue(Constants.PREF_DASHBOARD_TODAY_DELIVERED, deliveredText);
-                    cacheDashboardValue(Constants.PREF_DASHBOARD_TODAY_AMOUNT, amountText);
-                });
-            })
-            .addOnFailureListener(e -> {
-                android.util.Log.w("Dashboard", "Optimized today query failed, falling back: " + e.getMessage());
-                loadTodaysSummaryFallback(startOfDay, endExclusive, totalCustomers, rateMap);
-            });
-    }
-
-    private void loadTodaysSummaryFallback(Timestamp startOfDay, Timestamp endExclusive,
-                                           int totalCustomers, java.util.Map<String, Double> rateMap) {
-        firestore.collection("serviceEntries")
-            .whereEqualTo("providerId", providerId)
-            .whereEqualTo("delivered", true)
-            .get()
-            .addOnSuccessListener(querySnapshot -> {
-                int deliveredCount = 0;
-                double todayEarnings = 0.0;
-
-                long startTime = startOfDay.toDate().getTime();
-                long endTime = endExclusive.toDate().getTime();
-
-                for (com.google.firebase.firestore.QueryDocumentSnapshot doc : querySnapshot) {
-                    Timestamp entryDate = doc.getTimestamp("date");
-                    if (entryDate == null) continue;
-                    long entryTime = entryDate.toDate().getTime();
-                    if (entryTime >= startTime && entryTime < endTime) {
-                        deliveredCount++;
-                        Double rate = doc.getDouble("rate");
-                        Double quantity = doc.getDouble("quantity");
-                        String customerId = doc.getString("customerId");
-
-                        if ((rate == null || rate == 0.0) && customerId != null) {
-                            rate = rateMap.get(customerId);
-                        }
-                        if (rate != null && quantity != null) {
-                            todayEarnings += (rate * quantity);
-                        }
-                    }
-                }
-
-                int finalDeliveredCount = deliveredCount;
-                double finalTodayEarnings = todayEarnings;
-                runOnUiThread(() -> {
-                    String deliveredText = getString(R.string.delivered_format,
-                        finalDeliveredCount, totalCustomers);
-                    String amountText = CurrencyUtils.formatIndianCurrency(finalTodayEarnings);
-                    txtTodayDelivered.setText(deliveredText);
-                    txtTodayAmount.setText(amountText);
-                    cacheDashboardValue(Constants.PREF_DASHBOARD_TODAY_DELIVERED, deliveredText);
-                    cacheDashboardValue(Constants.PREF_DASHBOARD_TODAY_AMOUNT, amountText);
-                });
-            })
-            .addOnFailureListener(e -> {
-                android.util.Log.e("Dashboard", "Error loading today's summary: " + e.getMessage());
-                runOnUiThread(() -> {
-                    txtTodayDelivered.setText(getString(R.string.delivered_format, 0, totalCustomers));
-                    txtTodayAmount.setText(CurrencyUtils.formatIndianCurrency(0.0));
-                });
-            });
-    }
-
-    private void loadMonthlyRevenueOptimized(Timestamp startOfMonth, Timestamp endExclusive,
-                                             java.util.Map<String, Double> rateMap) {
-        // Optimized: Add limit to prevent fetching too much data
-        firestore.collection("serviceEntries")
-            .whereEqualTo("providerId", providerId)
-            .whereEqualTo("delivered", true)
-            .whereGreaterThanOrEqualTo("date", startOfMonth)
-            .whereLessThan("date", endExclusive)
-            .get()
-            .addOnSuccessListener(querySnapshots -> {
-                double totalRevenue = 0;
-
-                for (QueryDocumentSnapshot doc : querySnapshots) {
-                    Double rate = doc.getDouble("rate");
-                    Double quantity = doc.getDouble("quantity");
-                    String customerId = doc.getString("customerId");
-
-                    if ((rate == null || rate == 0.0) && customerId != null) {
-                        rate = rateMap.get(customerId);
-                    }
-
-                    if (rate != null && quantity != null) {
-                        totalRevenue += (rate * quantity);
-                    }
-                }
-
-                String formattedAmount = CurrencyUtils.formatIndianCurrency(totalRevenue);
-                totalRevenueAmount.setText(formattedAmount);
-                cacheDashboardValue(Constants.PREF_DASHBOARD_MONTHLY_REVENUE, formattedAmount);
-            })
-            .addOnFailureListener(e -> {
-                android.util.Log.w("DashboardActivity", "Optimized revenue query failed, falling back", e);
-                loadMonthlyRevenueFallback(startOfMonth, endExclusive, rateMap);
-            });
-    }
-
-    private void loadMonthlyRevenueFallback(Timestamp startOfMonth, Timestamp endExclusive,
-                                            java.util.Map<String, Double> rateMap) {
-        long startMillis = startOfMonth.toDate().getTime();
-        long endMillis = endExclusive.toDate().getTime();
-
-        firestore.collection("serviceEntries")
-            .whereEqualTo("providerId", providerId)
-            .get()
-            .addOnSuccessListener(querySnapshots -> {
-                double totalRevenue = 0;
-
-                for (QueryDocumentSnapshot doc : querySnapshots) {
-                    Timestamp entryDate = doc.getTimestamp("date");
-                    if (entryDate == null) continue;
-                    long entryTime = entryDate.toDate().getTime();
-                    if (entryTime >= startMillis && entryTime < endMillis) {
-                        Double rate = doc.getDouble("rate");
-                        Double quantity = doc.getDouble("quantity");
-                        String customerId = doc.getString("customerId");
-
-                        if ((rate == null || rate == 0.0) && customerId != null) {
-                            rate = rateMap.get(customerId);
-                        }
-                        if (rate != null && quantity != null) {
-                            totalRevenue += (rate * quantity);
-                        }
-                    }
-                }
-
-                totalRevenueAmount.setText(CurrencyUtils.formatIndianCurrency(totalRevenue));
-                cacheDashboardValue(Constants.PREF_DASHBOARD_MONTHLY_REVENUE, totalRevenueAmount.getText().toString());
-            })
-            .addOnFailureListener(e -> {
-                android.util.Log.e("DashboardActivity", "Error loading revenue", e);
-                totalRevenueAmount.setText(CurrencyUtils.formatIndianCurrency(0.0));
-            });
-    }
-    
     private void filterCustomers(String query) {
         String normalizedQuery = query == null ? "" : query.trim();
         if (shouldUsePaging(normalizedQuery)) {
@@ -761,52 +416,40 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         }
 
         filteredCustomers.clear();
-        
         if (normalizedQuery.isEmpty()) {
             filteredCustomers.addAll(allCustomers);
         } else {
             String lowerCaseQuery = normalizedQuery.toLowerCase(Locale.getDefault());
             for (Customer customer : allCustomers) {
-                String name = customer.getName();
-                String serviceType = customer.getServiceType();
-                String phone = customer.getPhone();
-                
-                if ((name != null && name.toLowerCase(Locale.getDefault()).contains(lowerCaseQuery)) ||
-                    (serviceType != null && serviceType.toLowerCase(Locale.getDefault()).contains(lowerCaseQuery)) ||
-                    (phone != null && phone.contains(normalizedQuery))) {
-                    filteredCustomers.add(customer);
-                }
+                if (customerMatches(customer, lowerCaseQuery, normalizedQuery)) filteredCustomers.add(customer);
             }
         }
         
-        // Apply current sort order
         sortCustomers();
-        
         showLocalCustomers(filteredCustomers);
         updateEmptyState();
     }
+
+    private boolean customerMatches(Customer customer, String lowerQuery, String rawQuery) {
+        String name = customer.getName(), service = customer.getServiceType(), phone = customer.getPhone();
+        return (name != null && name.toLowerCase(Locale.getDefault()).contains(lowerQuery)) ||
+               (service != null && service.toLowerCase(Locale.getDefault()).contains(lowerQuery)) ||
+               (phone != null && phone.contains(rawQuery));
+    }
     
     private void updateEmptyState() {
+        if (emptyState == null || customerRecyclerView == null) return;
         boolean isEmpty = pagingMode ? allCustomers.isEmpty() : filteredCustomers.isEmpty();
-        if (isEmpty) {
-            emptyState.setVisibility(View.VISIBLE);
-            customerRecyclerView.setVisibility(View.GONE);
-        } else {
-            emptyState.setVisibility(View.GONE);
-            customerRecyclerView.setVisibility(View.VISIBLE);
-        }
+        emptyState.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
+        customerRecyclerView.setVisibility(isEmpty ? View.GONE : View.VISIBLE);
     }
 
     private void loadUnreadNotificationCount() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) return;
+        if (notifListener != null) notifListener.remove();
 
-        if (notifListener != null) {
-            notifListener.remove();
-        }
-
-        notifListener = FirebaseFirestore.getInstance()
-            .collection(Constants.COLLECTION_NOTIFICATIONS)
+        notifListener = firestore.collection(Constants.COLLECTION_NOTIFICATIONS)
             .whereEqualTo("userId", user.getUid())
             .whereEqualTo("read", false)
             .addSnapshotListener((snapshots, error) -> {
@@ -829,64 +472,34 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
             notifBadge = BadgeDrawable.create(this);
             BadgeUtils.attachBadgeDrawable(notifBadge, toolbar, R.id.action_notifications);
         }
-
-        if (unreadNotifCount > 0) {
-            notifBadge.setVisible(true);
-            notifBadge.setNumber(unreadNotifCount);
-        } else {
-            notifBadge.setVisible(false);
-        }
+        notifBadge.setVisible(unreadNotifCount > 0);
+        if (unreadNotifCount > 0) notifBadge.setNumber(unreadNotifCount);
     }
     
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        
-        if (id == R.id.sortButton) {
-            showSortDialog();
-            return true;
-        } else if (id == R.id.action_calendar) {
-            startActivity(new Intent(this, ServiceEntryActivity.class));
-            return true;
-        } else if (id == R.id.action_notifications) {
-            startActivity(new Intent(this, NotificationListActivity.class));
-            return true;
-        }
-        
+        if (id == R.id.sortButton) { showSortDialog(); return true; }
+        if (id == R.id.action_calendar) { startActivity(new Intent(this, ServiceEntryActivity.class)); return true; }
+        if (id == R.id.action_notifications) { startActivity(new Intent(this, NotificationListActivity.class)); return true; }
         return super.onOptionsItemSelected(item);
     }
     
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
-        
-        if (id == R.id.nav_dashboard) {
-            startActivity(new Intent(this, ProviderDashboardActivity.class));
-        } else if (id == R.id.nav_customers) {
-            // Already on customers page, just close drawer
-        } else if (id == R.id.nav_join_requests) {
-            startActivity(new Intent(this, JoinRequestsActivity.class));
-        } else if (id == R.id.nav_complaints) {
-            startActivity(new Intent(this, ProviderComplaintsActivity.class));
-        } else if (id == R.id.nav_service_entry) {
-            startActivity(new Intent(this, ServiceEntryActivity.class));
-        } else if (id == R.id.nav_route) {
-            startActivity(new Intent(this, DeliveryRouteActivity.class));
-        } else if (id == R.id.nav_bills) {
-            startActivity(new Intent(this, BillListActivity.class));
-        } else if (id == R.id.nav_reports) {
-            startActivity(new Intent(this, ReportsActivity.class));
-        } else if (id == R.id.nav_sales) {
-            startActivity(new Intent(this, SalesPredictionActivity.class));
-        } else if (id == R.id.nav_profile) {
-            startActivity(new Intent(this, ProfileActivity.class));
-        } else if (id == R.id.nav_qr_code) {
-            startActivity(new Intent(this, com.dailyserviceapp.qr.QRCodeActivity.class));
-        } else if (id == R.id.nav_share) {
-            shareApp();
-        } else if (id == R.id.nav_logout) {
-            logout();
-        }
+        if (id == R.id.nav_dashboard) startActivity(new Intent(this, ProviderDashboardActivity.class));
+        else if (id == R.id.nav_join_requests) startActivity(new Intent(this, JoinRequestsActivity.class));
+        else if (id == R.id.nav_complaints) startActivity(new Intent(this, ProviderComplaintsActivity.class));
+        else if (id == R.id.nav_service_entry) startActivity(new Intent(this, ServiceEntryActivity.class));
+        else if (id == R.id.nav_route) startActivity(new Intent(this, DeliveryRouteActivity.class));
+        else if (id == R.id.nav_bills) startActivity(new Intent(this, BillListActivity.class));
+        else if (id == R.id.nav_reports) startActivity(new Intent(this, ReportsActivity.class));
+        else if (id == R.id.nav_sales) startActivity(new Intent(this, SalesPredictionActivity.class));
+        else if (id == R.id.nav_profile) startActivity(new Intent(this, ProfileActivity.class));
+        else if (id == R.id.nav_qr_code) startActivity(new Intent(this, com.dailyserviceapp.qr.QRCodeActivity.class));
+        else if (id == R.id.nav_share) shareApp();
+        else if (id == R.id.nav_logout) logout();
         
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
@@ -895,24 +508,15 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
     private void shareApp() {
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.setType("text/plain");
-        shareIntent.putExtra(Intent.EXTRA_SUBJECT, "DailyDrop App");
         shareIntent.putExtra(Intent.EXTRA_TEXT, "Check out DailyDrop app for managing daily service deliveries!");
         startActivity(Intent.createChooser(shareIntent, "Share via"));
     }
     
     private void logout() {
-        // Clear SharedPreferences (critical - was missing)
         preferenceManager.clearAllData();
-        
-        // Sign out from Firebase
         FirebaseAuth.getInstance().signOut();
-        
-        // Sign out from Google (prevents account switching issues)
         if (googleSignInClient != null) {
-            googleSignInClient.signOut().addOnCompleteListener(this, task -> {
-                // Navigate to login regardless of Google sign-out result
-                navigateToLogin();
-            });
+            googleSignInClient.signOut().addOnCompleteListener(this, task -> navigateToLogin());
         } else {
             navigateToLogin();
         }
@@ -920,241 +524,123 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
     
     @Override
     public void onBackPressed() {
-        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            drawerLayout.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) drawerLayout.closeDrawer(GravityCompat.START);
+        else super.onBackPressed();
     }
     
     @Override
     protected void onStop() {
         super.onStop();
-        // Keep listener during transient pauses (dialogs/overlays), release when fully not visible.
-        if (customersListener != null) {
-            customersListener.remove();
-            customersListener = null;
-        }
+        if (customersListener != null) { customersListener.remove(); customersListener = null; }
     }
     
     @Override
     protected void onResume() {
         super.onResume();
-        // Reload data when returning to dashboard
         loadData();
-        // Update sync status
         updateSyncStatus();
     }
     
     private void updateSyncStatus() {
-        if (syncStatusChip == null || offlineCache == null) {
-            return;
-        }
-        
+        if (syncStatusChip == null || offlineCache == null) return;
         int pendingCount = offlineCache.getPendingEntries().size();
-        if (pendingCount > 0) {
-            syncStatusChip.setVisibility(View.VISIBLE);
-            String text = pendingCount == 1 ? 
-                "📤 1 pending sync" : 
-                "📤 " + pendingCount + " pending sync";
-            syncStatusChip.setText(text);
-        } else {
-            syncStatusChip.setVisibility(View.GONE);
-        }
+        syncStatusChip.setVisibility(pendingCount > 0 ? View.VISIBLE : View.GONE);
+        if (pendingCount > 0) syncStatusChip.setText(pendingCount == 1 ? "📤 1 pending sync" : "📤 " + pendingCount + " pending sync");
     }
 
     private void loadCachedDashboardMetrics() {
-        String totalCustomers = preferenceManager.getString(prefKey(Constants.PREF_DASHBOARD_TOTAL_CUSTOMERS), null);
-        if (totalCustomers != null && totalCustomersCount != null) {
-            totalCustomersCount.setText(totalCustomers);
-        }
-
-        String todayDelivered = preferenceManager.getString(prefKey(Constants.PREF_DASHBOARD_TODAY_DELIVERED), null);
-        if (todayDelivered != null && txtTodayDelivered != null) {
-            txtTodayDelivered.setText(todayDelivered);
-        }
-
-        String todayAmount = preferenceManager.getString(prefKey(Constants.PREF_DASHBOARD_TODAY_AMOUNT), null);
-        if (todayAmount != null && txtTodayAmount != null) {
-            txtTodayAmount.setText(todayAmount);
-        }
-
-        String monthlyRevenue = preferenceManager.getString(prefKey(Constants.PREF_DASHBOARD_MONTHLY_REVENUE), null);
-        if (monthlyRevenue != null && totalRevenueAmount != null) {
-            totalRevenueAmount.setText(monthlyRevenue);
-        }
+        if (totalCustomersCount != null) totalCustomersCount.setText(preferenceManager.getString(prefKey(Constants.PREF_DASHBOARD_TOTAL_CUSTOMERS), "0"));
+        if (txtTodayDelivered != null) txtTodayDelivered.setText(preferenceManager.getString(prefKey(Constants.PREF_DASHBOARD_TODAY_DELIVERED), "0 / 0"));
+        if (txtTodayAmount != null) txtTodayAmount.setText(preferenceManager.getString(prefKey(Constants.PREF_DASHBOARD_TODAY_AMOUNT), "₹ 0.00"));
+        if (totalRevenueAmount != null) totalRevenueAmount.setText(preferenceManager.getString(prefKey(Constants.PREF_DASHBOARD_MONTHLY_REVENUE), "₹ 0.00"));
     }
 
     private void cacheDashboardValue(String key, String value) {
-        if (value == null) return;
-        preferenceManager.putString(prefKey(key), value);
+        if (value != null) preferenceManager.putString(prefKey(key), value);
     }
 
     private String prefKey(String key) {
-        if (providerId == null || providerId.isEmpty()) {
-            return key;
-        }
-        return key + "_" + providerId;
+        return providerId == null ? key : key + "_" + providerId;
     }
     
     private void showSortDialog() {
         String[] options = {"Sort by Name (A-Z)", "Sort by Service Type", "Sort by Address"};
-        int currentSelection = currentSortOrder.ordinal();
-        
         new com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
             .setTitle("Sort Customers")
-            .setSingleChoiceItems(options, currentSelection, (dialog, which) -> {
+            .setSingleChoiceItems(options, currentSortOrder.ordinal(), (dialog, which) -> {
                 currentSortOrder = SortOrder.values()[which];
-                filterCustomers(searchEditText.getText().toString());
+                filterCustomers(searchEditText != null ? searchEditText.getText().toString() : "");
                 dialog.dismiss();
-                String sortType = options[which]
-                    .toLowerCase(Locale.getDefault())
-                    .replace("sort by ", "");
-                showToast("Sorted by " + sortType);
             })
-            .setNegativeButton("Cancel", null)
-            .show();
+            .setNegativeButton("Cancel", null).show();
     }
     
     private void openCustomerProfile(Customer customer) {
-        if (customer == null || customer.getId() == null) {
-            return;
-        }
+        if (customer == null || customer.getId() == null) return;
         Intent intent = new Intent(this, CustomerDetailActivity.class);
         intent.putExtra(CustomerDetailActivity.EXTRA_CUSTOMER_ID, customer.getId());
         startActivity(intent);
     }
 
     private void openCustomerEditor(Customer customer) {
-        if (customer == null || customer.getId() == null) {
-            return;
-        }
+        if (customer == null || customer.getId() == null) return;
         Intent intent = new Intent(this, CustomerEditActivity.class);
         intent.putExtra("customerId", customer.getId());
         startActivity(intent);
     }
     
     private void toggleVacationMode(Customer customer) {
-        if (customer == null || customer.getId() == null) {
-            showToast("Customer details are incomplete");
-            return;
-        }
-
-        boolean newVacationStatus = !customer.isOnVacation();
-        
-        firestore.collection("customers")
-            .document(customer.getId())
-            .update("onVacation", newVacationStatus)
-            .addOnSuccessListener(aVoid -> {
-                String message = newVacationStatus ? 
-                    customer.getName() + " marked as on vacation 🏖️" :
-                    customer.getName() + " is back from vacation";
-                showToast(message);
-            })
-            .addOnFailureListener(e -> {
-                showToast("Failed to update vacation status");
-            });
+        if (customer == null || customer.getId() == null) return;
+        boolean newStatus = !customer.isOnVacation();
+        firestore.collection("customers").document(customer.getId()).update("onVacation", newStatus)
+            .addOnSuccessListener(aVoid -> showToast(customer.getName() + (newStatus ? " on vacation" : " is back")));
     }
     
     private void sortCustomers() {
-        switch (currentSortOrder) {
-            case NAME:
-                java.util.Collections.sort(filteredCustomers, (c1, c2) -> 
-                    c1.getName().compareToIgnoreCase(c2.getName()));
-                break;
-            case SERVICE_TYPE:
-                java.util.Collections.sort(filteredCustomers, (c1, c2) -> {
-                    int serviceCompare = c1.getServiceType().compareToIgnoreCase(c2.getServiceType());
-                    if (serviceCompare == 0) {
-                        return c1.getName().compareToIgnoreCase(c2.getName());
-                    }
-                    return serviceCompare;
-                });
-                break;
-            case ADDRESS:
-                java.util.Collections.sort(filteredCustomers, (c1, c2) -> {
-                    // Sort by area first, then by address, then by name
-                    String area1 = c1.getArea() != null && !c1.getArea().isEmpty() ? c1.getArea() : "ZZZ";
-                    String area2 = c2.getArea() != null && !c2.getArea().isEmpty() ? c2.getArea() : "ZZZ";
-                    int areaCompare = area1.compareToIgnoreCase(area2);
-                    if (areaCompare != 0) {
-                        return areaCompare;
-                    }
-                    
-                    String addr1 = c1.getAddress() != null ? c1.getAddress() : "";
-                    String addr2 = c2.getAddress() != null ? c2.getAddress() : "";
-                    int addrCompare = addr1.compareToIgnoreCase(addr2);
-                    if (addrCompare == 0) {
-                        return c1.getName().compareToIgnoreCase(c2.getName());
-                    }
-                    return addrCompare;
-                });
-                break;
-        }
+        java.util.Collections.sort(filteredCustomers, (c1, c2) -> {
+            if (currentSortOrder == SortOrder.SERVICE_TYPE) {
+                int res = c1.getServiceType().compareToIgnoreCase(c2.getServiceType());
+                return res != 0 ? res : c1.getName().compareToIgnoreCase(c2.getName());
+            }
+            if (currentSortOrder == SortOrder.ADDRESS) {
+                String a1 = c1.getArea() == null ? "" : c1.getArea(), a2 = c2.getArea() == null ? "" : c2.getArea();
+                int res = a1.compareToIgnoreCase(a2);
+                return res != 0 ? res : c1.getName().compareToIgnoreCase(c2.getName());
+            }
+            return c1.getName().compareToIgnoreCase(c2.getName());
+        });
     }
 
     private boolean shouldUsePaging(String query) {
-        return (query == null || query.trim().isEmpty())
-            && currentSortOrder == SortOrder.NAME
-            && allCustomers.size() >= PAGING_THRESHOLD;
+        return (query == null || query.trim().isEmpty()) && currentSortOrder == SortOrder.NAME && allCustomers.size() >= PAGING_THRESHOLD;
     }
 
     private void showPagedCustomers() {
         pagingMode = true;
-        if (customerRecyclerView.getAdapter() != pagedCustomerAdapter) {
-            customerRecyclerView.setAdapter(pagedCustomerAdapter);
-        }
+        if (customerRecyclerView != null && customerRecyclerView.getAdapter() != pagedCustomerAdapter) customerRecyclerView.setAdapter(pagedCustomerAdapter);
         loadPagedCustomers();
     }
 
     private void showLocalCustomers(List<Customer> customers) {
         pagingMode = false;
-        if (customerRecyclerView.getAdapter() != customerAdapter) {
-            customerRecyclerView.setAdapter(customerAdapter);
-        }
+        if (customerRecyclerView != null && customerRecyclerView.getAdapter() != customerAdapter) customerRecyclerView.setAdapter(customerAdapter);
         customerAdapter.submit(customers);
     }
 
     private void loadPagedCustomers() {
-        if (providerId == null || providerId.isEmpty()) {
-            return;
-        }
-
-        PagingConfig config = new PagingConfig(Constants.PAGE_SIZE, Constants.PAGE_SIZE, false);
-        Pager<DocumentSnapshot, Customer> pager = new Pager<>(
-            config,
-            () -> new CustomerPagingSource(firestore, providerId, Constants.PAGE_SIZE, "name")
-        );
-
-        LiveData<PagingData<Customer>> newLiveData = PagingLiveData.cachedIn(
-            PagingLiveData.getLiveData(pager),
-            getLifecycle()
-        );
-
-        if (pagedCustomersLiveData != null) {
-            pagedCustomersLiveData.removeObservers(this);
-        }
-        pagedCustomersLiveData = newLiveData;
-        pagedCustomersLiveData.observe(this,
-            pagingData -> pagedCustomerAdapter.submitData(getLifecycle(), pagingData));
+        if (providerId == null || providerId.isEmpty()) return;
+        Pager<DocumentSnapshot, Customer> pager = new Pager<>(new PagingConfig(Constants.PAGE_SIZE), () -> new CustomerPagingSource(firestore, providerId, Constants.PAGE_SIZE, "name"));
+        if (pagedCustomersLiveData != null) pagedCustomersLiveData.removeObservers(this);
+        pagedCustomersLiveData = PagingLiveData.cachedIn(PagingLiveData.getLiveData(pager), getLifecycle());
+        pagedCustomersLiveData.observe(this, data -> pagedCustomerAdapter.submitData(getLifecycle(), data));
     }
     
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        // Clean up search handler to prevent memory leaks
-        if (searchRunnable != null) {
-            searchHandler.removeCallbacks(searchRunnable);
-        }
-        // Final cleanup - remove listener if still exists
-        if (customersListener != null) {
-            customersListener.remove();
-            customersListener = null;
-        }
-        if (notifListener != null) {
-            notifListener.remove();
-            notifListener = null;
-        }
+        if (searchRunnable != null) searchHandler.removeCallbacks(searchRunnable);
+        if (customersListener != null) customersListener.remove();
+        if (notifListener != null) notifListener.remove();
         binding = null;
     }
 }

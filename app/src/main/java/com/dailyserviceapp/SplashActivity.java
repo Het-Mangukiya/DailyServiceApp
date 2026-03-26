@@ -32,14 +32,20 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import dagger.hilt.android.AndroidEntryPoint;
+import javax.inject.Inject;
+
 /**
- * Splash screen activity with FULL RESTORED LOGIC and fixed routing.
+ * Splash screen activity with corrected routing for Customer side.
  */
+@AndroidEntryPoint
 public class SplashActivity extends AppCompatActivity {
 
     private static final int SPLASH_DELAY = 2000;
     private FirebaseFirestore firestore;
-    private PreferenceManager preferenceManager;
+    
+    @Inject
+    protected PreferenceManager preferenceManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +58,7 @@ public class SplashActivity extends AppCompatActivity {
 
         SyncWorkScheduler.ensurePeriodicSync(this);
         firestore = FirebaseFirestore.getInstance();
-        preferenceManager = new PreferenceManager(this);
+        
         capturePendingInviteFromIntent(getIntent());
 
         long splashDelay = getIntent() != null
@@ -87,7 +93,8 @@ public class SplashActivity extends AppCompatActivity {
         }
 
         if (Constants.ROLE_CUSTOMER.equals(role)) {
-            routeCustomerWithInvite(userId);
+            // FIX: Always go to Customer Home first
+            openCustomerHome();
             return;
         }
 
@@ -113,7 +120,7 @@ public class SplashActivity extends AppCompatActivity {
 
                 if (Constants.ROLE_CUSTOMER.equals(role)) {
                     preferenceManager.setUserRole(Constants.ROLE_CUSTOMER);
-                    routeCustomerWithInvite(userId);
+                    openCustomerHome();
                     return;
                 }
 
@@ -145,157 +152,9 @@ public class SplashActivity extends AppCompatActivity {
         }
     }
 
-    private void routeCustomerWithInvite(String userId) {
-        String pendingToken = safeTrim(preferenceManager.getString(Constants.KEY_PENDING_INVITE_TOKEN, ""));
-        if (!pendingToken.isEmpty()) {
-            claimPendingInviteAndRoute(userId, pendingToken);
-            return;
-        }
-        routeCustomerByLinkStatus(userId);
-    }
-
-    private void routeCustomerByLinkStatus(String userId) {
-        firestore.collection(Constants.COLLECTION_CUSTOMER_LINKS)
-            .document(userId)
-            .get()
-            .addOnSuccessListener(linkDoc -> {
-                if (isActivityInactive()) return;
-                if (linkDoc == null || !linkDoc.exists()) {
-                    openCustomerHome();
-                    return;
-                }
-
-                String status = safeTrim(linkDoc.getString("status")).toUpperCase(Locale.US);
-                String providerId = safeTrim(linkDoc.getString("providerId"));
-                if ("ACTIVE".equals(status) && !providerId.isEmpty()) {
-                    openCustomerDashboard();
-                    return;
-                }
-                openCustomerHome();
-            })
-            .addOnFailureListener(e -> {
-                if (isActivityInactive()) return;
-                Log.w("SplashActivity", "Failed to load customer link", e);
-                openCustomerHome();
-            });
-    }
-
-    private void claimPendingInviteAndRoute(String userId, String token) {
-        String inviteHash = sha256(token);
-        if (inviteHash.isEmpty()) {
-            clearPendingInvite();
-            routeCustomerByLinkStatus(userId);
-            return;
-        }
-
-        firestore.collection(Constants.COLLECTION_CUSTOMER_INVITES)
-            .document(inviteHash)
-            .get()
-            .addOnSuccessListener(inviteDoc -> {
-                if (isActivityInactive()) return;
-                if (inviteDoc == null || !inviteDoc.exists()) {
-                    clearPendingInvite();
-                    routeCustomerByLinkStatus(userId);
-                    return;
-                }
-
-                String status = safeTrim(inviteDoc.getString("status")).toUpperCase(Locale.US);
-                String providerId = safeTrim(inviteDoc.getString("providerId"));
-                String providerCustomerId = safeTrim(inviteDoc.getString("providerCustomerId"));
-                Timestamp expiresAt = inviteDoc.getTimestamp("expiresAt");
-                String expectedCustomerId = safeTrim(
-                    preferenceManager.getString(Constants.KEY_PENDING_INVITE_CUSTOMER_ID, "")
-                );
-
-                boolean isExpired = expiresAt != null && expiresAt.toDate().getTime() < System.currentTimeMillis();
-                boolean mismatchedCustomer = !expectedCustomerId.isEmpty()
-                    && !providerCustomerId.isEmpty()
-                    && !expectedCustomerId.equals(providerCustomerId);
-
-                if (!"PENDING".equals(status) || providerId.isEmpty() || providerCustomerId.isEmpty()
-                    || isExpired || mismatchedCustomer) {
-                    clearPendingInvite();
-                    routeCustomerByLinkStatus(userId);
-                    return;
-                }
-
-                String providerName = safeTrim(inviteDoc.getString("providerName"));
-                String customerName = safeTrim(inviteDoc.getString("customerName"));
-                if (customerName.isEmpty()) {
-                    customerName = safeTrim(preferenceManager.getUserName());
-                }
-
-                WriteBatch batch = firestore.batch();
-
-                Map<String, Object> linkData = new HashMap<>();
-                linkData.put("customerId", userId);
-                linkData.put("providerId", providerId);
-                linkData.put("providerName", providerName);
-                linkData.put("providerCustomerId", providerCustomerId);
-                linkData.put("customerName", customerName);
-                linkData.put("status", "ACTIVE");
-                linkData.put("linkedVia", "INVITE_LINK");
-                linkData.put("updatedAt", FieldValue.serverTimestamp());
-                linkData.put("respondedAt", FieldValue.serverTimestamp());
-                linkData.put("linkedAt", FieldValue.serverTimestamp());
-
-                Map<String, Object> inviteUpdate = new HashMap<>();
-                inviteUpdate.put("providerId", providerId);
-                inviteUpdate.put("providerCustomerId", providerCustomerId);
-                inviteUpdate.put("status", "CLAIMED");
-                inviteUpdate.put("claimedByUserId", userId);
-                inviteUpdate.put("claimedAt", FieldValue.serverTimestamp());
-                inviteUpdate.put("updatedAt", FieldValue.serverTimestamp());
-
-                batch.set(
-                    firestore.collection(Constants.COLLECTION_CUSTOMER_LINKS).document(userId),
-                    linkData,
-                    SetOptions.merge()
-                );
-                batch.set(
-                    firestore.collection(Constants.COLLECTION_CUSTOMER_INVITES).document(inviteHash),
-                    inviteUpdate,
-                    SetOptions.merge()
-                );
-
-                batch.commit()
-                    .addOnSuccessListener(unused -> {
-                        if (isActivityInactive()) return;
-                        clearPendingInvite();
-                        openCustomerDashboard();
-                    })
-                    .addOnFailureListener(e -> {
-                        if (isActivityInactive()) return;
-                        Log.w("SplashActivity", "Failed to claim invite", e);
-                        routeCustomerByLinkStatus(userId);
-                    });
-            })
-            .addOnFailureListener(e -> {
-                if (isActivityInactive()) return;
-                Log.w("SplashActivity", "Failed to fetch invite", e);
-                routeCustomerByLinkStatus(userId);
-            });
-    }
-
     private void clearPendingInvite() {
         preferenceManager.remove(Constants.KEY_PENDING_INVITE_TOKEN);
         preferenceManager.remove(Constants.KEY_PENDING_INVITE_CUSTOMER_ID);
-    }
-
-    private String sha256(String input) {
-        if (input == null || input.trim().isEmpty()) return "";
-        try {
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] hash = digest.digest(input.trim().getBytes(java.nio.charset.StandardCharsets.UTF_8));
-            StringBuilder builder = new StringBuilder();
-            for (byte b : hash) {
-                builder.append(String.format(Locale.US, "%02x", b));
-            }
-            return builder.toString();
-        } catch (NoSuchAlgorithmException e) {
-            Log.e("SplashActivity", "SHA-256 not available", e);
-            return "";
-        }
     }
 
     private void enforceProviderProfileSetup(String userId) {
@@ -332,20 +191,12 @@ public class SplashActivity extends AppCompatActivity {
             for (Object item : casted) {
                 if (item instanceof String) {
                     String value = safeTrim((String) item);
-                    if (!value.isEmpty()) {
-                        services.add(value);
-                    }
+                    if (!value.isEmpty()) services.add(value);
                 }
             }
         }
         String serviceType = safeTrim(documentSnapshot.getString("serviceType"));
-        boolean hasService = (services != null && !services.isEmpty()) || !serviceType.isEmpty();
-
-        return !businessName.isEmpty()
-            && !ownerName.isEmpty()
-            && !phone.isEmpty()
-            && !address.isEmpty()
-            && hasService;
+        return !businessName.isEmpty() && !ownerName.isEmpty() && !phone.isEmpty() && !address.isEmpty() && ((services != null && !services.isEmpty()) || !serviceType.isEmpty());
     }
 
     private String safeTrim(String value) {
@@ -359,11 +210,6 @@ public class SplashActivity extends AppCompatActivity {
 
     private void openDashboard() {
         startActivity(new Intent(SplashActivity.this, DashboardActivity.class));
-        finish();
-    }
-
-    private void openCustomerDashboard() {
-        startActivity(new Intent(SplashActivity.this, CustomerServiceDashboardActivity.class));
         finish();
     }
 

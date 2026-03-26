@@ -4,6 +4,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -85,9 +86,12 @@ public class PagedCustomerAdapter extends PagingDataAdapter<Customer, PagedCusto
 
         boolean isExpanded = customer.getId() != null && customer.getId().equals(expandedCustomerId);
         holder.expandableActions.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
-        holder.customerMenuButton.setIconResource(
-            isExpanded ? R.drawable.ic_expand_less : R.drawable.ic_expand_more
-        );
+        
+        if (holder.customerMenuButton instanceof com.google.android.material.button.MaterialButton) {
+            ((com.google.android.material.button.MaterialButton)holder.customerMenuButton).setIconResource(
+                isExpanded ? R.drawable.ic_expand_less : R.drawable.ic_expand_more
+            );
+        }
 
         String vacationText = customer.isOnVacation()
             ? holder.itemView.getContext().getString(R.string.remove_from_vacation)
@@ -105,13 +109,13 @@ public class PagedCustomerAdapter extends PagingDataAdapter<Customer, PagedCusto
         final TextView customerService;
         final TextView customerPhone;
         final TextView customerInitial;
-        final com.google.android.material.chip.Chip customerStatus;
+        final TextView customerStatus; // Changed from Chip to TextView
         final TextView vacationBadge;
-        final com.google.android.material.button.MaterialButton customerMenuButton;
+        final View customerMenuButton; // Changed to View
         final View expandableActions;
-        final com.google.android.material.button.MaterialButton viewProfileButton;
-        final com.google.android.material.button.MaterialButton editCustomerButton;
-        final com.google.android.material.button.MaterialButton vacationActionButton;
+        final Button viewProfileButton; // Changed to Button
+        final Button editCustomerButton; // Changed to Button
+        final Button vacationActionButton; // Changed to Button
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
