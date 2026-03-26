@@ -50,6 +50,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 /**
  * Customer dashboard after provider link approval.

@@ -153,12 +153,12 @@ public class LoginActivity extends BaseActivity {
     }
     
     private void initializeViews() {
-        emailInput = binding.emailInput;
-        passwordInput = binding.passwordInput;
-        loginButton = binding.loginButton;
+        emailInput = binding.edtEmail;
+        passwordInput = binding.edtPassword;
+        loginButton = binding.btnLogin;
         googleSignInButton = binding.googleSignInButton;
-        signupLink = binding.signupLink;
-        forgotPasswordLink = binding.forgotPasswordLink;
+        signupLink = binding.txtSignUp;
+        forgotPasswordLink = binding.txtForgotPassword;
         progressBar = binding.progressBar;
     }
     

@@ -74,7 +74,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
-
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 /**
  * Main Dashboard Activity - Landing page with customer list and analytics
  * 
@@ -102,7 +102,7 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
     private PagedCustomerAdapter pagedCustomerAdapter;
     private LinearLayout emptyState;
     private EditText searchEditText;
-    private ExtendedFloatingActionButton addCustomerFab;
+    private FloatingActionButton addCustomerFab;
     private com.google.android.material.button.MaterialButton sortButton;
     
     private FirebaseFirestore firestore;
@@ -179,7 +179,6 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         syncStatusChip = binding.syncStatusChip;
         customerRecyclerView = binding.customerRecyclerView;
         emptyState = binding.emptyStateLayout;
-        searchEditText = binding.edtSearch;
         addCustomerFab = binding.fabAddCustomer;
         // sortButton will be set from menu in onCreateOptionsMenu
         

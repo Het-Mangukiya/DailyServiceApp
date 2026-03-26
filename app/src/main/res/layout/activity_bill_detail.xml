@@ -1,265 +1,253 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_app_backdrop"
-    android:fitsSystemWindows="true">
+    android:background="@color/bg_light">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/md_theme_primary"
-        app:elevation="@dimen/elevation_md">
+        android:background="@android:color/transparent"
+        app:elevation="0dp">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:navigationIcon="@drawable/ic_back"
-            app:navigationIconTint="@android:color/white"
-            app:title="@string/bill_detail_title"
-            app:titleTextColor="@android:color/white" />
+            app:navigationIconTint="@color/text_dark"
+            app:title="Bill Details"
+            app:titleTextColor="@color/text_dark" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="true"
+        android:clipToPadding="false"
+        android:paddingBottom="80dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="@dimen/spacing_base">
+            android:padding="16dp">
 
+            <!-- Customer & Period Header -->
             <com.google.android.material.card.MaterialCardView
-                style="@style/Widget.App.Card.Elevated"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/spacing_base"
-                app:strokeColor="#1A4DB6AC"
-                app:strokeWidth="1dp">
+                android:layout_marginBottom="20dp"
+                app:cardBackgroundColor="@color/teal_primary"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="4dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="@dimen/spacing_base">
+                    android:padding="20dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/bill_customer_label"
-                        android:textSize="@dimen/text_size_sm"
-                        android:textColor="@color/md_theme_on_surface_variant"
-                        android:layout_marginBottom="@dimen/spacing_xs" />
+                        android:text="Customer"
+                        android:textColor="#CCFFFFFF"
+                        android:textSize="12sp" />
 
                     <TextView
                         android:id="@+id/customerName"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/loading"
-                        android:textSize="@dimen/text_size_lg"
-                        android:textStyle="bold"
-                        android:textColor="@color/md_theme_on_surface" />
+                        android:text="John Doe"
+                        android:textColor="@color/white"
+                        android:textSize="22sp"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/billPeriod"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/bill_paid_due_label"
-                        android:textSize="@dimen/text_size_base"
-                        android:textColor="@color/md_theme_on_surface_variant"
-                        android:layout_marginTop="@dimen/spacing_xs" />
+                        android:layout_marginTop="4dp"
+                        android:text="May 2024"
+                        android:textColor="#CCFFFFFF"
+                        android:textSize="14sp" />
 
                 </LinearLayout>
-
             </com.google.android.material.card.MaterialCardView>
 
+            <!-- Summary Card -->
             <com.google.android.material.card.MaterialCardView
-                style="@style/Widget.App.Card.Elevated"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/spacing_base"
-                app:strokeColor="#1A4DB6AC"
-                app:strokeWidth="1dp">
+                android:layout_marginBottom="20dp"
+                app:cardBackgroundColor="@color/white"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="2dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="@dimen/spacing_base">
+                    android:padding="20dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/bill_ledger_summary"
-                        android:textSize="@dimen/text_size_base"
-                        android:textStyle="bold"
-                        android:textColor="@color/md_theme_on_surface"
-                        android:layout_marginBottom="@dimen/spacing_base" />
+                        android:text="Ledger Summary"
+                        android:textColor="@color/text_dark"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginBottom="@dimen/spacing_sm">
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="@string/bill_delivered_entries"
-                            android:textSize="@dimen/text_size_base"
-                            android:textColor="@color/md_theme_on_surface_variant" />
-
-                        <TextView
-                            android:id="@+id/daysServed"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/reports_default_count_value"
-                            android:textSize="@dimen/text_size_base"
-                            android:textStyle="bold"
-                            android:textColor="@color/md_theme_on_surface" />
-
-                    </LinearLayout>
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="@color/md_theme_surface_variant"
-                        android:layout_marginVertical="@dimen/spacing_sm" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
                         android:orientation="horizontal">
 
                         <TextView
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="@string/bill_outstanding_amount"
-                            android:textSize="@dimen/text_size_lg"
-                            android:textStyle="bold"
-                            android:textColor="@color/md_theme_on_surface" />
+                            android:text="Total Deliveries"
+                            android:textColor="@color/text_grey"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/daysServed"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="24 Days"
+                            android:textColor="@color/text_dark"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginVertical="12dp"
+                        android:background="@color/bg_light" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Outstanding Amount"
+                            android:textColor="@color/text_dark"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
 
                         <TextView
                             android:id="@+id/totalAmount"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/reports_default_currency_value"
-                            android:textSize="@dimen/text_size_xl"
-                            android:textStyle="bold"
-                            android:textColor="@color/md_theme_primary" />
-
+                            android:text="₹ 1,250.00"
+                            android:textColor="@color/teal_primary"
+                            android:textSize="22sp"
+                            android:textStyle="bold" />
                     </LinearLayout>
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/paymentStatusChip"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/bill_status_pending"
-                        android:layout_marginTop="@dimen/spacing_base"
-                        app:chipBackgroundColor="@color/color_payments" />
+                        android:layout_marginTop="16dp"
+                        android:text="PENDING"
+                        android:textColor="@color/white"
+                        app:chipBackgroundColor="@color/status_due"
+                        app:chipCornerRadius="8dp"
+                        app:chipStrokeWidth="0dp" />
 
                 </LinearLayout>
-
             </com.google.android.material.card.MaterialCardView>
+
+            <!-- History Sections -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:text="Payment History"
+                android:textColor="@color/text_dark"
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
             <com.google.android.material.card.MaterialCardView
-                style="@style/Widget.App.Card.Elevated"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/spacing_base"
-                app:strokeColor="#1A4DB6AC"
-                app:strokeWidth="1dp">
+                android:layout_marginBottom="20dp"
+                app:cardBackgroundColor="@color/white"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="2dp">
 
-                <LinearLayout
+                <TextView
+                    android:id="@+id/paymentHistoryText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="@dimen/spacing_base">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/bill_payment_history"
-                        android:textSize="@dimen/text_size_base"
-                        android:textStyle="bold"
-                        android:textColor="@color/md_theme_on_surface"
-                        android:layout_marginBottom="@dimen/spacing_sm" />
-
-                    <TextView
-                        android:id="@+id/paymentHistoryText"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/bill_no_payments_yet"
-                        android:textSize="@dimen/text_size_sm"
-                        android:textColor="@color/md_theme_on_surface_variant"
-                        android:lineSpacingExtra="2dp" />
-
-                </LinearLayout>
-
+                    android:padding="16dp"
+                    android:text="No payments recorded yet."
+                    android:textColor="@color/text_grey"
+                    android:textSize="14sp" />
             </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:text="Service Log"
+                android:textColor="@color/text_dark"
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
             <com.google.android.material.card.MaterialCardView
-                style="@style/Widget.App.Card.Elevated"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/spacing_base"
-                app:strokeColor="#1A4DB6AC"
-                app:strokeWidth="1dp">
+                android:layout_marginBottom="24dp"
+                app:cardBackgroundColor="@color/white"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="2dp">
 
-                <LinearLayout
+                <TextView
+                    android:id="@+id/serviceHistoryText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="@dimen/spacing_base">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/bill_service_entry_history"
-                        android:textSize="@dimen/text_size_base"
-                        android:textStyle="bold"
-                        android:textColor="@color/md_theme_on_surface"
-                        android:layout_marginBottom="@dimen/spacing_sm" />
-
-                    <TextView
-                        android:id="@+id/serviceHistoryText"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/bill_no_service_entries"
-                        android:textSize="@dimen/text_size_sm"
-                        android:textColor="@color/md_theme_on_surface_variant"
-                        android:lineSpacingExtra="2dp" />
-
-                </LinearLayout>
-
+                    android:padding="16dp"
+                    android:text="No service entries found."
+                    android:textColor="@color/text_grey"
+                    android:textSize="14sp" />
             </com.google.android.material.card.MaterialCardView>
 
+            <!-- Actions -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/markAsPaidButton"
-                style="@style/Widget.App.Button.Primary"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/bill_record_payment"
-                android:layout_marginBottom="@dimen/spacing_sm" />
+                android:layout_height="56dp"
+                android:layout_marginBottom="12dp"
+                android:text="Record Payment"
+                android:textAllCaps="false"
+                android:textSize="16sp"
+                app:cornerRadius="16dp" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/shareBillButton"
-                style="@style/Widget.App.Button.Outlined"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/bill_share_ledger" />
+                android:layout_height="56dp"
+                android:text="Share Ledger"
+                android:textAllCaps="false"
+                android:textSize="16sp"
+                app:cornerRadius="16dp"
+                app:strokeColor="@color/teal_primary" />
 
         </LinearLayout>
-
     </androidx.core.widget.NestedScrollView>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

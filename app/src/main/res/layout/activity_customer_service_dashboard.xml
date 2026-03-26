@@ -1,25 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_app_backdrop"
-    android:fitsSystemWindows="true">
+    android:background="@color/bg_light">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fitsSystemWindows="true"
-        android:background="@drawable/bg_toolbar_gradient"
-        app:elevation="4dp">
+        android:background="@android:color/transparent"
+        app:elevation="0dp">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@drawable/bg_toolbar_gradient"
-            app:title="@string/customer_service_dashboard_title"
-            app:titleTextColor="@android:color/white" />
+            app:navigationIcon="@drawable/ic_back"
+            app:navigationIconTint="@color/text_dark"
+            app:title="Service Dashboard"
+            app:titleTextColor="@color/text_dark">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnRefreshData"
+                style="@style/Widget.Material3.Button.IconButton"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="end"
+                android:layout_marginEnd="8dp"
+                app:icon="@drawable/ic_refresh_24"
+                app:iconTint="@color/teal_primary" />
+
+        </com.google.android.material.appbar.MaterialToolbar>
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -27,8 +39,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
-        android:fillViewport="true"
-        android:fitsSystemWindows="false"
+        android:paddingBottom="32dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
@@ -37,506 +48,462 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="end"
-                android:layout_marginBottom="10dp">
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnRefreshData"
-                    style="@style/Widget.App.Button.Outlined"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/action_refresh"
-                    app:icon="@drawable/ic_refresh_24"
-                    app:iconTint="@color/md_theme_primary_dark" />
-
-            </LinearLayout>
-
+            <!-- Provider Hero Card -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                app:cardBackgroundColor="@color/md_theme_primary_container"
-                app:cardCornerRadius="20dp"
-                app:cardElevation="3dp"
-                app:strokeColor="#334DB6AC"
-                app:strokeWidth="1dp">
+                android:layout_marginBottom="24dp"
+                app:cardBackgroundColor="@color/teal_primary"
+                app:cardCornerRadius="24dp"
+                app:cardElevation="6dp">
 
-                <LinearLayout
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:padding="16dp">
+                    android:padding="20dp">
 
                     <com.google.android.material.card.MaterialCardView
-                        android:layout_width="58dp"
-                        android:layout_height="58dp"
-                        app:cardBackgroundColor="@color/md_theme_secondary"
-                        app:cardCornerRadius="29dp"
-                        app:cardElevation="0dp">
+                        android:id="@+id/avatarContainer"
+                        android:layout_width="64dp"
+                        android:layout_height="64dp"
+                        app:cardBackgroundColor="@color/white"
+                        app:cardCornerRadius="32dp"
+                        app:cardElevation="0dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
 
                         <ImageView
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:contentDescription="@null"
-                            android:importantForAccessibility="no"
-                            android:padding="16dp"
+                            android:padding="14dp"
                             android:src="@drawable/ic_person_24"
-                            app:tint="@android:color/white" />
-
+                            app:tint="@color/teal_primary" />
                     </com.google.android.material.card.MaterialCardView>
 
-                    <LinearLayout
+                    <TextView
+                        android:id="@+id/txtProviderName"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="12dp"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
+                        android:layout_marginStart="16dp"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:text="Provider Name"
+                        android:textColor="@color/white"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        app:layout_constraintEnd_toStartOf="@id/statusChip"
+                        app:layout_constraintStart_toEndOf="@id/avatarContainer"
+                        app:layout_constraintTop_toTopOf="@id/avatarContainer" />
 
-                        <TextView
-                            android:id="@+id/txtProviderName"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@string/customer_home_provider_name_placeholder"
-                            android:textColor="@color/md_theme_on_primary_container"
-                            android:textSize="21sp"
-                            android:textStyle="bold" />
+                    <TextView
+                        android:id="@+id/txtServiceType"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="Milk Delivery"
+                        android:textColor="#CCFFFFFF"
+                        android:textSize="14sp"
+                        app:layout_constraintEnd_toEndOf="@id/txtProviderName"
+                        app:layout_constraintStart_toStartOf="@id/txtProviderName"
+                        app:layout_constraintTop_toBottomOf="@id/txtProviderName" />
 
-                        <TextView
-                            android:id="@+id/txtServiceType"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
-                            android:text="@string/service_type"
-                            android:textColor="@color/md_theme_on_primary_container"
-                            android:textSize="13sp" />
-
-                        <TextView
-                            android:id="@+id/txtProviderCode"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
-                            android:text="@string/customer_home_provider_id_placeholder"
-                            android:textColor="@color/md_theme_on_primary_container"
-                            android:textSize="12sp" />
-
-                    </LinearLayout>
+                    <TextView
+                        android:id="@+id/txtProviderCode"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="ID: #12345"
+                        android:textColor="#99FFFFFF"
+                        android:textSize="12sp"
+                        app:layout_constraintStart_toStartOf="@id/txtProviderName"
+                        app:layout_constraintTop_toBottomOf="@id/txtServiceType" />
 
                     <com.google.android.material.chip.Chip
+                        android:id="@+id/statusChip"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="ACTIVE"
-                        android:textStyle="bold"
-                        app:chipBackgroundColor="@color/md_theme_secondary"
+                        android:textColor="@color/teal_primary"
+                        app:chipBackgroundColor="@color/white"
+                        app:chipCornerRadius="8dp"
                         app:chipStrokeWidth="0dp"
-                        android:textColor="@android:color/white" />
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
-                </LinearLayout>
-
+                </androidx.constraintlayout.widget.ConstraintLayout>
             </com.google.android.material.card.MaterialCardView>
+
+            <!-- Today's Service Card -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:text="Today's Service"
+                android:textColor="@color/text_dark"
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                app:cardBackgroundColor="?attr/colorSurface"
-                app:cardCornerRadius="18dp"
-                app:cardElevation="2dp"
-                app:strokeColor="#1A4DB6AC"
-                app:strokeWidth="1dp">
+                android:layout_marginBottom="24dp"
+                app:cardBackgroundColor="@color/white"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="2dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="16dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Today's Service"
-                        android:textColor="@color/md_theme_on_surface"
-                        android:textSize="17sp"
-                        android:textStyle="bold" />
+                    android:padding="20dp">
 
                     <TextView
                         android:id="@+id/txtTodayStatus"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
-                        android:text="@string/customer_dashboard_not_delivered_yet"
-                        android:textColor="@color/md_theme_primary_dark"
-                        android:textSize="14sp"
+                        android:background="@drawable/status_pill_active"
+                        android:backgroundTint="@color/teal_light"
+                        android:paddingHorizontal="12dp"
+                        android:paddingVertical="4dp"
+                        android:text="Not delivered yet"
+                        android:textColor="@color/teal_primary"
+                        android:textSize="12sp"
                         android:textStyle="bold" />
 
-                    <LinearLayout
+                    <GridLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:orientation="horizontal"
-                        android:weightSum="3">
+                        android:layout_marginTop="20dp"
+                        android:columnCount="3">
 
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
+                            android:layout_columnWeight="1"
                             android:orientation="vertical">
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="@string/customer_dashboard_entries"
-                                android:textColor="@color/text_muted"
-                                android:textSize="11sp" />
+                                android:text="Entries"
+                                android:textColor="@color/text_grey"
+                                android:textSize="12sp" />
 
                             <TextView
                                 android:id="@+id/txtTodayDeliveredEntries"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="2dp"
+                                android:layout_marginTop="4dp"
                                 android:text="0"
-                                android:textColor="@color/md_theme_on_surface"
-                                android:textSize="17sp"
+                                android:textColor="@color/text_dark"
+                                android:textSize="18sp"
                                 android:textStyle="bold" />
-
                         </LinearLayout>
 
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
+                            android:layout_columnWeight="1"
                             android:orientation="vertical">
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="@string/customer_dashboard_quantity"
-                                android:textColor="@color/text_muted"
-                                android:textSize="11sp" />
+                                android:text="Quantity"
+                                android:textColor="@color/text_grey"
+                                android:textSize="12sp" />
 
                             <TextView
                                 android:id="@+id/txtTodayQuantity"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="2dp"
+                                android:layout_marginTop="4dp"
                                 android:text="0.00"
-                                android:textColor="@color/md_theme_on_surface"
-                                android:textSize="17sp"
+                                android:textColor="@color/text_dark"
+                                android:textSize="18sp"
                                 android:textStyle="bold" />
-
                         </LinearLayout>
 
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
+                            android:layout_columnWeight="1"
                             android:orientation="vertical">
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="@string/customer_dashboard_amount"
-                                android:textColor="@color/text_muted"
-                                android:textSize="11sp" />
+                                android:text="Amount"
+                                android:textColor="@color/text_grey"
+                                android:textSize="12sp" />
 
                             <TextView
                                 android:id="@+id/txtTodayAmount"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="2dp"
+                                android:layout_marginTop="4dp"
                                 android:text="₹0.00"
-                                android:textColor="@color/md_theme_on_surface"
-                                android:textSize="17sp"
+                                android:textColor="@color/text_dark"
+                                android:textSize="18sp"
                                 android:textStyle="bold" />
-
                         </LinearLayout>
-
-                    </LinearLayout>
+                    </GridLayout>
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnRequestExtraQuantity"
-                        style="@style/Widget.App.Button.Tonal"
+                        style="@style/Widget.MaterialComponents.Button.TextButton"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:text="@string/request_extra_quantity"
+                        android:layout_marginTop="16dp"
+                        android:text="Request Extra Quantity"
                         android:textAllCaps="false"
-                        android:textSize="13sp"
-                        app:cornerRadius="12dp"
-                        app:icon="@drawable/ic_nav_requests"
+                        app:icon="@drawable/ic_add_24"
                         app:iconGravity="textStart" />
 
                 </LinearLayout>
-
             </com.google.android.material.card.MaterialCardView>
 
+            <!-- Finance & Status Cards -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:orientation="horizontal"
-                android:weightSum="2">
+                android:layout_marginBottom="24dp"
+                android:orientation="horizontal">
 
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="7dp"
+                    android:layout_marginEnd="8dp"
                     android:layout_weight="1"
-                    app:cardBackgroundColor="?attr/colorSurface"
-                    app:cardCornerRadius="18dp"
-                    app:cardElevation="2dp"
-                    app:strokeColor="#1A4DB6AC"
-                    app:strokeWidth="1dp">
+                    app:cardBackgroundColor="@color/white"
+                    app:cardCornerRadius="20dp"
+                    app:cardElevation="2dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:padding="14dp">
+                        android:padding="16dp">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Billing"
-                            android:textColor="@color/md_theme_on_surface"
-                            android:textSize="15sp"
+                            android:textColor="@color/text_dark"
+                            android:textSize="14sp"
                             android:textStyle="bold" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:text="@string/customer_dashboard_total_service_value"
-                            android:textColor="@color/text_muted"
+                            android:layout_marginTop="12dp"
+                            android:text="Total Value"
+                            android:textColor="@color/text_grey"
                             android:textSize="11sp" />
 
                         <TextView
                             android:id="@+id/txtTotalServiceValue"
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
                             android:text="₹0.00"
-                            android:textColor="@color/md_theme_on_surface"
-                            android:textSize="15sp"
+                            android:textColor="@color/text_dark"
+                            android:textSize="16sp"
                             android:textStyle="bold" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
-                            android:text="@string/customer_dashboard_total_paid"
-                            android:textColor="@color/text_muted"
+                            android:text="Total Paid"
+                            android:textColor="@color/text_grey"
                             android:textSize="11sp" />
 
                         <TextView
                             android:id="@+id/txtTotalPaid"
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
                             android:text="₹0.00"
-                            android:textColor="@color/success"
-                            android:textSize="15sp"
+                            android:textColor="@color/status_active"
+                            android:textSize="16sp"
                             android:textStyle="bold" />
-
                     </LinearLayout>
-
                 </com.google.android.material.card.MaterialCardView>
 
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="7dp"
+                    android:layout_marginStart="8dp"
                     android:layout_weight="1"
-                    app:cardBackgroundColor="?attr/colorSurface"
-                    app:cardCornerRadius="18dp"
-                    app:cardElevation="2dp"
-                    app:strokeColor="#1A4DB6AC"
-                    app:strokeWidth="1dp">
+                    app:cardBackgroundColor="@color/white"
+                    app:cardCornerRadius="20dp"
+                    app:cardElevation="2dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:padding="14dp">
+                        android:padding="16dp">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Payment Status"
-                            android:textColor="@color/md_theme_on_surface"
-                            android:textSize="15sp"
+                            android:text="Due Status"
+                            android:textColor="@color/text_dark"
+                            android:textSize="14sp"
                             android:textStyle="bold" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:text="@string/customer_dashboard_outstanding"
-                            android:textColor="@color/text_muted"
+                            android:layout_marginTop="12dp"
+                            android:text="Outstanding"
+                            android:textColor="@color/text_grey"
                             android:textSize="11sp" />
 
                         <TextView
                             android:id="@+id/txtOutstanding"
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
                             android:text="₹0.00"
-                            android:textColor="@color/md_theme_error"
-                            android:textSize="15sp"
+                            android:textColor="@color/status_due"
+                            android:textSize="16sp"
                             android:textStyle="bold" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
-                            android:text="@string/customer_dashboard_last_paid_date"
-                            android:textColor="@color/text_muted"
+                            android:text="Last Paid"
+                            android:textColor="@color/text_grey"
                             android:textSize="11sp" />
 
                         <TextView
                             android:id="@+id/txtLastPaidDate"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
-                            android:text="@string/customer_dashboard_not_paid_yet"
-                            android:textColor="@color/md_theme_on_surface"
-                            android:textSize="13sp"
+                            android:ellipsize="end"
+                            android:maxLines="1"
+                            android:text="None"
+                            android:textColor="@color/text_dark"
+                            android:textSize="12sp"
                             android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:text="@string/customer_dashboard_paid_this_month"
-                            android:textColor="@color/text_muted"
-                            android:textSize="11sp" />
-
-                        <TextView
-                            android:id="@+id/txtMonthPaid"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
-                            android:text="₹0.00"
-                            android:textColor="@color/md_theme_primary_dark"
-                            android:textSize="13sp"
-                            android:textStyle="bold" />
-
                     </LinearLayout>
-
                 </com.google.android.material.card.MaterialCardView>
-
             </LinearLayout>
 
+            <!-- Quick Actions -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                app:cardBackgroundColor="?attr/colorSurface"
-                app:cardCornerRadius="18dp"
-                app:cardElevation="2dp"
-                app:strokeColor="#1A4DB6AC"
-                app:strokeWidth="1dp">
+                android:layout_marginBottom="24dp"
+                app:cardBackgroundColor="@color/white"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="2dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:padding="20dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/customer_dashboard_quick_actions"
-                        android:textColor="@color/md_theme_on_surface"
-                        android:textSize="17sp"
+                        android:text="Quick Actions"
+                        android:textColor="@color/text_dark"
+                        android:textSize="16sp"
                         android:textStyle="bold" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnDownloadAndSharePdf"
-                        style="@style/Widget.MaterialComponents.Button"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:text="@string/customer_dashboard_download_share_pdf"
+                        android:layout_height="56dp"
+                        android:layout_marginTop="16dp"
+                        android:text="Download Bill PDF"
+                        android:textAllCaps="false"
+                        app:cornerRadius="12dp"
                         app:icon="@drawable/ic_bill_24" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnComplaintSupport"
-                        style="@style/Widget.App.Button.Outlined"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="@string/customer_dashboard_complaint_support"
+                        android:layout_height="56dp"
+                        android:layout_marginTop="12dp"
+                        android:text="Raise Support Ticket"
+                        android:textAllCaps="false"
+                        app:cornerRadius="12dp"
                         app:icon="@drawable/ic_notifications_24" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnShareCustomerSummary"
-                        style="@style/Widget.App.Button.Outlined"
+                        style="@style/Widget.MaterialComponents.Button.TextButton"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="56dp"
                         android:layout_marginTop="8dp"
-                        android:text="@string/customer_dashboard_share_summary"
-                        app:icon="@drawable/ic_more_vert_24" />
+                        android:text="Share Summary"
+                        android:textAllCaps="false"
+                        app:icon="@drawable/ic_share" />
 
                 </LinearLayout>
-
             </com.google.android.material.card.MaterialCardView>
+
+            <!-- Service History -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:text="Recent Service Logs"
+                android:textColor="@color/text_dark"
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                app:cardBackgroundColor="?attr/colorSurface"
-                app:cardCornerRadius="18dp"
-                app:cardElevation="2dp"
-                app:strokeColor="#1A4DB6AC"
-                app:strokeWidth="1dp">
+                android:layout_marginBottom="24dp"
+                app:cardBackgroundColor="@color/white"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="2dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:padding="16dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/customer_dashboard_recent_service_history"
-                        android:textColor="@color/md_theme_on_surface"
-                        android:textSize="17sp"
-                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/txtNoServiceHistory"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:text="@string/customer_dashboard_no_service_entries_yet"
-                        android:textColor="@color/text_muted"
+                        android:gravity="center"
+                        android:paddingVertical="20dp"
+                        android:text="No history found"
+                        android:textColor="@color/text_grey"
                         android:textSize="14sp" />
 
                     <LinearLayout
                         android:id="@+id/serviceHistoryContainer"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
                         android:orientation="vertical" />
-
                 </LinearLayout>
-
             </com.google.android.material.card.MaterialCardView>
+
+            <!-- Payment History -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:text="Recent Payments"
+                android:textColor="@color/text_dark"
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardBackgroundColor="?attr/colorSurface"
-                app:cardCornerRadius="18dp"
-                app:cardElevation="2dp"
-                app:strokeColor="#1A4DB6AC"
-                app:strokeWidth="1dp">
+                app:cardBackgroundColor="@color/white"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="2dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -545,47 +512,34 @@
                     android:padding="16dp">
 
                     <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/customer_dashboard_recent_payment_history"
-                        android:textColor="@color/md_theme_on_surface"
-                        android:textSize="17sp"
-                        android:textStyle="bold" />
-
-                    <TextView
                         android:id="@+id/txtNoPaymentHistory"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:text="@string/customer_dashboard_no_payments_yet"
-                        android:textColor="@color/text_muted"
+                        android:gravity="center"
+                        android:paddingVertical="20dp"
+                        android:text="No payments yet"
+                        android:textColor="@color/text_grey"
                         android:textSize="14sp" />
 
                     <LinearLayout
                         android:id="@+id/paymentHistoryContainer"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
                         android:orientation="vertical" />
-
                 </LinearLayout>
-
             </com.google.android.material.card.MaterialCardView>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="20dp" />
-
         </LinearLayout>
-
     </androidx.core.widget.NestedScrollView>
 
     <ProgressBar
         android:id="@+id/progressBar"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:contentDescription="@string/loading"
         android:visibility="gone" />
+
+    <!-- Hidden compatible IDs -->
+    <TextView android:id="@+id/txtMonthPaid" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

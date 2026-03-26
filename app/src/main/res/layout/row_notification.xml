@@ -1,83 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="12dp"
-    android:layout_marginVertical="4dp"
-    app:cardCornerRadius="12dp"
-    app:cardElevation="1dp"
-    app:strokeWidth="0dp">
+    android:layout_marginHorizontal="8dp"
+    android:layout_marginVertical="6dp"
+    app:cardBackgroundColor="@color/white"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="2dp">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="14dp"
-        android:gravity="center_vertical">
+        android:padding="16dp">
 
-        <!-- Notification type icon -->
-        <ImageView
-            android:id="@+id/notifIcon"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:background="@drawable/bg_circle_minimal"
-            android:backgroundTint="@color/md_theme_primary_container"
-            android:padding="8dp"
-            android:src="@drawable/ic_notifications_24"
-            android:importantForAccessibility="no"
-            app:tint="@color/md_theme_primary" />
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/iconContainer"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            app:cardBackgroundColor="@color/teal_light"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="0dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-        <!-- Text content -->
-        <LinearLayout
+            <ImageView
+                android:id="@+id/notifIcon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_notifications_24"
+                app:tint="@color/teal_primary" />
+        </com.google.android.material.card.MaterialCardView>
+
+        <TextView
+            android:id="@+id/notifTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:layout_marginStart="12dp"
-            android:layout_marginEnd="8dp">
+            android:layout_marginStart="16dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="Notification Title"
+            android:textColor="@color/text_dark"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@id/unreadDot"
+            app:layout_constraintStart_toEndOf="@id/iconContainer"
+            app:layout_constraintTop_toTopOf="@id/iconContainer" />
 
-            <TextView
-                android:id="@+id/notifTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:textColor="@color/md_theme_on_surface"
-                android:maxLines="1"
-                android:ellipsize="end" />
+        <TextView
+            android:id="@+id/notifMessage"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:text="This is a notification message that might span multiple lines."
+            android:textColor="@color/text_grey"
+            android:textSize="13sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/notifTitle"
+            app:layout_constraintTop_toBottomOf="@id/notifTitle" />
 
-            <TextView
-                android:id="@+id/notifMessage"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:textSize="13sp"
-                android:textColor="@color/md_theme_on_surface_variant"
-                android:maxLines="2"
-                android:ellipsize="end" />
+        <TextView
+            android:id="@+id/notifTimestamp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="2 hours ago"
+            android:textColor="@color/text_grey"
+            android:textSize="11sp"
+            app:layout_constraintStart_toStartOf="@id/notifTitle"
+            app:layout_constraintTop_toBottomOf="@id/notifMessage" />
 
-            <TextView
-                android:id="@+id/notifTimestamp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:textSize="11sp"
-                android:textColor="@color/md_theme_on_surface_variant"
-                android:alpha="0.6" />
-
-        </LinearLayout>
-
-        <!-- Unread dot indicator -->
         <View
             android:id="@+id/unreadDot"
             android:layout_width="8dp"
             android:layout_height="8dp"
-            android:background="@drawable/bg_circle_minimal"
-            android:backgroundTint="@color/md_theme_primary"
-            android:visibility="gone" />
+            android:background="@drawable/status_pill_active"
+            android:backgroundTint="@color/teal_primary"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/notifTitle"
+            app:layout_constraintBottom_toBottomOf="@id/notifTitle"
+            tools:visibility="visible" />
 
-    </LinearLayout>
-
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

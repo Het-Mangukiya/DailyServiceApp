@@ -31,46 +31,25 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 /**
- * Splash screen activity displayed on app launch.
- * Shows the DailyDrop logo and brand name for 2 seconds,
- * then navigates to either the Dashboard (if user is logged in)
- * or the Login screen (if user is not logged in).
- * 
- * @author DailyDrop Team
- * @version 1.0
- * @since 2026-01-08
+ * Splash screen activity with FULL RESTORED LOGIC and fixed routing.
  */
 public class SplashActivity extends AppCompatActivity {
 
-    /**
-     * Duration in milliseconds to display the splash screen.
-     */
-    private static final int SPLASH_DELAY = 2000; // 2 seconds
+    private static final int SPLASH_DELAY = 2000;
     private FirebaseFirestore firestore;
     private PreferenceManager preferenceManager;
 
-    /**
-     * Called when the activity is first created.
-     * Sets up the splash screen layout, hides the action bar,
-     * and schedules navigation to the next screen after a delay.
-     * 
-     * @param savedInstanceState If the activity is being re-initialized after previously
-     *                          being shut down, this Bundle contains the most recent data.
-     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
-        // Hide action bar
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
 
-        // Ensure background sync worker is always registered.
         SyncWorkScheduler.ensurePeriodicSync(this);
         firestore = FirebaseFirestore.getInstance();
         preferenceManager = new PreferenceManager(this);
@@ -80,19 +59,12 @@ public class SplashActivity extends AppCompatActivity {
             && getIntent().getBooleanExtra(Constants.EXTRA_SKIP_SPLASH_DELAY, false)
             ? 0L : SPLASH_DELAY;
 
-        // Delay and navigate
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
             if (isActivityInactive()) return;
             navigateToNextScreen();
         }, splashDelay);
     }
 
-    /**
-     * Determines the next screen to navigate to based on user's login status.
-     * If the user is logged in (session exists), navigates to the Dashboard.
-     * Otherwise, navigates to the Login screen.
-     * Finishes this activity to prevent returning to splash screen on back press.
-     */
     private void navigateToNextScreen() {
         if (isActivityInactive()) return;
         if (!preferenceManager.isLoggedIn()) {
@@ -386,7 +358,7 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void openDashboard() {
-        startActivity(new Intent(SplashActivity.this, com.dailyserviceapp.dashboard.ProviderDashboardActivity.class));
+        startActivity(new Intent(SplashActivity.this, DashboardActivity.class));
         finish();
     }
 

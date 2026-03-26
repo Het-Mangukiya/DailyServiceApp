@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="12dp"
-    app:cardBackgroundColor="@color/md_theme_surface"
-    app:cardCornerRadius="18dp"
-    app:cardElevation="3dp"
-    app:strokeColor="#1A4DB6AC"
-    app:strokeWidth="1dp">
+    android:layout_marginHorizontal="4dp"
+    android:layout_marginVertical="6dp"
+    app:cardBackgroundColor="@color/white"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="2dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -17,19 +17,19 @@
         android:padding="16dp">
 
         <!-- Header: Avatar + Name + Service badge -->
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:layout_height="wrap_content">
 
-            <!-- Customer Initial Circle -->
             <com.google.android.material.card.MaterialCardView
+                android:id="@+id/avatarContainer"
                 android:layout_width="44dp"
                 android:layout_height="44dp"
-                app:cardBackgroundColor="@color/md_theme_secondary"
+                app:cardBackgroundColor="@color/teal_light"
                 app:cardCornerRadius="22dp"
-                app:cardElevation="0dp">
+                app:cardElevation="0dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
                 <TextView
                     android:id="@+id/txtCustomerInitial"
@@ -37,52 +37,51 @@
                     android:layout_height="match_parent"
                     android:gravity="center"
                     android:text="C"
-                    android:textColor="@android:color/white"
+                    android:textColor="@color/teal_primary"
                     android:textSize="18sp"
                     android:textStyle="bold" />
-
             </com.google.android.material.card.MaterialCardView>
 
-            <LinearLayout
+            <TextView
+                android:id="@+id/txtCustomerName"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="12dp"
-                android:layout_weight="1"
-                android:orientation="vertical">
+                android:text="Customer Name"
+                android:textColor="@color/text_dark"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@id/txtServiceType"
+                app:layout_constraintStart_toEndOf="@id/avatarContainer"
+                app:layout_constraintTop_toTopOf="@id/avatarContainer" />
 
-                <TextView
-                    android:id="@+id/txtCustomerName"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Customer Name"
-                    android:textColor="@color/md_theme_on_surface"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/txtRequestDate"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:text="For: 23 Mar 2026"
-                    android:textColor="@color/text_muted"
-                    android:textSize="12sp" />
-
-            </LinearLayout>
+            <TextView
+                android:id="@+id/txtRequestDate"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="For: 24 May 2024"
+                android:textColor="@color/text_grey"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toEndOf="@id/txtCustomerName"
+                app:layout_constraintStart_toStartOf="@id/txtCustomerName"
+                app:layout_constraintTop_toBottomOf="@id/txtCustomerName" />
 
             <TextView
                 android:id="@+id/txtServiceType"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/bg_pill_teal"
-                android:paddingHorizontal="12dp"
+                android:background="@drawable/status_pill_active"
+                android:backgroundTint="@color/teal_light"
+                android:paddingHorizontal="10dp"
                 android:paddingVertical="4dp"
-                android:text="Milk"
-                android:textColor="@android:color/white"
-                android:textSize="11sp"
-                android:textStyle="bold" />
+                android:text="MILK"
+                android:textColor="@color/teal_primary"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/avatarContainer" />
 
-        </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <!-- Divider -->
         <View
@@ -90,7 +89,7 @@
             android:layout_height="1dp"
             android:layout_marginTop="12dp"
             android:layout_marginBottom="12dp"
-            android:background="#0F4DB6AC" />
+            android:background="@color/bg_light" />
 
         <!-- Quantity Display: Current → Requested -->
         <LinearLayout
@@ -99,7 +98,6 @@
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
-            <!-- Current Qty Box -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -111,7 +109,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Current"
-                    android:textColor="@color/text_muted"
+                    android:textColor="@color/text_grey"
                     android:textSize="11sp" />
 
                 <TextView
@@ -120,23 +118,18 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:text="1.0"
-                    android:textColor="@color/md_theme_on_surface"
-                    android:textSize="22sp"
+                    android:textColor="@color/text_dark"
+                    android:textSize="20sp"
                     android:textStyle="bold" />
-
             </LinearLayout>
 
-            <!-- Arrow -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingHorizontal="12dp"
-                android:text="→"
-                android:textColor="@color/md_theme_primary"
-                android:textSize="24sp"
-                android:textStyle="bold" />
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginHorizontal="16dp"
+                android:src="@drawable/ic_chevron_right_24"
+                app:tint="@color/teal_primary" />
 
-            <!-- Requested Qty Box -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -148,7 +141,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Requested"
-                    android:textColor="@color/text_muted"
+                    android:textColor="@color/text_grey"
                     android:textSize="11sp" />
 
                 <TextView
@@ -157,32 +150,29 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:text="2.0"
-                    android:textColor="@color/md_theme_primary"
-                    android:textSize="22sp"
+                    android:textColor="@color/teal_primary"
+                    android:textSize="20sp"
                     android:textStyle="bold" />
-
             </LinearLayout>
 
-            <!-- Extra Badge -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                app:cardBackgroundColor="#E8F5E9"
-                app:cardCornerRadius="12dp"
+                app:cardBackgroundColor="@color/teal_light"
+                app:cardCornerRadius="8dp"
                 app:cardElevation="0dp">
 
                 <TextView
                     android:id="@+id/txtExtraQty"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingHorizontal="10dp"
-                    android:paddingVertical="6dp"
+                    android:paddingHorizontal="8dp"
+                    android:paddingVertical="4dp"
                     android:text="+1.0"
-                    android:textColor="#2E7D32"
-                    android:textSize="14sp"
+                    android:textColor="@color/teal_primary"
+                    android:textSize="12sp"
                     android:textStyle="bold" />
-
             </com.google.android.material.card.MaterialCardView>
 
         </LinearLayout>
@@ -192,69 +182,59 @@
             android:id="@+id/cardNote"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="12dp"
             android:visibility="gone"
-            app:cardBackgroundColor="#F5F5F5"
-            app:cardCornerRadius="10dp"
+            app:cardBackgroundColor="@color/bg_light"
+            app:cardCornerRadius="12dp"
             app:cardElevation="0dp">
 
             <TextView
                 android:id="@+id/txtNote"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:drawablePadding="6dp"
-                android:fontFamily="sans-serif"
-                android:padding="10dp"
-                android:text="Customer note"
-                android:textColor="@color/md_theme_on_surface"
+                android:padding="12dp"
+                android:text="Customer note placeholder"
+                android:textColor="@color/text_dark"
                 android:textSize="13sp"
                 android:textStyle="italic" />
-
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Timestamp -->
         <TextView
             android:id="@+id/txtTimestamp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="Requested 2 min ago"
-            android:textColor="@color/text_muted"
+            android:layout_marginTop="12dp"
+            android:text="2 min ago"
+            android:textColor="@color/text_grey"
             android:textSize="11sp" />
 
         <!-- Action buttons -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:orientation="horizontal"
-            android:weightSum="2">
+            android:layout_marginTop="16dp"
+            android:orientation="horizontal">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnReject"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                style="@style/Widget.Material3.Button.TextButton"
                 android:layout_width="0dp"
-                android:layout_height="44dp"
-                android:layout_marginEnd="6dp"
+                android:layout_height="48dp"
+                android:layout_marginEnd="8dp"
                 android:layout_weight="1"
-                android:text="✕  Reject"
+                android:text="Reject"
                 android:textAllCaps="false"
-                android:textColor="@color/md_theme_error"
-                android:textSize="14sp"
-                app:cornerRadius="12dp"
-                app:rippleColor="#33F44336"
-                app:strokeColor="@color/md_theme_error" />
+                android:textColor="@color/status_due"
+                app:cornerRadius="12dp" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnApprove"
                 android:layout_width="0dp"
-                android:layout_height="44dp"
-                android:layout_marginStart="6dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="8dp"
                 android:layout_weight="1"
-                android:text="✓  Approve"
+                android:text="Approve"
                 android:textAllCaps="false"
-                android:textSize="14sp"
-                app:backgroundTint="@color/success"
                 app:cornerRadius="12dp" />
 
         </LinearLayout>
