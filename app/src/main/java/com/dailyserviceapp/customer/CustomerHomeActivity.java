@@ -1,8 +1,11 @@
 package com.dailyserviceapp.customer;
 
 import dagger.hilt.android.AndroidEntryPoint;
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Build;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -14,11 +17,14 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.PopupMenu;
 
+import androidx.core.content.ContextCompat;
+
 import com.dailyserviceapp.R;
 import com.dailyserviceapp.core.base.BaseActivity;
 import com.dailyserviceapp.core.utils.Constants;
 import com.dailyserviceapp.dashboard.DashboardActivity;
 import com.dailyserviceapp.databinding.ActivityCustomerHomeBinding;
+import com.dailyserviceapp.notifications.NotificationHelper;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -75,6 +81,7 @@ public class CustomerHomeActivity extends BaseActivity {
 
         firestore = FirebaseFirestore.getInstance();
         setupGoogleSignInClient();
+        ensureNotificationPermissionIfNeeded();
 
         setupToolbar();
         setupContent();
@@ -396,6 +403,17 @@ public class CustomerHomeActivity extends BaseActivity {
                 setLoading(false);
                 binding.providerCodeLayout.setError(null);
                 renderLinkedProvider(providerName, providerId, "PENDING");
+                String customerName = safeTrim(preferenceManager.getUserName());
+                if (customerName.isEmpty()) {
+                    customerName = "A customer";
+                }
+                NotificationHelper.saveNotification(
+                    providerId,
+                    "New join request",
+                    customerName + " wants to connect with your service.",
+                    Constants.NOTIF_JOIN_REQUEST,
+                    customerId
+                );
                 showToast("Join request sent to " + providerName);
             })
             .addOnFailureListener(e -> {
@@ -530,6 +548,14 @@ public class CustomerHomeActivity extends BaseActivity {
             ? binding.providerCodeInput.getText().toString().trim()
             : "";
         binding.btnJoinProvider.setEnabled(!loading && !code.isEmpty());
+    }
+
+    private void ensureNotificationPermissionIfNeeded() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+            && ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+            != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, 1001);
+        }
     }
 
     private boolean isUiActive() {

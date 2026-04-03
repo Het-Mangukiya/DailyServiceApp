@@ -18,6 +18,7 @@ import com.dailyserviceapp.core.utils.Constants;
 import com.dailyserviceapp.core.utils.DateUtils;
 import com.dailyserviceapp.data.models.QuantityRequest;
 import com.dailyserviceapp.databinding.ActivityQuantityRequestsBinding;
+import com.dailyserviceapp.notifications.NotificationHelper;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -121,6 +122,13 @@ public class QuantityRequestsActivity extends BaseActivity {
             )
             .addOnSuccessListener(unused -> {
                 if (!isUiActive()) return;
+                NotificationHelper.saveNotification(
+                    request.getCustomerId(),
+                    "Quantity request approved",
+                    "Your extra quantity request was approved.",
+                    Constants.NOTIF_QUANTITY_RESPONSE,
+                    request.getId()
+                );
                 showToast("Request approved for " + safeTrim(request.getCustomerName()));
                 requests.remove(position);
                 adapter.notifyItemRemoved(position);
@@ -145,6 +153,13 @@ public class QuantityRequestsActivity extends BaseActivity {
             )
             .addOnSuccessListener(unused -> {
                 if (!isUiActive()) return;
+                NotificationHelper.saveNotification(
+                    request.getCustomerId(),
+                    "Quantity request rejected",
+                    "Your extra quantity request was rejected.",
+                    Constants.NOTIF_QUANTITY_RESPONSE,
+                    request.getId()
+                );
                 showToast("Request rejected");
                 requests.remove(position);
                 adapter.notifyItemRemoved(position);
@@ -282,4 +297,3 @@ public class QuantityRequestsActivity extends BaseActivity {
         }
     }
 }
-

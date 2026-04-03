@@ -17,6 +17,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.OptIn;
@@ -50,6 +51,7 @@ import com.dailyserviceapp.payment.PaymentActivity;
 import com.dailyserviceapp.profile.ProfileActivity;
 import com.dailyserviceapp.provider.ProviderComplaintsActivity;
 import com.dailyserviceapp.provider.JoinRequestsActivity;
+import com.dailyserviceapp.provider.QuantityRequestsActivity;
 import com.dailyserviceapp.reports.ReportsActivity;
 import com.dailyserviceapp.route.DeliveryRouteActivity;
 import com.dailyserviceapp.sales.ui.SalesPredictionActivity;
@@ -161,6 +163,7 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         setupNavigationDrawer();
         setupRecyclerView();
         setupListeners();
+        setupBackNavigation();
         loadCachedDashboardMetrics();
         loadData();
 
@@ -523,6 +526,7 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         if (id == R.id.nav_dashboard) startActivity(new Intent(this, ProviderDashboardActivity.class));
         else if (id == R.id.nav_join_requests) startActivity(new Intent(this, JoinRequestsActivity.class));
         else if (id == R.id.nav_complaints) startActivity(new Intent(this, ProviderComplaintsActivity.class));
+        else if (id == R.id.nav_quantity_requests) startActivity(new Intent(this, QuantityRequestsActivity.class));
         else if (id == R.id.nav_service_entry) startActivity(new Intent(this, ServiceEntryActivity.class));
         else if (id == R.id.nav_route) startActivity(new Intent(this, DeliveryRouteActivity.class));
         else if (id == R.id.nav_bills) startActivity(new Intent(this, BillListActivity.class));
@@ -554,10 +558,18 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         }
     }
     
-    @Override
-    public void onBackPressed() {
-        if (drawerLayout.isDrawerOpen(GravityCompat.START)) drawerLayout.closeDrawer(GravityCompat.START);
-        else super.onBackPressed();
+    private void setupBackNavigation() {
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (drawerLayout != null && drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                    drawerLayout.closeDrawer(GravityCompat.START);
+                } else {
+                    setEnabled(false);
+                    getOnBackPressedDispatcher().onBackPressed();
+                }
+            }
+        });
     }
     
     @Override

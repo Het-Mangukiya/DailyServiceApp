@@ -16,50 +16,117 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="12dp"
         android:layout_marginBottom="20dp"
-        android:alpha="0.2"
-        android:background="@color/text_grey" />
+        android:background="@drawable/rounded_background"
+        android:backgroundTint="@color/divider_color" />
 
-    <!-- Title -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Request Extra Quantity"
-        android:textColor="@color/text_dark"
-        android:textSize="20sp"
-        android:textStyle="bold" />
-
-    <TextView
+    <!-- Header icon + title -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:text="Need more items today? Send a request to your provider."
-        android:textColor="@color/text_grey"
-        android:textSize="14sp" />
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
 
-    <!-- Current Quantity (read-only) -->
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/layoutCurrentQuantity"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            app:cardBackgroundColor="@color/teal_light"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="0dp">
+
+            <ImageView
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_add_24"
+                app:tint="@color/teal_primary" />
+        </com.google.android.material.card.MaterialCardView>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="14dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Request Extra Quantity"
+                android:textColor="@color/text_dark"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="Need more items? Send a request to your provider."
+                android:textColor="@color/text_grey"
+                android:textSize="13sp" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Divider -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginVertical="20dp"
+        android:background="@color/divider_color" />
+
+    <!-- Current Quantity (read-only) — tinted background -->
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:enabled="false"
-        android:hint="Current Base Quantity"
-        app:boxCornerRadiusBottomEnd="12dp"
-        app:boxCornerRadiusBottomStart="12dp"
-        app:boxCornerRadiusTopEnd="12dp"
-        app:boxCornerRadiusTopStart="12dp">
+        app:cardBackgroundColor="@color/bg_light"
+        app:cardCornerRadius="14dp"
+        app:cardElevation="0dp"
+        app:strokeColor="@color/md_theme_outline"
+        app:strokeWidth="1dp">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/inputCurrentQuantity"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:enabled="false"
-            android:inputType="numberDecimal"
-            android:textColor="@color/text_grey"
-            android:textSize="16sp" />
+            android:orientation="vertical"
+            android:padding="14dp">
 
-    </com.google.android.material.textfield.TextInputLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="YOUR CURRENT QUANTITY"
+                android:textColor="@color/text_grey"
+                android:textSize="10sp"
+                android:textAllCaps="true"
+                android:letterSpacing="0.08" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/layoutCurrentQuantity"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:enabled="false"
+                android:hint="Base Quantity"
+                app:boxCornerRadiusBottomEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusTopStart="12dp"
+                app:boxBackgroundColor="@color/white">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/inputCurrentQuantity"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:enabled="false"
+                    android:inputType="numberDecimal"
+                    android:textColor="@color/text_dark"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
 
     <!-- Requested Quantity (editable) -->
     <com.google.android.material.textfield.TextInputLayout
@@ -68,20 +135,22 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:hint="Total Quantity Required"
+        android:hint="Total Quantity You Need"
         app:boxCornerRadiusBottomEnd="12dp"
         app:boxCornerRadiusBottomStart="12dp"
         app:boxCornerRadiusTopEnd="12dp"
         app:boxCornerRadiusTopStart="12dp"
+        app:boxStrokeColor="@color/teal_primary"
         app:startIconDrawable="@drawable/ic_add_24"
-        app:startIconTint="@color/teal_primary">
+        app:startIconTint="@color/teal_primary"
+        app:hintTextColor="@color/teal_primary">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/inputRequestedQuantity"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="numberDecimal"
-            android:textSize="16sp"
+            android:textSize="18sp"
             android:textStyle="bold" />
 
     </com.google.android.material.textfield.TextInputLayout>
@@ -93,7 +162,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:hint="Note for Provider (Optional)"
+        android:hint="Message for Provider (Optional)"
         app:boxCornerRadiusBottomEnd="12dp"
         app:boxCornerRadiusBottomStart="12dp"
         app:boxCornerRadiusTopEnd="12dp"
@@ -114,20 +183,29 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <!-- Pending status indicator -->
-    <TextView
-        android:id="@+id/txtPendingStatus"
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:background="@drawable/status_pill_active"
-        android:backgroundTint="@color/teal_light"
-        android:gravity="center"
-        android:padding="12dp"
-        android:text="A request is already pending for today"
-        android:textColor="@color/teal_primary"
-        android:textSize="13sp"
-        android:textStyle="bold"
-        android:visibility="gone" />
+        app:cardBackgroundColor="@color/teal_light"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="0dp"
+        app:strokeColor="@color/teal_primary"
+        app:strokeWidth="1dp">
+
+        <TextView
+            android:id="@+id/txtPendingStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="12dp"
+            android:text="⏳ A request is already pending for today"
+            android:textColor="@color/teal_dark"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
+    </com.google.android.material.card.MaterialCardView>
 
     <!-- Submit Button -->
     <com.google.android.material.button.MaterialButton
@@ -138,7 +216,11 @@
         android:text="Submit Request"
         android:textAllCaps="false"
         android:textSize="16sp"
-        app:cornerRadius="16dp" />
+        app:backgroundTint="@color/teal_primary"
+        app:cornerRadius="16dp"
+        app:icon="@drawable/ic_chevron_right_24"
+        app:iconGravity="end"
+        app:iconTint="@color/white" />
 
     <ProgressBar
         android:id="@+id/progressBar"

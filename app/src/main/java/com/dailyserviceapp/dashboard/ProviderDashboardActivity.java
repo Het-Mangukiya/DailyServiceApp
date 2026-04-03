@@ -1,9 +1,12 @@
 package com.dailyserviceapp.dashboard;
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.OvershootInterpolator;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -73,10 +76,10 @@ public class ProviderDashboardActivity extends BaseActivity {
     private TextView txtMonthlyEarnings;
     private TextView txtMonthlyDeliveries;
     
-    private MaterialButton btnServiceEntry;
-    private MaterialButton btnBills;
-    private MaterialButton btnCustomers;
-    private MaterialButton btnJoinRequests;
+    private View btnServiceEntry;
+    private View btnBills;
+    private View btnCustomers;
+    private View btnJoinRequests;
     
     @Inject
     FirebaseFirestore firestore;
@@ -103,6 +106,7 @@ public class ProviderDashboardActivity extends BaseActivity {
         initializeViews();
         setupListeners();
         setupBackNavigation();
+        animateQuickActions();
         loadCachedProviderMetrics();
         loadDashboardData();
     }
@@ -224,6 +228,27 @@ public class ProviderDashboardActivity extends BaseActivity {
         btnBills.setOnClickListener(v -> startActivity(new Intent(this, BillListActivity.class)));
         btnCustomers.setOnClickListener(v -> startActivity(new Intent(this, DashboardActivity.class)));
         btnJoinRequests.setOnClickListener(v -> startActivity(new Intent(this, JoinRequestsActivity.class)));
+    }
+
+    private void animateQuickActions() {
+        View[] cards = { btnCustomers, btnServiceEntry, btnBills, btnJoinRequests };
+        for (int i = 0; i < cards.length; i++) {
+            View card = cards[i];
+            card.setScaleX(0f);
+            card.setScaleY(0f);
+            card.setAlpha(0f);
+
+            ObjectAnimator scaleX = ObjectAnimator.ofFloat(card, "scaleX", 0f, 1f);
+            ObjectAnimator scaleY = ObjectAnimator.ofFloat(card, "scaleY", 0f, 1f);
+            ObjectAnimator alpha = ObjectAnimator.ofFloat(card, "alpha", 0f, 1f);
+
+            AnimatorSet set = new AnimatorSet();
+            set.playTogether(scaleX, scaleY, alpha);
+            set.setDuration(400);
+            set.setStartDelay(200 + (i * 100L));
+            set.setInterpolator(new OvershootInterpolator(1.1f));
+            set.start();
+        }
     }
     
     private void setupNavigationMenu() {

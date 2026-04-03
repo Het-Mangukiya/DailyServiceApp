@@ -1,20 +1,12 @@
 package com.dailyserviceapp.notifications;
 
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
-import android.content.Intent;
 import android.os.Build;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.core.app.NotificationCompat;
 
 import com.dailyserviceapp.R;
 import com.dailyserviceapp.core.utils.Constants;
-import com.dailyserviceapp.dashboard.DashboardActivity;
-import com.dailyserviceapp.provider.JoinRequestsActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -34,7 +26,7 @@ public class FCMService extends FirebaseMessagingService {
     @Override
     public void onCreate() {
         super.onCreate();
-        createNotificationChannels();
+        NotificationHelper.createNotificationChannels(this);
     }
 
     @Override
@@ -45,7 +37,7 @@ public class FCMService extends FirebaseMessagingService {
         Map<String, String> data = remoteMessage.getData();
         String title = data.get("title");
         String body = data.get("body");
-        String type = data.get("type");
+        String type = data.containsKey("type") ? data.get("type") : Constants.NOTIF_SERVICE_DELIVERY;
         String relatedId = data.get("relatedId");
 
         if (title == null && remoteMessage.getNotification() != null) {
@@ -53,9 +45,19 @@ public class FCMService extends FirebaseMessagingService {
             body = remoteMessage.getNotification().getBody();
         }
 
-        if (title != null) {
-            showNotification(title, body, type, relatedId);
-        }
+        if (title == null) title = getString(R.string.app_name);
+        if (body == null) body = "";
+
+        NotificationHelper.showLocalNotification(this, title, body, type, relatedId);
+
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        NotificationHelper.saveNotification(
+            currentUser != null ? currentUser.getUid() : null,
+            title,
+            body,
+            type,
+            relatedId
+        );
     }
 
     @Override
@@ -63,44 +65,6 @@ public class FCMService extends FirebaseMessagingService {
         super.onNewToken(token);
         Log.d(TAG, "Refreshed token: " + token);
         saveTokenToFirestore(token);
-    }
-
-    private void showNotification(String title, String body, String type, String relatedId) {
-        Intent intent;
-        if (Constants.NOTIF_JOIN_REQUEST.equals(type)) {
-            intent = new Intent(this, JoinRequestsActivity.class);
-        } else {
-            intent = new Intent(this, DashboardActivity.class);
-            if (relatedId != null) intent.putExtra(Constants.EXTRA_ORDER_ID, relatedId);
-        }
-
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        int flags = PendingIntent.FLAG_UPDATE_CURRENT | (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ? PendingIntent.FLAG_IMMUTABLE : 0);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, flags);
-
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ADMIN)
-                .setSmallIcon(R.drawable.ic_notifications_24)
-                .setContentTitle(title)
-                .setContentText(body)
-                .setAutoCancel(true)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setDefaults(NotificationCompat.DEFAULT_ALL)
-                .setContentIntent(pendingIntent);
-
-        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        if (manager != null) {
-            manager.notify(notifIdCounter++, builder.build());
-        }
-    }
-
-    private void createNotificationChannels() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel adminChannel = new NotificationChannel(
-                    CHANNEL_ADMIN, "Admin Alerts", NotificationManager.IMPORTANCE_HIGH);
-            adminChannel.enableVibration(true);
-            NotificationManager manager = getSystemService(NotificationManager.class);
-            if (manager != null) manager.createNotificationChannel(adminChannel);
-        }
     }
 
     /**

@@ -1,20 +1,24 @@
 package com.dailyserviceapp;
 
 import android.app.Application;
+import com.dailyserviceapp.notifications.NotificationHelper;
+import com.dailyserviceapp.notifications.NotificationSyncManager;
+
 import dagger.hilt.android.HiltAndroidApp;
 
 /**
  * Main application class.
- * Annotated with @HiltAndroidApp to trigger Hilt's code generation,
- * including a base class for the application that serves as the 
- * application-level dependency container.
  */
 @HiltAndroidApp
 public class DailyDropApp extends Application {
+
+    private NotificationSyncManager notificationSyncManager;
     
     @Override
     public void onCreate() {
         super.onCreate();
-        // Application-wide initialization (e.g., Timber, Analytics) goes here
+        NotificationHelper.createNotificationChannels(this);
+        notificationSyncManager = new NotificationSyncManager(this);
+        notificationSyncManager.start();
     }
 }

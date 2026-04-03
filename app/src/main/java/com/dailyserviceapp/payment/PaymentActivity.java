@@ -14,6 +14,7 @@ import com.dailyserviceapp.R;
 import com.dailyserviceapp.billing.CustomerLedgerCalculator;
 import com.dailyserviceapp.billing.CustomerLedgerSummary;
 import com.dailyserviceapp.core.base.BaseActivity;
+import com.dailyserviceapp.core.utils.Constants;
 import com.dailyserviceapp.core.utils.CurrencyUtils;
 import com.dailyserviceapp.core.utils.DateUtils;
 import com.dailyserviceapp.data.FirestoreRepository;
@@ -22,6 +23,7 @@ import com.dailyserviceapp.data.models.Customer;
 import com.dailyserviceapp.data.models.Payment;
 import com.dailyserviceapp.data.models.ServiceEntry;
 import com.dailyserviceapp.databinding.ActivityPaymentNewBinding;
+import com.dailyserviceapp.notifications.NotificationHelper;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
@@ -439,6 +441,13 @@ public class PaymentActivity extends BaseActivity {
         repository.savePayment(payment, new FirestoreRepository.OnSaveCompleteListener() {
             @Override
             public void onSuccess() {
+                NotificationHelper.saveNotification(
+                    customerId,
+                    "Payment received",
+                    "A payment of " + CurrencyUtils.formatCurrency(amount) + " was recorded.",
+                    Constants.NOTIF_PAYMENT_RECEIVED,
+                    payment.getBillId()
+                );
                 showToast("Payment recorded successfully");
                 finish();
             }
@@ -472,7 +481,7 @@ public class PaymentActivity extends BaseActivity {
         repository.savePayment(payment, new FirestoreRepository.OnSaveCompleteListener() {
             @Override
             public void onSuccess() {
-                updateBillPaymentStatus();
+                updateBillPaymentStatus(amount);
             }
 
             @Override
@@ -483,7 +492,7 @@ public class PaymentActivity extends BaseActivity {
         });
     }
 
-    private void updateBillPaymentStatus() {
+    private void updateBillPaymentStatus(double latestPaymentAmount) {
         double billTotal = currentBill.getTotalAmount();
 
         repository.getPaymentsByBill(billId, new FirestoreRepository.OnPaymentsLoadedListener() {
@@ -507,6 +516,13 @@ public class PaymentActivity extends BaseActivity {
                 repository.saveBill(currentBill, new FirestoreRepository.OnSaveCompleteListener() {
                     @Override
                     public void onSuccess() {
+                        NotificationHelper.saveNotification(
+                            currentBill.getCustomerId(),
+                            "Payment received",
+                            "A payment of " + CurrencyUtils.formatCurrency(latestPaymentAmount) + " was recorded.",
+                            Constants.NOTIF_PAYMENT_RECEIVED,
+                            billId
+                        );
                         showToast("Payment recorded successfully");
                         finish();
                     }

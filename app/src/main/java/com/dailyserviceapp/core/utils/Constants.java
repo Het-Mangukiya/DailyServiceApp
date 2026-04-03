@@ -59,7 +59,12 @@ public class Constants {
     
     // Admin Notification Types (Push Notifications)
     public static final String NOTIF_JOIN_REQUEST = "JOIN_REQUEST";
+    public static final String NOTIF_JOIN_REQUEST_STATUS = "JOIN_REQUEST_STATUS";
     public static final String NOTIF_BULK_ORDER = "BULK_ORDER";
+    public static final String NOTIF_QUANTITY_REQUEST = "QUANTITY_REQUEST";
+    public static final String NOTIF_QUANTITY_RESPONSE = "QUANTITY_RESPONSE";
+    public static final String NOTIF_SUPPORT_TICKET = "SUPPORT_TICKET";
+    public static final String NOTIF_SUPPORT_UPDATE = "SUPPORT_UPDATE";
     
     // Firebase Collections
     public static final String COLLECTION_USERS = "users";
@@ -102,6 +107,7 @@ public class Constants {
     // Invite flow cache keys
     public static final String KEY_PENDING_INVITE_TOKEN = "pendingInviteToken";
     public static final String KEY_PENDING_INVITE_CUSTOMER_ID = "pendingInviteCustomerId";
+    public static final String KEY_LAST_NOTIFICATION_ALERT_PREFIX = "lastNotificationAlert_";
     
     // Pagination
     public static final int PAGE_SIZE = 50;
