@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -14,6 +15,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.dailyserviceapp.R;
+import com.dailyserviceapp.core.ui.PremiumMotionController;
 import com.dailyserviceapp.core.utils.NetworkMonitor;
 import com.dailyserviceapp.core.utils.PreferenceManager;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -52,6 +54,29 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         // preferenceManager is injected by Hilt
         networkMonitor = new NetworkMonitor(this);
+    }
+
+    @Override
+    public void setContentView(int layoutResID) {
+        super.setContentView(layoutResID);
+        bindPremiumMotion();
+    }
+
+    @Override
+    public void setContentView(View view) {
+        super.setContentView(view);
+        bindPremiumMotion();
+    }
+
+    @Override
+    public void setContentView(View view, ViewGroup.LayoutParams params) {
+        super.setContentView(view, params);
+        bindPremiumMotion();
+    }
+
+    protected void bindPremiumMotion() {
+        ViewGroup content = findViewById(android.R.id.content);
+        PremiumMotionController.bind(content);
     }
     
     /**

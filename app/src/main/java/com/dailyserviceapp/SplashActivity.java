@@ -1,11 +1,16 @@
 package com.dailyserviceapp;
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.view.View;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.OvershootInterpolator;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -36,12 +41,12 @@ import dagger.hilt.android.AndroidEntryPoint;
 import javax.inject.Inject;
 
 /**
- * Splash screen activity with corrected routing for Customer side.
+ * Splash screen activity with premium brand animation and preserved routing.
  */
 @AndroidEntryPoint
 public class SplashActivity extends AppCompatActivity {
 
-    private static final int SPLASH_DELAY = 2000;
+    private static final int SPLASH_DELAY = 1450;
     private FirebaseFirestore firestore;
     
     @Inject
@@ -56,6 +61,8 @@ public class SplashActivity extends AppCompatActivity {
             getSupportActionBar().hide();
         }
 
+        startSplashAnimation();
+
         SyncWorkScheduler.ensurePeriodicSync(this);
         firestore = FirebaseFirestore.getInstance();
         
@@ -69,6 +76,125 @@ public class SplashActivity extends AppCompatActivity {
             if (isActivityInactive()) return;
             navigateToNextScreen();
         }, splashDelay);
+    }
+
+    private void startSplashAnimation() {
+        View logoPlate = findViewById(R.id.logoPlate);
+        View logoGlow = findViewById(R.id.logoGlow);
+        View logoSweep = findViewById(R.id.logoSweep);
+        View checkBadge = findViewById(R.id.checkBadge);
+        View brandTitle = findViewById(R.id.brandTitle);
+        View brandSubtitle = findViewById(R.id.brandSubtitle);
+
+        if (logoPlate == null) return;
+
+        logoPlate.post(() -> {
+            float riseDistance = logoPlate.getResources().getDisplayMetrics().density * 18f;
+
+            logoPlate.setAlpha(0.15f);
+            logoPlate.setScaleX(0.78f);
+            logoPlate.setScaleY(0.78f);
+            logoPlate.setTranslationY(riseDistance);
+
+            if (logoGlow != null) {
+                logoGlow.setAlpha(0f);
+                logoGlow.setScaleX(0.78f);
+                logoGlow.setScaleY(0.78f);
+            }
+
+            if (brandTitle != null) {
+                brandTitle.setAlpha(0f);
+                brandTitle.setTranslationY(riseDistance * 0.75f);
+            }
+
+            if (brandSubtitle != null) {
+                brandSubtitle.setAlpha(0f);
+                brandSubtitle.setTranslationY(riseDistance);
+            }
+
+            if (checkBadge != null) {
+                checkBadge.setAlpha(0f);
+                checkBadge.setScaleX(0.2f);
+                checkBadge.setScaleY(0.2f);
+            }
+
+            AnimatorSet plateEntrance = new AnimatorSet();
+            plateEntrance.playTogether(
+                ObjectAnimator.ofFloat(logoPlate, View.ALPHA, 0.15f, 1f),
+                ObjectAnimator.ofFloat(logoPlate, View.SCALE_X, 0.78f, 1f),
+                ObjectAnimator.ofFloat(logoPlate, View.SCALE_Y, 0.78f, 1f),
+                ObjectAnimator.ofFloat(logoPlate, View.TRANSLATION_Y, riseDistance, 0f)
+            );
+            plateEntrance.setDuration(520L);
+            plateEntrance.setStartDelay(80L);
+            plateEntrance.setInterpolator(new DecelerateInterpolator(1.7f));
+            plateEntrance.start();
+
+            if (logoGlow != null) {
+                AnimatorSet glowPulse = new AnimatorSet();
+                glowPulse.playTogether(
+                    ObjectAnimator.ofFloat(logoGlow, View.ALPHA, 0f, 0.55f, 0.2f),
+                    ObjectAnimator.ofFloat(logoGlow, View.SCALE_X, 0.78f, 1.08f, 1f),
+                    ObjectAnimator.ofFloat(logoGlow, View.SCALE_Y, 0.78f, 1.08f, 1f)
+                );
+                glowPulse.setDuration(760L);
+                glowPulse.setInterpolator(new DecelerateInterpolator(1.3f));
+                glowPulse.start();
+            }
+
+            if (brandTitle != null) {
+                AnimatorSet titleIn = new AnimatorSet();
+                titleIn.playTogether(
+                    ObjectAnimator.ofFloat(brandTitle, View.ALPHA, 0f, 1f),
+                    ObjectAnimator.ofFloat(brandTitle, View.TRANSLATION_Y, riseDistance * 0.75f, 0f)
+                );
+                titleIn.setDuration(380L);
+                titleIn.setStartDelay(150L);
+                titleIn.setInterpolator(new DecelerateInterpolator(1.5f));
+                titleIn.start();
+            }
+
+            if (brandSubtitle != null) {
+                AnimatorSet subtitleIn = new AnimatorSet();
+                subtitleIn.playTogether(
+                    ObjectAnimator.ofFloat(brandSubtitle, View.ALPHA, 0f, 1f),
+                    ObjectAnimator.ofFloat(brandSubtitle, View.TRANSLATION_Y, riseDistance, 0f)
+                );
+                subtitleIn.setDuration(360L);
+                subtitleIn.setStartDelay(220L);
+                subtitleIn.setInterpolator(new DecelerateInterpolator(1.4f));
+                subtitleIn.start();
+            }
+
+            if (logoSweep != null) {
+                float sweepStart = -logoSweep.getWidth() * 1.4f;
+                float sweepEnd = logoPlate.getWidth() + (logoSweep.getWidth() * 1.1f);
+                logoSweep.setTranslationX(sweepStart);
+
+                AnimatorSet sweepAcross = new AnimatorSet();
+                sweepAcross.playTogether(
+                    ObjectAnimator.ofFloat(logoSweep, View.TRANSLATION_X, sweepStart, sweepEnd),
+                    ObjectAnimator.ofFloat(logoSweep, View.ALPHA, 0f, 0.7f, 0f)
+                );
+                sweepAcross.setDuration(430L);
+                sweepAcross.setStartDelay(250L);
+                sweepAcross.setInterpolator(new DecelerateInterpolator(1.2f));
+                sweepAcross.start();
+            }
+
+            if (checkBadge != null) {
+                AnimatorSet badgePop = new AnimatorSet();
+                badgePop.playTogether(
+                    ObjectAnimator.ofFloat(checkBadge, View.ALPHA, 0f, 1f),
+                    ObjectAnimator.ofFloat(checkBadge, View.SCALE_X, 0.2f, 1f),
+                    ObjectAnimator.ofFloat(checkBadge, View.SCALE_Y, 0.2f, 1f)
+                );
+                badgePop.setDuration(260L);
+                badgePop.setStartDelay(430L);
+                badgePop.setInterpolator(new OvershootInterpolator(2.2f));
+                badgePop.start();
+            }
+        });
     }
 
     private void navigateToNextScreen() {
@@ -351,29 +477,30 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void openLogin() {
-        startActivity(new Intent(SplashActivity.this, LoginActivity.class));
-        finish();
+        launchAndFinish(new Intent(SplashActivity.this, LoginActivity.class));
     }
 
     private void openDashboard() {
-        startActivity(new Intent(SplashActivity.this, DashboardActivity.class));
-        finish();
+        launchAndFinish(new Intent(SplashActivity.this, DashboardActivity.class));
     }
 
     private void openCustomerHome() {
-        startActivity(new Intent(SplashActivity.this, CustomerHomeActivity.class));
-        finish();
+        launchAndFinish(new Intent(SplashActivity.this, CustomerHomeActivity.class));
     }
 
     private void openCustomerDashboard() {
-        startActivity(new Intent(SplashActivity.this, CustomerServiceDashboardActivity.class));
-        finish();
+        launchAndFinish(new Intent(SplashActivity.this, CustomerServiceDashboardActivity.class));
     }
 
     private void openProfileSetup() {
         Intent intent = new Intent(SplashActivity.this, ProfileActivity.class);
         intent.putExtra(Constants.EXTRA_FORCE_PROFILE_SETUP, true);
+        launchAndFinish(intent);
+    }
+
+    private void launchAndFinish(Intent intent) {
         startActivity(intent);
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         finish();
     }
 

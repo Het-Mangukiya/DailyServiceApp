@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="tag_motion_bound" type="id" />
+    <item name="tag_motion_item_animated" type="id" />
+    <item name="tag_motion_recycler_bound" type="id" />
+    <item name="tag_motion_row_animated" type="id" />
+    <item name="tag_motion_press_bound" type="id" />
+</resources>
