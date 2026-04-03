@@ -1,64 +1,89 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- DailyDrop Logo: Stylized milk drop with glass highlight -->
+<!-- DailyDrop Logo: Service clipboard with checkmark - represents daily service management -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="96dp"
     android:height="96dp"
     android:viewportWidth="96"
     android:viewportHeight="96">
 
-    <!-- Outer circle - dark teal border -->
+    <!-- Background circle - dark teal -->
     <path
         android:fillColor="#147A5B"
         android:pathData="M48,48m-44,0a44,44 0,1 1,88 0a44,44 0,1 1,-88 0" />
 
-    <!-- Inner circle - gradient teal fill -->
+    <!-- Inner circle - brand teal -->
     <path
         android:fillColor="#1D9E75"
         android:pathData="M48,48m-40,0a40,40 0,1 1,80 0a40,40 0,1 1,-80 0" />
 
-    <!-- Subtle inner ring accent -->
-    <path
-        android:fillColor="#22B080"
-        android:pathData="M48,48m-36,0a36,36 0,1 1,72 0a36,36 0,1 1,-72 0" />
-
-    <!-- Drop shape - main white milk drop -->
+    <!-- Clipboard body - rounded rectangle -->
     <path
         android:fillColor="#FFFFFF"
-        android:pathData="M48,22
-            C48,22 36,38 36,48
-            C36,54.627 41.373,60 48,60
-            C54.627,60 60,54.627 60,48
-            C60,38 48,22 48,22Z" />
+        android:pathData="M33,28 L63,28 Q66,28 66,31 L66,72 Q66,75 63,75 L33,75 Q30,75 30,72 L30,31 Q30,28 33,28 Z" />
 
-    <!-- Drop highlight - glass shine effect (left arc) -->
+    <!-- Clipboard clip (top) -->
     <path
-        android:fillColor="#E0F2EE"
-        android:pathData="M44,35
-            C41,40 39,44 39,48
-            C39,50.5 40,52.8 41.5,54.5
-            C40.2,52.8 39.5,50.5 39.5,48
-            C39.5,43 43,37 44,35Z" />
+        android:fillColor="#147A5B"
+        android:pathData="M40,24 L56,24 Q58,24 58,26 L58,30 Q58,32 56,32 L40,32 Q38,32 38,30 L38,26 Q38,24 40,24 Z" />
 
-    <!-- Small highlight dot -->
+    <!-- Clipboard clip circle notch -->
     <path
-        android:fillColor="#E8F6F2"
-        android:pathData="M43,42m-2,0a2,2 0,1 1,4 0a2,2 0,1 1,-4 0" />
+        android:fillColor="#1D9E75"
+        android:pathData="M48,24m-3,0a3,3 0,1 1,6 0a3,3 0,1 1,-6 0" />
 
-    <!-- Ripple wave 1 - beneath drop -->
+    <!-- Service line 1 (with check) -->
+    <path
+        android:fillColor="#1D9E75"
+        android:pathData="M36,40 L42,40 L42,42 L36,42 Z" />
+    <path
+        android:fillColor="#E0E0E0"
+        android:pathData="M46,40 L60,40 L60,42 L46,42 Z" />
+
+    <!-- Service line 2 (with check) -->
+    <path
+        android:fillColor="#1D9E75"
+        android:pathData="M36,48 L42,48 L42,50 L36,50 Z" />
+    <path
+        android:fillColor="#E0E0E0"
+        android:pathData="M46,48 L60,48 L60,50 L46,50 Z" />
+
+    <!-- Service line 3 -->
+    <path
+        android:fillColor="#1D9E75"
+        android:pathData="M36,56 L42,56 L42,58 L36,58 Z" />
+    <path
+        android:fillColor="#E0E0E0"
+        android:pathData="M46,56 L60,56 L60,58 L46,58 Z" />
+
+    <!-- Checkmarks on completed lines -->
+    <path
+        android:fillColor="#1D9E75"
+        android:strokeColor="#1D9E75"
+        android:strokeWidth="1.8"
+        android:pathData="M37,41 L38.5,42.5 L41,39.5" />
+
+    <path
+        android:fillColor="#1D9E75"
+        android:strokeColor="#1D9E75"
+        android:strokeWidth="1.8"
+        android:pathData="M37,49 L38.5,50.5 L41,47.5" />
+
+    <!-- Big checkmark overlay (bottom right) - represents completion/success -->
     <path
         android:fillColor="#FFFFFF"
-        android:fillAlpha="0.7"
-        android:pathData="M38,63 Q43,66 48,63 Q53,66 58,63"
-        android:strokeWidth="1.5"
-        android:strokeColor="#FFFFFF"
-        android:strokeAlpha="0.7" />
+        android:pathData="M68,58m-14,0a14,14 0,1 1,28 0a14,14 0,1 1,-28 0" />
 
-    <!-- Ripple wave 2 - wider -->
     <path
-        android:fillColor="#00000000"
-        android:strokeWidth="1.2"
+        android:fillColor="#1D9E75"
+        android:pathData="M68,58m-12,0a12,12 0,1 1,24 0a12,12 0,1 1,-24 0" />
+
+    <!-- Big check inside circle -->
+    <path
+        android:fillColor="#FFFFFF"
         android:strokeColor="#FFFFFF"
-        android:strokeAlpha="0.4"
-        android:pathData="M34,67 Q41,71 48,67 Q55,71 62,67" />
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M62,58 L66,62 L75,53" />
 
 </vector>
