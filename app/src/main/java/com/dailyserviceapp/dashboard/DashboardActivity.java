@@ -1,7 +1,10 @@
 package com.dailyserviceapp.dashboard;
 
 import dagger.hilt.android.AndroidEntryPoint;
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -14,6 +17,8 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.OptIn;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.core.content.ContextCompat;
@@ -40,6 +45,7 @@ import com.dailyserviceapp.data.models.Customer;
 import com.dailyserviceapp.databinding.ActivityHomeBinding;
 import com.dailyserviceapp.databinding.NavHeaderBinding;
 import com.dailyserviceapp.notifications.NotificationListActivity;
+import com.dailyserviceapp.notifications.FCMService;
 import com.dailyserviceapp.payment.PaymentActivity;
 import com.dailyserviceapp.profile.ProfileActivity;
 import com.dailyserviceapp.provider.ProviderComplaintsActivity;
@@ -69,15 +75,14 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.Timestamp;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-/**
- * Main Dashboard Activity - Landing page with customer list and analytics
- */
+
 @AndroidEntryPoint
 public class DashboardActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -123,6 +128,14 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
     // Sorting
     private enum SortOrder { NAME, SERVICE_TYPE, ADDRESS }
     private SortOrder currentSortOrder = SortOrder.NAME;
+
+    // Notification Permission Launcher
+    private final ActivityResultLauncher<String> requestPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                if (isGranted) {
+                    showToast("Notifications enabled");
+                }
+            });
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,7 +151,6 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         providerId = getCurrentUserId();
         firestore = FirebaseFirestore.getInstance();
         
-        // Initialize Google Sign-In client for logout
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
@@ -153,9 +165,33 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         loadData();
 
         loadUnreadNotificationCount();
+        
+        // Notification Setup
+        checkNotificationPermission();
+        refreshFcmToken();
+
         if (getIntent() != null && getIntent().getBooleanExtra("openNotifications", false)) {
             startActivity(new Intent(this, NotificationListActivity.class));
         }
+    }
+
+    private void checkNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) !=
+                    PackageManager.PERMISSION_GRANTED) {
+                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
+            }
+        }
+    }
+
+    private void refreshFcmToken() {
+        FirebaseMessaging.getInstance().getToken()
+                .addOnSuccessListener(token -> {
+                    if (token != null && !token.isEmpty()) {
+                        FCMService.saveTokenToFirestore(token);
+                    }
+                })
+                .addOnFailureListener(e -> android.util.Log.e("DashboardActivity", "FCM Token failed", e));
     }
     
     private void initializeViews() {
@@ -163,7 +199,6 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
         navigationView = binding.navigationView;
         toolbar = binding.topAppBar;
         
-        // Use generic reflection or try-catch for binding fields that might be missing in different variants
         try {
             totalCustomersCount = binding.txtCustomerCount;
             totalRevenueAmount = binding.txtTotalValue;
@@ -173,11 +208,9 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
             customerRecyclerView = binding.customerRecyclerView;
             emptyState = binding.emptyStateLayout;
             addCustomerFab = binding.fabAddCustomer;
-            
-            // Search field might be missing in current XML version
-            // searchEditText = binding.searchEditText; 
+            searchEditText = binding.searchEditText; 
         } catch (Exception e) {
-            android.util.Log.e("DashboardActivity", "Error binding views, some IDs may be missing: " + e.getMessage());
+            android.util.Log.e("DashboardActivity", "Error binding views: " + e.getMessage());
         }
         
         setSupportActionBar(toolbar);
@@ -269,7 +302,6 @@ public class DashboardActivity extends BaseActivity implements NavigationView.On
             addCustomerFab.setOnClickListener(v -> startActivity(new Intent(this, CustomerEditActivity.class)));
         }
         
-        // CRASH FIX: Check for null before adding listener
         if (searchEditText != null) {
             searchEditText.addTextChangedListener(new TextWatcher() {
                 @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}

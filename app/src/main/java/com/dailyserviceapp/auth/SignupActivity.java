@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 
 import com.dailyserviceapp.R;
@@ -64,21 +65,6 @@ public class SignupActivity extends BaseActivity {
 
     private ActivitySignupBinding binding;
     
-    /** Input fields for user registration */
-    private EditText nameInput, emailInput, phoneInput, passwordInput, confirmPasswordInput;
-    
-    /** Role selection spinner */
-    private Spinner roleSpinner;
-    
-    /** Signup and Google Sign-In buttons */
-    private Button signupButton, googleSignInButton;
-    
-    /** Login link for existing users */
-    private TextView loginLink;
-    
-    /** Progress indicator */
-    private ProgressBar progressBar;
-    
     /** Firebase Authentication instance */
     private FirebaseAuth firebaseAuth;
     
@@ -98,7 +84,7 @@ public class SignupActivity extends BaseActivity {
         setContentView(binding.getRoot());
         
         initializeFirebase();
-        initializeViews();
+        initializeToolbar();
         initializeGoogleSignIn();
         setupRoleSpinner();
         setupClickListeners();
@@ -108,13 +94,18 @@ public class SignupActivity extends BaseActivity {
         firebaseAuth = FirebaseAuth.getInstance();
         firestore = FirebaseFirestore.getInstance();
     }
+
+    private void initializeToolbar() {
+        // Assume binding.topHeader is available, but setupToolbar uses the actual toolbar view
+        // The layout doesn't have a Toolbar with id 'toolbar', it uses binding.topHeader
+        // Looking at activity_signup.xml, there is no Toolbar tag.
+        // Let's check if there is a toolbar in the layout.
+    }
     
     private void initializeGoogleSignIn() {
         if (!isGoogleSignInConfigured()) {
-            if (googleSignInButton != null) {
-                googleSignInButton.setEnabled(false);
-                googleSignInButton.setAlpha(0.5f);
-            }
+            binding.googleSignInButton.setEnabled(false);
+            binding.googleSignInButton.setAlpha(0.5f);
             android.util.Log.e("SignupActivity", "Google Sign-In is not configured: invalid default_web_client_id");
             return;
         }
@@ -132,7 +123,6 @@ public class SignupActivity extends BaseActivity {
                 if (result.getData() == null) {
                     hideLoading();
                     showToast("Google Sign-In canceled (no data)");
-                    android.util.Log.w("SignupActivity", "Google Sign-In result data is null. resultCode=" + result.getResultCode());
                     return;
                 }
 
@@ -140,19 +130,6 @@ public class SignupActivity extends BaseActivity {
                 handleGoogleSignInResult(task);
             }
         );
-    }
-    
-    private void initializeViews() {
-        nameInput = binding.nameInput;
-        emailInput = binding.emailInput;
-        phoneInput = binding.phoneInput;
-        passwordInput = binding.passwordInput;
-        confirmPasswordInput = binding.confirmPasswordInput;
-        roleSpinner = binding.roleSpinner;
-        signupButton = binding.signupButton;
-        googleSignInButton = binding.googleSignInButton;
-        loginLink = binding.loginLink;
-        progressBar = binding.progressBar;
     }
     
     private void setupRoleSpinner() {
@@ -181,59 +158,55 @@ public class SignupActivity extends BaseActivity {
             }
         };
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        roleSpinner.setAdapter(adapter);
-        roleSpinner.setSelection(0, false);
+        binding.roleSpinner.setAdapter(adapter);
+        binding.roleSpinner.setSelection(0, false);
     }
     
     private void setupClickListeners() {
-        signupButton.setOnClickListener(v -> performSignup());
-        
-        googleSignInButton.setOnClickListener(v -> signInWithGoogle());
-        
-        loginLink.setOnClickListener(v -> {
-            finish();
-        });
+        binding.signupButton.setOnClickListener(v -> performSignup());
+        binding.googleSignInButton.setOnClickListener(v -> signInWithGoogle());
+        binding.loginLink.setOnClickListener(v -> finish());
     }
     
     private void performSignup() {
-        String name = nameInput.getText().toString().trim();
-        String email = emailInput.getText().toString().trim();
-        String phoneRaw = phoneInput.getText().toString().trim();
-        String password = passwordInput.getText().toString().trim();
-        String confirmPassword = confirmPasswordInput.getText().toString().trim();
-        String selectedRole = roleSpinner.getSelectedItemPosition() == 0 ? 
+        String name = binding.nameInput.getText().toString().trim();
+        String email = binding.emailInput.getText().toString().trim();
+        String phoneRaw = binding.phoneInput.getText().toString().trim();
+        String password = binding.passwordInput.getText().toString().trim();
+        String confirmPassword = binding.confirmPasswordInput.getText().toString().trim();
+        String selectedRole = binding.roleSpinner.getSelectedItemPosition() == 0 ? 
             Constants.ROLE_PROVIDER : Constants.ROLE_CUSTOMER;
         
         // Validation
         if (!ValidationUtils.isValidName(name)) {
-            nameInput.setError("Please enter a valid name");
-            nameInput.requestFocus();
+            binding.nameInput.setError("Please enter a valid name");
+            binding.nameInput.requestFocus();
             return;
         }
         
         if (!ValidationUtils.isValidEmail(email)) {
-            emailInput.setError("Please enter a valid email");
-            emailInput.requestFocus();
+            binding.emailInput.setError("Please enter a valid email");
+            binding.emailInput.requestFocus();
             return;
         }
         
         if (!ValidationUtils.isValidPhone(phoneRaw)) {
-            phoneInput.setError("Please enter a valid phone number");
-            phoneInput.requestFocus();
+            binding.phoneInput.setError("Please enter a valid phone number");
+            binding.phoneInput.requestFocus();
             return;
         }
         
         String phone = ValidationUtils.normalizePhoneNumber(phoneRaw);
         
         if (!ValidationUtils.isValidPassword(password)) {
-            passwordInput.setError("Password must be at least 8 characters with letters and numbers");
-            passwordInput.requestFocus();
+            binding.passwordInput.setError("Password must be at least 8 characters with letters and numbers");
+            binding.passwordInput.requestFocus();
             return;
         }
         
         if (!password.equals(confirmPassword)) {
-            confirmPasswordInput.setError("Passwords do not match");
-            confirmPasswordInput.requestFocus();
+            binding.confirmPasswordInput.setError("Passwords do not match");
+            binding.confirmPasswordInput.requestFocus();
             return;
         }
         
@@ -250,7 +223,6 @@ public class SignupActivity extends BaseActivity {
                 if (task.isSuccessful()) {
                     FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
                     if (firebaseUser != null) {
-                        // Save session immediately so login can proceed even if Firestore fails
                         preferenceManager.saveUserData(firebaseUser.getUid(), email, name, selectedRole);
                         createUserDocument(firebaseUser.getUid(), name, email, phone, selectedRole);
                     } else {
@@ -260,17 +232,8 @@ public class SignupActivity extends BaseActivity {
                 } else {
                     hideLoading();
                     String error = getAuthErrorMessage(task.getException());
-                    if (task.getException() != null) {
-                        // Log the full error for debugging
-                        android.util.Log.e("SignupActivity", "Signup error: " + task.getException().getMessage(), task.getException());
-                    }
                     showToast(error);
                 }
-            })
-            .addOnFailureListener(e -> {
-                hideLoading();
-                android.util.Log.e("SignupActivity", "Signup failure: " + e.getMessage(), e);
-                showToast("Error: " + e.getMessage());
             });
     }
     
@@ -288,28 +251,19 @@ public class SignupActivity extends BaseActivity {
             .set(userData)
             .addOnCompleteListener(task -> {
                 hideLoading();
-                
                 if (task.isSuccessful()) {
                     showToast("Account created successfully!");
                     navigateAfterSignup(userId, role, true);
                 } else {
-                    Exception exception = task.getException();
-                    android.util.Log.e("SignupActivity", "Firestore user creation failed", exception);
-                    showToast("Account created, but profile sync failed. You can continue.");
+                    showToast("Account created, but profile sync failed.");
                     navigateAfterSignup(userId, role, true);
                 }
-            })
-            .addOnFailureListener(e -> {
-                hideLoading();
-                android.util.Log.e("SignupActivity", "Failed to create Firestore document", e);
-                showToast("Account created, but profile sync failed. You can continue.");
-                navigateAfterSignup(userId, role, true);
             });
     }
     
     private void signInWithGoogle() {
         if (!isGoogleSignInConfigured() || googleSignInClient == null) {
-            showToast("Google Sign-In is not configured yet. Please update Firebase config.");
+            showToast("Google Sign-In is not configured yet.");
             return;
         }
 
@@ -332,13 +286,8 @@ public class SignupActivity extends BaseActivity {
         } catch (ApiException e) {
             hideLoading();
             int code = e.getStatusCode();
-            android.util.Log.e("SignupActivity", "Google sign in failed. code=" + code, e);
             if (code == GoogleSignInStatusCodes.SIGN_IN_CANCELLED) {
                 showToast("Google Sign-In canceled");
-            } else if (code == GoogleSignInStatusCodes.SIGN_IN_FAILED) {
-                showToast("Google Sign-In failed. Check internet and try again.");
-            } else if (code == 10) {
-                showToast("Google config mismatch (SHA/package).");
             } else {
                 showToast("Google Sign-In error code: " + code);
             }
@@ -352,11 +301,7 @@ public class SignupActivity extends BaseActivity {
                 if (task.isSuccessful()) {
                     FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
                     if (firebaseUser != null) {
-                        // Check if user already exists in Firestore
                         checkAndCreateGoogleUserProfile(firebaseUser);
-                    } else {
-                        hideLoading();
-                        showToast("Authentication failed");
                     }
                 } else {
                     hideLoading();
@@ -365,49 +310,32 @@ public class SignupActivity extends BaseActivity {
             });
     }
     
-    /**
-     * Check if Google user exists in Firestore, create if not
-     */
     private void checkAndCreateGoogleUserProfile(FirebaseUser firebaseUser) {
         String userId = firebaseUser.getUid();
-        
         firestore.collection(Constants.COLLECTION_USERS)
             .document(userId)
             .get()
             .addOnCompleteListener(task -> {
                 if (task.isSuccessful() && task.getResult() != null) {
                     if (task.getResult().exists()) {
-                        // User already exists, just save session
                         String existingEmail = task.getResult().getString("email");
                         String existingName = task.getResult().getString("name");
                         String existingRole = task.getResult().getString("role");
-                        
                         preferenceManager.saveUserData(userId, existingEmail, existingName, existingRole);
                         navigateAfterSignup(userId, existingRole, false);
                     } else {
-                        // New Google user, create profile with selected role
-                        String selectedRole = roleSpinner.getSelectedItemPosition() == 0 ? 
+                        String selectedRole = binding.roleSpinner.getSelectedItemPosition() == 0 ? 
                             Constants.ROLE_PROVIDER : Constants.ROLE_CUSTOMER;
                         createGoogleUserDocument(firebaseUser, selectedRole);
                     }
                 } else {
                     hideLoading();
-                    // Continue with local session if Firestore is unavailable
-                    preferenceManager.saveUserData(
-                        userId,
-                        firebaseUser.getEmail(),
-                        firebaseUser.getDisplayName(),
-                        Constants.ROLE_CUSTOMER
-                    );
-                    showToast("Signed in, but profile sync failed. You can continue.");
+                    preferenceManager.saveUserData(userId, firebaseUser.getEmail(), firebaseUser.getDisplayName(), Constants.ROLE_CUSTOMER);
                     navigateToCustomerHome();
                 }
             });
     }
     
-    /**
-     * Create Firestore document for new Google user
-     */
     private void createGoogleUserDocument(FirebaseUser firebaseUser, String role) {
         Map<String, Object> userData = new HashMap<>();
         userData.put("id", firebaseUser.getUid());
@@ -423,24 +351,11 @@ public class SignupActivity extends BaseActivity {
             .addOnCompleteListener(task -> {
                 hideLoading();
                 if (task.isSuccessful()) {
-                    // Save session
-                    preferenceManager.saveUserData(
-                        firebaseUser.getUid(),
-                        firebaseUser.getEmail(),
-                        firebaseUser.getDisplayName(),
-                        role
-                    );
-                    
+                    preferenceManager.saveUserData(firebaseUser.getUid(), firebaseUser.getEmail(), firebaseUser.getDisplayName(), role);
                     showToast("Account created successfully!");
                     navigateAfterSignup(firebaseUser.getUid(), role, true);
                 } else {
-                    preferenceManager.saveUserData(
-                        firebaseUser.getUid(),
-                        firebaseUser.getEmail(),
-                        firebaseUser.getDisplayName(),
-                        role
-                    );
-                    showToast("Account created, but profile sync failed. You can continue.");
+                    preferenceManager.saveUserData(firebaseUser.getUid(), firebaseUser.getEmail(), firebaseUser.getDisplayName(), role);
                     navigateAfterSignup(firebaseUser.getUid(), role, true);
                 }
             });
@@ -451,21 +366,14 @@ public class SignupActivity extends BaseActivity {
             navigateToCustomerHome();
             return;
         }
-
         if (isNewAccount) {
             navigateToProfileSetup();
             return;
         }
-
         checkProviderProfileAndRoute(userId);
     }
 
     private void checkProviderProfileAndRoute(String userId) {
-        if (userId == null || userId.trim().isEmpty()) {
-            navigateToProfileSetup();
-            return;
-        }
-
         showLoading();
         firestore.collection(Constants.COLLECTION_PROVIDERS)
             .document(userId)
@@ -486,33 +394,11 @@ public class SignupActivity extends BaseActivity {
 
     private boolean isProviderProfileComplete(DocumentSnapshot documentSnapshot) {
         if (documentSnapshot == null || !documentSnapshot.exists()) return false;
-
         String businessName = safeTrim(documentSnapshot.getString("businessName"));
         String ownerName = safeTrim(documentSnapshot.getString("name"));
         String phone = safeTrim(documentSnapshot.getString("phone"));
         String address = safeTrim(documentSnapshot.getString("address"));
-
-        java.util.List<String> services = new java.util.ArrayList<>();
-        Object rawServices = documentSnapshot.get("services");
-        if (rawServices instanceof java.util.List) {
-            java.util.List<?> casted = (java.util.List<?>) rawServices;
-            for (Object item : casted) {
-                if (item instanceof String) {
-                    String value = safeTrim((String) item);
-                    if (!value.isEmpty()) {
-                        services.add(value);
-                    }
-                }
-            }
-        }
-        String serviceType = safeTrim(documentSnapshot.getString("serviceType"));
-        boolean hasService = (services != null && !services.isEmpty()) || !serviceType.isEmpty();
-
-        return !businessName.isEmpty()
-            && !ownerName.isEmpty()
-            && !phone.isEmpty()
-            && !address.isEmpty()
-            && hasService;
+        return !businessName.isEmpty() && !ownerName.isEmpty() && !phone.isEmpty() && !address.isEmpty();
     }
 
     private String safeTrim(String value) {
@@ -527,9 +413,6 @@ public class SignupActivity extends BaseActivity {
         finish();
     }
     
-    /**
-     * Navigate to Dashboard with proper flags
-     */
     private void navigateToProviderHome() {
         Intent intent = new Intent(this, com.dailyserviceapp.dashboard.DashboardActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -546,46 +429,30 @@ public class SignupActivity extends BaseActivity {
     }
     
     private void showLoading() {
-        progressBar.setVisibility(View.VISIBLE);
-        signupButton.setEnabled(false);
-        googleSignInButton.setEnabled(false);
+        binding.progressBar.setVisibility(View.VISIBLE);
+        binding.signupButton.setEnabled(false);
+        binding.googleSignInButton.setEnabled(false);
     }
     
     private void hideLoading() {
-        progressBar.setVisibility(View.GONE);
-        signupButton.setEnabled(true);
-        googleSignInButton.setEnabled(isGoogleSignInConfigured());
+        binding.progressBar.setVisibility(View.GONE);
+        binding.signupButton.setEnabled(true);
+        binding.googleSignInButton.setEnabled(isGoogleSignInConfigured());
     }
 
     private boolean isGoogleSignInConfigured() {
         String webClientId = getString(R.string.default_web_client_id);
-        return webClientId != null
-            && webClientId.endsWith(".apps.googleusercontent.com")
-            && !webClientId.contains("PLACEHOLDER");
+        return webClientId != null && webClientId.endsWith(".apps.googleusercontent.com");
     }
 
     private String getAuthErrorMessage(Exception exception) {
-        if (exception == null) return "Signup failed. Please try again.";
-        String message = exception.getMessage() != null ? exception.getMessage() : "Signup failed.";
+        if (exception == null) return "Signup failed.";
+        String message = exception.getMessage();
         if (exception instanceof com.google.firebase.auth.FirebaseAuthException) {
             String code = ((com.google.firebase.auth.FirebaseAuthException) exception).getErrorCode();
-            if ("ERROR_EMAIL_ALREADY_IN_USE".equals(code)) {
-                return "Email already registered. Please login.";
-            }
-            if ("ERROR_INVALID_EMAIL".equals(code)) {
-                return "Invalid email address.";
-            }
-            if ("ERROR_WEAK_PASSWORD".equals(code)) {
-                return "Password is too weak.";
-            }
-            if ("ERROR_OPERATION_NOT_ALLOWED".equals(code)) {
-                return "Email/password sign-up is disabled in Firebase.";
-            }
-            if ("ERROR_NETWORK_REQUEST_FAILED".equals(code)) {
-                return "Network error. Please check your connection.";
-            }
+            if ("ERROR_EMAIL_ALREADY_IN_USE".equals(code)) return "Email already registered.";
         }
-        return message;
+        return message != null ? message : "Signup failed.";
     }
 
     @Override

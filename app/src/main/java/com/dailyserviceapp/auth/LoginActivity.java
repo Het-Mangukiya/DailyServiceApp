@@ -22,6 +22,7 @@ import com.dailyserviceapp.dashboard.DashboardActivity;
 import com.dailyserviceapp.databinding.ActivityLoginBinding;
 import com.dailyserviceapp.profile.ProfileActivity;
 import com.dailyserviceapp.notifications.FCMService;
+import com.dailyserviceapp.customer.CustomerHomeActivity;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -44,48 +45,20 @@ import java.util.Map;
 /**
  * Login Activity for DailyDrop application.
  * Provides email/password authentication and Google Sign-In functionality.
- * Integrates with Firebase Authentication and Firestore for user management.
- * 
- * <p>Features:</p>
- * <ul>
- *   <li>Email/password login with validation</li>
- *   <li>Google Sign-In integration</li>
- *   <li>Password recovery link</li>
- *   <li>Registration link to SignupActivity</li>
- *   <li>Automatic navigation to dashboard after successful login</li>
- * </ul>
- * 
- * @author DailyDrop Team
- * @version 1.0
- * @since 2026-01-08
  */
 @AndroidEntryPoint
 public class LoginActivity extends BaseActivity {
 
     private ActivityLoginBinding binding;
     
-    /** Email input field */
     private EditText emailInput, passwordInput;
-    
-    /** Login and Google Sign-In buttons */
     private Button loginButton, googleSignInButton;
-    
-    /** Text links for signup and forgot password */
     private TextView signupLink, forgotPasswordLink;
-    
-    /** Progress indicator for async operations */
     private ProgressBar progressBar;
     
-    /** Firebase Authentication instance */
     private FirebaseAuth firebaseAuth;
-    
-    /** Firestore database instance */
     private FirebaseFirestore firestore;
-    
-    /** Google Sign-In client */
     private GoogleSignInClient googleSignInClient;
-    
-    /** Activity result launcher for Google Sign-In flow */
     private ActivityResultLauncher<Intent> googleSignInLauncher;
     
     @Override
@@ -124,7 +97,6 @@ public class LoginActivity extends BaseActivity {
                 googleSignInButton.setEnabled(false);
                 googleSignInButton.setAlpha(0.5f);
             }
-            android.util.Log.e("LoginActivity", "Google Sign-In is not configured: invalid default_web_client_id");
             return;
         }
 
@@ -135,17 +107,13 @@ public class LoginActivity extends BaseActivity {
         
         googleSignInClient = GoogleSignIn.getClient(this, gso);
         
-        // Register result launcher
         googleSignInLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
                 if (result.getData() == null) {
                     hideLoading();
-                    showToast("Google Sign-In canceled (no data)");
-                    android.util.Log.w("LoginActivity", "Google Sign-In result data is null. resultCode=" + result.getResultCode());
                     return;
                 }
-
                 Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(result.getData());
                 handleGoogleSignInResult(task);
             }
@@ -164,23 +132,15 @@ public class LoginActivity extends BaseActivity {
     
     private void setupClickListeners() {
         loginButton.setOnClickListener(v -> performLogin());
-        
         googleSignInButton.setOnClickListener(v -> signInWithGoogle());
-        
-        signupLink.setOnClickListener(v -> {
-            startActivity(new Intent(this, SignupActivity.class));
-        });
-        
-        forgotPasswordLink.setOnClickListener(v -> {
-            startActivity(new Intent(this, ForgotPasswordActivity.class));
-        });
+        signupLink.setOnClickListener(v -> startActivity(new Intent(this, SignupActivity.class)));
+        forgotPasswordLink.setOnClickListener(v -> startActivity(new Intent(this, ForgotPasswordActivity.class)));
     }
     
     private void performLogin() {
         String email = emailInput.getText().toString().trim();
         String password = passwordInput.getText().toString().trim();
         
-        // Validation
         if (!ValidationUtils.isValidEmail(email)) {
             emailInput.setError("Please enter a valid email");
             emailInput.requestFocus();
@@ -205,7 +165,6 @@ public class LoginActivity extends BaseActivity {
                 if (task.isSuccessful()) {
                     FirebaseUser user = firebaseAuth.getCurrentUser();
                     if (user != null) {
-                        android.util.Log.d("LoginActivity", "Firebase Auth successful for user: " + user.getUid());
                         loadUserData(user.getUid());
                     } else {
                         hideLoading();
@@ -213,23 +172,7 @@ public class LoginActivity extends BaseActivity {
                     }
                 } else {
                     hideLoading();
-                    Exception exception = task.getException();
-                    String error = exception != null ? exception.getMessage() : "Login failed";
-                    
-                    android.util.Log.e("LoginActivity", "Login failed: " + error, exception);
-                    
-                    // Provide user-friendly error messages
-                    if (error.contains("password")) {
-                        showToast("Incorrect password. Please try again.");
-                    } else if (error.contains("no user record")) {
-                        showToast("No account found with this email. Please sign up.");
-                    } else if (error.contains("network")) {
-                        showToast("Network error. Please check your connection.");
-                    } else if (error.contains("too many requests")) {
-                        showToast("Too many failed attempts. Please try again later.");
-                    } else {
-                        showToast(error);
-                    }
+                    showToast(task.getException() != null ? task.getException().getMessage() : "Login failed");
                 }
             });
     }
@@ -239,8 +182,6 @@ public class LoginActivity extends BaseActivity {
             .document(userId)
             .get()
             .addOnCompleteListener(task -> {
-                hideLoading();
-                
                 if (task.isSuccessful() && task.getResult() != null) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
@@ -248,46 +189,19 @@ public class LoginActivity extends BaseActivity {
                         String name = document.getString("name");
                         String role = document.getString("role");
                         
-                        // Save user data to preferences
                         preferenceManager.saveUserData(userId, email, name, role);
-                        
-                        showToast("Login successful!");
                         routeAfterLogin(userId, role);
                     } else {
-                        // User document doesn't exist - create it from Firebase Auth data
-                        android.util.Log.w("LoginActivity", "User document not found for userId: " + userId + ". Creating document...");
                         createUserDocument(userId);
                     }
                 } else {
-                    // Network or permissions error
-                    Exception exception = task.getException();
-                    String errorMsg = exception != null ? exception.getMessage() : "Unknown error";
-                    
-                    android.util.Log.e("LoginActivity", "Failed to load user data: " + errorMsg, exception);
-                    
-                    // Check if it's a permissions error
-                    if (errorMsg != null && errorMsg.toLowerCase(Locale.ROOT).contains("permission")) {
-                        // Permissions error - try to create document anyway
-                        android.util.Log.w("LoginActivity", "Permissions error detected. Attempting to create user document...");
-                        createUserDocument(userId);
-                    } else if (errorMsg != null && errorMsg.toLowerCase(Locale.ROOT).contains("network")) {
-                        showToast("Network error. Please check your connection and try again.");
-                    } else {
-                        // Unknown error - try to create document as fallback
-                        android.util.Log.w("LoginActivity", "Unknown error. Attempting to create user document as fallback...");
-                        createUserDocument(userId);
-                    }
+                    hideLoading();
+                    showToast("Failed to load user data. Please try again.");
                 }
             });
     }
     
-    /**
-     * Creates a user document in Firestore from Firebase Auth data.
-     * This handles cases where signup was interrupted or the document wasn't created.
-     */
     private void createUserDocument(String userId) {
-        showLoading();
-        
         FirebaseUser currentUser = firebaseAuth.getCurrentUser();
         if (currentUser == null) {
             hideLoading();
@@ -295,11 +209,8 @@ public class LoginActivity extends BaseActivity {
             return;
         }
         
-        // Get user data from Firebase Auth
         String email = currentUser.getEmail();
         String name = currentUser.getDisplayName();
-        
-        // Use least-privilege default role when legacy records need recovery.
         String role = Constants.ROLE_CUSTOMER;
         
         Map<String, Object> userData = new HashMap<>();
@@ -314,35 +225,27 @@ public class LoginActivity extends BaseActivity {
             .document(userId)
             .set(userData)
             .addOnCompleteListener(task -> {
-                hideLoading();
-                
                 if (task.isSuccessful()) {
-                    // Save to preferences
-                    preferenceManager.saveUserData(userId, email, 
-                        name != null ? name : email, role);
-                    
-                    showToast("Login successful!");
+                    preferenceManager.saveUserData(userId, email, name != null ? name : email, role);
                     routeAfterLogin(userId, role);
                 } else {
-                    showToast("Failed to create user profile. Please try again.");
+                    hideLoading();
+                    showToast("Failed to create user profile.");
                 }
             });
     }
     
     private void signInWithGoogle() {
         if (!isGoogleSignInConfigured() || googleSignInClient == null) {
-            showToast("Google Sign-In is not configured yet. Please update Firebase config.");
+            showToast("Google Sign-In is not configured.");
             return;
         }
-
         if (!isNetworkAvailable()) {
             showNetworkError();
             return;
         }
-        
         showLoading();
-        Intent signInIntent = googleSignInClient.getSignInIntent();
-        googleSignInLauncher.launch(signInIntent);
+        googleSignInLauncher.launch(googleSignInClient.getSignInIntent());
     }
     
     private void handleGoogleSignInResult(Task<GoogleSignInAccount> completedTask) {
@@ -353,17 +256,7 @@ public class LoginActivity extends BaseActivity {
             }
         } catch (ApiException e) {
             hideLoading();
-            int code = e.getStatusCode();
-            android.util.Log.e("LoginActivity", "Google sign in failed. code=" + code, e);
-            if (code == GoogleSignInStatusCodes.SIGN_IN_CANCELLED) {
-                showToast("Google Sign-In canceled");
-            } else if (code == GoogleSignInStatusCodes.SIGN_IN_FAILED) {
-                showToast("Google Sign-In failed. Check internet and try again.");
-            } else if (code == 10) {
-                showToast("Google config mismatch (SHA/package).");
-            } else {
-                showToast("Google Sign-In error code: " + code);
-            }
+            showToast("Google sign in failed.");
         }
     }
     
@@ -378,15 +271,13 @@ public class LoginActivity extends BaseActivity {
                     }
                 } else {
                     hideLoading();
-                    showToast("Authentication failed: " + 
-                        (task.getException() != null ? task.getException().getMessage() : "Unknown error"));
+                    showToast("Authentication failed.");
                 }
             });
     }
     
     private void checkAndCreateUserProfile(FirebaseUser firebaseUser) {
         String userId = firebaseUser.getUid();
-        
         firestore.collection(Constants.COLLECTION_USERS)
             .document(userId)
             .get()
@@ -394,14 +285,12 @@ public class LoginActivity extends BaseActivity {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
-                        // User exists, save and navigate
                         String email = document.getString("email");
                         String name = document.getString("name");
                         String role = document.getString("role");
                         preferenceManager.saveUserData(userId, email, name, role);
                         routeAfterLogin(userId, role);
                     } else {
-                        // New Google user, create profile with default role
                         createGoogleUserProfile(firebaseUser);
                     }
                 } else {
@@ -412,41 +301,30 @@ public class LoginActivity extends BaseActivity {
     }
     
     private void createGoogleUserProfile(FirebaseUser firebaseUser) {
-        java.util.Map<String, Object> userData = new java.util.HashMap<>();
+        Map<String, Object> userData = new HashMap<>();
         userData.put("id", firebaseUser.getUid());
         userData.put("name", firebaseUser.getDisplayName() != null ? firebaseUser.getDisplayName() : "User");
         userData.put("email", firebaseUser.getEmail());
-        userData.put("phone", firebaseUser.getPhoneNumber() != null ? firebaseUser.getPhoneNumber() : "");
-        userData.put("role", Constants.ROLE_CUSTOMER); // Default role for Google sign-in
+        userData.put("role", Constants.ROLE_CUSTOMER);
         userData.put("createdAt", System.currentTimeMillis());
         
         firestore.collection(Constants.COLLECTION_USERS)
             .document(firebaseUser.getUid())
             .set(userData)
             .addOnCompleteListener(task -> {
-                hideLoading();
                 if (task.isSuccessful()) {
-                    preferenceManager.saveUserData(
-                        firebaseUser.getUid(),
-                        firebaseUser.getEmail(),
-                        firebaseUser.getDisplayName(),
-                        Constants.ROLE_CUSTOMER
-                    );
+                    preferenceManager.saveUserData(firebaseUser.getUid(), firebaseUser.getEmail(), firebaseUser.getDisplayName(), Constants.ROLE_CUSTOMER);
                     routeAfterLogin(firebaseUser.getUid(), Constants.ROLE_CUSTOMER);
                 } else {
+                    hideLoading();
                     showToast("Failed to create user profile");
                 }
             });
     }
 
     private void routeAfterLogin(String userId, String role) {
-        if (userId == null || userId.trim().isEmpty()) {
-            navigateToLogin();
-            return;
-        }
-
         saveFcmTokenIfAvailable();
-
+        
         if (role == null || role.trim().isEmpty()) {
             resolveRoleAndRoute(userId);
             return;
@@ -471,7 +349,6 @@ public class LoginActivity extends BaseActivity {
     }
 
     private void resolveRoleAndRoute(String userId) {
-        showLoading();
         firestore.collection(Constants.COLLECTION_USERS)
             .document(userId)
             .get()
@@ -482,23 +359,20 @@ public class LoginActivity extends BaseActivity {
                 if (role != null && !role.trim().isEmpty()) {
                     preferenceManager.setUserRole(role);
                     routeAfterLogin(userId, role);
-                    return;
+                } else {
+                    hideLoading();
+                    preferenceManager.clearAllData();
+                    firebaseAuth.signOut();
+                    showToast("Account role is missing.");
                 }
-                hideLoading();
-                showToast("Account role is missing. Please sign in again.");
-                preferenceManager.clearAllData();
-                firebaseAuth.signOut();
-                navigateToLogin();
             })
             .addOnFailureListener(e -> {
                 hideLoading();
-                showToast("Failed to load account role. Please try again.");
-                navigateToLogin();
+                showToast("Failed to resolve role.");
             });
     }
 
     private void checkProviderProfileAndRoute(String userId) {
-        showLoading();
         firestore.collection(Constants.COLLECTION_PROVIDERS)
             .document(userId)
             .get()
@@ -518,33 +392,11 @@ public class LoginActivity extends BaseActivity {
 
     private boolean isProviderProfileComplete(DocumentSnapshot documentSnapshot) {
         if (documentSnapshot == null || !documentSnapshot.exists()) return false;
-
         String businessName = safeTrim(documentSnapshot.getString("businessName"));
         String ownerName = safeTrim(documentSnapshot.getString("name"));
         String phone = safeTrim(documentSnapshot.getString("phone"));
         String address = safeTrim(documentSnapshot.getString("address"));
-
-        java.util.List<String> services = new java.util.ArrayList<>();
-        Object rawServices = documentSnapshot.get("services");
-        if (rawServices instanceof java.util.List) {
-            java.util.List<?> casted = (java.util.List<?>) rawServices;
-            for (Object item : casted) {
-                if (item instanceof String) {
-                    String value = safeTrim((String) item);
-                    if (!value.isEmpty()) {
-                        services.add(value);
-                    }
-                }
-            }
-        }
-        String serviceType = safeTrim(documentSnapshot.getString("serviceType"));
-        boolean hasService = (services != null && !services.isEmpty()) || !serviceType.isEmpty();
-
-        return !businessName.isEmpty()
-            && !ownerName.isEmpty()
-            && !phone.isEmpty()
-            && !address.isEmpty()
-            && hasService;
+        return !businessName.isEmpty() && !ownerName.isEmpty() && !phone.isEmpty() && !address.isEmpty();
     }
 
     private String safeTrim(String value) {
@@ -567,8 +419,7 @@ public class LoginActivity extends BaseActivity {
     }
 
     private void navigateToCustomerHome() {
-        Intent intent = new Intent(this, SplashActivity.class);
-        intent.putExtra(Constants.EXTRA_SKIP_SPLASH_DELAY, true);
+        Intent intent = new Intent(this, CustomerHomeActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();
@@ -588,9 +439,7 @@ public class LoginActivity extends BaseActivity {
 
     private boolean isGoogleSignInConfigured() {
         String webClientId = getString(R.string.default_web_client_id);
-        return webClientId != null
-            && webClientId.endsWith(".apps.googleusercontent.com")
-            && !webClientId.contains("PLACEHOLDER");
+        return webClientId != null && webClientId.endsWith(".apps.googleusercontent.com");
     }
 
     @Override

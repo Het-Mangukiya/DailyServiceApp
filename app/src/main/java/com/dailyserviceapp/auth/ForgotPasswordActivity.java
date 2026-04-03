@@ -8,6 +8,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 
+import androidx.appcompat.widget.Toolbar;
+
 import com.dailyserviceapp.R;
 import com.dailyserviceapp.core.base.BaseActivity;
 import com.dailyserviceapp.core.utils.ValidationUtils;
@@ -34,6 +36,9 @@ public class ForgotPasswordActivity extends BaseActivity {
     }
     
     private void initializeViews() {
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setupToolbar(toolbar, "Forgot Password", true);
+
         emailInput = findViewById(R.id.emailInput);
         resetPasswordButton = findViewById(R.id.resetPasswordButton);
         progressBar = findViewById(R.id.progressBar);

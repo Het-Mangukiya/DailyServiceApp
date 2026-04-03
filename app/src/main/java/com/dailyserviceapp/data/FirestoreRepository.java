@@ -187,30 +187,41 @@ public class FirestoreRepository {
                         return;
                     }
 
+                    String providerId = doc.getString("providerId");
+                    String authUid = getCurrentAuthUid();
+
+                    if (providerId == null || !providerId.equals(authUid)) {
+                        listener.onError("Permission denied: You do not own this customer");
+                        return;
+                    }
+
                     // Cascade delete in sequence to avoid orphaned data
-                    deleteDocuments(db.collection("serviceEntries")
-                                    .whereEqualTo("customerId", customerId),
+                    deleteDocumentsScoped(db.collection("serviceEntries")
+                                    .whereEqualTo("customerId", customerId)
+                                    .whereEqualTo("providerId", providerId),
                             new OnSaveCompleteListener() {
                                 @Override
                                 public void onSuccess() {
-                                    deleteDocuments(db.collection("payments")
-                                                    .whereEqualTo("customerId", customerId),
+                                    deleteDocumentsScoped(db.collection("payments")
+                                                    .whereEqualTo("customerId", customerId)
+                                                    .whereEqualTo("providerId", providerId),
                                             new OnSaveCompleteListener() {
                                                 @Override
                                                 public void onSuccess() {
-                                                    deleteDocuments(db.collection("bills")
-                                                                    .whereEqualTo("customerId", customerId),
+                                                    deleteDocumentsScoped(db.collection("bills")
+                                                                    .whereEqualTo("customerId", customerId)
+                                                                    .whereEqualTo("providerId", providerId),
                                                             new OnSaveCompleteListener() {
                                                                 @Override
                                                                 public void onSuccess() {
-                                                                    // Legacy subcollections cleanup
-                                                                    deleteDocuments(customers()
+                                                                    // Legacy subcollections cleanup - these are already scoped by customer path
+                                                                    deleteDocumentsScoped(customers()
                                                                                     .document(customerId)
                                                                                     .collection("deliveries"),
                                                                             new OnSaveCompleteListener() {
                                                                                 @Override
                                                                                 public void onSuccess() {
-                                                                                    deleteDocuments(customers()
+                                                                                    deleteDocumentsScoped(customers()
                                                                                                     .document(customerId)
                                                                                                     .collection("payments"),
                                                                                             new OnSaveCompleteListener() {
@@ -263,8 +274,9 @@ public class FirestoreRepository {
 
     /**
      * Deletes all documents from a query in batches.
+     * Renamed and ensured query is scoped to avoid permission errors.
      */
-    private void deleteDocuments(Query query, OnSaveCompleteListener listener) {
+    private void deleteDocumentsScoped(Query query, OnSaveCompleteListener listener) {
         final int batchSize = 400;
 
         query.limit(batchSize)
@@ -284,7 +296,7 @@ public class FirestoreRepository {
                             .addOnSuccessListener(aVoid -> {
                                 if (snapshot.size() >= batchSize) {
                                     // There may be more documents; repeat
-                                    deleteDocuments(query, listener);
+                                    deleteDocumentsScoped(query, listener);
                                 } else {
                                     listener.onSuccess();
                                 }

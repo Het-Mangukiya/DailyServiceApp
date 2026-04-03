@@ -17,6 +17,7 @@ import com.dailyserviceapp.R;
 import com.dailyserviceapp.core.base.BaseActivity;
 import com.dailyserviceapp.core.utils.Constants;
 import com.dailyserviceapp.data.models.Notification;
+import com.dailyserviceapp.databinding.ActivityNotificationListBinding;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
@@ -41,42 +42,27 @@ import java.util.Locale;
  */
 public class NotificationListActivity extends BaseActivity {
 
-    private static final String TAG = "NotificationListActivity";
-
-    private RecyclerView recyclerView;
-    private TextView emptyStateText;
-    private View emptyStateContainer;
-    private NotificationAdapter adapter;
+    private ActivityNotificationListBinding binding;
 
     private FirebaseFirestore db;
     private ListenerRegistration listenerReg;
+    private NotificationAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_notification_list);
+        binding = ActivityNotificationListBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         db = FirebaseFirestore.getInstance();
 
         // Toolbar
-        MaterialToolbar toolbar = findViewById(R.id.toolbar);
-        if (toolbar != null) {
-            setSupportActionBar(toolbar);
-            if (getSupportActionBar() != null) {
-                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-                getSupportActionBar().setTitle(R.string.menu_notifications);
-            }
-        }
-
-        // Views
-        recyclerView = findViewById(R.id.notificationsRecycler);
-        emptyStateText = findViewById(R.id.emptyStateText);
-        emptyStateContainer = findViewById(R.id.emptyState);
+        setupToolbar(binding.toolbar, getString(R.string.menu_notifications), true);
 
         // RecyclerView
         adapter = new NotificationAdapter(this::markAsRead);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(adapter);
+        binding.notificationsRecycler.setLayoutManager(new LinearLayoutManager(this));
+        binding.notificationsRecycler.setAdapter(adapter);
 
         listenForNotifications();
     }
@@ -85,6 +71,7 @@ public class NotificationListActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         if (listenerReg != null) listenerReg.remove();
+        binding = null;
     }
 
     // ────────────────────────────────────────────────────────────────────────
@@ -99,10 +86,6 @@ public class NotificationListActivity extends BaseActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            finish();
-            return true;
-        }
         if (item.getItemId() == R.id.action_mark_all_read) {
             markAllAsRead();
             return true;
@@ -123,6 +106,7 @@ public class NotificationListActivity extends BaseActivity {
             .orderBy("timestamp", Query.Direction.DESCENDING)
             .limit(50)
             .addSnapshotListener((snapshots, error) -> {
+                if (!isUiActive()) return;
                 if (error != null || snapshots == null) return;
 
                 List<Notification> notifications = new ArrayList<>();
@@ -137,13 +121,17 @@ public class NotificationListActivity extends BaseActivity {
                 adapter.setNotifications(notifications);
 
                 boolean isEmpty = notifications.isEmpty();
-                recyclerView.setVisibility(isEmpty ? View.GONE : View.VISIBLE);
-                if (emptyStateContainer != null) {
-                    emptyStateContainer.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
+                binding.notificationsRecycler.setVisibility(isEmpty ? View.GONE : View.VISIBLE);
+                binding.emptyState.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
+                
+                if (isEmpty) {
+                    binding.emptyStateText.setText(R.string.notifications_empty_state);
                 }
-                emptyStateText.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
-                if (isEmpty) emptyStateText.setText(R.string.notifications_empty_state);
             });
+    }
+
+    private boolean isUiActive() {
+        return binding != null && !isFinishing() && !isDestroyed();
     }
 
     // ────────────────────────────────────────────────────────────────────────
@@ -161,7 +149,7 @@ public class NotificationListActivity extends BaseActivity {
     private void markAllAsRead() {
         List<Notification> unread = adapter.getUnreadNotifications();
         if (unread.isEmpty()) {
-            Snackbar.make(recyclerView, R.string.notifications_all_read, Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(binding.notificationsRecycler, R.string.notifications_all_read, Snackbar.LENGTH_SHORT).show();
             return;
         }
 
@@ -175,9 +163,9 @@ public class NotificationListActivity extends BaseActivity {
         }
         batch.commit()
             .addOnSuccessListener(v ->
-                Snackbar.make(recyclerView, R.string.notifications_mark_all_read_done, Snackbar.LENGTH_SHORT).show())
+                Snackbar.make(binding.notificationsRecycler, R.string.notifications_mark_all_read_done, Snackbar.LENGTH_SHORT).show())
             .addOnFailureListener(e ->
-                Snackbar.make(recyclerView, R.string.notifications_update_failed, Snackbar.LENGTH_SHORT).show());
+                Snackbar.make(binding.notificationsRecycler, R.string.notifications_update_failed, Snackbar.LENGTH_SHORT).show());
     }
 
     // ════════════════════════════════════════════════════════════════════════
