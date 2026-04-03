@@ -4,6 +4,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
@@ -113,7 +114,7 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.ViewHo
             holder.customerInitial.setText(initial);
         }
         
-        // Set status chip
+        // Set status text
         holder.customerStatus.setText(customer.getStatus() != null ? customer.getStatus() : "ACTIVE");
         
         // Show vacation badge if customer is on vacation
@@ -127,9 +128,13 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.ViewHo
 
         boolean isExpanded = isExpanded(customer);
         holder.expandableActions.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
-        holder.customerMenuButton.setIconResource(
-            isExpanded ? R.drawable.ic_expand_less : R.drawable.ic_expand_more
-        );
+        
+        // Use generic View or check if customerMenuButton is actually a MaterialButton
+        if (holder.customerMenuButton instanceof com.google.android.material.button.MaterialButton) {
+            ((com.google.android.material.button.MaterialButton)holder.customerMenuButton).setIconResource(
+                isExpanded ? R.drawable.ic_expand_less : R.drawable.ic_expand_more
+            );
+        }
 
         String vacationText = customer.isOnVacation()
             ? holder.itemView.getContext().getString(R.string.remove_from_vacation)
@@ -152,13 +157,13 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.ViewHo
         final TextView customerService;
         final TextView customerPhone;
         final TextView customerInitial;
-        final com.google.android.material.chip.Chip customerStatus;
+        final TextView customerStatus; // Changed from Chip to TextView
         final TextView vacationBadge;
-        final com.google.android.material.button.MaterialButton customerMenuButton;
+        final View customerMenuButton; // Changed to View for safety
         final View expandableActions;
-        final com.google.android.material.button.MaterialButton viewProfileButton;
-        final com.google.android.material.button.MaterialButton editCustomerButton;
-        final com.google.android.material.button.MaterialButton vacationActionButton;
+        final Button viewProfileButton; // Changed from MaterialButton to Button
+        final Button editCustomerButton; // Changed from MaterialButton to Button
+        final Button vacationActionButton; // Changed from MaterialButton to Button
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);

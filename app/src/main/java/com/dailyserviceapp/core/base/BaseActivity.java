@@ -3,11 +3,15 @@ package com.dailyserviceapp.core.base;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import com.dailyserviceapp.R;
 import com.dailyserviceapp.core.utils.NetworkMonitor;
@@ -59,12 +63,39 @@ public abstract class BaseActivity extends AppCompatActivity {
      */
     protected void setupToolbar(Toolbar toolbar, String title, boolean showBackButton) {
         if (toolbar != null) {
+            applyToolbarInsets(toolbar);
             setSupportActionBar(toolbar);
             if (getSupportActionBar() != null) {
                 getSupportActionBar().setTitle(title);
                 getSupportActionBar().setDisplayHomeAsUpEnabled(showBackButton);
             }
         }
+    }
+
+    protected void applyToolbarInsets(Toolbar toolbar) {
+        if (toolbar == null) return;
+
+        final int initialTopPadding = toolbar.getPaddingTop();
+        final int initialLeftPadding = toolbar.getPaddingLeft();
+        final int initialRightPadding = toolbar.getPaddingRight();
+        final int initialBottomPadding = toolbar.getPaddingBottom();
+        final int initialHeight = toolbar.getLayoutParams() != null ? toolbar.getLayoutParams().height : 0;
+
+        ViewCompat.setOnApplyWindowInsetsListener(toolbar, (View view, WindowInsetsCompat insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            if (view.getLayoutParams() != null && initialHeight > 0) {
+                view.getLayoutParams().height = initialHeight + systemBars.top;
+                view.setLayoutParams(view.getLayoutParams());
+            }
+            view.setPadding(
+                initialLeftPadding,
+                initialTopPadding + systemBars.top,
+                initialRightPadding,
+                initialBottomPadding
+            );
+            return insets;
+        });
+        ViewCompat.requestApplyInsets(toolbar);
     }
     
     /**

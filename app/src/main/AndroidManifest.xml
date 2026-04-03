@@ -21,18 +21,18 @@
     <application
         android:name=".DailyDropApp"
         android:allowBackup="true"
-        android:icon="@drawable/ic_app_icon"
+        android:icon="@mipmap/ic_launcher"
         android:label="DailyDrop"
-        android:roundIcon="@drawable/ic_app_icon"
+        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.DailyServiceApp"
         android:usesCleartextTraffic="false"
         android:networkSecurityConfig="@xml/network_security_config"
         android:hardwareAccelerated="true">
 
-        <!-- Splash Screen (Launcher) -->
+        <!-- Login Activity (Now the Launcher) -->
         <activity
-            android:name=".SplashActivity"
+            android:name=".auth.LoginActivity"
             android:exported="true"
             android:theme="@style/Theme.DailyServiceApp.NoActionBar">
             <intent-filter>
@@ -58,9 +58,9 @@
             </intent-filter>
         </activity>
 
-        <!-- Login Activity -->
+        <!-- Splash Screen (Kept for internal routing if needed, but no longer launcher) -->
         <activity
-            android:name=".auth.LoginActivity"
+            android:name=".SplashActivity"
             android:exported="false"
             android:theme="@style/Theme.DailyServiceApp.NoActionBar" />
 

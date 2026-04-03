@@ -1,12 +1,15 @@
 package com.dailyserviceapp.customer;
 
 import dagger.hilt.android.AndroidEntryPoint;
+import android.Manifest;
 import android.content.ActivityNotFoundException;
 import android.content.ClipData;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Build;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
@@ -17,6 +20,7 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
 import com.dailyserviceapp.R;
@@ -32,17 +36,21 @@ import com.dailyserviceapp.data.models.Payment;
 import com.dailyserviceapp.data.models.ServiceEntry;
 import com.dailyserviceapp.databinding.ActivityCustomerServiceDashboardBinding;
 import com.dailyserviceapp.data.models.QuantityRequest;
+import com.dailyserviceapp.notifications.NotificationHelper;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.WriteBatch;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Map;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedHashSet;
@@ -50,6 +58,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 /**
  * Customer dashboard after provider link approval.
@@ -99,6 +108,7 @@ public class CustomerServiceDashboardActivity extends BaseActivity {
         serviceCustomerId = customerId;
 
         firestore = FirebaseFirestore.getInstance();
+        ensureNotificationPermissionIfNeeded();
 
         setupToolbar(binding.toolbar, "My Service Dashboard", true);
         binding.btnRefreshData.setOnClickListener(v -> loadActiveLinkAndDashboard());
@@ -618,10 +628,32 @@ public class CustomerServiceDashboardActivity extends BaseActivity {
 
             btnSubmit.setEnabled(false);
             progressBar.setVisibility(View.VISIBLE);
+            final String notificationCustomerName = customerName;
+            final String notificationServiceType = serviceType;
+            final String requestedLabel = String.format(Locale.US, "%.1f", requestedQty);
+            Map<String, Object> notificationPayload = NotificationHelper.buildNotificationPayload(
+                providerId,
+                "Extra quantity request",
+                notificationCustomerName + " requested " + requestedLabel + " " + notificationServiceType + ".",
+                Constants.NOTIF_QUANTITY_REQUEST,
+                customerId
+            );
+            if (notificationPayload == null) {
+                progressBar.setVisibility(View.GONE);
+                btnSubmit.setEnabled(true);
+                showToast("Failed to prepare provider notification.");
+                return;
+            }
 
-            firestore.collection(Constants.COLLECTION_QUANTITY_REQUESTS)
-                .add(request)
-                .addOnSuccessListener(docRef -> {
+            DocumentReference requestRef =
+                firestore.collection(Constants.COLLECTION_QUANTITY_REQUESTS).document();
+            DocumentReference notificationRef =
+                firestore.collection(Constants.COLLECTION_NOTIFICATIONS).document();
+            WriteBatch batch = firestore.batch();
+            batch.set(requestRef, request);
+            batch.set(notificationRef, notificationPayload);
+            batch.commit()
+                .addOnSuccessListener(unused -> {
                     if (!isUiActive()) return;
                     progressBar.setVisibility(View.GONE);
                     showToast(getString(R.string.request_submitted_success));
@@ -817,6 +849,14 @@ public class CustomerServiceDashboardActivity extends BaseActivity {
         String[] months = symbols.getMonths();
         String monthName = (month >= 0 && month < months.length) ? months[month] : "Month";
         return monthName + " " + year;
+    }
+
+    private void ensureNotificationPermissionIfNeeded() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+            && ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+            != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, 1002);
+        }
     }
 
     private static final class MonthYearItem {

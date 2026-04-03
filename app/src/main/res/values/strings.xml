@@ -16,6 +16,21 @@
     <string name="products">Products</string>
     <string name="add_product">Add Product</string>
     
+    <!-- Dashboard Labels -->
+    <string name="greeting_morning">Good morning</string>
+    <string name="label_quick_actions">Quick Actions</string>
+    <string name="label_recent_customers">Recent Customers</string>
+    <string name="label_view_all">View All</string>
+    <string name="label_total_earnings">Total Earnings</string>
+    <string name="label_pending_dues">Pending Dues</string>
+    <string name="label_deliveries">Deliveries</string>
+    <string name="label_earnings">Earnings</string>
+    <string name="label_route">Route</string>
+    <string name="label_bills">Bills</string>
+    <string name="label_alerts">Alerts</string>
+    <string name="label_home">Home</string>
+    <string name="label_profile">Profile</string>
+
     <!-- Error messages -->
     <string name="error_name_required">Name is required</string>
     <string name="error_rate_required">Rate is required</string>
@@ -192,222 +207,70 @@
     <string name="provider_support_reply_body">Hello %1$s,\n\nYour complaint has been updated in DailyDrop.\n\nSubject: %2$s\nNew Status: %3$s\nProvider: %4$s\n\nIf needed, you can reply to this email for further discussion.</string>
     <string name="provider_support_email_customer">Email Customer</string>
     <string name="provider_support_update_status">Update Status</string>
-    <string name="provider_support_customer_unavailable">Customer email is not available for this ticket.</string>
 
-    <string name="provider_dashboard_title">Dashboard</string>
-    <string name="provider_dashboard_today_summary">Today\'s Summary</string>
-    <string name="provider_dashboard_delivered">Delivered</string>
-    <string name="provider_dashboard_today_earnings">Today\'s Earnings</string>
-    <string name="provider_dashboard_payment_overview">Payment Overview</string>
-    <string name="provider_dashboard_total_lent">Total Lent</string>
-    <string name="provider_dashboard_total_received">Total Received</string>
-    <string name="provider_dashboard_pending_amount">Pending Amount</string>
-    <string name="provider_dashboard_this_month">This Month</string>
-    <string name="provider_dashboard_total_earnings">Total Earnings</string>
-    <string name="provider_dashboard_total_deliveries">Total Deliveries</string>
-    <string name="provider_dashboard_quick_actions">Quick Actions</string>
-    <string name="provider_dashboard_service_entry">Service Entry</string>
-    <string name="provider_dashboard_bills_payments">Bills &amp; Payments</string>
-    <string name="provider_dashboard_my_customers">My Customers</string>
-    <string name="provider_dashboard_join_requests">Join Requests</string>
-    <string name="customers_insight_title">Customer Insights</string>
-    <string name="customers_insight_body">Review customer trends, dues, and delivery activity from one place.</string>
-    <string name="customers_insight_cta">Add Customer</string>
-    <string name="balance_label">Balance</string>
-    <string name="nav_bills">Bills</string>
-    <string name="nav_profile">Profile</string>
-    <string name="provider_complaints_title">Customer Complaints</string>
-    <string name="provider_complaints_summary">Complaint Summary</string>
-    <string name="provider_complaints_open">Open</string>
-    <string name="provider_complaints_in_progress">In Progress</string>
-    <string name="provider_complaints_resolved">Resolved</string>
-    <string name="provider_complaints_recent">Recent Complaints</string>
-    <string name="provider_complaints_empty">No complaints yet. Customer tickets will appear here.</string>
-    <string name="provider_complaints_mark_resolved">Mark Resolved</string>
-    <string name="provider_complaints_mark_in_progress">Mark In Progress</string>
-    <string name="auth_welcome_back">Welcome Back</string>
-    <string name="auth_sign_in_continue">Sign in to continue</string>
-    <string name="auth_login">Login</string>
+    <string name="coming_soon">Coming Soon</string>
+
+    <string name="forgot_title">Forgot Password</string>
+    <string name="forgot_subtitle">Enter your email to reset password</string>
     <string name="auth_email">Email</string>
-    <string name="auth_password">Password</string>
-    <string name="auth_forgot_password">Forgot Password?</string>
-    <string name="auth_or">OR</string>
-    <string name="auth_continue_google">Continue with Google</string>
-    <string name="auth_no_account">Don\'t have an account?</string>
-    <string name="auth_have_account">Already have an account?</string>
-    <string name="auth_sign_up">Sign Up</string>
-    <string name="signup_create_account">Create Account</string>
-    <string name="auth_full_name">Full Name</string>
-    <string name="auth_phone_number">Phone Number</string>
-    <string name="auth_confirm_password">Confirm Password</string>
-    <string name="forgot_title">Reset Password</string>
-    <string name="forgot_subtitle">Enter your email to receive reset link</string>
     <string name="forgot_send_link">Send Reset Link</string>
     <string name="forgot_back_login">Back to Login</string>
-    <string name="service_entry_title">Service Entry</string>
-    <string name="service_entry_offline">Offline</string>
-    <string name="service_entry_pending_sync_default">3 deliveries pending sync</string>
-    <string name="service_entry_selected_date">Selected Date</string>
-    <string name="service_entry_today">Today</string>
-    <string name="action_change">Change</string>
-    <string name="action_select_all">Select All</string>
-    <string name="action_clear">Clear</string>
-    <string name="service_entry_no_customers">No customers found</string>
-    <string name="service_entry_add_customers_prompt">Add customers first to record deliveries</string>
-    <string name="bills_title">Bills</string>
-    <string name="ledger_snapshot">Ledger Snapshot</string>
-    <string name="ledger_live_customer">Live customer ledger</string>
-    <string name="ledger_empty_title">No Customer Ledger Data</string>
-    <string name="ledger_empty_subtitle">Add customers and service entries to start tracking dues</string>
-    <string name="bill_detail_title">Customer Ledger</string>
-    <string name="bill_customer_label">Customer</string>
-    <string name="bill_paid_due_label">Paid till / Due from</string>
-    <string name="bill_ledger_summary">Ledger Summary</string>
-    <string name="bill_delivered_entries">Delivered Entries</string>
-    <string name="bill_outstanding_amount">Outstanding Amount</string>
-    <string name="bill_status_pending">Pending</string>
-    <string name="bill_payment_history">Payment History</string>
-    <string name="bill_no_payments_yet">No payments yet</string>
-    <string name="bill_service_entry_history">Service Entry History</string>
-    <string name="bill_no_service_entries">No service entries yet</string>
-    <string name="bill_record_payment">Record Payment</string>
-    <string name="bill_share_ledger">Share Ledger</string>
-    <string name="payment_title">Record Payment</string>
-    <string name="payment_context">Payment Context</string>
-    <string name="payment_outstanding_subtitle">Outstanding from service entries</string>
-    <string name="payment_current_due">Current Due</string>
-    <string name="payment_information">Payment Information</string>
-    <string name="payment_amount_hint">Payment Amount</string>
-    <string name="payment_method_hint">Payment Method</string>
-    <string name="payment_date_hint">Payment Date</string>
-    <string name="notes_optional">Notes (Optional)</string>
-    <string name="join_requests_empty_title">No pending join requests</string>
-    <string name="join_requests_empty_subtitle">When customers scan your QR, requests will appear here.</string>
-    <string name="profile_basic_information">Basic Information</string>
-    <string name="profile_business_name">Business Name</string>
-    <string name="profile_owner_name">Owner Name</string>
-    <string name="profile_phone_number_hint">Phone Number</string>
-    <string name="profile_email_hint">Email</string>
-    <string name="profile_address_hint">Address</string>
-    <string name="profile_area_hint">Area / Locality</string>
-    <string name="profile_city_hint">City</string>
-    <string name="profile_services_offered">Services Offered</string>
-    <string name="service_option_milk">Milk</string>
-    <string name="service_option_newspaper">Newspaper</string>
-    <string name="service_option_water">Water</string>
-    <string name="service_option_tiffin">Tiffin</string>
-    <string name="service_option_laundry">Laundry</string>
-    <string name="service_option_maid">Maid</string>
-    <string name="service_option_other">Other</string>
-    <string name="profile_other_service_optional">Other service (optional)</string>
-    <string name="profile_business_details">Business Details</string>
-    <string name="profile_gst_optional">GST Number (optional)</string>
-    <string name="profile_upi_optional">UPI ID (optional)</string>
-    <string name="profile_notes_optional">Notes (optional)</string>
-    <string name="profile_save">Save Profile</string>
-    <string name="customer_edit_delete">Delete Customer</string>
-    <string name="qr_share_title">Share this QR Code</string>
-    <string name="qr_share_subtitle">Customers can scan this code to join your service</string>
-    <string name="qr_code_content_desc">QR Code</string>
-    <string name="qr_share_button">Share QR Code</string>
-    <string name="qr_save_button">Save QR Code</string>
-    <string name="qr_info_content_desc">Info</string>
-    <string name="qr_info_text">Share this QR code with your customers or display it at your location for easy registration</string>
-    <string name="coming_soon">Coming Soon</string>
-    <string name="customer_profile_title">Customer Profile</string>
-    <string name="contact_title">Contact</string>
-    <string name="customer_detail_service_placeholder">Service • ₹0.00/unit</string>
-    <string name="customer_detail_month_label">Month:</string>
-    <string name="customer_detail_delivered_entries_label">Delivered Entries:</string>
-    <string name="customer_detail_total_quantity_label">Total Quantity:</string>
-    <string name="customer_detail_service_value_label">Service Value:</string>
-    <string name="customer_detail_total_service_value_label">Total Service Value:</string>
-    <string name="customer_detail_total_paid_label">Total Paid:</string>
-    <string name="customer_detail_outstanding_label">Outstanding:</string>
-    <string name="customer_detail_paid_till_label">Paid Till:</string>
-    <string name="customer_detail_due_from_label">Due From:</string>
-    <string name="phone_placeholder">Phone: -</string>
-    <string name="address_placeholder">Address: -</string>
-    <string name="customer_initial_placeholder">H</string>
-    <string name="customer_month_placeholder">Feb 2026</string>
-    <string name="customer_quantity_placeholder">0.0</string>
-    <string name="dash_placeholder">-</string>
-    <string name="splash_subtitle">Deliver. Track. Grow.</string>
-    <string name="product_name_hint">Product Name</string>
-    <string name="category_hint">Category</string>
-    <string name="price_hint">Price</string>
-    <string name="quantity_hint">Quantity</string>
-    <string name="description_optional">Description (Optional)</string>
-    <string name="action_cancel">Cancel</string>
-    <string name="action_add">Add</string>
-    <string name="rupee_symbol">₹</string>
-    <string name="service_quantity_placeholder">Service • Quantity</string>
-    <string name="quantity_minus">-</string>
-    <string name="quantity_plus">+</string>
-    <string name="delivered_label">Delivered</string>
-    <string name="initial_placeholder">A</string>
-    <string name="dot_separator"> • </string>
-    <string name="rate_day_placeholder">₹60/day</string>
-    <string name="pending_placeholder">Pending: ₹500</string>
-    <string name="check_mark">✓</string>
-    <string name="bill_period_placeholder">January 2026 • 28 days</string>
-    <string name="action_details">Details</string>
-    <string name="action_share">Share</string>
-    <string name="tap_add_photo">Tap to add photo</string>
-    <string name="close_dialog">Close dialog</string>
-    <string name="customer_photo_picker">Select customer photo</string>
-    <string name="customer_name_required">Customer Name *</string>
-    <string name="phone_number">Phone Number</string>
-    <string name="delivery_address">Delivery Address</string>
-    <string name="service_type_required">Service Type *</string>
-    <string name="rate_per_day_required">Rate/Day *</string>
-    <string name="save_customer">Save Customer</string>
-    <string name="area_name_placeholder">Area Name</string>
-    <string name="customer_invite_to_app">Invite To App</string>
 
-    <!-- Quantity Request Feature -->
+    <string name="join_requests_empty_title">No Requests</string>
+    <string name="join_requests_empty_subtitle">No join requests available</string>
+
     <string name="menu_quantity_requests">Quantity Requests</string>
-    <string name="request_extra_quantity">Request Extra Quantity</string>
-    <string name="request_extra_quantity_title">Request Extra Quantity</string>
-    <string name="request_extra_quantity_subtitle">Ask your provider for extra quantity before today\'s delivery</string>
-    <string name="current_quantity_hint">Current Quantity</string>
-    <string name="requested_quantity_hint">Requested Quantity</string>
-    <string name="request_note_hint">Note to provider (optional)</string>
-    <string name="submit_request">Submit Request</string>
-    <string name="request_already_pending">You already have a pending request for today</string>
-    <string name="request_submitted_success">Extra quantity request submitted!</string>
-    <string name="request_invalid_quantity">Requested quantity must be greater than current</string>
-    <string name="pending_qty_requests">Pending Qty Requests</string>
-    <string name="pending_qty_requests_count">%1$d pending</string>
-    <string name="no_pending_qty_requests">No pending requests</string>
-    <string name="quantity_request_approved">Request approved for %1$s</string>
-    <string name="quantity_request_rejected">Request rejected</string>
-    <string name="customer_precision_service_format">%1$s • %2$s</string>
-    <string name="status_vacation_pill">Vacation</string>
-    <string name="status_dues_pill">Dues</string>
-    <string name="status_active_pill">Active</string>
-    <string name="customers_area_unassigned">Other Areas</string>
-    <string name="customers_group_subtitle_default">Customer deliveries</string>
-    <string name="customers_group_count_format">%1$d customers</string>
-    <string name="delivery_route_title">Delivery Route</string>
-    <string name="delivery_route_subtitle">Area-wise customer order for faster rounds</string>
-    <string name="delivery_route_active_count">%1$d active stops</string>
-    <string name="delivery_route_open_first_stop">Open First Stop</string>
-    <string name="delivery_route_refresh">Refresh</string>
-    <string name="delivery_route_empty_title">No route stops yet</string>
-    <string name="delivery_route_empty_body">Add active customers with addresses to see a delivery route here.</string>
-    <string name="delivery_route_area_fallback">Other Areas</string>
-    <string name="delivery_route_open_maps">Open in Maps</string>
-    <string name="delivery_route_call">Call</string>
-    <string name="delivery_route_address_missing">Address not available</string>
-    <string name="delivery_route_maps_missing">Add a customer address to open Maps.</string>
-    <string name="delivery_route_stop_number">Stop %1$d</string>
-    <!-- Test data -->
-    <string name="test_generating">Generating test data…</string>
-    <string name="test_generated">✅ Generated %1$d customers and %2$d service entries</string>
 
     <string-array name="role_options">
-        <item>Service Provider</item>
-        <item>Customer</item>
+    <item>Delivery Boy</item>
+    <item>Customer</item>
     </string-array>
+
+    <string name="request_invalid_quantity">Invalid quantity</string>
+    <string name="request_submitted_success">Request submitted successfully</string>
+    <string name="request_already_pending">Request already pending</string>
+
+    <string name="pending_qty_requests_count">
+    Pending Requests: %1$d
+    </string>
+
+    <string name="delivery_route_title">Delivery Route</string>
+
+    <string name="delivery_route_address_missing">
+        Address missing for some customers
+    </string>
+
+    <string name="provider_complaints_title">Customer Complaints</string>
+
+<string name="provider_complaints_mark_in_progress">
+    Mark as In Progress
+</string>
+
+<string name="provider_complaints_mark_resolved">
+    Mark as Resolved
+</string>
+
+<string name="provider_support_customer_unavailable">
+    Customer is unavailable right now
+</string>
+
+<string name="delivery_route_empty_title">
+    No delivery route available
+</string>
+
+<string name="delivery_route_active_count">
+    Active deliveries: %1$d
+</string>
+
+<string name="delivery_route_area_fallback">
+    Area not specified
+</string>
+
+<string name="delivery_route_maps_missing">
+    Google Maps not installed
+</string>
+
+<string name="delivery_route_stop_number">
+    Stop %1$d
+</string>
 </resources>

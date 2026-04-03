@@ -1,8 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Modern UI Palette -->
+    <color name="teal_primary">#1D9E75</color>
+    <color name="teal_dark">#147A5B</color>
+    <color name="teal_light">#E8F6F2</color>
+    <color name="bg_light">#F4FAF8</color>
+    <color name="white">#FFFFFF</color>
+    <color name="text_dark">#1A1A1A</color>
+    <color name="text_grey">#757575</color>
+    <color name="divider_color">#EEEEEE</color>
+    <color name="status_active">#4CAF50</color>
+    <color name="status_due">#F44336</color>
+    <color name="status_vacation">#FF9800</color>
+
     <!-- Brand Palette -->
-    <color name="brand_teal_500">#4DB6AC</color>
-    <color name="brand_teal_700">#00897B</color>
+    <color name="brand_teal_500">#1D9E75</color>
+    <color name="brand_teal_700">#147A5B</color>
     <color name="brand_green_500">#66BB6A</color>
     <color name="brand_sky_500">#42A5F5</color>
     <color name="brand_amber_500">#FFA726</color>
@@ -10,9 +23,9 @@
     <color name="brand_ink_600">#49454F</color>
 
     <!-- Primary Colors - Material Design 3 -->
-    <color name="md_theme_primary">#4DB6AC</color>
+    <color name="md_theme_primary">#1D9E75</color>
     <color name="md_theme_primary_container">#B2DFDB</color>
-    <color name="md_theme_primary_dark">#00897B</color>
+    <color name="md_theme_primary_dark">#147A5B</color>
     <color name="md_theme_secondary">#66BB6A</color>
     <color name="md_theme_secondary_container">#C8E6C9</color>
     <color name="md_theme_tertiary">#42A5F5</color>
@@ -21,7 +34,7 @@
     <!-- Surface Colors -->
     <color name="md_theme_surface">#FFFFFF</color>
     <color name="md_theme_surface_variant">#F5F5F5</color>
-    <color name="md_theme_background">#FAFAFA</color>
+    <color name="md_theme_background">#F4FAF8</color>
     <color name="md_theme_surface_raised">#F3FAF9</color>
     <color name="md_theme_surface_tint">#E8F6F4</color>
     
@@ -42,21 +55,21 @@
     <color name="warning">#FFA726</color>
     
     <!-- Gradient Colors -->
-    <color name="gradient_start">#4DB6AC</color>
-    <color name="gradient_end">#00897B</color>
+    <color name="gradient_start">#1D9E75</color>
+    <color name="gradient_end">#147A5B</color>
     <color name="gradient_soft_start">#EAF8F5</color>
     <color name="gradient_soft_end">#F7FBFA</color>
 
     <!-- Chart Colors -->
     <color name="chart_paid">#66BB6A</color>
-    <color name="chart_pending">#4DB6AC</color>
+    <color name="chart_pending">#1D9E75</color>
     <color name="chart_overdue">#FFA726</color>
     
     <!-- Legacy Support -->
-    <color name="primary">#4DB6AC</color>
-    <color name="primary_dark">#00897B</color>
+    <color name="primary">#1D9E75</color>
+    <color name="primary_dark">#147A5B</color>
     <color name="accent">#66BB6A</color>
-    <color name="background">#FAFAFA</color>
+    <color name="background">#F4FAF8</color>
     <color name="surface">#FFFFFF</color>
     <color name="surface_variant">#F5F5F5</color>
     <color name="secondary">#66BB6A</color>
@@ -80,7 +93,7 @@
     <color name="dailydrop_secondary_container">#C8E6C9</color>
     <color name="dailydrop_surface_container">#F5F5F5</color>
     <color name="dailydrop_surface_container_lowest">#FFFFFF</color>
-    <color name="dailydrop_teal_800">#00897B</color>
+    <color name="dailydrop_teal_800">#147A5B</color>
     <color name="dailydrop_emerald_50">#EAF8F5</color>
     <color name="stitch_header_scrim">#EAF6F4</color>
     <color name="stitch_on_surface">#1C1B1F</color>

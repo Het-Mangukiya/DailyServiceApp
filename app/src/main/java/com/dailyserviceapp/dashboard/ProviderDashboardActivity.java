@@ -1,9 +1,12 @@
 package com.dailyserviceapp.dashboard;
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.OvershootInterpolator;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -42,42 +45,20 @@ import android.util.Log;
 import java.util.Calendar;
 import java.util.Date;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.activity.OnBackPressedCallback;
 
 import dagger.hilt.android.AndroidEntryPoint;
 import javax.inject.Inject;
 
 /**
  * Provider Dashboard Activity - Professional analytics dashboard for service providers.
- * 
- * Shows real-time:
- * - Today's deliveries and earnings
- * - Payment overview (total lent, received, pending)
- * - Monthly statistics
- * - Quick action buttons
- * 
- * All calculations are data-driven from Firestore collections:
- * - serviceEntries: For deliveries and earnings
- * - customers: For lent amounts
- * - payments: For received amounts
- * 
- * @author DailyDrop Team
- * @version 2.0
- * @since 2026-02-02
  */
 @AndroidEntryPoint
 public class ProviderDashboardActivity extends BaseActivity {
 
     private ActivityProviderDashboardBinding binding;
     
-    // Constants for better maintainability
     private static final String TAG = "ProviderDashboard";
-    private static final String FIELD_PROVIDER_ID = "providerId";
-    private static final String FIELD_STATUS = "status";
-    private static final String STATUS_ACTIVE = "ACTIVE";
-    private static final String COLLECTION_SERVICE_ENTRIES = "serviceEntries";
-    private static final String COLLECTION_CUSTOMERS = "customers";
-    private static final String COLLECTION_PAYMENTS = "payments";
-    private static final double DEFAULT_AMOUNT = 0.0;
     
     private MaterialToolbar toolbar;
     private ProgressBar progressBar;
@@ -85,24 +66,20 @@ public class ProviderDashboardActivity extends BaseActivity {
     private NavigationView navigationView;
     private ActionBarDrawerToggle drawerToggle;
     
-    // Today's Summary
     private TextView txtTodayDelivered;
     private TextView txtTodayEarnings;
     
-    // Payment Overview
     private TextView txtTotalLent;
     private TextView txtTotalReceived;
     private TextView txtPendingAmount;
     
-    // Monthly Overview
     private TextView txtMonthlyEarnings;
     private TextView txtMonthlyDeliveries;
     
-    // Quick Actions
-    private MaterialButton btnServiceEntry;
-    private MaterialButton btnBills;
-    private MaterialButton btnCustomers;
-    private MaterialButton btnJoinRequests;
+    private View btnServiceEntry;
+    private View btnBills;
+    private View btnCustomers;
+    private View btnJoinRequests;
     
     @Inject
     FirebaseFirestore firestore;
@@ -126,10 +103,10 @@ public class ProviderDashboardActivity extends BaseActivity {
             return;
         }
         
-        // firestore is injected by Hilt
-        
         initializeViews();
         setupListeners();
+        setupBackNavigation();
+        animateQuickActions();
         loadCachedProviderMetrics();
         loadDashboardData();
     }
@@ -140,38 +117,31 @@ public class ProviderDashboardActivity extends BaseActivity {
         drawerLayout = binding.drawerLayout;
         navigationView = binding.navigationView;
         
-        // Today's Summary
         txtTodayDelivered = binding.txtTodayDelivered;
         txtTodayEarnings = binding.txtTodayEarnings;
         
-        // Payment Overview
         txtTotalLent = binding.txtTotalLent;
         txtTotalReceived = binding.txtTotalReceived;
         txtPendingAmount = binding.txtPendingAmount;
         
-        // Monthly Overview
         txtMonthlyEarnings = binding.txtMonthlyEarnings;
         txtMonthlyDeliveries = binding.txtMonthlyDeliveries;
         
-        // Quick Actions
         btnServiceEntry = binding.btnServiceEntry;
         btnBills = binding.btnBills;
         btnCustomers = binding.btnCustomers;
         btnJoinRequests = binding.btnJoinRequests;
 
-        // Pending Quantity Requests card
         binding.cardPendingRequests.setOnClickListener(v ->
             startActivity(new Intent(this, QuantityRequestsActivity.class)));
         binding.btnViewRequests.setOnClickListener(v ->
             startActivity(new Intent(this, QuantityRequestsActivity.class)));
         
-        // Setup toolbar with drawer
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         }
         
-        // Setup drawer toggle
         drawerToggle = new ActionBarDrawerToggle(
             this, drawerLayout, toolbar,
             R.string.navigation_drawer_open,
@@ -180,16 +150,27 @@ public class ProviderDashboardActivity extends BaseActivity {
         drawerLayout.addDrawerListener(drawerToggle);
         drawerToggle.syncState();
         
-        // Setup navigation menu
         setupNavigationMenu();
         setupNavigationHeader();
     }
 
+    private void setupBackNavigation() {
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (drawerLayout != null && drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                    drawerLayout.closeDrawer(GravityCompat.START);
+                } else {
+                    setEnabled(false);
+                    getOnBackPressedDispatcher().onBackPressed();
+                }
+            }
+        });
+    }
+
     private void setupNavigationHeader() {
         View headerView = navigationView.getHeaderView(0);
-        if (headerView == null) {
-            return;
-        }
+        if (headerView == null) return;
 
         NavHeaderBinding headerBinding = NavHeaderBinding.bind(headerView);
         bindProviderHeader(headerBinding, null, null);
@@ -198,15 +179,11 @@ public class ProviderDashboardActivity extends BaseActivity {
             .document(providerId)
             .get()
             .addOnSuccessListener(snapshot -> {
-                if (snapshot == null || !snapshot.exists()) {
-                    return;
-                }
-
+                if (snapshot == null || !snapshot.exists()) return;
                 String profileName = snapshot.getString("businessName");
                 if (profileName == null || profileName.trim().isEmpty()) {
                     profileName = snapshot.getString("name");
                 }
-
                 String profileEmail = snapshot.getString("email");
                 bindProviderHeader(headerBinding, profileName, profileEmail);
             });
@@ -214,10 +191,8 @@ public class ProviderDashboardActivity extends BaseActivity {
 
     private void bindProviderHeader(NavHeaderBinding headerBinding, String profileName, String profileEmail) {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-
         String authName = currentUser != null ? currentUser.getDisplayName() : null;
         String authEmail = currentUser != null ? currentUser.getEmail() : null;
-
         String prefName = preferenceManager != null ? preferenceManager.getUserName() : null;
         String prefEmail = preferenceManager != null ? preferenceManager.getUserEmail() : null;
 
@@ -233,7 +208,6 @@ public class ProviderDashboardActivity extends BaseActivity {
         headerBinding.userEmail.setText(displayEmail);
         headerBinding.userInitial.setText(initials);
         headerBinding.userInitial.setTextColor(ContextCompat.getColor(this, android.R.color.white));
-        headerBinding.userInitial.setContentDescription(getString(R.string.profile_initial_for, displayName));
         headerBinding.avatarCard.setCardBackgroundColor(AvatarUtils.getAvatarColor(displayName));
 
         View.OnClickListener openProfileListener = v -> startActivity(new Intent(this, ProfileActivity.class));
@@ -244,37 +218,43 @@ public class ProviderDashboardActivity extends BaseActivity {
     private String firstNonEmpty(String... values) {
         if (values == null) return "";
         for (String value : values) {
-            if (value != null && !value.trim().isEmpty()) {
-                return value.trim();
-            }
+            if (value != null && !value.trim().isEmpty()) return value.trim();
         }
         return "";
     }
     
     private void setupListeners() {
-        btnServiceEntry.setOnClickListener(v -> {
-            startActivity(new Intent(this, ServiceEntryActivity.class));
-        });
-        
-        btnBills.setOnClickListener(v -> {
-            startActivity(new Intent(this, BillListActivity.class));
-        });
-        
-        btnCustomers.setOnClickListener(v -> {
-            startActivity(new Intent(this, DashboardActivity.class));
-        });
+        btnServiceEntry.setOnClickListener(v -> startActivity(new Intent(this, ServiceEntryActivity.class)));
+        btnBills.setOnClickListener(v -> startActivity(new Intent(this, BillListActivity.class)));
+        btnCustomers.setOnClickListener(v -> startActivity(new Intent(this, DashboardActivity.class)));
+        btnJoinRequests.setOnClickListener(v -> startActivity(new Intent(this, JoinRequestsActivity.class)));
+    }
 
-        btnJoinRequests.setOnClickListener(v -> {
-            startActivity(new Intent(this, JoinRequestsActivity.class));
-        });
+    private void animateQuickActions() {
+        View[] cards = { btnCustomers, btnServiceEntry, btnBills, btnJoinRequests };
+        for (int i = 0; i < cards.length; i++) {
+            View card = cards[i];
+            card.setScaleX(0f);
+            card.setScaleY(0f);
+            card.setAlpha(0f);
+
+            ObjectAnimator scaleX = ObjectAnimator.ofFloat(card, "scaleX", 0f, 1f);
+            ObjectAnimator scaleY = ObjectAnimator.ofFloat(card, "scaleY", 0f, 1f);
+            ObjectAnimator alpha = ObjectAnimator.ofFloat(card, "alpha", 0f, 1f);
+
+            AnimatorSet set = new AnimatorSet();
+            set.playTogether(scaleX, scaleY, alpha);
+            set.setDuration(400);
+            set.setStartDelay(200 + (i * 100L));
+            set.setInterpolator(new OvershootInterpolator(1.1f));
+            set.start();
+        }
     }
     
     private void setupNavigationMenu() {
         navigationView.setNavigationItemSelectedListener(item -> {
             int itemId = item.getItemId();
-            
             if (itemId == R.id.nav_dashboard) {
-                // Already on dashboard, just close drawer
                 drawerLayout.closeDrawer(GravityCompat.START);
             } else if (itemId == R.id.nav_service_entry) {
                 startActivity(new Intent(this, ServiceEntryActivity.class));
@@ -301,26 +281,14 @@ public class ProviderDashboardActivity extends BaseActivity {
             } else if (itemId == R.id.nav_logout) {
                 logout();
             }
-            
             drawerLayout.closeDrawer(GravityCompat.START);
             return true;
         });
     }
     
     @Override
-    public void onBackPressed() {
-        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            drawerLayout.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
-    }
-    
-    @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (drawerToggle.onOptionsItemSelected(item)) {
-            return true;
-        }
+        if (drawerToggle.onOptionsItemSelected(item)) return true;
         return super.onOptionsItemSelected(item);
     }
     
@@ -336,37 +304,30 @@ public class ProviderDashboardActivity extends BaseActivity {
 
     private void setupObservers() {
         viewModel.isLoading().observe(this, this::showLoading);
-        
         viewModel.todayDelivered().observe(this, text -> {
             txtTodayDelivered.setText(text);
             cacheProviderValue(Constants.PREF_PROVIDER_TODAY_DELIVERED, text);
         });
-        
         viewModel.todayEarnings().observe(this, text -> {
             txtTodayEarnings.setText(text);
             cacheProviderValue(Constants.PREF_PROVIDER_TODAY_EARNINGS, text);
         });
-        
         viewModel.totalLent().observe(this, text -> {
             txtTotalLent.setText(text);
             cacheProviderValue(Constants.PREF_PROVIDER_TOTAL_LENT, text);
         });
-        
         viewModel.totalReceived().observe(this, text -> {
             txtTotalReceived.setText(text);
             cacheProviderValue(Constants.PREF_PROVIDER_TOTAL_RECEIVED, text);
         });
-        
         viewModel.pendingAmount().observe(this, text -> {
             txtPendingAmount.setText(text);
             cacheProviderValue(Constants.PREF_PROVIDER_PENDING_AMOUNT, text);
         });
-        
         viewModel.monthlyEarnings().observe(this, text -> {
             txtMonthlyEarnings.setText(text);
             cacheProviderValue(Constants.PREF_PROVIDER_MONTHLY_EARNINGS, text);
         });
-        
         viewModel.monthlyDeliveries().observe(this, text -> {
             txtMonthlyDeliveries.setText(text);
             cacheProviderValue(Constants.PREF_PROVIDER_MONTHLY_DELIVERIES, text);
@@ -374,82 +335,42 @@ public class ProviderDashboardActivity extends BaseActivity {
     }
 
     private void loadCachedProviderMetrics() {
-        String todayDelivered = preferenceManager.getString(prefKey(Constants.PREF_PROVIDER_TODAY_DELIVERED), null);
-        if (todayDelivered != null && txtTodayDelivered != null) {
-            txtTodayDelivered.setText(todayDelivered);
-        }
+        loadCachedValue(Constants.PREF_PROVIDER_TODAY_DELIVERED, txtTodayDelivered);
+        loadCachedValue(Constants.PREF_PROVIDER_TODAY_EARNINGS, txtTodayEarnings);
+        loadCachedValue(Constants.PREF_PROVIDER_TOTAL_LENT, txtTotalLent);
+        loadCachedValue(Constants.PREF_PROVIDER_TOTAL_RECEIVED, txtTotalReceived);
+        loadCachedValue(Constants.PREF_PROVIDER_PENDING_AMOUNT, txtPendingAmount);
+        loadCachedValue(Constants.PREF_PROVIDER_MONTHLY_EARNINGS, txtMonthlyEarnings);
+        loadCachedValue(Constants.PREF_PROVIDER_MONTHLY_DELIVERIES, txtMonthlyDeliveries);
+    }
 
-        String todayEarnings = preferenceManager.getString(prefKey(Constants.PREF_PROVIDER_TODAY_EARNINGS), null);
-        if (todayEarnings != null && txtTodayEarnings != null) {
-            txtTodayEarnings.setText(todayEarnings);
-        }
-
-        String totalLent = preferenceManager.getString(prefKey(Constants.PREF_PROVIDER_TOTAL_LENT), null);
-        if (totalLent != null && txtTotalLent != null) {
-            txtTotalLent.setText(totalLent);
-        }
-
-        String totalReceived = preferenceManager.getString(prefKey(Constants.PREF_PROVIDER_TOTAL_RECEIVED), null);
-        if (totalReceived != null && txtTotalReceived != null) {
-            txtTotalReceived.setText(totalReceived);
-        }
-
-        String pendingAmount = preferenceManager.getString(prefKey(Constants.PREF_PROVIDER_PENDING_AMOUNT), null);
-        if (pendingAmount != null && txtPendingAmount != null) {
-            txtPendingAmount.setText(pendingAmount);
-        }
-
-        String monthlyEarnings = preferenceManager.getString(prefKey(Constants.PREF_PROVIDER_MONTHLY_EARNINGS), null);
-        if (monthlyEarnings != null && txtMonthlyEarnings != null) {
-            txtMonthlyEarnings.setText(monthlyEarnings);
-        }
-
-        String monthlyDeliveries = preferenceManager.getString(prefKey(Constants.PREF_PROVIDER_MONTHLY_DELIVERIES), null);
-        if (monthlyDeliveries != null && txtMonthlyDeliveries != null) {
-            txtMonthlyDeliveries.setText(monthlyDeliveries);
-        }
+    private void loadCachedValue(String key, TextView view) {
+        String val = preferenceManager.getString(prefKey(key), null);
+        if (val != null && view != null) view.setText(val);
     }
 
     private void cacheProviderValue(String key, String value) {
-        if (value == null) return;
-        preferenceManager.putString(prefKey(key), value);
+        if (value != null) preferenceManager.putString(prefKey(key), value);
     }
 
     private String prefKey(String key) {
-        if (providerId == null || providerId.isEmpty()) {
-            return key;
-        }
-        return key + "_" + providerId;
+        return providerId == null ? key : key + "_" + providerId;
     }
     
     private void logout() {
-        // Clear session and navigate to login
         preferenceManager.clearAllData();
         navigateToLogin();
         finishAffinity();
     }
     
     private void showLoading(boolean show) {
-        if (isFinishing() || isDestroyed()) {
-            return;
-        }
-        if (progressBar != null) {
-            progressBar.setVisibility(show ? View.VISIBLE : View.GONE);
-        }
+        if (isFinishing() || isDestroyed()) return;
+        if (progressBar != null) progressBar.setVisibility(show ? View.VISIBLE : View.GONE);
     }
 
-    private void runOnSafeUi(Runnable action) {
-        if (action == null) return;
-        runOnUiThread(() -> {
-            if (isFinishing() || isDestroyed()) return;
-            action.run();
-        });
-    }
-    
     @Override
     protected void onResume() {
         super.onResume();
-        // Refresh data when returning to this screen
         loadDashboardData();
         loadPendingQuantityRequests();
     }
@@ -464,16 +385,13 @@ public class ProviderDashboardActivity extends BaseActivity {
                 if (isFinishing() || isDestroyed() || binding == null) return;
                 int count = querySnapshot != null ? querySnapshot.size() : 0;
                 if (count > 0) {
-                    binding.cardPendingRequests.setVisibility(android.view.View.VISIBLE);
-                    binding.txtPendingRequestCount.setText(
-                        getString(R.string.pending_qty_requests_count, count));
+                    binding.cardPendingRequests.setVisibility(View.VISIBLE);
+                    binding.txtPendingRequestCount.setText(getString(R.string.pending_qty_requests_count, count));
                 } else {
-                    binding.cardPendingRequests.setVisibility(android.view.View.GONE);
+                    binding.cardPendingRequests.setVisibility(View.GONE);
                 }
             })
-            .addOnFailureListener(e -> {
-                Log.e(TAG, "Failed to load pending quantity requests", e);
-            });
+            .addOnFailureListener(e -> Log.e(TAG, "Failed to load pending quantity requests", e));
     }
 
     @Override

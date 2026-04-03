@@ -21,6 +21,7 @@ import com.dailyserviceapp.core.base.BaseActivity;
 import com.dailyserviceapp.core.utils.Constants;
 import com.dailyserviceapp.core.utils.DateUtils;
 import com.dailyserviceapp.databinding.ActivityComplaintSupportBinding;
+import com.dailyserviceapp.notifications.NotificationHelper;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -348,10 +349,16 @@ public class ComplaintSupportActivity extends BaseActivity {
             .addOnSuccessListener(ref -> {
                 if (!isUiActive()) return;
                 setSubmitBusy(false);
+                NotificationHelper.saveNotification(
+                    providerId,
+                    "New support ticket",
+                    subject + " (" + category + ") from " + safe(preferenceManager.getUserName()),
+                    Constants.NOTIF_SUPPORT_TICKET,
+                    ref.getId()
+                );
                 showToast("Support ticket submitted");
                 binding.etSubject.setText("");
                 binding.etMessage.setText("");
-                emailProvider(subject, category, message);
                 loadTickets();
             })
             .addOnFailureListener(e -> {

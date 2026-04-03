@@ -200,5 +200,75 @@ service cloud.firestore {
         && request.resource.data.providerId == resource.data.providerId;
       allow delete: if false;
     }
+
+    match /notifications/{notifId} {
+      // Users can read and manage their own notifications.
+      allow read, delete: if isSignedIn()
+        && resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn()
+        && request.resource.data.userId is string
+        && request.resource.data.title is string
+        && request.resource.data.message is string
+        && request.resource.data.type is string
+        && (
+          request.resource.data.userId == request.auth.uid
+          || (
+            request.resource.data.senderId == request.auth.uid
+            && (
+              (
+                exists(/databases/$(database)/documents/customerLinks/$(request.auth.uid))
+                && get(/databases/$(database)/documents/customerLinks/$(request.auth.uid)).data.providerId
+                  == request.resource.data.userId
+              )
+              || (
+                exists(/databases/$(database)/documents/customerLinks/$(request.resource.data.userId))
+                && get(/databases/$(database)/documents/customerLinks/$(request.resource.data.userId)).data.providerId
+                  == request.auth.uid
+              )
+            )
+          )
+        );
+      allow update: if isSignedIn()
+        && resource.data.userId == request.auth.uid
+        && request.resource.data.userId == resource.data.userId;
+    }
+
+    match /joinRequests/{requestId} {
+      // Customers create join requests; providers read/update them.
+      allow read: if isSignedIn()
+        && (resource.data.customerId == request.auth.uid
+          || resource.data.providerId == request.auth.uid);
+      allow create: if isSignedIn()
+        && request.resource.data.customerId == request.auth.uid
+        && request.resource.data.providerId is string;
+      allow update: if isSignedIn()
+        && resource.data.providerId == request.auth.uid
+        && request.resource.data.customerId == resource.data.customerId
+        && request.resource.data.providerId == resource.data.providerId;
+      allow delete: if isSignedIn()
+        && resource.data.providerId == request.auth.uid;
+    }
+
+    match /bulkOrders/{orderId} {
+      // Providers manage their own bulk orders.
+      allow read, delete: if isSignedIn()
+        && resource.data.providerId == request.auth.uid;
+      allow create: if isSignedIn()
+        && request.resource.data.providerId == request.auth.uid;
+      allow update: if isSignedIn()
+        && resource.data.providerId == request.auth.uid
+        && request.resource.data.providerId == resource.data.providerId;
+    }
+
+    match /products/{productId} {
+      // Providers manage their own products.
+      allow read, delete: if isSignedIn()
+        && resource.data.providerId == request.auth.uid;
+      allow create: if isSignedIn()
+        && request.resource.data.providerId == request.auth.uid;
+      allow update: if isSignedIn()
+        && resource.data.providerId == request.auth.uid
+        && request.resource.data.providerId == resource.data.providerId;
+    }
   }
 }

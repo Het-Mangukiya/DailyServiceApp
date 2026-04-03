@@ -1,184 +1,159 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    style="@style/Widget.App.Card.Elevated"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="@dimen/spacing_sm">
+    android:layout_marginHorizontal="12dp"
+    android:layout_marginVertical="8dp"
+    app:cardBackgroundColor="@color/white"
+    app:cardCornerRadius="20dp"
+    app:cardElevation="3dp"
+    app:strokeColor="@color/divider_color"
+    app:strokeWidth="1dp">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:animateLayoutChanges="true"
-        android:orientation="vertical"
-        android:padding="@dimen/spacing_base">
+        android:padding="16dp">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/customerAvatar"
-                android:layout_width="@dimen/card_size_lg"
-                android:layout_height="@dimen/card_size_lg"
-                app:cardBackgroundColor="@color/color_customers"
-                app:cardCornerRadius="@dimen/corner_radius_pill"
-                app:cardElevation="0dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <TextView
-                    android:id="@+id/customerInitial"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:textColor="@android:color/white"
-                    android:textSize="@dimen/text_size_lg"
-                    android:textStyle="bold" />
-
-            </com.google.android.material.card.MaterialCardView>
-
-            <LinearLayout
-                android:id="@+id/customerInfo"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/spacing_base"
-                android:orientation="vertical"
-                app:layout_constraintBottom_toBottomOf="@id/customerAvatar"
-                app:layout_constraintEnd_toStartOf="@id/customerMenuButton"
-                app:layout_constraintStart_toEndOf="@id/customerAvatar"
-                app:layout_constraintTop_toTopOf="@id/customerAvatar">
-
-                <TextView
-                    android:id="@+id/customerName"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:maxLines="1"
-                    android:textColor="@color/md_theme_on_surface"
-                    android:textSize="@dimen/text_size_base"
-                    android:textStyle="bold"
-                    tools:text="Customer Name" />
-
-                <TextView
-                    android:id="@+id/customerService"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/spacing_xs"
-                    android:ellipsize="end"
-                    android:maxLines="1"
-                    android:textColor="@color/md_theme_on_surface_variant"
-                    android:textSize="@dimen/text_size_sm"
-                    tools:text="Service Type · ₹0.00" />
-
-                <TextView
-                    android:id="@+id/customerPhone"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/spacing_xs"
-                    android:ellipsize="end"
-                    android:maxLines="1"
-                    android:textColor="@color/md_theme_on_surface_variant"
-                    android:textSize="@dimen/text_size_sm"
-                    tools:text="9876543210" />
-
-                <TextView
-                    android:id="@+id/vacationBadge"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/spacing_xs"
-                    android:text="@string/on_vacation"
-                    android:textColor="@color/md_theme_error"
-                    android:textSize="@dimen/text_size_xs"
-                    android:textStyle="bold"
-                    android:visibility="gone" />
-
-            </LinearLayout>
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/customerMenuButton"
-                style="@style/Widget.Material3.Button.IconButton"
-                android:layout_width="@dimen/card_size_md"
-                android:layout_height="@dimen/card_size_md"
-                android:contentDescription="@string/customer_actions_expand"
-                android:padding="0dp"
-                app:icon="@drawable/ic_expand_more"
-                app:iconSize="20dp"
-                app:iconTint="@color/md_theme_on_surface"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <com.google.android.material.chip.Chip
-                android:id="@+id/customerStatus"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_xs"
-                android:text="@string/status_active"
-                android:textColor="@color/color_on_customers"
-                android:textSize="@dimen/text_size_sm"
-                app:chipBackgroundColor="@color/color_customers"
-                app:chipStrokeWidth="0dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/customerMenuButton"
-                tools:text="ACTIVE" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
+        <!-- Avatar with better contrast -->
         <com.google.android.material.card.MaterialCardView
-            android:id="@+id/expandableActions"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_sm"
-            android:visibility="gone"
-            app:cardBackgroundColor="@color/md_theme_surface_variant"
-            app:cardCornerRadius="@dimen/corner_radius_base"
-            app:cardElevation="0dp">
+            android:id="@+id/customerAvatar"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            app:cardBackgroundColor="@color/teal_light"
+            app:cardCornerRadius="28dp"
+            app:cardElevation="0dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-            <LinearLayout
+            <TextView
+                android:id="@+id/customerInitial"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="@dimen/spacing_xs">
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/viewProfileButton"
-                    style="@style/Widget.Material3.Button.TextButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="start|center_vertical"
-                    android:insetTop="0dp"
-                    android:insetBottom="0dp"
-                    android:text="@string/view_profile"
-                    android:textAllCaps="false" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/editCustomerButton"
-                    style="@style/Widget.Material3.Button.TextButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="start|center_vertical"
-                    android:insetTop="0dp"
-                    android:insetBottom="0dp"
-                    android:text="@string/edit_customer"
-                    android:textAllCaps="false" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/vacationActionButton"
-                    style="@style/Widget.Material3.Button.TextButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="start|center_vertical"
-                    android:insetTop="0dp"
-                    android:insetBottom="0dp"
-                    android:text="@string/mark_on_vacation"
-                    android:textAllCaps="false" />
-
-            </LinearLayout>
-
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:textColor="@color/teal_primary"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                tools:text="A" />
         </com.google.android.material.card.MaterialCardView>
 
-    </LinearLayout>
+        <!-- Name with higher emphasis -->
+        <TextView
+            android:id="@+id/customerName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="@color/text_dark"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@id/customerAmount"
+            app:layout_constraintStart_toEndOf="@id/customerAvatar"
+            app:layout_constraintTop_toTopOf="@id/customerAvatar"
+            tools:text="Amit Patel" />
 
+        <!-- Service Info with clearer text -->
+        <TextView
+            android:id="@+id/customerService"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:textColor="@color/brand_teal_700"
+            android:textSize="14sp"
+            android:textStyle="normal"
+            app:layout_constraintEnd_toStartOf="@id/customerStatus"
+            app:layout_constraintStart_toStartOf="@id/customerName"
+            app:layout_constraintTop_toBottomOf="@id/customerName"
+            tools:text="Milk · ₹60.00" />
+
+        <!-- Amount with clear visibility -->
+        <TextView
+            android:id="@+id/customerAmount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_dark"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/customerName"
+            tools:text="₹ 0.00" />
+
+        <!-- Status Chip with high readability -->
+        <TextView
+            android:id="@+id/customerStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:background="@drawable/status_pill_active"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="3dp"
+            android:text="ACTIVE"
+            android:textColor="@color/white"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/customerAmount" />
+
+        <!-- Improved Action Buttons for better touch and readability -->
+        <LinearLayout
+            android:id="@+id/actionsLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/customerAvatar">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/viewProfileButton"
+                style="@style/Widget.Material3.Button.TonalButton"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_marginEnd="6dp"
+                android:layout_weight="1"
+                android:text="View"
+                android:textColor="@color/teal_primary"
+                android:textSize="13sp"
+                app:backgroundTint="@color/teal_light"
+                app:cornerRadius="14dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/editCustomerButton"
+                style="@style/Widget.Material3.Button.TonalButton"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_marginHorizontal="6dp"
+                android:layout_weight="1"
+                android:text="Edit"
+                android:textColor="@color/teal_primary"
+                android:textSize="13sp"
+                app:backgroundTint="@color/teal_light"
+                app:cornerRadius="14dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/vacationActionButton"
+                style="@style/Widget.Material3.Button.TonalButton"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="6dp"
+                android:layout_weight="1.6"
+                android:text="On Vacation"
+                android:textColor="@color/status_vacation"
+                android:textSize="13sp"
+                app:backgroundTint="#FFF3E0"
+                app:cornerRadius="14dp" />
+
+        </LinearLayout>
+
+        <!-- Hidden Compatibility views -->
+        <TextView android:id="@+id/customerPhone" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toStartOf="parent" />
+        <TextView android:id="@+id/vacationBadge" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toStartOf="parent" />
+        <View android:id="@+id/customerMenuButton" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toStartOf="parent" />
+        <View android:id="@+id/expandableActions" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toStartOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

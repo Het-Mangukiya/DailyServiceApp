@@ -2,68 +2,57 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_app_backdrop"
-    android:fitsSystemWindows="true">
+    android:background="@color/bg_light">
 
-    <!-- AppBar -->
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/bg_toolbar_gradient"
-        app:elevation="@dimen/elevation_md">
+        android:background="@android:color/transparent"
+        app:elevation="0dp">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@drawable/bg_toolbar_gradient"
             app:navigationIcon="@drawable/ic_back"
-            app:navigationIconTint="@android:color/white"
-            app:title="@string/bills_title"
-            app:titleTextColor="@android:color/white" />
+            app:navigationIconTint="@color/text_dark"
+            app:title="Monthly Bills"
+            app:titleTextColor="@color/text_dark" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <!-- Main Content -->
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="true"
+        android:clipToPadding="false"
+        android:paddingBottom="80dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="@dimen/spacing_base">
+            android:padding="16dp">
 
             <!-- Month Selector Card -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/monthSelectorCard"
-                style="@style/Widget.App.Card.Elevated"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/spacing_base"
-                app:strokeColor="#1A4DB6AC"
-                app:strokeWidth="1dp">
+                android:layout_marginBottom="20dp"
+                app:cardBackgroundColor="@color/teal_primary"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="4dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
                     android:orientation="horizontal"
-                    android:padding="@dimen/spacing_base"
-                    android:gravity="center_vertical">
-
-                    <ImageView
-                        android:layout_width="@dimen/card_size_md"
-                        android:layout_height="@dimen/card_size_md"
-                        android:contentDescription="@null"
-                        android:importantForAccessibility="no"
-                        android:layout_marginEnd="@dimen/spacing_base"
-                        android:src="@drawable/ic_calendar_24"
-                        app:tint="@color/md_theme_primary" />
+                    android:padding="20dp">
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -74,52 +63,146 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/ledger_snapshot"
-                            android:textSize="@dimen/text_size_sm"
-                            android:textColor="@color/md_theme_on_surface_variant" />
+                            android:text="Billing Period"
+                            android:textColor="#CCFFFFFF"
+                            android:textSize="12sp" />
 
                         <TextView
                             android:id="@+id/selectedMonthText"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/ledger_live_customer"
-                            android:textSize="@dimen/text_size_lg"
-                            android:textStyle="bold"
-                            android:textColor="@color/md_theme_on_surface"
-                            android:layout_marginTop="@dimen/spacing_xs" />
-
+                            android:text="May 2024"
+                            android:textColor="@color/white"
+                            android:textSize="20sp"
+                            android:textStyle="bold" />
                     </LinearLayout>
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/previousMonthButton"
-                        style="@style/Widget.App.Button.Outlined"
-                        android:layout_width="@dimen/card_size_lg"
-                        android:layout_height="@dimen/card_size_lg"
-                        android:minHeight="48dp"
+                        style="@style/Widget.MaterialComponents.Button.Icon"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:insetLeft="0dp"
+                        android:insetTop="0dp"
+                        android:insetRight="0dp"
+                        android:insetBottom="0dp"
+                        app:backgroundTint="#33FFFFFF"
+                        app:cornerRadius="12dp"
                         app:icon="@drawable/ic_chevron_left_24"
-                        app:iconTint="@color/md_theme_primary_dark"
-                        app:iconSize="20dp" />
+                        app:iconGravity="textStart"
+                        app:iconPadding="0dp"
+                        app:iconTint="@color/white" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/nextMonthButton"
-                        style="@style/Widget.App.Button.Outlined"
-                        android:layout_width="@dimen/card_size_lg"
-                        android:layout_height="@dimen/card_size_lg"
-                        android:minHeight="48dp"
+                        style="@style/Widget.MaterialComponents.Button.Icon"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_marginStart="8dp"
+                        android:insetLeft="0dp"
+                        android:insetTop="0dp"
+                        android:insetRight="0dp"
+                        android:insetBottom="0dp"
+                        app:backgroundTint="#33FFFFFF"
+                        app:cornerRadius="12dp"
                         app:icon="@drawable/ic_chevron_right_24"
-                        app:iconTint="@color/md_theme_primary_dark"
-                        app:iconSize="20dp" />
+                        app:iconGravity="textStart"
+                        app:iconPadding="0dp"
+                        app:iconTint="@color/white" />
 
                 </LinearLayout>
-
             </com.google.android.material.card.MaterialCardView>
+
+            <!-- Stats Overview -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                android:orientation="horizontal">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_weight="1"
+                    app:cardBackgroundColor="@color/white"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="2dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Total Billed"
+                            android:textColor="@color/text_grey"
+                            android:textSize="12sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="₹ 45,200"
+                            android:textColor="@color/teal_primary"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    app:cardBackgroundColor="@color/white"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="2dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Collected"
+                            android:textColor="@color/text_grey"
+                            android:textSize="12sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="₹ 32,800"
+                            android:textColor="@color/status_active"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:text="Customer Invoices"
+                android:textColor="@color/text_dark"
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
             <!-- Bills RecyclerView -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/billsRecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:clipToPadding="false" />
+                android:nestedScrollingEnabled="false"
+                tools:listitem="@layout/row_bill" />
 
             <!-- Loading Progress -->
             <ProgressBar
@@ -127,63 +210,49 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="@dimen/spacing_xl"
-                android:visibility="gone"
-                android:indeterminateTint="@color/md_theme_primary" />
+                android:layout_marginTop="32dp"
+                android:visibility="gone" />
 
             <!-- Empty State -->
             <LinearLayout
                 android:id="@+id/emptyState"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
                 android:gravity="center"
-                android:padding="@dimen/spacing_xl"
+                android:orientation="vertical"
+                android:padding="48dp"
                 android:visibility="gone">
 
                 <ImageView
-                    android:layout_width="72dp"
-                    android:layout_height="72dp"
-                    android:layout_marginBottom="@dimen/spacing_base"
-                    android:contentDescription="@null"
-                    android:importantForAccessibility="no"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:alpha="0.3"
                     android:src="@drawable/ic_nav_bills"
-                    app:tint="@color/md_theme_primary" />
+                    app:tint="@color/teal_primary" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/ledger_empty_title"
-                    android:textSize="@dimen/text_size_lg"
-                    android:textStyle="bold"
-                    android:textColor="@color/md_theme_on_surface"
-                    android:layout_marginBottom="@dimen/spacing_xs" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/ledger_empty_subtitle"
-                    android:textSize="@dimen/text_size_base"
-                    android:textColor="@color/md_theme_on_surface_variant"
-                    android:gravity="center" />
-
+                    android:layout_marginTop="16dp"
+                    android:text="No bills found"
+                    android:textColor="@color/text_dark"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
             </LinearLayout>
 
         </LinearLayout>
-
     </androidx.core.widget.NestedScrollView>
 
-    <!-- FAB for Generate Bills -->
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/generateBillsFab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/spacing_base"
-        android:text="@string/action_refresh"
-        android:textColor="@android:color/white"
+        android:layout_margin="16dp"
+        android:text="Generate"
+        android:textColor="@color/white"
+        app:backgroundTint="@color/teal_primary"
         app:icon="@drawable/ic_refresh_24"
-        app:iconTint="@android:color/white"
-        app:backgroundTint="@color/md_theme_primary_dark" />
+        app:iconTint="@color/white" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

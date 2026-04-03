@@ -16,6 +16,7 @@ import com.dailyserviceapp.core.base.BaseActivity;
 import com.dailyserviceapp.core.utils.Constants;
 import com.dailyserviceapp.core.utils.DateUtils;
 import com.dailyserviceapp.databinding.ActivityProviderComplaintsBinding;
+import com.dailyserviceapp.notifications.NotificationHelper;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -275,8 +276,14 @@ public class ProviderComplaintsActivity extends BaseActivity {
             .set(updates, SetOptions.merge())
             .addOnSuccessListener(unused -> {
                 if (!isUiActive()) return;
+                NotificationHelper.saveNotification(
+                    safe(doc.getString("customerId")),
+                    "Support ticket updated",
+                    "Your ticket is now " + newStatus.replace("_", " ").toLowerCase(Locale.US) + ".",
+                    Constants.NOTIF_SUPPORT_UPDATE,
+                    ticketId
+                );
                 showToast("Complaint updated: " + newStatus.replace("_", " "));
-                emailCustomer(doc, newStatus);
                 loadComplaints();
             })
             .addOnFailureListener(e -> {

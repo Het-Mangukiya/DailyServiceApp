@@ -31,68 +31,46 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
+
+import dagger.hilt.android.AndroidEntryPoint;
+import javax.inject.Inject;
 
 /**
- * Splash screen activity displayed on app launch.
- * Shows the DailyDrop logo and brand name for 2 seconds,
- * then navigates to either the Dashboard (if user is logged in)
- * or the Login screen (if user is not logged in).
- * 
- * @author DailyDrop Team
- * @version 1.0
- * @since 2026-01-08
+ * Splash screen activity with corrected routing for Customer side.
  */
+@AndroidEntryPoint
 public class SplashActivity extends AppCompatActivity {
 
-    /**
-     * Duration in milliseconds to display the splash screen.
-     */
-    private static final int SPLASH_DELAY = 2000; // 2 seconds
+    private static final int SPLASH_DELAY = 2000;
     private FirebaseFirestore firestore;
-    private PreferenceManager preferenceManager;
+    
+    @Inject
+    protected PreferenceManager preferenceManager;
 
-    /**
-     * Called when the activity is first created.
-     * Sets up the splash screen layout, hides the action bar,
-     * and schedules navigation to the next screen after a delay.
-     * 
-     * @param savedInstanceState If the activity is being re-initialized after previously
-     *                          being shut down, this Bundle contains the most recent data.
-     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
-        // Hide action bar
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
 
-        // Ensure background sync worker is always registered.
         SyncWorkScheduler.ensurePeriodicSync(this);
         firestore = FirebaseFirestore.getInstance();
-        preferenceManager = new PreferenceManager(this);
+        
         capturePendingInviteFromIntent(getIntent());
 
         long splashDelay = getIntent() != null
             && getIntent().getBooleanExtra(Constants.EXTRA_SKIP_SPLASH_DELAY, false)
             ? 0L : SPLASH_DELAY;
 
-        // Delay and navigate
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
             if (isActivityInactive()) return;
             navigateToNextScreen();
         }, splashDelay);
     }
 
-    /**
-     * Determines the next screen to navigate to based on user's login status.
-     * If the user is logged in (session exists), navigates to the Dashboard.
-     * Otherwise, navigates to the Login screen.
-     * Finishes this activity to prevent returning to splash screen on back press.
-     */
     private void navigateToNextScreen() {
         if (isActivityInactive()) return;
         if (!preferenceManager.isLoggedIn()) {
@@ -171,6 +149,11 @@ public class SplashActivity extends AppCompatActivity {
         } else {
             preferenceManager.putString(Constants.KEY_PENDING_INVITE_CUSTOMER_ID, inviteCustomerId);
         }
+    }
+
+    private void clearPendingInvite() {
+        preferenceManager.remove(Constants.KEY_PENDING_INVITE_TOKEN);
+        preferenceManager.remove(Constants.KEY_PENDING_INVITE_CUSTOMER_ID);
     }
 
     private void routeCustomerWithInvite(String userId) {
@@ -305,11 +288,6 @@ public class SplashActivity extends AppCompatActivity {
             });
     }
 
-    private void clearPendingInvite() {
-        preferenceManager.remove(Constants.KEY_PENDING_INVITE_TOKEN);
-        preferenceManager.remove(Constants.KEY_PENDING_INVITE_CUSTOMER_ID);
-    }
-
     private String sha256(String input) {
         if (input == null || input.trim().isEmpty()) return "";
         try {
@@ -360,20 +338,12 @@ public class SplashActivity extends AppCompatActivity {
             for (Object item : casted) {
                 if (item instanceof String) {
                     String value = safeTrim((String) item);
-                    if (!value.isEmpty()) {
-                        services.add(value);
-                    }
+                    if (!value.isEmpty()) services.add(value);
                 }
             }
         }
         String serviceType = safeTrim(documentSnapshot.getString("serviceType"));
-        boolean hasService = (services != null && !services.isEmpty()) || !serviceType.isEmpty();
-
-        return !businessName.isEmpty()
-            && !ownerName.isEmpty()
-            && !phone.isEmpty()
-            && !address.isEmpty()
-            && hasService;
+        return !businessName.isEmpty() && !ownerName.isEmpty() && !phone.isEmpty() && !address.isEmpty() && ((services != null && !services.isEmpty()) || !serviceType.isEmpty());
     }
 
     private String safeTrim(String value) {
@@ -386,17 +356,17 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void openDashboard() {
-        startActivity(new Intent(SplashActivity.this, com.dailyserviceapp.dashboard.ProviderDashboardActivity.class));
-        finish();
-    }
-
-    private void openCustomerDashboard() {
-        startActivity(new Intent(SplashActivity.this, CustomerServiceDashboardActivity.class));
+        startActivity(new Intent(SplashActivity.this, DashboardActivity.class));
         finish();
     }
 
     private void openCustomerHome() {
         startActivity(new Intent(SplashActivity.this, CustomerHomeActivity.class));
+        finish();
+    }
+
+    private void openCustomerDashboard() {
+        startActivity(new Intent(SplashActivity.this, CustomerServiceDashboardActivity.class));
         finish();
     }
 

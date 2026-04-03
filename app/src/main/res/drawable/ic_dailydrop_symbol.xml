@@ -1,0 +1,33 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="1024dp"
+    android:height="1024dp"
+    android:viewportWidth="1024"
+    android:viewportHeight="1024">
+
+    <!-- Drop Shape -->
+    <path
+        android:fillColor="#1D9E75"
+        android:pathData="M512,80
+                          C512,80 220,420 220,640
+                          C220,840 380,960 512,960
+                          C644,960 804,840 804,640
+                          C804,420 512,80 512,80Z" />
+
+    <!-- Inner Circle Curve -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M512,720
+                          A200,200 0 1,1 512,360
+                          A200,200 0 1,1 512,720Z" />
+
+    <!-- Checkmark -->
+    <path
+        android:fillColor="#1D9E75"
+        android:pathData="M420,580
+                          L500,660
+                          L700,460
+                          L740,500
+                          L500,740
+                          L380,620Z" />
+
+</vector>

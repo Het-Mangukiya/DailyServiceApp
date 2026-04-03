@@ -11,6 +11,7 @@ import com.dailyserviceapp.R;
 import com.dailyserviceapp.core.base.BaseActivity;
 import com.dailyserviceapp.core.utils.Constants;
 import com.dailyserviceapp.databinding.ActivityJoinRequestsBinding;
+import com.dailyserviceapp.notifications.NotificationHelper;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentReference;
@@ -232,7 +233,7 @@ public class JoinRequestsActivity extends BaseActivity {
                     existingCustomerDoc == null || !existingCustomerDoc.exists()
                 );
 
-                commitApproval(customerRef, linkRef, customerData);
+                commitApproval(customerRef, linkRef, customerData, item.getCustomerId());
             })
             .addOnFailureListener(e -> {
                 if (!isUiActive()) return;
@@ -240,7 +241,7 @@ public class JoinRequestsActivity extends BaseActivity {
                 // If customer doc does not exist yet, rules can reject get(). Proceed as a new customer.
                 if (isPermissionDenied(e)) {
                     Map<String, Object> customerData = buildCustomerData(item, defaultService, true);
-                    commitApproval(customerRef, linkRef, customerData);
+                    commitApproval(customerRef, linkRef, customerData, item.getCustomerId());
                     return;
                 }
 
@@ -251,7 +252,8 @@ public class JoinRequestsActivity extends BaseActivity {
 
     private void commitApproval(DocumentReference customerRef,
                                 DocumentReference linkRef,
-                                Map<String, Object> customerData) {
+                                Map<String, Object> customerData,
+                                String customerId) {
         Map<String, Object> linkData = new HashMap<>();
         linkData.put("customerId", safeTrim(customerRef.getId()));
         linkData.put("providerId", providerId);
@@ -266,6 +268,13 @@ public class JoinRequestsActivity extends BaseActivity {
         batch.commit()
             .addOnSuccessListener(unused -> {
                 if (!isUiActive()) return;
+                NotificationHelper.saveNotification(
+                    customerId,
+                    "Join request approved",
+                    "Your request was approved. You can now open your service dashboard.",
+                    Constants.NOTIF_JOIN_REQUEST_STATUS,
+                    providerId
+                );
                 showLoading(false);
                 showToast("Request approved. Customer added to your list.");
             })
@@ -363,6 +372,13 @@ public class JoinRequestsActivity extends BaseActivity {
             .set(buildRejectUpdate(), SetOptions.merge())
             .addOnSuccessListener(unused -> {
                 if (!isUiActive()) return;
+                NotificationHelper.saveNotification(
+                    item.getCustomerId(),
+                    "Join request rejected",
+                    "Your request was rejected. You can try again later.",
+                    Constants.NOTIF_JOIN_REQUEST_STATUS,
+                    providerId
+                );
                 showLoading(false);
                 showToast("Request rejected");
             })
