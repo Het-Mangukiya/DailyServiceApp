@@ -1,68 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- DailyDrop Launcher Foreground: Service clipboard for adaptive icon -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
     android:height="108dp"
-    android:viewportWidth="108"
-    android:viewportHeight="108">
+    android:viewportWidth="96"
+    android:viewportHeight="96">
 
-    <!-- Clipboard body -->
     <path
-        android:fillColor="#1D9E75"
-        android:pathData="M38,30 L70,30 Q74,30 74,34 L74,82 Q74,86 70,86 L38,86 Q34,86 34,82 L34,34 Q34,30 38,30 Z" />
+        android:fillColor="@color/logo_blue_soft"
+        android:pathData="M22,8h52c7.7,0 14,6.3 14,14v52c0,7.7 -6.3,14 -14,14H22c-7.7,0 -14,-6.3 -14,-14V22c0,-7.7 6.3,-14 14,-14z" />
 
-    <!-- Clipboard inner white area -->
     <path
-        android:fillColor="#FFFFFF"
-        android:pathData="M40,36 L68,36 Q70,36 70,38 L70,80 Q70,82 68,82 L40,82 Q38,82 38,80 L38,38 Q38,36 40,36 Z" />
+        android:fillColor="@color/white"
+        android:pathData="M48,48m-28,0a28,28 0,1 1,56 0a28,28 0,1 1,-56 0" />
 
-    <!-- Clipboard clip (top) -->
     <path
-        android:fillColor="#147A5B"
-        android:pathData="M46,26 L62,26 Q64,26 64,28 L64,34 Q64,36 62,36 L46,36 Q44,36 44,34 L44,28 Q44,26 46,26 Z" />
-
-    <!-- Clip circle notch -->
-    <path
-        android:fillColor="#1D9E75"
-        android:pathData="M54,26m-3,0a3,3 0,1 1,6 0a3,3 0,1 1,-6 0" />
-
-    <!-- Task line 1 -->
-    <path
-        android:fillColor="#E8F5E9"
-        android:pathData="M42,44 L66,44 L66,48 L42,48 Z" />
-    <path
-        android:fillColor="#1D9E75"
-        android:pathData="M42,44 L48,44 L48,48 L42,48 Z" />
-
-    <!-- Task line 2 -->
-    <path
-        android:fillColor="#E8F5E9"
-        android:pathData="M42,54 L66,54 L66,58 L42,58 Z" />
-    <path
-        android:fillColor="#1D9E75"
-        android:pathData="M42,54 L48,54 L48,58 L42,58 Z" />
-
-    <!-- Task line 3 -->
-    <path
-        android:fillColor="#E8F5E9"
-        android:pathData="M42,64 L66,64 L66,68 L42,68 Z" />
-    <path
-        android:fillColor="#1D9E75"
-        android:pathData="M42,64 L48,64 L48,68 L42,68 Z" />
-
-    <!-- Checkmark badge (bottom right) -->
-    <path
-        android:fillColor="#FFFFFF"
-        android:pathData="M74,72m-12,0a12,12 0,1 1,24 0a12,12 0,1 1,-24 0" />
-    <path
-        android:fillColor="#1D9E75"
-        android:pathData="M74,72m-10,0a10,10 0,1 1,20 0a10,10 0,1 1,-20 0" />
-    <path
-        android:fillColor="#FFFFFF"
-        android:strokeColor="#FFFFFF"
-        android:strokeWidth="2.5"
+        android:fillColor="@android:color/transparent"
+        android:pathData="M29,48l19,-16 19,16M35,43v20h26V43M44,63V52h8v11"
+        android:strokeColor="@color/logo_blue_dark"
         android:strokeLineCap="round"
         android:strokeLineJoin="round"
-        android:pathData="M69,72 L72,75 L80,67" />
+        android:strokeWidth="5" />
 
+    <path
+        android:fillColor="@android:color/transparent"
+        android:pathData="M54,41h8M54,48h11"
+        android:strokeColor="@color/logo_blue_primary"
+        android:strokeLineCap="round"
+        android:strokeWidth="3.5" />
+
+    <path
+        android:fillColor="@color/logo_green_accent"
+        android:pathData="M69,67m-11,0a11,11 0,1 1,22 0a11,11 0,1 1,-22 0" />
+
+    <path
+        android:fillColor="@android:color/transparent"
+        android:pathData="M64,67l4,4 7,-8"
+        android:strokeColor="@color/white"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:strokeWidth="3.8" />
 </vector>

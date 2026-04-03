@@ -190,22 +190,6 @@
                 android:textStyle="bold" />
         </LinearLayout>
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnThemePreview"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-            android:layout_width="wrap_content"
-            android:layout_height="48dp"
-            android:layout_marginTop="14dp"
-            android:layout_marginBottom="24dp"
-            android:text="Preview Theme Demos"
-            android:textAllCaps="false"
-            android:textColor="@color/teal_primary"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/layoutSignUp"
-            app:strokeColor="@color/teal_primary" />
-
         <ProgressBar
             android:id="@+id/progressBar"
             android:layout_width="wrap_content"

@@ -28,6 +28,7 @@ import com.dailyserviceapp.billing.MonthlyBillPdfGenerator;
 import com.dailyserviceapp.billing.CustomerLedgerCalculator;
 import com.dailyserviceapp.billing.CustomerLedgerSummary;
 import com.dailyserviceapp.core.base.BaseActivity;
+import com.dailyserviceapp.core.ui.PremiumMotionController;
 import com.dailyserviceapp.core.utils.Constants;
 import com.dailyserviceapp.core.utils.CurrencyUtils;
 import com.dailyserviceapp.core.utils.DateUtils;
@@ -568,6 +569,7 @@ public class CustomerServiceDashboardActivity extends BaseActivity {
         View sheetView = getLayoutInflater()
             .inflate(R.layout.bottom_sheet_quantity_request, sheetContainer, false);
         bottomSheet.setContentView(sheetView);
+        PremiumMotionController.animateStandalone(sheetView);
 
         TextInputEditText inputCurrent = sheetView.findViewById(R.id.inputCurrentQuantity);
         TextInputEditText inputRequested = sheetView.findViewById(R.id.inputRequestedQuantity);
