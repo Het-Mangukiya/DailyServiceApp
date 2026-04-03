@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Premium DailyDrop logo: Milk drop in a circle with gradient -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Outer ring -->
+    <item>
+        <shape android:shape="oval">
+            <gradient
+                android:startColor="#1D9E75"
+                android:endColor="#147A5B"
+                android:angle="135" />
+            <size
+                android:width="96dp"
+                android:height="96dp" />
+        </shape>
+    </item>
+    <!-- Inner white circle -->
+    <item
+        android:left="4dp"
+        android:top="4dp"
+        android:right="4dp"
+        android:bottom="4dp">
+        <shape android:shape="oval">
+            <solid android:color="#FFFFFF" />
+        </shape>
+    </item>
+    <!-- Inner gradient circle -->
+    <item
+        android:left="8dp"
+        android:top="8dp"
+        android:right="8dp"
+        android:bottom="8dp">
+        <shape android:shape="oval">
+            <gradient
+                android:startColor="#1D9E75"
+                android:centerColor="#22B080"
+                android:endColor="#66BB6A"
+                android:angle="315" />
+        </shape>
+    </item>
+    <!-- Drop shape (centered white drop) -->
+    <item
+        android:left="28dp"
+        android:top="20dp"
+        android:right="28dp"
+        android:bottom="24dp">
+        <shape android:shape="oval">
+            <solid android:color="#FFFFFF" />
+        </shape>
+    </item>
+    <!-- Inner drop highlight -->
+    <item
+        android:left="34dp"
+        android:top="24dp"
+        android:right="42dp"
+        android:bottom="36dp">
+        <shape android:shape="oval">
+            <solid android:color="#E8F6F2" />
+        </shape>
+    </item>
+</layer-list>
