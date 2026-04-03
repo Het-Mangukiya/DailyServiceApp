@@ -125,6 +125,11 @@
             android:exported="false"
             android:theme="@style/Theme.DailyServiceApp.NoActionBar" />
 
+        <activity
+            android:name=".ui.ThemePreviewActivity"
+            android:exported="false"
+            android:theme="@style/Theme.DailyServiceApp.NoActionBar" />
+
         <!-- Service Entry -->
         <activity
             android:name=".service.ServiceEntryActivity"

@@ -101,4 +101,26 @@
     <color name="stitch_nav_active_bg">#B2DFDB</color>
     <color name="dailydrop_on_secondary_container">#1F4D31</color>
     <color name="stitch_search_fill">#E8F1F0</color>
+
+    <!-- Theme preview palettes -->
+    <color name="preview_emerald_primary">#0F8F6B</color>
+    <color name="preview_emerald_dark">#0A5C45</color>
+    <color name="preview_emerald_accent">#D7A84A</color>
+    <color name="preview_emerald_background">#F7F4EC</color>
+    <color name="preview_emerald_surface">#FFFDFC</color>
+    <color name="preview_emerald_text">#172121</color>
+
+    <color name="preview_royal_primary">#1F4ED8</color>
+    <color name="preview_royal_dark">#1739A6</color>
+    <color name="preview_royal_accent">#F4B942</color>
+    <color name="preview_royal_background">#F8F1E7</color>
+    <color name="preview_royal_surface">#FFFFFF</color>
+    <color name="preview_royal_text">#1E2430</color>
+
+    <color name="preview_forest_primary">#1E6B4C</color>
+    <color name="preview_forest_dark">#124431</color>
+    <color name="preview_forest_accent">#C9784A</color>
+    <color name="preview_forest_background">#F3F6F2</color>
+    <color name="preview_forest_surface">#FFFFFF</color>
+    <color name="preview_forest_text">#18201B</color>
 </resources>

@@ -23,6 +23,7 @@ import com.dailyserviceapp.databinding.ActivityLoginBinding;
 import com.dailyserviceapp.profile.ProfileActivity;
 import com.dailyserviceapp.notifications.FCMService;
 import com.dailyserviceapp.customer.CustomerHomeActivity;
+import com.dailyserviceapp.ui.ThemePreviewActivity;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -55,6 +56,7 @@ public class LoginActivity extends BaseActivity {
     private Button loginButton, googleSignInButton;
     private TextView signupLink, forgotPasswordLink;
     private ProgressBar progressBar;
+    private View themePreviewButton;
     
     private FirebaseAuth firebaseAuth;
     private FirebaseFirestore firestore;
@@ -128,6 +130,7 @@ public class LoginActivity extends BaseActivity {
         signupLink = binding.txtSignUp;
         forgotPasswordLink = binding.txtForgotPassword;
         progressBar = binding.progressBar;
+        themePreviewButton = binding.btnThemePreview;
     }
     
     private void setupClickListeners() {
@@ -135,6 +138,7 @@ public class LoginActivity extends BaseActivity {
         googleSignInButton.setOnClickListener(v -> signInWithGoogle());
         signupLink.setOnClickListener(v -> startActivity(new Intent(this, SignupActivity.class)));
         forgotPasswordLink.setOnClickListener(v -> startActivity(new Intent(this, ForgotPasswordActivity.class)));
+        themePreviewButton.setOnClickListener(v -> startActivity(ThemePreviewActivity.createIntent(this)));
     }
     
     private void performLogin() {

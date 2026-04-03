@@ -1,11 +1,15 @@
 package com.dailyserviceapp;
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.view.View;
+import android.view.animation.OvershootInterpolator;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -54,6 +58,25 @@ public class SplashActivity extends AppCompatActivity {
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
+        }
+
+        // Animate logo entrance
+        View logoCard = findViewById(R.id.logoCard);
+        if (logoCard != null) {
+            logoCard.setScaleX(0f);
+            logoCard.setScaleY(0f);
+            logoCard.setAlpha(0f);
+
+            ObjectAnimator scaleX = ObjectAnimator.ofFloat(logoCard, "scaleX", 0f, 1f);
+            ObjectAnimator scaleY = ObjectAnimator.ofFloat(logoCard, "scaleY", 0f, 1f);
+            ObjectAnimator alpha = ObjectAnimator.ofFloat(logoCard, "alpha", 0f, 1f);
+
+            AnimatorSet set = new AnimatorSet();
+            set.playTogether(scaleX, scaleY, alpha);
+            set.setDuration(600);
+            set.setStartDelay(150);
+            set.setInterpolator(new OvershootInterpolator(1.2f));
+            set.start();
         }
 
         SyncWorkScheduler.ensurePeriodicSync(this);
